@@ -1,0 +1,30 @@
+diff -Nur usbutils-008/Makefile.am usbutils-008n/Makefile.am
+--- usbutils-008/Makefile.am	2014-10-21 20:30:11.000000000 +0000
++++ usbutils-008n/Makefile.am	2015-06-19 02:23:21.141123999 +0000
+@@ -25,7 +25,7 @@
+ 
+ lsusb_CPPFLAGS = \
+ 	$(AM_CPPFLAGS) $(LIBUSB_CFLAGS) $(UDEV_CFLAGS) \
+-	-DDATADIR=\"$(datadir)\"
++	-DDATADIR=\"$(datadir)/hwdata\"
+ 
+ lsusb_LDADD = \
+ 	$(LIBUSB_LIBS) \
+@@ -43,7 +43,7 @@
+ 	usbutils.pc.in
+ 
+ lsusb.8: $(srcdir)/lsusb.8.in
+-	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
++	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/hwdata/usb.ids|g' $< >$@
+ 
+ usb-devices.1: $(srcdir)/usb-devices.1.in
+ 	sed 's|VERSION|$(VERSION)|g' $< >$@
+@@ -52,7 +52,7 @@
+ pkgconfig_DATA = usbutils.pc
+ 
+ usbutils.pc: $(srcdir)/usbutils.pc.in
+-	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
++	sed 's|@usbids@|$(datadir)/hwdata/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
+ 
+ DISTCLEANFILES = \
+ 	lsusb.8 \

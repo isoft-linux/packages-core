@@ -1,0 +1,27 @@
+diff -Nur nss-3.19.2/nss/tests/all.sh nss-3.19.2n/nss/tests/all.sh
+--- nss-3.19.2/nss/tests/all.sh	2015-06-17 18:26:43.000000000 +0000
++++ nss-3.19.2n/nss/tests/all.sh	2015-07-02 14:02:11.270308191 +0000
+@@ -184,7 +184,7 @@
+     init_directories
+ 
+     if [ -r "${OLDHOSTDIR}/cert.log" ]; then
+-        DIRS="alicedir bobdir CA cert_extensions client clientCA dave eccurves eve ext_client ext_server fips SDR server serverCA stapling tools/copydir cert.log cert.done tests.*"
++        DIRS="alicedir bobdir CA cert_extensions client clientCA dave eccurves eve ext_client ext_server SDR server serverCA stapling tools/copydir cert.log cert.done tests.*"
+         for i in $DIRS
+         do
+             cp -r ${OLDHOSTDIR}/${i} ${HOSTDIR} #2> /dev/null
+@@ -274,12 +274,12 @@
+ cycles="standard pkix upgradedb sharedb"
+ CYCLES=${NSS_CYCLES:-$cycles}
+ 
+-tests="cipher lowhash libpkix cert dbtests tools fips sdr crmf smime ssl ocsp merge pkits chains"
++tests="cipher lowhash libpkix cert dbtests tools sdr crmf smime ssl ocsp merge pkits chains"
+ TESTS=${NSS_TESTS:-$tests}
+ 
+ ALL_TESTS=${TESTS}
+ 
+-nss_ssl_tests="crl bypass_normal normal_bypass fips_normal normal_fips iopr"
++nss_ssl_tests="crl bypass_normal normal_bypass iopr"
+ NSS_SSL_TESTS="${NSS_SSL_TESTS:-$nss_ssl_tests}"
+ 
+ nss_ssl_run="cov auth stapling stress"

@@ -1,0 +1,492 @@
+%global build_check_log 0 
+
+%define gcc_version 5.2.0 
+%define gcc_release 12
+%define _unpackaged_files_terminate_build 0
+
+%define gcc_target_platform %{_target_platform}
+
+Summary: Various compilers (C, C++, Objective-C, Java, ...)
+Name: gcc
+Version: %{gcc_version}
+Release: %{gcc_release}
+License: GPLv3+ and GPLv2+ with exceptions
+Group:  Core/Development/Language
+Source0: gcc-%{version}.tar.bz2
+
+Patch0:  gcc-64bit-use-lib-as-libdir.patch
+Patch1:  gcc-4.9-fix-cstddef-for-clang.patch 
+Patch2:  kill-fixincludes.diff
+
+URL: http://gcc.gnu.org
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: binutils >= 2.17.50.0.17-3
+BuildRequires: mpc-devel >= 1.0.2 
+BuildRequires: zlib-devel, gettext
+
+%if %build_check_log
+BuildRequires: autogen, dejagnu, expect, tcl
+%endif
+
+Requires: mpc >= 1.0.2 
+Requires: binutils >= 2.17.50.0.17-3
+Requires: libgcc = %{version}-%{release}
+Requires: libstdc++-devel = %{version}-%{release}
+AutoReq: true
+
+%description
+The gcc package contains the GNU Compiler Collection version 4.3.
+You'll need this package in order to compile C code.
+
+
+%package -n libgcc
+Summary: GCC shared library
+Group: Core/Runtime/Library
+Autoreq: false
+
+%description -n libgcc
+This package contains GCC shared support library which is needed
+e.g. for exception handling support.
+
+%package -n libstdc++
+Summary: GNU Standard C++ Library
+Group: Core/Runtime/Library 
+Autoreq: true
+
+%description -n libstdc++
+The libstdc++ package contains a rewritten standard compliant GCC Standard
+C++ Library.
+
+%package -n libstdc++-devel
+Summary: Header files and libraries for C++ development
+Group: Core/Development/Library 
+Requires: libstdc++ = %{version}-%{release}, %{_prefix}/%{_lib}/libstdc++.so.6
+Autoreq: false 
+
+%description -n libstdc++-devel
+This is the GNU implementation of the standard C++ libraries.  This
+package includes the header files and libraries needed for C++
+development. This includes rewritten implementation of STL.
+
+%package go
+Summary: go lang support for GCC
+Group: Development/Languages
+Requires: gcc = %{version}-%{release}
+Requires: libgo = %{version}-%{release}
+Autoreq: true
+
+%description go
+This package adds go lang support to the GNU Compiler Collection.
+
+%package -n libgo
+Summary: go library
+Group: System Environment/Libraries
+Autoreq: true
+
+%description -n libgo
+The libgo package contains a go library.
+
+
+%package gfortran
+Summary: Fortran support
+Group: Development/Languages
+Requires: gcc = %{version}-%{release}
+Requires: libgfortran = %{version}-%{release}
+Requires: libquadmath = %{version}-%{release}
+BuildRequires: gmp-devel >= 4.1.2-8, mpfr-devel >= 2.2.1, mpc-devel >= 0.8.1
+Autoreq: true
+
+%description gfortran
+The gcc-gfortran package provides support for compiling Fortran
+programs with the GNU Compiler Collection.
+
+%package -n libgfortran
+Summary: Fortran runtime
+Group: System Environment/Libraries
+Autoreq: true
+Requires: libquadmath = %{version}-%{release}
+
+%description -n libgfortran
+This package contains Fortran shared library which is needed to run
+Fortran dynamically linked programs.
+
+
+
+%package -n libgomp
+Summary: GCC OpenMP v3.0 shared support library
+Group: Core/Runtime/Library 
+
+%description -n libgomp
+This package contains GCC shared support library which is needed
+for OpenMP v3.0 support.
+
+%package -n libquadmath
+Summary: GCC Quad-Precision Math shared support library
+Group: Core/Runtime/Library 
+
+%description -n libquadmath
+This package contains GCC shared support library which is needed
+for Quad-Precision Math support.
+
+%package -n libitm
+Summary: The GNU Transactional Memory library
+Group: Core/Runtime/Library 
+
+%description -n libitm
+This package contains the GNU Transactional Memory library
+which is a GCC transactional memory support runtime library.
+
+%package -n libatomic
+Summary:  The GNU Atomic library
+Group: Core/Runtime/Library 
+
+%description -n libatomic
+This package contains the GNU Atomic library
+
+%package -n libcilkrts
+Summary: The Cilk runtime library
+Group: Core/Runtime/Library 
+
+%description -n libcilkrts
+This package contains the Cilk runtime library
+
+%package -n libvtv
+Summary: The virtual table verification library
+Group: Core/Runtime/Library 
+
+%description -n libvtv
+This package contains the virtual table verification library
+
+%package -n libssp
+Summary: The stack smashing protection library
+Group: Core/Runtime/Library
+
+%description -n libssp
+This package contains the stack smashing protection library
+
+%package -n libsanitizer
+Summary: Various sanitizer runtime libraries
+Group: Core/Runtime/Library 
+
+%description -n libsanitizer
+This package contains various sanitizer libraries
+
+%package -n libcc1
+Summary: GCC cc1 plugin for GDB
+Group: System Environment/Libraries
+
+%description -n libcc1
+GCC cc1 plugin for GDB
+
+
+
+
+%prep
+%setup -q -n gcc-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+
+echo 'Pure64 %{version}-%{gcc_release}' > gcc/DEV-PHASE
+
+# Do not run fixincludes
+sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
+
+%build
+mkdir build
+pushd build
+../configure \
+	--target=%{gcc_target_platform} \
+	--host=%{gcc_target_platform} \
+	--build=%{gcc_target_platform} \
+	--with-cpu=generic \
+	--prefix=/usr \
+	--enable-bootstrap \
+	--enable-shared \
+	--enable-threads=posix \
+    --enable-checking=release \
+	--enable-languages=c,c++,lto,go,fortran \
+    --enable-plugin \
+    --enable-initfini-array \
+    --enable-gnu-unique-object \
+	--enable-__cxa_atexit \
+	--enable-c99 \
+	--enable-long-long \
+    --enable-libgomp \
+	--enable-lto \
+	--enable-libsanitizer \
+    --enable-libatomic \
+    --enable-libquadmath \
+    --enable-symvers \
+    --disable-libstdcxx-pch \
+	--disable-libitm \
+	--disable-libvtv \
+	--disable-multilib \
+	--disable-libmudflap \
+	--disable-libcilkrts \
+	--disable-libunwind-exceptions
+
+make %{?_smp_mflags} BOOT_CFLAGS="$OPT_FLAGS" bootstrap
+popd
+
+%install
+rm -fr $RPM_BUILD_ROOT
+
+pushd build
+make prefix=$RPM_BUILD_ROOT%{_prefix} install
+
+%if %build_check_log
+make check >gcc-%{version}-%{release}-check.log 2>&1 ||:
+mkdir -p $RPM_BUILD_ROOT%{_docdir}/gcc
+install -m0644 gcc-%{version}-%{release}-check.log $RPM_BUILD_ROOT%{_docdir}/gcc/gcc-%{version}-%{release}-check.log
+%endif
+popd
+
+
+#create some useful links
+#we use compiler-wrapper will switch between gcc/clang.
+#ln -sf gcc $RPM_BUILD_ROOT%{_prefix}/bin/cc
+rm -rf $RPM_BUILD_ROOT%{_prefix}/bin/c++
+
+ln -sf gfortran %{buildroot}%{_prefix}/bin/f95
+
+#remove files we do not ship.
+rm -rf %{buildroot}/%{_bindir}/gcc-ar
+rm -rf %{buildroot}/%{_bindir}/gcc-nm
+rm -rf %{buildroot}/%{_bindir}/gcc-ranlib
+rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gcc-ar
+rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gcc-nm
+rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gcc-ranlib
+rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gfortran
+rm -rf %{buildroot}/%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/install-tools
+rm -rf %{buildroot}/%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_version}/install-tools
+
+#set up libstdc++ symbol for gdb
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/gdb/auto-load/usr/lib/
+mv $RPM_BUILD_ROOT%{_libdir}/libstdc++.so.*.py $RPM_BUILD_ROOT%{_datadir}/gdb/auto-load/usr/lib/
+
+#fix lib perms.
+chmod +x $RPM_BUILD_ROOT%{_libdir}/lib*.so.*
+
+# we do not ship info
+rm -rf $RPM_BUILD_ROOT%{_infodir}
+
+# do not ship gpl/gfdl/fsf-funding man page
+rm -rf $RPM_BUILD_ROOT%{_mandir}/man7
+
+
+find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
+
+
+%find_lang gcc
+%find_lang cpplib
+%find_lang libstdc++
+
+cat cpplib.lang >>gcc.lang
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%post -n libstdc++ -p /sbin/ldconfig
+%postun -n libstdc++ -p /sbin/ldconfig
+
+%post -n libgomp -p /sbin/ldconfig
+%postun -n libgomp -p /sbin/ldconfig
+
+%post -n libgo -p /sbin/ldconfig
+%postun -n libgo -p /sbin/ldconfig
+
+%post -n libgfortran -p /sbin/ldconfig
+%postun -n libgfortran -p /sbin/ldconfig
+
+%post -n libsanitizer -p /sbin/ldconfig
+%postun -n libsanitizer -p /sbin/ldconfig
+
+
+%post -n libssp -p /sbin/ldconfig
+%postun -n libssp -p /sbin/ldconfig
+
+%post -n libcc1 -p /sbin/ldconfig
+%postun -n libcc1 -p /sbin/ldconfig
+
+%post -n libquadmath -p /sbin/ldconfig
+%postun -n libquadmath -p /sbin/ldconfig
+
+%post -n libatomic -p /sbin/ldconfig
+%postun -n libatomic -p /sbin/ldconfig
+
+
+%files -f gcc.lang
+%defattr(-,root,root)
+#%{_prefix}/bin/c++
+%{_prefix}/bin/cpp
+%{_prefix}/bin/g++
+%{_prefix}/bin/gcc
+#%{_prefix}/bin/cc
+%{_prefix}/bin/gcov
+%{_prefix}/bin/gcov-tool
+%{_prefix}/bin/%{gcc_target_platform}-c++
+%{_prefix}/bin/%{gcc_target_platform}-g++
+%{_prefix}/bin/%{gcc_target_platform}-gcc
+%{_prefix}/bin/%{gcc_target_platform}-gcc-%{version}
+%dir %{_libdir}/gcc
+%dir %{_libdir}/gcc/%{gcc_target_platform}
+%dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}
+%dir %{_prefix}/libexec/gcc
+%dir %{_prefix}/libexec/gcc/%{gcc_target_platform}
+%dir %{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}
+%dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include/*
+
+%dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include-fixed
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include-fixed/*
+
+%dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/plugin
+%dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/plugin/include
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/plugin/include/*
+
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/plugin/gtype.state
+
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/cc1
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/cc1plus
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/collect2
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/liblto_*
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/lto-wrapper
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/lto1
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/plugin/gengtype
+
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/crt*.o
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc.a
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/libgcov.a
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/libgcc_eh.a
+
+%{_mandir}/man1/cpp.1.gz
+%{_mandir}/man1/g++.1.gz
+%{_mandir}/man1/gcc.1.gz
+%{_mandir}/man1/gcov.1.gz
+
+%if %build_check_log
+%{_docdir}/gcc/gcc-%{version}-%{release}-check.log
+%endif
+
+%files -n libgcc
+%{_libdir}/libgcc_s.so
+%{_libdir}/libgcc_s.so.1
+
+%files -n libstdc++ -f libstdc++.lang
+%{_libdir}/libstdc++.so.6
+%{_libdir}/libstdc++.so.6.*
+
+%files -n libstdc++-devel
+%dir %{_includedir}/c++
+%{_includedir}/c++/*
+%{_libdir}/libstdc++.a
+%{_libdir}/libstdc++.so
+%{_libdir}/libsupc++.a
+%dir %{_datadir}/gcc-*/python/libstdcxx
+%{_datadir}/gcc-*/python/libstdcxx/*
+%{_datadir}/gdb/auto-load/usr/lib/libstdc++.so.*.py
+
+%files -n libgomp 
+%{_libdir}/libgomp.so.*
+%{_libdir}/libgomp.a
+%{_libdir}/libgomp.so
+%{_libdir}/libgomp.spec
+%{_libdir}/libgomp-plugin-host_nonshm.so
+%{_libdir}/libgomp-plugin-host_nonshm.so.*
+
+
+%files -n libatomic
+%{_libdir}/libatomic.so.*
+%{_libdir}/libatomic.a
+%{_libdir}/libatomic.so
+
+
+%files go
+%defattr(-,root,root)
+%{_bindir}/go
+%{_bindir}/gofmt
+%{_bindir}/gccgo
+%{_prefix}/bin/%{gcc_target_platform}-gccgo
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/go*
+%{_mandir}/man1/gccgo*
+%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_version}/cgo
+%{_mandir}/man1/go.1.gz
+%{_mandir}/man1/gofmt.1.gz
+
+%files -n libgo
+%defattr(-,root,root)
+%{_libdir}/libgo.so.*
+%{_libdir}/go/*
+%{_libdir}/libgo.so
+%{_libdir}/libgo.a
+%{_libdir}/libnetgo.a
+%{_libdir}/libgobegin.a
+%{_libdir}/libgolibbegin.a
+
+%files gfortran
+%defattr(-,root,root,-)
+%{_prefix}/bin/gfortran
+%{_prefix}/bin/f95
+%{_mandir}/man1/gfortran.1*
+%dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/finclude
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/finclude/*
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/f951
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgfortranbegin.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libcaf_single.a
+
+%files -n libgfortran
+%defattr(-,root,root,-)
+%{_prefix}/%{_lib}/libgfortran.so.*
+%{_prefix}/%{_lib}/libgfortran.so
+%{_prefix}/%{_lib}/libgfortran.a
+%{_prefix}/%{_lib}/libgfortran.spec
+
+#%files -n libcilkrts
+#%{_libdir}/libcilkrts.so.*
+#%{_libdir}/libcilkrts.a
+#%{_libdir}/libcilkrts.so
+#%{_libdir}/libcilkrts.spec
+
+#%files -n libitm
+#%{_libdir}/libitm.so.*
+#%{_libdir}/libitm.a
+#%{_libdir}/libitm.so
+#%{_libdir}/libitm.spec
+
+%files -n libquadmath
+%{_libdir}/libquadmath.so.*
+%{_libdir}/libquadmath.a
+%{_libdir}/libquadmath.so
+
+%files -n libssp
+%defattr(-,root,root,-)
+%{_libdir}/libssp.a
+%{_libdir}/libssp.so
+%{_libdir}/libssp.so.0
+%{_libdir}/libssp.so.0.0.0
+%{_libdir}/libssp_nonshared.a
+
+%files -n libsanitizer
+%defattr(-,root,root)
+%{_libdir}/libsanitizer.spec
+%{_prefix}/%{_lib}/libtsan.*
+%{_prefix}/%{_lib}/libasan*
+%{_prefix}/%{_lib}/liblsan*
+%{_prefix}/%{_lib}/libubsan*
+
+%files -n libcc1
+%{_libdir}/libcc1.so
+%{_libdir}/libcc1.so.*
+%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/plugin/libcc1plugin.so*
+
+#%files -n libvtv
+#%{_libdir}/libvtv.so.*
+#%{_libdir}/libvtv.a
+#%{_libdir}/libvtv.so
+
+%changelog
+* Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
+- update to 5.2.0

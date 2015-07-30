@@ -1,0 +1,37 @@
+#echo "Clean unused Doc, Locale, Man Page..."
+#unused_lang="aa  ab  ae  af  am  ar  as  ay  az  ba  be  bg  bh  bi  bn  br  bs  ca  ce  ch  co  cs  cv  cy  da  de  dz  el  en_GB  eo  es  et  eu  fa  fi  fj  fo  fr  fy  ga  gd  gl  gn  gu  gv  ha  he  hi  ho  hr  hsb  hu  hy  hz  id  ie  ik  io  is  it  iu  jv  ka  ki  kl  km  kn  ks  ku  kv  kw  ky  la  lb  li  ln  lo  lt  lv  mg  mh  mi  mk  ml  mo  mr  mt  na  nb  nd  nds  ne  ng  nl  nn  nr  nso  nv  ny  oc  om  or  os  pa  pi  pl  ps  pt*  qu  rn  ro  rw  sa  sc  sd  se  sg  si  sk  sl  sm  sn  so  sq  sr*  ss  st  su  sv  sw  ta  te  tg  ti  tk  tn  to  tr  ts  tt  tw  ty  uk  ur  uz  ven  vo  wa  wo  xh  yi  yo  zu  xx ja ko ru th sr@Latn"
+#
+#for i in $unused_lang;do
+#    rm -rf $RPM_BUILD_ROOT/usr/share/doc/HTML/$i
+#    rm -rf $RPM_BUILD_ROOT/usr/share/locale/$i
+#    rm -rf $RPM_BUILD_ROOT/usr/share/man/$i
+#done
+#echo "Finished"
+if [ -z "$RPM_BUILD_ROOT" -o "$RPM_BUILD_ROOT" = "/" ]; then
+    exit 0
+fi
+
+echo "Strip RPM_BUILD_ROOT..."
+for i in `find $RPM_BUILD_ROOT -type f -exec file {} + | grep ELF | grep "not stripped" | awk -F ":" '{print $1}'`;
+do
+    echo "Strip $i"
+    strip $i
+done
+
+echo "Strip done"
+
+if [ -d "$RPM_BUILD_ROOT/usr/lib" ]; then
+    for i in `find $RPM_BUILD_ROOT/usr/lib -type f -exec file {} + | grep ELF | awk -F ":" '{print $1}'`;
+    do  
+        [ ! -x "$i" ] && chmod 0755 "$i"
+    done
+fi
+
+if [ -d "$RPM_BUILD_ROOT/usr/lib64" ]; then
+    for i in `find $RPM_BUILD_ROOT/usr/lib64 -type f -exec file {} + | grep ELF | awk -F ":" '{print $1}'`;
+    do  
+        [ ! -x "$i" ] && chmod 0755 "$i"
+    done
+fi
+
+exit 0

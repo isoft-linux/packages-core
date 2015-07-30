@@ -1,0 +1,109 @@
+diff -Nur mesa-10.5.7/src/gallium/drivers/nouveau/Makefile.am mesa-10.5.7new/src/gallium/drivers/nouveau/Makefile.am
+--- mesa-10.5.7/src/gallium/drivers/nouveau/Makefile.am	2015-06-03 03:35:16.000000000 -0800
++++ mesa-10.5.7new/src/gallium/drivers/nouveau/Makefile.am	2015-06-15 14:31:21.010157648 -0800
+@@ -50,6 +50,6 @@
+ 	libnouveau.la \
+ 	../../auxiliary/libgallium.la \
+ 	$(top_builddir)/src/util/libmesautil.la \
+-	$(GALLIUM_COMMON_LIB_DEPS)
++	$(GALLIUM_COMMON_LIB_DEPS) $(LLVM_LIBS)
+ 
+ EXTRA_DIST = codegen/lib nvc0/mme
+diff -Nur mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir.h mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir.h
+--- mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir.h	2015-06-07 18:06:53.000000000 -0800
++++ mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir.h	2015-06-15 14:31:50.766156584 -0800
+@@ -29,7 +29,7 @@
+ #include <deque>
+ #include <list>
+ #include <vector>
+-#include <tr1/unordered_set>
++#include <unordered_set>
+ 
+ #include "codegen/nv50_ir_util.h"
+ #include "codegen/nv50_ir_graph.h"
+@@ -582,10 +582,10 @@
+ 
+    static inline Value *get(Iterator&);
+ 
+-   std::tr1::unordered_set<ValueRef *> uses;
++   std::unordered_set<ValueRef *> uses;
+    std::list<ValueDef *> defs;
+-   typedef std::tr1::unordered_set<ValueRef *>::iterator UseIterator;
+-   typedef std::tr1::unordered_set<ValueRef *>::const_iterator UseCIterator;
++   typedef std::unordered_set<ValueRef *>::iterator UseIterator;
++   typedef std::unordered_set<ValueRef *>::const_iterator UseCIterator;
+    typedef std::list<ValueDef *>::iterator DefIterator;
+    typedef std::list<ValueDef *>::const_iterator DefCIterator;
+ 
+diff -Nur mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.cpp mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.cpp
+--- mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.cpp	2015-06-07 18:06:53.000000000 -0800
++++ mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.cpp	2015-06-15 14:32:45.206154638 -0800
+@@ -200,7 +200,7 @@
+       const Instruction *texi,
+       const Instruction *insn,
+       std::list<TexUse> &uses,
+-      std::tr1::unordered_set<const Instruction *>& visited)
++      std::unordered_set<const Instruction *>& visited)
+ {
+    for (int d = 0; insn->defExists(d); ++d) {
+       Value *v = insn->getDef(d);
+@@ -294,7 +294,7 @@
+    if (!uses)
+       return false;
+    for (size_t i = 0; i < texes.size(); ++i) {
+-      std::tr1::unordered_set<const Instruction *> visited;
++      std::unordered_set<const Instruction *> visited;
+       findFirstUses(texes[i], texes[i], uses[i], visited);
+    }
+ 
+diff -Nur mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.h mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.h
+--- mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.h	2015-06-02 01:38:37.000000000 -0800
++++ mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir_lowering_nvc0.h	2015-06-15 14:32:09.258155923 -0800
+@@ -20,7 +20,7 @@
+  * OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
+-#include <tr1/unordered_set>
++#include <unordered_set>
+ 
+ #include "codegen/nv50_ir.h"
+ #include "codegen/nv50_ir_build_util.h"
+@@ -73,7 +73,7 @@
+    inline bool insnDominatedBy(const Instruction *, const Instruction *) const;
+    void findFirstUses(const Instruction *tex, const Instruction *def,
+                       std::list<TexUse>&,
+-                      std::tr1::unordered_set<const Instruction *>&);
++                      std::unordered_set<const Instruction *>&);
+    void findOverwritingDefs(const Instruction *tex, Instruction *insn,
+                             const BasicBlock *term,
+                             std::list<TexUse>&);
+diff -Nur mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir_ra.cpp mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir_ra.cpp
+--- mesa-10.5.7/src/gallium/drivers/nouveau/codegen/nv50_ir_ra.cpp	2014-12-06 03:06:59.000000000 -0800
++++ mesa-10.5.7new/src/gallium/drivers/nouveau/codegen/nv50_ir_ra.cpp	2015-06-15 14:32:57.206154209 -0800
+@@ -25,7 +25,7 @@
+ 
+ #include <stack>
+ #include <limits>
+-#include <tr1/unordered_set>
++#include <unordered_set>
+ 
+ namespace nv50_ir {
+ 
+@@ -1551,7 +1551,7 @@
+       // Keep track of which instructions to delete later. Deleting them
+       // inside the loop is unsafe since a single instruction may have
+       // multiple destinations that all need to be spilled (like OP_SPLIT).
+-      std::tr1::unordered_set<Instruction *> to_del;
++      std::unordered_set<Instruction *> to_del;
+ 
+       for (Value::DefIterator d = lval->defs.begin(); d != lval->defs.end();
+            ++d) {
+@@ -1593,7 +1593,7 @@
+          }
+       }
+ 
+-      for (std::tr1::unordered_set<Instruction *>::const_iterator it = to_del.begin();
++      for (std::unordered_set<Instruction *>::const_iterator it = to_del.begin();
+            it != to_del.end(); ++it)
+          delete_Instruction(func->getProgram(), *it);
+    }

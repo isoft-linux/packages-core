@@ -1,0 +1,12 @@
+diff -Nur rpm-4.11.2/scripts/brp-compress rpm-4.11.2new/scripts/brp-compress
+--- rpm-4.11.2/scripts/brp-compress	2014-05-05 10:09:43.073008605 +0800
++++ rpm-4.11.2new/scripts/brp-compress	2014-05-05 10:10:54.581006049 +0800
+@@ -5,6 +5,8 @@
+ 	exit 0
+ fi
+ 
++find $RPM_BUILD_ROOT "${@:$D}" -name '*.la' -delete
++
+ cd "$RPM_BUILD_ROOT"
+ 
+ # Compress man pages

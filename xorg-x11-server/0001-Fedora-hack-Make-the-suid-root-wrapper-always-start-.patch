@@ -1,0 +1,41 @@
+From 17830918f1bebf3696c6660f602de84d3efeb1ac Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Thu, 17 Apr 2014 15:50:44 +0200
+Subject: [PATCH] Fedora hack: Make the suid-root wrapper start the server
+ with root rights
+
+Do NOT upstream.
+
+Since most display managers are not ready yet to start Xorg in way which will
+keep it working without root-rights, see:
+https://fedoraproject.org/wiki/Changes/XorgWithoutRootRights
+
+Just keep starting X as root for now, but do it through the wrapper, by
+overriding the needs_root_rights = -1 (auto) default and setting it to 1.
+
+We set a special environment variable when starting X in a way where root
+rights are not needed (from gdm and startx) and keep the upstream
+needs_root_rights = -1 (auto) default in that case.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ hw/xfree86/xorg-wrapper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/xfree86/xorg-wrapper.c b/hw/xfree86/xorg-wrapper.c
+index 90c8c11..539bfe4 100644
+--- a/hw/xfree86/xorg-wrapper.c
++++ b/hw/xfree86/xorg-wrapper.c
+@@ -191,6 +191,9 @@ int main(int argc, char *argv[])
+     int allowed = CONSOLE_ONLY;
+     int needs_root_rights = -1;
+ 
++    if (getenv("XORG_RUN_AS_USER_OK") == NULL)
++        needs_root_rights = 1;
++
+     progname = argv[0];
+ 
+     parse_config(&allowed, &needs_root_rights);
+-- 
+1.9.0
+

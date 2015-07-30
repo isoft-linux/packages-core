@@ -1,0 +1,159 @@
+diff -U0 dejagnu-1.5/ChangeLog.gfortran dejagnu-1.5/ChangeLog
+--- dejagnu-1.5/ChangeLog.gfortran	2011-03-09 05:29:16.000000000 +0100
++++ dejagnu-1.5/ChangeLog	2012-05-14 18:38:36.316469119 +0200
+@@ -0,0 +1,8 @@
++2011-06-30  Tom Tromey  <tromey@redhat.com>
++
++	* doc/ref.xml: Document find_gfortran.
++	* doc/dejagnu.texi: Regenerate.
++	* lib/target.exp (default_target_compile): Handle f90.
++	(default_target_compile): Likewise.
++	* lib/libgloss.exp (find_gfortran): New proc.
++
+diff -up dejagnu-1.5/doc/dejagnu.texi.gfortran dejagnu-1.5/doc/dejagnu.texi
+--- dejagnu-1.5/doc/dejagnu.texi.gfortran	2011-03-08 01:26:30.000000000 +0100
++++ dejagnu-1.5/doc/dejagnu.texi	2012-05-14 18:38:36.317469122 +0200
+@@ -6548,6 +6548,7 @@ executable image for an embedded systems
+ * Find_gcj Procedure: find_gcj procedure.
+ * Find_g++ Procedure: find_g++ procedure.
+ * Find_g77 Procedure: find_g77 procedure.
++* Find_gfortran Procedure: find_gfortran procedure.
+ * Process_multilib_options Procedure: process_multilib_options procedure.
+ * Add_multilib_option Procedure: add_multilib_option procedure.
+ * Find_gas Procedure: find_gas procedure.
+@@ -6752,7 +6753,7 @@ executable image for an embedded systems
+ @t{@b{find_g++}(@i{});}
+ @end quotation
+ 
+-@node find_g77 procedure, process_multilib_options procedure, find_g++ procedure, Libgloss
++@node find_g77 procedure, find_gfortran procedure, find_g++ procedure, Libgloss
+ @subsubsection Find_g77 Procedure
+ 
+ 
+@@ -6761,7 +6762,16 @@ executable image for an embedded systems
+ @t{@b{find_g77}(@i{});}
+ @end quotation
+ 
+-@node process_multilib_options procedure, add_multilib_option procedure, find_g77 procedure, Libgloss
++@node find_gfortran procedure, process_multilib_options procedure, find_g77 procedure, Libgloss
++@subsubsection Find_gfortran Procedure
++
++
++@quotation
++
++@t{@b{find_gfortran}(@i{});}
++@end quotation
++
++@node process_multilib_options procedure, add_multilib_option procedure, find_gfortran procedure, Libgloss
+ @subsubsection Process_multilib_options Procedure
+ 
+ 
+diff -up dejagnu-1.5/doc/ref.xml.gfortran dejagnu-1.5/doc/ref.xml
+--- dejagnu-1.5/doc/ref.xml.gfortran	2011-03-03 22:38:25.000000000 +0100
++++ dejagnu-1.5/doc/ref.xml	2012-05-14 18:38:36.333469167 +0200
+@@ -4146,6 +4146,19 @@
+         </funcsynopsis>
+ 	</sect4>
+ 
++	<sect4 id="findgfortran" xreflabel="find_gfortran procedure">
++	  <title>Find_gfortran Procedure</title>
++
++	  <para></para>
++
++	<funcsynopsis role="tcl">
++          <funcprototype>
++            <funcdef><function>find_gfortran</function></funcdef>
++	    <paramdef><parameter></parameter></paramdef>
++           </funcprototype>
++        </funcsynopsis>
++	</sect4>
++
+ 	<sect4 id="processmultiliboptions" xreflabel="process_multilib_options
+ 	procedure">
+ 	  <title>Process_multilib_options Procedure</title>
+diff -up dejagnu-1.5/lib/libgloss.exp.gfortran dejagnu-1.5/lib/libgloss.exp
+--- dejagnu-1.5/lib/libgloss.exp.gfortran	2011-03-03 10:58:56.000000000 +0100
++++ dejagnu-1.5/lib/libgloss.exp	2012-05-14 18:38:36.364469259 +0200
+@@ -1,5 +1,5 @@
+ # Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+-# 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
++# 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+ #
+ # This file is part of DejaGnu.
+ #
+@@ -701,6 +701,25 @@ proc find_g77 {} {
+     }
+     return $CC
+ }
++
++proc find_gfortran {} {
++    global tool_root_dir
++
++    if {![is_remote host]} {
++	set file [lookfor_file $tool_root_dir gfortran]
++	if { $file == "" } {
++	    set file [lookfor_file $tool_root_dir gcc/gfortran]
++	}
++	if { $file != "" } {
++	    set CC "$file -B[file dirname $file]/"
++	} else {
++	    set CC [transform gfortran]
++	}
++    } else {
++	set CC [transform gfortran]
++    }
++    return $CC
++}
+ 
+ proc find_gnatmake {} {
+     global tool_root_dir
+diff -up dejagnu-1.5/lib/target.exp.gfortran dejagnu-1.5/lib/target.exp
+--- dejagnu-1.5/lib/target.exp.gfortran	2011-03-03 10:58:56.000000000 +0100
++++ dejagnu-1.5/lib/target.exp	2012-05-14 18:38:36.399469362 +0200
+@@ -1,5 +1,5 @@
+ # Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+-# 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
++# 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+ #
+ # This file is part of DejaGnu.
+ #
+@@ -367,6 +367,18 @@ proc default_target_compile {source dest
+ 	    }
+ 	}
+ 
++	if { $i == "f90" } {
++	    set compiler_type "f90"
++	    if {[board_info $dest exists f90flags]} {
++		append add_flags " [target_info f90flags]"
++	    }
++	    if {[board_info $dest exists f90compiler]} {
++		set compiler [target_info f90compiler]
++	    } else {
++		set compiler [find_gfortran]
++	    }
++	}
++
+ 	if {[regexp "^dest=" $i]} {
+ 	    regsub "^dest=" $i "" tmp
+ 	    if {[board_info $tmp exists name]} {
+@@ -420,6 +432,7 @@ proc default_target_compile {source dest
+     global CC_FOR_TARGET
+     global CXX_FOR_TARGET
+     global F77_FOR_TARGET
++    global F90_FOR_TARGET
+     global GNATMAKE_FOR_TARGET
+ 
+     if {[info exists GNATMAKE_FOR_TARGET]} {
+@@ -446,6 +459,12 @@ proc default_target_compile {source dest
+ 	}
+     }
+ 
++    if {[info exists F90_FOR_TARGET]} {
++	if { $compiler_type == "f90" } {
++	    set compiler $F90_FOR_TARGET
++	}
++    }
++
+     if { $compiler == "" } {
+ 	set compiler [board_info $dest compiler]
+ 	if { $compiler == "" } {

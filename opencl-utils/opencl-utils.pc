@@ -1,0 +1,8 @@
+prefix=/usr
+includedir=${prefix}/include
+
+Name: opencl-utils
+Description:  OpenCL tools and utilities.
+Version: 0
+Libs:  -lclrun
+Cflags: -I${includedir}/opencl-utils

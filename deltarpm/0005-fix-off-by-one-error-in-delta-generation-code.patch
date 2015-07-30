@@ -1,0 +1,26 @@
+From 619eaf318b3420056c14933bd513201bfb8af494 Mon Sep 17 00:00:00 2001
+From: Michael Schroeder <mls@suse.de>
+Date: Mon, 12 Jan 2015 14:38:50 +0100
+Subject: [PATCH 5/6] fix off-by-one error in delta generation code
+
+This could lead to a segfault in rare circumstances.
+---
+ delta.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/delta.c b/delta.c
+index 3569351..caafa62 100644
+--- a/delta.c
++++ b/delta.c
+@@ -366,7 +366,7 @@ scannext:
+ 	    {
+ 	      if (memcmp(new + scan + HSIZE *3, old + pos2 - 1, HSIZE))
+ 		{
+-		  ssx2 = (ssx2 == prime) ? 0 : ssx2 + 1;
++		  ssx2 = (ssx2 == prime - 1) ? 0 : ssx2 + 1;
+ 		  pos2 = hash[ssx2];
+ 		}
+ 	    }
+-- 
+2.1.0
+

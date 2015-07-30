@@ -1,0 +1,106 @@
+.\" Copyright (C) 1992, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+.\" Copyright (C) 1998 Ben Pfaff.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of
+.\" this manual provided the copyright notice and this permission notice
+.\" are preserved on all copies.
+.\" 
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the entire
+.\" resulting derived work is distributed under the terms of a permission
+.\" notice identical to this one.
+.\" 
+.\" Permission is granted to copy and distribute translations of this manual
+.\" into another language, under the above conditions for modified versions,
+.\" except that this permission notice may be stated in a translation approved
+.\" by the Foundation.
+.\"
+.TH ACLOCAL 1 "Automake"
+.SH NAME
+aclocal - automatically generate aclocal.m4 from configure.in
+.SH SYNOPSIS
+.B aclocal
+[
+.BR --acdir= DIR
+] [
+.B --help
+] [
+.B -I
+DIR ] [
+.BR --output= FILE
+] [
+.B --verbose
+] [
+.B --version
+]
+.SH DESCRIPTION
+.PP
+Automake includes a number of Autoconf macros which can be used in
+your package; some of them are actually required by Automake in certain
+situations.  These macros must be defined in your 
+.BR aclocal.m4 ;
+otherwise they will not be seen by 
+.BR autoconf .
+.PP
+The 
+.B aclocal
+program will automatically generate 
+.B aclocal.m4
+files based on the contents of 
+.BR configure.in .  
+This provides a convenient way to get Automake-provided macros,
+without having to search around.  Also, the 
+.B aclocal
+mechanism is extensible for use by other packages.
+.PP
+At startup, 
+.B aclocal
+scans all the 
+.B .m4
+files it can find, looking for macro definitions.  Then it scans
+.BR configure.in .  
+Any mention of one of the macros found in the first step causes that
+macro, and any macros it in turn requires, to be put into
+.BR aclocal.m4 .
+.PP
+The contents of 
+.BR acinclude.m4 , 
+if it exists, are also automatically included in 
+.BR aclocal.m4 .  
+This is useful for incorporating local macros into 
+.BR configure .
+.PP
+.B aclocal
+accepts the following options:
+.TP
+.BI --acdir=\fRDIR
+Look for the macro files in DIR instead of the installation
+directory.  This is typically used for debugging.
+.TP
+.BI --help
+Print a summary of the command line options and exit.
+.TP
+.BI -I\fR\ DIR
+Add the directory DIR to the list of directories searched for
+.B .m4
+files.
+.TP
+.BI --output=\fRFILE
+Cause the output to be put into FILE instead of 
+.BR aclocal.m4 .
+.TP
+.BI --verbose
+Print the names of the files it examines.
+.TP
+.BI --version
+Print the version number of Automake and exit.
+.PP
+.SH "SEE ALSO"
+.BR automake (1),
+and the Texinfo documentation for automake
+.SH AUTHORS
+Automake was written primarily by David Mackenzie and Tom Tromey.
+This manpage written by Ben Pfaff <pfaffben@pilot.msu.edu> for the
+Debian GNU/Linux
+.B automake
+package.

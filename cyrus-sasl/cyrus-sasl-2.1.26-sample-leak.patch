@@ -1,0 +1,13 @@
+diff --git a/sample/server.c b/sample/server.c
+index f5aff68..6c684af 100644
+--- a/sample/server.c
++++ b/sample/server.c
+@@ -227,6 +227,8 @@ int mysasl_negotiate(FILE *in, FILE *out, sasl_conn_t *conn)
+ 
+     /* send capability list to client */
+     send_string(out, data, len);
++    if (mech)
++		free(data);
+ 
+     dprintf(1, "waiting for client mechanism...\n");
+     len = recv_string(in, chosenmech, sizeof chosenmech);

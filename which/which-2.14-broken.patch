@@ -1,0 +1,33 @@
+--- which-2.14/tilde/tilde.c.orig	Mon Dec  9 18:52:19 2002
++++ which-2.14/tilde/tilde.c	Mon Dec  9 18:58:09 2002
+@@ -182,7 +182,10 @@
+   int result_size, result_index;
+ 
+   result_index = result_size = 0;
+-  if (result = strchr (string, '~'))
++
++  result = strchr (string, '~');
++  
++  if (!result)
+     result = xmalloc (result_size = (strlen (string) + 16));
+   else
+     result = xmalloc (result_size = (strlen (string) + 1));
+--- which-2.14/which.c.orig	Mon Dec  9 18:58:28 2002
++++ which-2.14/which.c	Mon Dec  9 18:59:52 2002
+@@ -22,6 +22,7 @@
+ #include "getopt.h"
+ #include "tilde/tilde.h"
+ #include "bash.h"
++#include <ctype.h>
+ 
+ static const char *progname;
+ 
+@@ -536,7 +537,7 @@
+     while (fgets(buf, sizeof(buf), stdin))
+     {
+       int looks_like_function_start = 0;
+-      int function_start_version_205b;
++      int function_start_version_205b = 0;
+       if (read_functions)
+       {
+ 	// bash version 2.0.5a and older output a pattern for `str' like

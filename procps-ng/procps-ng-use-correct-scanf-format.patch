@@ -1,0 +1,82 @@
+diff -Nur procps-ng-3.3.10/proc/readproc.c procps-ng-3.3.10n/proc/readproc.c
+--- procps-ng-3.3.10/proc/readproc.c	2014-09-23 19:40:36.000000000 -0800
++++ procps-ng-3.3.10n/proc/readproc.c	2014-10-23 00:00:24.414579070 -0800
+@@ -571,11 +571,11 @@
+        "%c "
+        "%d %d %d %d %d "
+        "%lu %lu %lu %lu %lu "
+-       "%Lu %Lu %Lu %Lu "  /* utime stime cutime cstime */
++       "%lu %lu %lu %lu "  /* utime stime cutime cstime */
+        "%ld %ld "
+        "%d "
+        "%ld "
+-       "%Lu "  /* start_time */
++       "%lu "  /* start_time */
+        "%lu "
+        "%ld "
+        "%lu %"KLF"u %"KLF"u %"KLF"u %"KLF"u %"KLF"u "
+diff -Nur procps-ng-3.3.10/proc/sysinfo.c procps-ng-3.3.10n/proc/sysinfo.c
+--- procps-ng-3.3.10/proc/sysinfo.c	2014-09-23 19:40:36.000000000 -0800
++++ procps-ng-3.3.10n/proc/sysinfo.c	2014-10-23 00:00:16.714755221 -0800
+@@ -198,7 +198,7 @@
+     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
+     /* uptime(&up_1, NULL); */
+     FILE_TO_BUF(STAT_FILE,stat_fd);
+-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &user_j, &nice_j, &sys_j, &other_j, &wait_j, &hirq_j, &sirq_j, &stol_j);
++    sscanf(buf, "cpu %lu %lu %lu %lu %lu %lu %lu %lu", &user_j, &nice_j, &sys_j, &other_j, &wait_j, &hirq_j, &sirq_j, &stol_j);
+     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
+     /* uptime(&up_2, NULL); */
+   } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
+@@ -326,7 +326,7 @@
+     new_z = 0;
+ 
+     FILE_TO_BUF(STAT_FILE,stat_fd);
+-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
++    sscanf(buf, "cpu %lu %lu %lu %lu %lu %lu %lu %lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
+     ticks_past = (new_u+new_n+new_s+new_i+new_w+new_x+new_y+new_z)-(old_u+old_n+old_s+old_i+old_w+old_x+old_y+old_z);
+     if(ticks_past){
+       scale = 100.0 / (double)ticks_past;
+@@ -466,7 +466,7 @@
+   *czzz = 0;  /* not separated out until the 2.6.11 kernel */
+ 
+   b = strstr(buff, "cpu ");
+-  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow, cxxx, cyyy, czzz);
++  if(b) sscanf(b,  "cpu  %lu %lu %lu %lu %lu %lu %lu %lu", cuse, cice, csys, cide, ciow, cxxx, cyyy, czzz);
+ 
+   b = strstr(buff, "page ");
+   if(b) sscanf(b,  "page %lu %lu", pin, pout);
+@@ -477,11 +477,11 @@
+   else need_vmstat_file = 1;
+ 
+   b = strstr(buff, "intr ");
+-  if(b) sscanf(b,  "intr %Lu", &llbuf);
++  if(b) sscanf(b,  "intr %lu", &llbuf);
+   *intr = llbuf;
+ 
+   b = strstr(buff, "ctxt ");
+-  if(b) sscanf(b,  "ctxt %Lu", &llbuf);
++  if(b) sscanf(b,  "ctxt %lu", &llbuf);
+   *ctxt = llbuf;
+ 
+   b = strstr(buff, "btime ");
+diff -Nur procps-ng-3.3.10/top/top.c procps-ng-3.3.10n/top/top.c
+--- procps-ng-3.3.10/top/top.c	2014-09-23 19:40:36.000000000 -0800
++++ procps-ng-3.3.10n/top/top.c	2014-10-23 00:00:30.578209829 -0800
+@@ -2413,7 +2413,7 @@
+    sum_ptr = &cpus[sumSLOT];
+    memcpy(&sum_ptr->sav, &sum_ptr->cur, sizeof(CT_t));
+    // then value the last slot with the cpu summary line
+-   if (4 > sscanf(bp, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
++   if (4 > sscanf(bp, "cpu %lu %lu %lu %lu %lu %lu %lu %lu"
+       , &sum_ptr->cur.u, &sum_ptr->cur.n, &sum_ptr->cur.s
+       , &sum_ptr->cur.i, &sum_ptr->cur.w, &sum_ptr->cur.x
+       , &sum_ptr->cur.y, &sum_ptr->cur.z))
+@@ -2444,7 +2444,7 @@
+       bp = 1 + strchr(bp, '\n');
+       // remember from last time around
+       memcpy(&cpu_ptr->sav, &cpu_ptr->cur, sizeof(CT_t));
+-      if (4 > sscanf(bp, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpu_ptr->id
++      if (4 > sscanf(bp, "cpu%d %lu %lu %lu %lu %lu %lu %lu %lu", &cpu_ptr->id
+          , &cpu_ptr->cur.u, &cpu_ptr->cur.n, &cpu_ptr->cur.s
+          , &cpu_ptr->cur.i, &cpu_ptr->cur.w, &cpu_ptr->cur.x
+          , &cpu_ptr->cur.y, &cpu_ptr->cur.z)) {

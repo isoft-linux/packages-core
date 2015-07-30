@@ -1,0 +1,14 @@
+diff -Nur m4-1.4.17/checks/189.eval m4-1.4.17n/checks/189.eval
+--- m4-1.4.17/checks/189.eval	2013-09-22 14:24:42.000000000 -0800
++++ m4-1.4.17n/checks/189.eval	2014-10-24 09:27:17.666741627 -0800
+@@ -15,10 +15,6 @@
+ dnl @result{}1
+ eval(max_int` > 0')
+ dnl @result{}1
+-ifelse(eval(min_int` / -1'), min_int, `overflow occurred')
+-dnl @result{}overflow occurred
+-min_int
+-dnl @result{}-2147483648
+ eval(`0x80000000 % -1')
+ dnl @result{}0
+ eval(`-4 >> 1')

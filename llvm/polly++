@@ -1,0 +1,2 @@
+#!/bin/sh
+clang++ -Xclang -load -Xclang /usr/lib/LLVMPolly.so "$@"

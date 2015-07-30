@@ -1,0 +1,574 @@
+From 287b5ccf870c56ae0baabf501a7dc26bec337fd0 Mon Sep 17 00:00:00 2001
+From: Kamil Dudka <kdudka@redhat.com>
+Date: Fri, 27 May 2011 13:36:56 +0200
+Subject: [PATCH] import the contents of lynx2.8.8dev.8d
+
+... from ftp://invisible-island.net/temp/lynx2.8.8dev.8d.patch.gz
+---
+ WWW/Library/Implementation/hdr_HTMLDTD.h    |   13 ++++----
+ WWW/Library/Implementation/src0_HTMLDTD.h   |    2 +
+ WWW/Library/Implementation/src0_HTMLDTD.txt |   22 +++++++------
+ WWW/Library/Implementation/src1_HTMLDTD.h   |    2 +
+ WWW/Library/Implementation/src1_HTMLDTD.txt |   26 ++++++++-------
+ src/GridText.c                              |    3 ++
+ src/HTForms.h                               |    4 ++
+ src/HTML.c                                  |   12 +++++--
+ src/HTML.h                                  |    1 +
+ src/LYForms.c                               |   44 +++++++++++++-------------
+ src/LYMainLoop.c                            |   10 +++---
+ src/structdump.h                            |    3 +-
+ 12 files changed, 82 insertions(+), 60 deletions(-)
+
+diff --git a/WWW/Library/Implementation/hdr_HTMLDTD.h b/WWW/Library/Implementation/hdr_HTMLDTD.h
+index f6cb0b5..562e7da 100644
+--- a/WWW/Library/Implementation/hdr_HTMLDTD.h
++++ b/WWW/Library/Implementation/hdr_HTMLDTD.h
+@@ -310,12 +310,13 @@ extern "C" {
+ #define HTML_BUTTON_NAME          7
+ #define HTML_BUTTON_ONBLUR        8
+ #define HTML_BUTTON_ONFOCUS       9
+-#define HTML_BUTTON_STYLE        10
+-#define HTML_BUTTON_TABINDEX     11
+-#define HTML_BUTTON_TITLE        12
+-#define HTML_BUTTON_TYPE         13
+-#define HTML_BUTTON_VALUE        14
+-#define HTML_BUTTON_ATTRIBUTES   15
++#define HTML_BUTTON_READONLY     10
++#define HTML_BUTTON_STYLE        11
++#define HTML_BUTTON_TABINDEX     12
++#define HTML_BUTTON_TITLE        13
++#define HTML_BUTTON_TYPE         14
++#define HTML_BUTTON_VALUE        15
++#define HTML_BUTTON_ATTRIBUTES   16
+ 
+ #define HTML_CAPTION_ACCESSKEY    0
+ #define HTML_CAPTION_ALIGN        1
+diff --git a/WWW/Library/Implementation/src0_HTMLDTD.h b/WWW/Library/Implementation/src0_HTMLDTD.h
+index 845ed59..0f647f2 100644
+--- a/WWW/Library/Implementation/src0_HTMLDTD.h
++++ b/WWW/Library/Implementation/src0_HTMLDTD.h
+@@ -394,6 +394,7 @@ static const attr BUTTON_attr_list[] = {
+ 	{ "NAME"          T(N) },
+ 	{ "ONBLUR"        T(N) },
+ 	{ "ONFOCUS"       T(N) },
++	{ "READONLY"      T(N) },
+ 	{ "TABINDEX"      T(N) },
+ 	{ "TYPE"          T(N) },
+ 	{ "VALUE"         T(N) },
+@@ -1383,6 +1384,7 @@ static const attr BUTTON_attr[] = {     /* BUTTON attributes */
+ 	{ "NAME"          T(N) },
+ 	{ "ONBLUR"        T(N) },
+ 	{ "ONFOCUS"       T(N) },
++	{ "READONLY"      T(N) },
+ 	{ "STYLE"         T(N) },
+ 	{ "TABINDEX"      T(N) },
+ 	{ "TITLE"         T(N) },
+diff --git a/WWW/Library/Implementation/src0_HTMLDTD.txt b/WWW/Library/Implementation/src0_HTMLDTD.txt
+index ceece92..923623d 100644
+--- a/WWW/Library/Implementation/src0_HTMLDTD.txt
++++ b/WWW/Library/Implementation/src0_HTMLDTD.txt
+@@ -119,16 +119,17 @@
+ 			1:0:CLEAR
+ 			2:0:NOWRAP
+ 	15:BUTTON
+-		9 attributes:
++		10 attributes:
+ 			0:0:ACCESSKEY
+ 			1:0:CLEAR
+ 			2:0:DISABLED
+ 			3:0:NAME
+ 			4:0:ONBLUR
+ 			5:0:ONFOCUS
+-			6:0:TABINDEX
+-			7:0:TYPE
+-			8:0:VALUE
++			6:0:READONLY
++			7:0:TABINDEX
++			8:0:TYPE
++			9:0:VALUE
+ 	16:CAPTION
+ 		2 attributes:
+ 			0:0:ACCESSKEY
+@@ -1065,7 +1066,7 @@
+ 		flags: endO
+ 	21:BUTTON
+ 		justify
+-		15 attributes:
++		16 attributes:
+ 			0:0:ACCESSKEY
+ 			1:4:CLASS
+ 			2:0:CLEAR
+@@ -1076,11 +1077,12 @@
+ 			7:0:NAME
+ 			8:0:ONBLUR
+ 			9:0:ONFOCUS
+-			10:0:STYLE
+-			11:0:TABINDEX
+-			12:0:TITLE
+-			13:0:TYPE
+-			14:0:VALUE
++			10:0:READONLY
++			11:0:STYLE
++			12:0:TABINDEX
++			13:0:TITLE
++			14:0:TYPE
++			15:0:VALUE
+ 		4 attr_types
+ 			core
+ 			events
+diff --git a/WWW/Library/Implementation/src1_HTMLDTD.h b/WWW/Library/Implementation/src1_HTMLDTD.h
+index c2bc87f..c4bd365 100644
+--- a/WWW/Library/Implementation/src1_HTMLDTD.h
++++ b/WWW/Library/Implementation/src1_HTMLDTD.h
+@@ -394,6 +394,7 @@ static const attr BUTTON_attr_list[] = {
+ 	{ "NAME"          T(N) },
+ 	{ "ONBLUR"        T(N) },
+ 	{ "ONFOCUS"       T(N) },
++	{ "READONLY"      T(N) },
+ 	{ "TABINDEX"      T(N) },
+ 	{ "TYPE"          T(N) },
+ 	{ "VALUE"         T(N) },
+@@ -1383,6 +1384,7 @@ static const attr BUTTON_attr[] = {     /* BUTTON attributes */
+ 	{ "NAME"          T(N) },
+ 	{ "ONBLUR"        T(N) },
+ 	{ "ONFOCUS"       T(N) },
++	{ "READONLY"      T(N) },
+ 	{ "STYLE"         T(N) },
+ 	{ "TABINDEX"      T(N) },
+ 	{ "TITLE"         T(N) },
+diff --git a/WWW/Library/Implementation/src1_HTMLDTD.txt b/WWW/Library/Implementation/src1_HTMLDTD.txt
+index 1342171..aef07fb 100644
+--- a/WWW/Library/Implementation/src1_HTMLDTD.txt
++++ b/WWW/Library/Implementation/src1_HTMLDTD.txt
+@@ -119,16 +119,17 @@
+ 			1:0:CLEAR
+ 			2:0:NOWRAP
+ 	15:BUTTON
+-		9 attributes:
++		10 attributes:
+ 			0:0:ACCESSKEY
+ 			1:0:CLEAR
+ 			2:0:DISABLED
+ 			3:0:NAME
+-			4:0:ONBLUR
+-			5:0:ONFOCUS
+-			6:0:TABINDEX
+-			7:0:TYPE
+-			8:0:VALUE
++			4:0:READONLY
++			5:0:ONBLUR
++			6:0:ONFOCUS
++			7:0:TABINDEX
++			8:0:TYPE
++			9:0:VALUE
+ 	16:CAPTION
+ 		2 attributes:
+ 			0:0:ACCESSKEY
+@@ -1065,7 +1066,7 @@
+ 		flags: endO
+ 	21:BUTTON
+ 		justify
+-		15 attributes:
++		16 attributes:
+ 			0:0:ACCESSKEY
+ 			1:4:CLASS
+ 			2:0:CLEAR
+@@ -1076,11 +1077,12 @@
+ 			7:0:NAME
+ 			8:0:ONBLUR
+ 			9:0:ONFOCUS
+-			10:0:STYLE
+-			11:0:TABINDEX
+-			12:0:TITLE
+-			13:0:TYPE
+-			14:0:VALUE
++			10:0:READONLY
++			11:0:STYLE
++			12:0:TABINDEX
++			13:0:TITLE
++			14:0:TYPE
++			15:0:VALUE
+ 		4 attr_types
+ 			core
+ 			events
+diff --git a/src/GridText.c b/src/GridText.c
+index 19d634f..e275619 100644
+--- a/src/GridText.c
++++ b/src/GridText.c
+@@ -9732,6 +9732,7 @@ int HText_beginInput(HText *text, BOOL underline,
+     f->select_list = 0;
+     f->number = HTFormNumber;
+     f->disabled = HTFormDisabled || I->disabled;
++    f->readonly = I->readonly;
+     f->no_cache = NO;
+ 
+     HTFormFields++;
+@@ -12311,6 +12312,7 @@ static void insert_new_textarea_anchor(TextAnchor **curr_anchor, HTLine **exit_h
+     f->maxlength = anchor->input_field->maxlength;
+     f->no_cache = anchor->input_field->no_cache;
+     f->disabled = anchor->input_field->disabled;
++    f->readonly = anchor->input_field->readonly;
+     f->value_cs = current_char_set;	/* use current setting - kw */
+ 
+     /*  Init all the fields in the new HTLine (but see the #if).   */
+@@ -13128,6 +13130,7 @@ int HText_InsertFile(LinkInfo * form_link)
+     f->maxlength = anchor_ptr->input_field->maxlength;
+     f->no_cache = anchor_ptr->input_field->no_cache;
+     f->disabled = anchor_ptr->input_field->disabled;
++    f->readonly = anchor_ptr->input_field->readonly;
+     f->value_cs = (file_cs >= 0) ? file_cs : current_char_set;
+ 
+     /*  Init all the fields in the new HTLine (but see the #if).   */
+diff --git a/src/HTForms.h b/src/HTForms.h
+index ec99405..17ee994 100644
+--- a/src/HTForms.h
++++ b/src/HTForms.h
+@@ -35,6 +35,7 @@ extern "C" {
+ 	int checked;
+ 	const char *iclass;
+ 	int disabled;
++	int readonly;
+ 	const char *error;
+ 	const char *height;
+ 	const char *id;
+@@ -91,11 +92,14 @@ extern "C" {
+ 	char *orig_submit_value;	/* original submit value */
+ 	int size_l;		/* The length of the option list */
+ 	int disabled;		/* If YES, can't change values */
++	int readonly;		/* If YES, can't change values */
+ 	int name_cs;
+ 	int value_cs;
+ 	char *accept_cs;
+     } FormInfo;
+ 
++#define FormIsReadonly(form) ((form)->disabled || (form)->readonly)
++
+ /*
+  * As structure for info associated with a form.  There is some redundancy
+  * here, this shouldn't waste too much memory since the total number of forms
+diff --git a/src/HTML.c b/src/HTML.c
+index 2ed4a7b..08f7c7d 100644
+--- a/src/HTML.c
++++ b/src/HTML.c
+@@ -4431,6 +4431,9 @@ static int HTML_start_element(HTStructured * me, int element_number,
+ 		}
+ 	    }
+ 
++	    if (present && present[HTML_BUTTON_READONLY])
++		I.readonly = YES;
++
+ 	    if (present && present[HTML_BUTTON_DISABLED])
+ 		I.disabled = YES;
+ 
+@@ -4788,7 +4791,7 @@ static int HTML_start_element(HTStructured * me, int element_number,
+ 		I.value = ImageSrc;
+ 	    }
+ 	    if (present && present[HTML_INPUT_READONLY])
+-		I.disabled = YES;
++		I.readonly = YES;
+ 	    if (present && present[HTML_INPUT_CHECKED])
+ 		I.checked = YES;
+ 	    if (present && present[HTML_INPUT_SIZE] &&
+@@ -5039,10 +5042,11 @@ static int HTML_start_element(HTStructured * me, int element_number,
+ 	 * Lynx treats disabled and readonly textarea's the same -
+ 	 * unmodifiable in either case.
+ 	 */
+-	me->textarea_disabled = NO;
++	me->textarea_readonly = NO;
+ 	if (present && present[HTML_TEXTAREA_READONLY])
+-	    me->textarea_disabled = YES;
++	    me->textarea_readonly = YES;
+ 
++	me->textarea_disabled = NO;
+ 	if (present && present[HTML_TEXTAREA_DISABLED])
+ 	    me->textarea_disabled = YES;
+ 
+@@ -6850,6 +6854,7 @@ static int HTML_end_element(HTStructured * me, int element_number,
+ 	    I.accept_cs = me->textarea_accept_cs;
+ 	    me->textarea_accept_cs = NULL;
+ 	    I.disabled = me->textarea_disabled;
++	    I.readonly = me->textarea_readonly;
+ 	    I.id = me->textarea_id;
+ 
+ 	    /*
+@@ -7720,7 +7725,6 @@ HTStructured *HTML_new(HTParentAnchor *anchor,
+     me->textarea_accept_cs = NULL;
+     me->textarea_cols = 0;
+     me->textarea_rows = 4;
+-    me->textarea_disabled = NO;
+     me->textarea_id = NULL;
+ 
+     HTChunkInit(&me->math, 128);
+diff --git a/src/HTML.h b/src/HTML.h
+index 695ed9f..d074235 100644
+--- a/src/HTML.h
++++ b/src/HTML.h
+@@ -101,6 +101,7 @@ extern "C" {
+ 	int textarea_cols;
+ 	int textarea_rows;
+ 	int textarea_disabled;
++	int textarea_readonly;
+ 	char *textarea_id;
+ 	HTChunk math;		/* Grow by 128 */
+ 	HTChunk style_block;	/* Grow by 128 */
+diff --git a/src/LYForms.c b/src/LYForms.c
+index d6ea2fe..b7961c2 100644
+--- a/src/LYForms.c
++++ b/src/LYForms.c
+@@ -88,7 +88,7 @@ int change_form_link_ex(int cur,
+ 
+     switch (form->type) {
+     case F_CHECKBOX_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    break;
+ 	LYSetHilite(cur, form->num_value ? unchecked_box : checked_box);
+ 	form->num_value = !form->num_value;
+@@ -101,7 +101,7 @@ int change_form_link_ex(int cur,
+ 	    break;
+ 	}
+ 
+-	if (form->disabled == YES) {
++	if (FormIsReadonly(form)) {
+ 	    int dummy;
+ 
+ 	    dummy = LYhandlePopupList(form->num_value,
+@@ -110,7 +110,7 @@ int change_form_link_ex(int cur,
+ 				      (const char **) my_data,
+ 				      form->size,
+ 				      form->size_l,
+-				      form->disabled,
++				      FormIsReadonly(form),
+ 				      FALSE);
+ #if CTRL_W_HACK != DO_NOTHING
+ 	    if (!enable_scrollback)
+@@ -127,7 +127,7 @@ int change_form_link_ex(int cur,
+ 					    (const char **) my_data,
+ 					    form->size,
+ 					    form->size_l,
+-					    form->disabled,
++					    FormIsReadonly(form),
+ 					    FALSE);
+ 	{
+ 	    OptionType *opt_ptr = form->select_list;
+@@ -156,7 +156,7 @@ int change_form_link_ex(int cur,
+ 	break;
+ 
+     case F_RADIO_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    break;
+ 	/*
+ 	 * Radio buttons must have one and only one down at a time!
+@@ -210,7 +210,7 @@ int change_form_link_ex(int cur,
+ 	break;
+ 
+     case F_RESET_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    break;
+ 	HText_ResetForm(form);
+ 	*refresh_screen = TRUE;
+@@ -223,7 +223,7 @@ int change_form_link_ex(int cur,
+ 	}
+ 	if (!immediate_submit)
+ 	    c = form_getstr(cur, use_last_tfpos, FALSE);
+-	if (form->disabled == YES &&
++	if (FormIsReadonly(form) &&
+ 	    (c == '\r' || c == '\n' || immediate_submit)) {
+ 	    if (peek_mouse_link() >= 0)
+ 		c = LAC_TO_LKC0(LYK_ACTIVATE);
+@@ -307,7 +307,7 @@ int change_form_link_ex(int cur,
+ 
+     case F_SUBMIT_TYPE:
+     case F_IMAGE_SUBMIT_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    break;
+ 	if (form->no_cache &&
+ 	    form->submit_method != URL_MAIL_METHOD) {
+@@ -407,7 +407,7 @@ static int form_getstr(int cur,
+ 	 * much of the tail as fits.  - FM
+ 	 */
+ 	value += (strlen(form->value) - max_length);
+-	if (!form->disabled &&
++	if (!FormIsReadonly(form) &&
+ 	    !(form->submit_method == URL_MAIL_METHOD && no_mail)) {
+ 	    /*
+ 	     * If we can edit it, report that we are using the tail.  - FM
+@@ -702,13 +702,13 @@ static int form_getstr(int cur,
+ 		if (c == YES) {
+ 		    return (ch);
+ 		} else {
+-		    if (form->disabled == YES)
++		    if (FormIsReadonly(form))
+ 			_statusline(ARROWS_OR_TAB_TO_MOVE);
+ 		    else
+ 			_statusline(ENTER_TEXT_ARROWS_OR_TAB);
+ 		}
+ 	    }
+-	    if (form->disabled == YES) {
++	    if (FormIsReadonly(form)) {
+ 		/*
+ 		 * Allow actions that don't modify the contents even in
+ 		 * disabled form fields, so the user can scroll through the
+@@ -857,7 +857,7 @@ void show_formlink_statusline(const FormInfo * form,
+ {
+     switch (form->type) {
+     case F_PASSWORD_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_PASSWORD_UNM_MSG);
+ 	else
+ #ifdef TEXTFIELDS_MAY_NEED_ACTIVATION
+@@ -868,25 +868,25 @@ void show_formlink_statusline(const FormInfo * form,
+ 	    statusline(FORM_LINK_PASSWORD_MESSAGE);
+ 	break;
+     case F_OPTION_LIST_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_OPTION_LIST_UNM_MSG);
+ 	else
+ 	    statusline(FORM_LINK_OPTION_LIST_MESSAGE);
+ 	break;
+     case F_CHECKBOX_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_CHECKBOX_UNM_MSG);
+ 	else
+ 	    statusline(FORM_LINK_CHECKBOX_MESSAGE);
+ 	break;
+     case F_RADIO_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_RADIO_UNM_MSG);
+ 	else
+ 	    statusline(FORM_LINK_RADIO_MESSAGE);
+ 	break;
+     case F_TEXT_SUBMIT_TYPE:
+-	if (form->disabled == YES) {
++	if (FormIsReadonly(form)) {
+ 	    statusline(FORM_LINK_TEXT_SUBMIT_UNM_MSG);
+ 	} else if (form->submit_method ==
+ 		   URL_MAIL_METHOD) {
+@@ -934,7 +934,7 @@ void show_formlink_statusline(const FormInfo * form,
+ 	break;
+     case F_SUBMIT_TYPE:
+     case F_IMAGE_SUBMIT_TYPE:
+-	if (form->disabled == YES) {
++	if (FormIsReadonly(form)) {
+ 	    statusline(FORM_LINK_SUBMIT_DIS_MSG);
+ 	} else if (form->submit_method ==
+ 		   URL_MAIL_METHOD) {
+@@ -977,25 +977,25 @@ void show_formlink_statusline(const FormInfo * form,
+ 	}
+ 	break;
+     case F_RESET_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_RESET_DIS_MSG);
+ 	else
+ 	    statusline(FORM_LINK_RESET_MESSAGE);
+ 	break;
+     case F_BUTTON_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_BUTTON_DIS_MSG);
+ 	else
+ 	    statusline(FORM_LINK_BUTTON_MESSAGE);
+ 	break;
+     case F_FILE_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_FILE_UNM_MSG);
+ 	else
+ 	    statusline(FORM_LINK_FILE_MESSAGE);
+ 	break;
+     case F_TEXT_TYPE:
+-	if (form->disabled == YES)
++	if (FormIsReadonly(form))
+ 	    statusline(FORM_LINK_TEXT_UNM_MSG);
+ 	else
+ #ifdef TEXTFIELDS_MAY_NEED_ACTIVATION
+@@ -1006,7 +1006,7 @@ void show_formlink_statusline(const FormInfo * form,
+ 	    statusline(FORM_LINK_TEXT_MESSAGE);
+ 	break;
+     case F_TEXTAREA_TYPE:
+-	if (form->disabled == YES) {
++	if (FormIsReadonly(form)) {
+ 	    statusline(FORM_LINK_TEXT_UNM_MSG);
+ 	} else {
+ 	    char *submit_str = NULL;
+diff --git a/src/LYMainLoop.c b/src/LYMainLoop.c
+index b8a0fa9..55d5c50 100644
+--- a/src/LYMainLoop.c
++++ b/src/LYMainLoop.c
+@@ -1183,7 +1183,7 @@ static int handle_LYK_ACTIVATE(int *c,
+ 		if (user_mode == NOVICE_MODE &&
+ 		    textinput_activated &&
+ 		    (real_cmd == LYK_ACTIVATE || real_cmd == LYK_SUBMIT)) {
+-		    form_noviceline(links[curdoc.link].l_form->disabled);
++		    form_noviceline(FormIsReadonly(links[curdoc.link].l_form));
+ 		}
+ 	    }
+ 
+@@ -2522,7 +2522,7 @@ static void handle_LYK_DWIMHELP(const char **cshelpfile)
+      */
+     if (curdoc.link >= 0 && curdoc.link < nlinks &&
+ 	links[curdoc.link].type == WWW_FORM_LINK_TYPE &&
+-	!links[curdoc.link].l_form->disabled &&
++	!FormIsReadonly(links[curdoc.link].l_form) &&
+ 	F_TEXTLIKE(links[curdoc.link].l_form->type)) {
+ 	*cshelpfile = LYLineeditHelpURL();
+     }
+@@ -2989,7 +2989,7 @@ static BOOLEAN handle_LYK_HEAD(int *cmd)
+ 		 strncmp(curdoc.address, "http", 4))) {
+ 		HTUserMsg(LINK_NOT_HTTP_URL);
+ 	    } else if (links[curdoc.link].type == WWW_FORM_LINK_TYPE &&
+-		       links[curdoc.link].l_form->disabled) {
++		       FormIsReadonly(links[curdoc.link].l_form)) {
+ 		HTUserMsg(FORM_ACTION_DISABLED);
+ 	    } else if (links[curdoc.link].type == WWW_FORM_LINK_TYPE &&
+ 		       links[curdoc.link].l_form->submit_action != 0 &&
+@@ -6539,7 +6539,7 @@ int mainloop(void)
+ 		     * Replace novice lines if in NOVICE_MODE.
+ 		     */
+ 		    if (user_mode == NOVICE_MODE) {
+-			form_noviceline(links[curdoc.link].l_form->disabled);
++			form_noviceline(FormIsReadonly(links[curdoc.link].l_form));
+ 		    }
+ 		    real_c = change_form_link(curdoc.link,
+ 					      &newdoc, &refresh_screen,
+@@ -6569,7 +6569,7 @@ int mainloop(void)
+ #ifdef TEXTFIELDS_MAY_NEED_ACTIVATION
+ 		} else if (LinkIsTextarea(curdoc.link)
+ 			   && textfields_need_activation
+-			   && !links[curdoc.link].l_form->disabled
++			   && !FormIsReadonly(links[curdoc.link].l_form)
+ 			   && peek_mouse_link() < 0 &&
+ 			   (((LKC_TO_LAC(keymap, real_c) == LYK_NEXT_LINK ||
+ #ifdef TEXTAREA_AUTOGROW
+diff --git a/src/structdump.h b/src/structdump.h
+index f9be55a..a084486 100644
+--- a/src/structdump.h
++++ b/src/structdump.h
+@@ -109,6 +109,7 @@ CTRACE((tfp, "\n" \
+             "orig_submit_value=|%s|\n"   \
+             "           size_l=%d\n"     \
+             "         disabled=%d\n"     \
++            "         readonly=%d\n"     \
+             "          name_cs=%d\n"     \
+             "         value_cs=%d\n"     \
+             "        accept_cs=|%s|\n"   \
+@@ -120,7 +121,7 @@ CTRACE((tfp, "\n" \
+             (F)->hrange, (F)->lrange, (F)->select_list, (F)->submit_action, \
+             (F)->submit_method, (F)->submit_enctype, (F)->submit_title, \
+             (F)->no_cache, (F)->cp_submit_value, (F)->orig_submit_value, \
+-            (F)->size_l, (F)->disabled, (F)->name_cs, (F)->value_cs, \
++            (F)->size_l, (F)->disabled, (F)->readonly, (F)->name_cs, (F)->value_cs, \
+             (F)->accept_cs)); \
+ } else { \
+ CTRACE((tfp, "\n" \
+-- 
+1.7.4.4
+

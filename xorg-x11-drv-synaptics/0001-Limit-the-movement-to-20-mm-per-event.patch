@@ -1,0 +1,113 @@
+From f9155de44f1a94cccaca061231830b3c3e2277cd Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Tue, 16 Sep 2014 08:52:56 +1000
+Subject: [PATCH synaptics] Limit the movement to 20 mm per event
+
+Touchpads are limited by a fixed sampling rate (usually 80Hz). Some finger
+changes may happen too fast for this sampling rate, resulting in two distinct
+event sequences:
+* finger 1 up and finger 2 down in the same EV_SYN frame. Synaptics sees one
+  finger down before and after and the changed coordinates
+* finger 1 up and finger 2 down _between_ two EV_SYN frames. Synaptics sees one
+  touchpoint move from f1 position to f2 position.
+
+That move causes a large cursor jump. The former could be solved (with
+difficulty) by adding fake EV_SYN handling after releasing touchpoints but
+that won't fix the latter case.
+
+So as a solution for now limit the finger movement to 20mm per event.
+Tests on a T440 and an x220 showed that this is just above what a reasonable
+finger movement would trigger. If a movement is greater than that limit, reset
+it to 0/0.
+
+On devices without resolution, use 0.25 of the touchpad's diagonal instead.
+
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+(cherry picked from commit 41b2312c006fca1f24e1a366174d3203a63fa04a)
+---
+ src/synaptics.c    | 33 +++++++++++++++++++++++++++++++++
+ src/synapticsstr.h |  2 ++
+ 2 files changed, 35 insertions(+)
+
+diff --git a/src/synaptics.c b/src/synaptics.c
+index 08b90f4..4730777 100644
+--- a/src/synaptics.c
++++ b/src/synaptics.c
+@@ -786,6 +786,23 @@ set_default_parameters(InputInfoPtr pInfo)
+         pars->resolution_vert = 1;
+     }
+ 
++    /* Touchpad sampling rate is too low to detect all movements.
++       A user may lift one finger and put another one down within the same
++       EV_SYN or even between samplings so the driver doesn't notice at all.
++
++       We limit the movement to 20 mm within one event, that is more than
++       recordings showed is needed (17mm on a T440).
++      */
++    if (pars->resolution_horiz > 1 &&
++        pars->resolution_vert > 1)
++        pars->maxDeltaMM = 20;
++    else {
++        /* on devices without resolution set the vector length to 0.25 of
++           the touchpad diagonal */
++        pars->maxDeltaMM = diag * 0.25;
++    }
++
++
+     /* Warn about (and fix) incorrectly configured TopEdge/BottomEdge parameters */
+     if (pars->top_edge > pars->bottom_edge) {
+         int tmp = pars->top_edge;
+@@ -2236,6 +2253,13 @@ get_delta(SynapticsPrivate *priv, const struct SynapticsHwState *hw,
+     *dy = integral;
+ }
+ 
++/* Vector length, but not sqrt'ed, we only need it for comparison */
++static inline double
++vlenpow2(double x, double y)
++{
++    return x * x + y * y;
++}
++
+ /**
+  * Compute relative motion ('deltas') including edge motion.
+  */
+@@ -2245,6 +2269,7 @@ ComputeDeltas(SynapticsPrivate * priv, const struct SynapticsHwState *hw,
+ {
+     enum MovingState moving_state;
+     double dx, dy;
++    double vlen;
+     int delay = 1000000000;
+ 
+     dx = dy = 0;
+@@ -2290,6 +2315,14 @@ ComputeDeltas(SynapticsPrivate * priv, const struct SynapticsHwState *hw,
+  out:
+     priv->prevFingers = hw->numFingers;
+ 
++    vlen = vlenpow2(dx/priv->synpara.resolution_horiz,
++                    dy/priv->synpara.resolution_vert);
++
++    if (vlen > priv->synpara.maxDeltaMM * priv->synpara.maxDeltaMM) {
++        dx = 0;
++        dy = 0;
++    }
++
+     *dxP = dx;
+     *dyP = dy;
+ 
+diff --git a/src/synapticsstr.h b/src/synapticsstr.h
+index e245c60..319fddc 100644
+--- a/src/synapticsstr.h
++++ b/src/synapticsstr.h
+@@ -226,6 +226,8 @@ typedef struct _SynapticsParameters {
+     int area_left_edge, area_right_edge, area_top_edge, area_bottom_edge;       /* area coordinates absolute */
+     int softbutton_areas[4][4]; /* soft button area coordinates, 0 => right, 1 => middle , 2 => secondary right, 3 => secondary middle button */
+     int hyst_x, hyst_y;         /* x and y width of hysteresis box */
++
++    int maxDeltaMM;               /* maximum delta movement (vector length) in mm */
+ } SynapticsParameters;
+ 
+ struct _SynapticsPrivateRec {
+-- 
+2.1.0
+

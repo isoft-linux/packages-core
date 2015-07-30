@@ -1,0 +1,22 @@
+--- gdb-7.8/bfd/Makefile.in
++++ gdb-7.8n/bfd/Makefile.in
+@@ -342,7 +342,7 @@
+ # RELEASE=y
+ INCDIR = $(srcdir)/../include
+ CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
+-SUBDIRS = doc po
++SUBDIRS = po
+ bfddocdir = doc
+ libbfd_la_LDFLAGS = $(am__append_1) -release `cat libtool-soversion` \
+ 	@SHARED_LDFLAGS@ $(am__empty)
+--- gdb-7.8/gdb/Makefile.in
++++ gdb-7.8new/gdb/Makefile.in
+@@ -1034,7 +1034,7 @@
+ 
+ TSOBS = inflow.o
+ 
+-SUBDIRS = doc @subdirs@ data-directory $(GNULIB_BUILDDIR)
++SUBDIRS = @subdirs@ data-directory $(GNULIB_BUILDDIR)
+ CLEANDIRS = $(SUBDIRS)
+ 
+ # List of subdirectories in the build tree that must exist.

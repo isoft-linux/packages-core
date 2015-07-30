@@ -1,0 +1,13 @@
+diff -Nur llvm-3.1.src/tools/clang/lib/Driver/Tools.cpp llvm-3.1.srcn/tools/clang/lib/Driver/Tools.cpp
+--- llvm-3.1.src/tools/clang/lib/Driver/Tools.cpp	2012-11-23 10:22:56.163631939 +0800
++++ llvm-3.1.srcn/tools/clang/lib/Driver/Tools.cpp	2012-11-23 10:24:09.275657217 +0800
+@@ -1174,6 +1174,9 @@
+                    options::OPT_fno_objc_exceptions,
+                    true)) {
+     CmdArgs.push_back("-fobjc-exceptions");
++    //cjacker add this
++    //only use -fobjc-exceptions with libobjc2 and gnustep-base can not catch exceptions.
++    CmdArgs.push_back("-fexceptions");
+ 
+     ShouldUseExceptionTables |=
+       shouldUseExceptionTablesForObjCExceptions(objcABIVersion, Triple);

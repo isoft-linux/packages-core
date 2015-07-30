@@ -1,0 +1,12 @@
+diff -Nur bzip2-1.0.6/Makefile-libbz2_so bzip2-1.0.6n/Makefile-libbz2_so
+--- bzip2-1.0.6/Makefile-libbz2_so	2015-06-19 07:59:09.845205642 +0000
++++ bzip2-1.0.6n/Makefile-libbz2_so	2015-06-19 07:59:37.177206052 +0000
+@@ -35,7 +35,7 @@
+       bzlib.o
+ 
+ all: $(OBJS)
+-	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.6 $(OBJS)
++	$(CC) $(CFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.6 $(OBJS)
+ 	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.6
+ 	rm -f libbz2.so.1.0
+ 	ln -s libbz2.so.1.0.6 libbz2.so.1.0

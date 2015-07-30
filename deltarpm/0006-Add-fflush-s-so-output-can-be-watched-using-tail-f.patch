@@ -1,0 +1,43 @@
+From 19b7ad9efae520997da8b4b58a5ae0208185952c Mon Sep 17 00:00:00 2001
+From: Jonathan Dieter <jdieter@lesbg.com>
+Date: Wed, 14 Jan 2015 08:16:55 +0200
+Subject: [PATCH 6/6] Add fflush's so output can be watched using tail -f
+
+Signed-off-by: Jonathan Dieter <jdieter@lesbg.com>
+---
+ applydeltaiso.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/applydeltaiso.c b/applydeltaiso.c
+index 67f8e39..e482694 100644
+--- a/applydeltaiso.c
++++ b/applydeltaiso.c
+@@ -122,6 +122,7 @@ processrpm(FILE *fpold, struct cfile *ocf, struct cfile *cf, unsigned int *nmp,
+       unsigned char buf[8192];
+ 
+       printf("%s: verbatim copy\n", namebuf);
++      fflush(stdout);
+       len = cget4(cf);
+       while (len)
+ 	{
+@@ -141,9 +142,15 @@ processrpm(FILE *fpold, struct cfile *ocf, struct cfile *cf, unsigned int *nmp,
+       return;
+     }
+   if (ctype == 254)
+-    printf("%s: copying unchanged payload\n", namebuf);
++    {
++      printf("%s: copying unchanged payload\n", namebuf);
++      fflush(stdout);
++    }
+   else
+-    printf("%s (%s): applying delta\n", namebuf, cfile_comp2str(ctype));
++    {
++      printf("%s (%s): applying delta\n", namebuf, cfile_comp2str(ctype));
++      fflush(stdout);
++    }
+   rpmn = cget4(cf);
+   if (rpmn < 0 || rpmn >= nmpn)
+     {
+-- 
+2.1.0
+

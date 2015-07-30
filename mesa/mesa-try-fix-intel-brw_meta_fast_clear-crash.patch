@@ -1,0 +1,93 @@
+diff -Nur mesa/src/mesa/drivers/dri/i965/brw_draw.c mesanew/src/mesa/drivers/dri/i965/brw_draw.c
+--- mesa/src/mesa/drivers/dri/i965/brw_draw.c	2015-07-15 17:44:09.117971256 +0000
++++ mesanew/src/mesa/drivers/dri/i965/brw_draw.c	2015-07-15 17:44:00.638971407 +0000
+@@ -391,7 +391,7 @@
+       struct intel_renderbuffer *irb =
+          intel_renderbuffer(fb->_ColorDrawBuffers[i]);
+ 
+-      if (irb)
++      if (irb && irb->mt)
+          brw_render_cache_set_add_bo(brw, irb->mt->bo);
+    }
+ }
+diff -Nur mesa/src/mesa/drivers/dri/i965/brw_meta_fast_clear.c mesanew/src/mesa/drivers/dri/i965/brw_meta_fast_clear.c
+--- mesa/src/mesa/drivers/dri/i965/brw_meta_fast_clear.c	2015-07-15 17:44:09.116971256 +0000
++++ mesanew/src/mesa/drivers/dri/i965/brw_meta_fast_clear.c	2015-07-15 17:44:00.629971408 +0000
+@@ -448,7 +448,7 @@
+       if (brw->gen < 7)
+          clear_type = REP_CLEAR;
+ 
+-      if (irb->mt->fast_clear_state == INTEL_FAST_CLEAR_STATE_NO_MCS)
++      if (irb->mt && irb->mt->fast_clear_state == INTEL_FAST_CLEAR_STATE_NO_MCS)
+          clear_type = REP_CLEAR;
+ 
+       /* We can't do scissored fast clears because of the restrictions on the
+@@ -460,17 +460,18 @@
+       /* Fast clear is only supported for colors where all components are
+        * either 0 or 1.
+        */
+-      format = _mesa_get_render_format(ctx, irb->mt->format);
+-      if (!is_color_fast_clear_compatible(brw, format, &ctx->Color.ClearColor))
+-         clear_type = REP_CLEAR;
+-
++      if(irb->mt) {
++        format = _mesa_get_render_format(ctx, irb->mt->format);
++        if (!is_color_fast_clear_compatible(brw, format, &ctx->Color.ClearColor))
++           clear_type = REP_CLEAR;
++      }
+       /* From the SNB PRM (Vol4_Part1):
+        *
+        *     "Replicated data (Message Type = 111) is only supported when
+        *      accessing tiled memory.  Using this Message Type to access
+        *      linear (untiled) memory is UNDEFINED."
+        */
+-      if (irb->mt->tiling == I915_TILING_NONE) {
++      if (irb->mt && irb->mt->tiling == I915_TILING_NONE) {
+          perf_debug("Falling back to plain clear because %dx%d buffer is untiled\n",
+                     irb->mt->logical_width0, irb->mt->logical_height0);
+          clear_type = PLAIN_CLEAR;
+@@ -481,7 +482,7 @@
+        */
+       GLubyte *color_mask = ctx->Color.ColorMask[buf];
+       for (int i = 0; i < 4; i++) {
+-         if (_mesa_format_has_color_component(irb->mt->format, i) &&
++         if (irb->mt && _mesa_format_has_color_component(irb->mt->format, i) &&
+              !color_mask[i]) {
+             perf_debug("Falling back to plain clear on %dx%d buffer because of color mask\n",
+                        irb->mt->logical_width0, irb->mt->logical_height0);
+@@ -493,10 +494,13 @@
+        * clear and we don't have the MCS yet.  On failure, fall back to
+        * replicated clear.
+        */
+-      if (clear_type == FAST_CLEAR && irb->mt->mcs_mt == NULL)
++      if (irb->mt && clear_type == FAST_CLEAR && irb->mt->mcs_mt == NULL)
+          if (!intel_miptree_alloc_non_msrt_mcs(brw, irb->mt))
+             clear_type = REP_CLEAR;
+ 
++      if (irb->mt == NULL)
++         clear_type = REP_CLEAR;
++
+       switch (clear_type) {
+       case FAST_CLEAR:
+          irb->mt->fast_clear_color_value =
+@@ -600,7 +604,7 @@
+       struct intel_renderbuffer *irb = intel_renderbuffer(rb);
+       int index = fb->_ColorDrawBufferIndexes[buf];
+ 
+-      if ((1 << index) & fast_clear_buffers)
++      if (irb->mt && ((1 << index) & fast_clear_buffers))
+          irb->mt->fast_clear_state = INTEL_FAST_CLEAR_STATE_CLEAR;
+    }
+ 
+diff -Nur mesa/src/mesa/drivers/dri/i965/gen8_surface_state.c mesanew/src/mesa/drivers/dri/i965/gen8_surface_state.c
+--- mesa/src/mesa/drivers/dri/i965/gen8_surface_state.c	2015-07-15 17:44:09.117971256 +0000
++++ mesanew/src/mesa/drivers/dri/i965/gen8_surface_state.c	2015-07-15 17:44:00.637971407 +0000
+@@ -384,6 +384,8 @@
+ {
+    struct gl_context *ctx = &brw->ctx;
+    struct intel_renderbuffer *irb = intel_renderbuffer(rb);
++   if(irb->mt == NULL)
++     return 0;
+    struct intel_mipmap_tree *mt = irb->mt;
+    struct intel_mipmap_tree *aux_mt = NULL;
+    uint32_t aux_mode = 0;

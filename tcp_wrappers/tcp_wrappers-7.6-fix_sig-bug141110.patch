@@ -1,0 +1,20 @@
+--- tcp_wrappers_7.6/hosts_access.c.bug141110	2004-11-29 15:19:09.872243504 +0300
++++ tcp_wrappers_7.6/hosts_access.c	2004-11-29 19:59:09.282344976 +0300
+@@ -127,7 +127,7 @@
+     verdict = setjmp(tcpd_buf);
+     if (verdict != 0)
+ 	return (verdict == AC_PERMIT);
+-    if (table_match(hosts_allow_table, request))
++    if (table_match(hosts_allow_table, request) == YES)
+ 	return (YES);
+     if (table_match(hosts_deny_table, request) == NO)
+ 	return (YES);
+@@ -177,7 +177,7 @@
+ 	tcpd_warn("cannot open %s: %m", table);
+ 	match = ERR;
+     }
+-    if (match) {
++    if (match == YES) {
+ 	if (hosts_access_verbose > 1)
+ 	    syslog(LOG_DEBUG, "matched:  %s line %d",
+ 		   tcpd_context.file, tcpd_context.line);

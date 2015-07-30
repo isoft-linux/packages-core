@@ -1,0 +1,41 @@
+From 1d0657b29ee72e842e0d1ada61ea0177b3159a8e Mon Sep 17 00:00:00 2001
+From: Jonathan Dieter <jdieter@lesbg.com>
+Date: Mon, 12 Jan 2015 13:47:51 +0200
+Subject: [PATCH 4/4] Return error rather than crashing if we can't allocate
+ memory
+
+Signed-off-by: Jonathan Dieter <jdieter@lesbg.com>
+---
+ deltarpmmodule.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/deltarpmmodule.c b/deltarpmmodule.c
+index cf333b6..40ea60f 100644
+--- a/deltarpmmodule.c
++++ b/deltarpmmodule.c
+@@ -46,6 +46,11 @@ PyObject *createDict(struct deltarpm d)
+   if (d.seq) {
+     char *tmp = calloc(d.seql * 2 + 1, sizeof(char));
+     int i;
++
++    if(tmp == NULL) {
++      PyErr_SetFromErrno(PyExc_SystemError);
++      return NULL;
++    }
+     for (i = 0; i < d.seql; i++) {
+       char buf[3];
+       
+@@ -54,6 +59,10 @@ PyObject *createDict(struct deltarpm d)
+     }
+     o = PyString_FromString(tmp);
+     free(tmp);
++    if(o == NULL) {
++      PyErr_SetFromErrno(PyExc_SystemError);
++      return NULL;
++    }
+     PyDict_SetItemString(dict, "seq", o);
+     Py_DECREF(o);
+   } else {
+-- 
+2.1.0
+

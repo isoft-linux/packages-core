@@ -1,0 +1,40 @@
+--- which-2.16/bash.c.afs	2003-09-15 03:58:55.000000000 +0200
++++ which-2.16/bash.c	2003-09-24 23:40:25.000000000 +0200
+@@ -33,7 +33,6 @@
+  */
+ #define HAVE_GETGROUPS
+ #undef SHELL
+-#undef AFS
+ #undef NOGROUP
+ 
+ /*
+@@ -253,7 +252,7 @@
+   if (S_ISDIR (finfo.st_mode))
+     return (FS_EXISTS|FS_DIRECTORY);
+ 
+-#if defined (AFS)
++  if (getenv("AFS")) {
+   /* We have to use access(2) to determine access because AFS does not
+      support Unix file system semantics.  This may produce wrong
+      answers for non-AFS files when ruid != euid.  I hate AFS. */
+@@ -261,8 +260,9 @@
+     return (FS_EXISTS | FS_EXECABLE);
+   else
+     return (FS_EXISTS);
+-#else /* !AFS */
+-
++  }
++  else /* !AFS */
++    {
+   /* Find out if the file is actually executable.  By definition, the
+      only other criteria is that the file has an execute bit set that
+      we can use. */
+@@ -298,7 +298,7 @@
+     return (FS_EXISTS | FS_EXECABLE);
+ 
+   return (FS_EXISTS);
+-#endif /* !AFS */
++  } /* !AFS */
+ }
+ 
+ /* From bash-2.05b / general.c / line 501 ; Changes: Using 'strchr' instead of 'xstrchr'. */

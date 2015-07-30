@@ -1,0 +1,29 @@
+diff -Nur gcc-4.9.0/libstdc++-v3/include/c_global/cstddef gcc-4.9.0n/libstdc++-v3/include/c_global/cstddef
+--- gcc-4.9.0/libstdc++-v3/include/c_global/cstddef	2014-01-03 06:30:10.000000000 +0800
++++ gcc-4.9.0n/libstdc++-v3/include/c_global/cstddef	2014-05-03 10:42:46.490557497 +0800
+@@ -47,8 +47,11 @@
+ #if __cplusplus >= 201103L
+ namespace std
+ {
++//fix for clang
++#ifndef __clang__
+   // We handle size_t, ptrdiff_t, and nullptr_t in c++config.h.
+   using ::max_align_t;
++#endif
+ }
+ #endif
+ 
+diff -Nur gcc-4.9.0/libstdc++-v3/include/c_std/cstddef gcc-4.9.0n/libstdc++-v3/include/c_std/cstddef
+--- gcc-4.9.0/libstdc++-v3/include/c_std/cstddef	2014-01-03 06:30:10.000000000 +0800
++++ gcc-4.9.0n/libstdc++-v3/include/c_std/cstddef	2014-05-03 10:43:33.159555829 +0800
+@@ -47,8 +47,10 @@
+ #if __cplusplus >= 201103L
+ namespace std
+ {
++#ifndef __clang__
+   // We handle size_t, ptrdiff_t, and nullptr_t in c++config.h.
+   using ::max_align_t;
++#endif
+ }
+ #endif
+ 

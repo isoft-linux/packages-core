@@ -1,0 +1,34 @@
+Name: dosfstools
+Summary: Utilities for making and checking MS-DOS FAT filesystems on Linux
+Version: 3.0.26
+Release: 5
+License: GPLv3+
+Group:  Core/Runtime/Utility 
+Source0: http://www.daniel-baumann.ch/software/dosfstools/%{name}-%{version}.tar.xz
+
+URL: http://www.daniel-baumann.ch/software/dosfstools/
+
+%description
+The dosfstools package includes the mkdosfs and dosfsck utilities,
+which respectively make and check MS-DOS FAT filesystems on hard
+drives or on floppies.
+
+%prep
+%setup -q 
+
+%build
+make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -fno-strict-aliasing" CC=gcc
+
+%install
+rm -rf %{buildroot}
+make DESTDIR=%{buildroot} install-bin install-man PREFIX=%{_prefix} SBINDIR=/sbin
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root,-)
+/sbin/*
+%{_mandir}/man8/*
+
+%changelog

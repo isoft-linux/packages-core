@@ -1,0 +1,12 @@
+diff -up libarchive-2.7.0/Makefile.am.orig libarchive-2.7.0/Makefile.am
+--- libarchive-2.7.0/Makefile.am.orig	2009-04-08 09:37:15.000000000 +0200
++++ libarchive-2.7.0/Makefile.am	2009-05-12 14:12:39.000000000 +0200
+@@ -23,7 +23,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-bsd
+ # Especially for early development, we want to be a little
+ # aggressive about diagnosing build problems; this can get
+ # relaxed somewhat in final shipping versions.
+-AM_CFLAGS=-Wall -Werror
++AM_CFLAGS=-Wall
+ 
+ #
+ # What to include in the distribution

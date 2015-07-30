@@ -1,0 +1,11 @@
+--- rpm-4.11.2/installplatform	2014-05-05 10:07:07.382014171 +0800
++++ rpm-4.11.2n/installplatform	2014-05-05 10:09:17.307009526 +0800
+@@ -82,7 +82,7 @@
+ 	ISANAME=x86
+ 	ISABITS=64
+ 	CANONARCH=x86_64
+-	CANONCOLOR=3
++	CANONCOLOR=0
+ 	;;
+     ia64)
+ 	ISANAME=ia

@@ -1,0 +1,13 @@
+diff -Nur setup-2.9.8/group setup-2.9.8n/group
+--- setup-2.9.8/group	2015-07-01 22:30:20.940105554 +0000
++++ setup-2.9.8n/group	2015-07-01 22:30:57.738102671 +0000
+@@ -15,7 +15,9 @@
+ dialout:x:18:
+ floppy:x:19:
+ games:x:20:
++utmp:x:22:
+ tape:x:33:
++utempter:x:35:
+ video:x:39:
+ ftp:x:50:
+ lock:x:54:

@@ -1,0 +1,20 @@
+diff -Nur unzip-5.50/unzpriv.h unzip-5.50new/unzpriv.h
+--- unzip-5.50/unzpriv.h	2002-02-18 01:01:48.000000000 +0800
++++ unzip-5.50new/unzpriv.h	2002-11-14 01:02:49.000000000 +0800
+@@ -2420,15 +2420,7 @@
+  */
+ #ifndef Ext_ASCII_TO_Native
+ #  define Ext_ASCII_TO_Native(string, hostnum, hostver, isuxatt, islochdr) \
+-    if (((hostnum) == FS_FAT_ && \
+-         !(((islochdr) || (isuxatt)) && \
+-           ((hostver) == 25 || (hostver) == 26 || (hostver) == 40))) || \
+-        (hostnum) == FS_HPFS_ || \
+-        ((hostnum) == FS_NTFS_ && (hostver) == 50)) { \
+-        _OEM_INTERN((string)); \
+-    } else { \
+-        _ISO_INTERN((string)); \
+-    }
++        _ISO_INTERN((string)); 
+ #endif
+ 
+ 

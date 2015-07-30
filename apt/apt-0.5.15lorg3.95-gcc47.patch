@@ -1,0 +1,33 @@
+diff -up apt-0.5.15lorg3.95.git522/apt-pkg/contrib/progress.h.gcc47 apt-0.5.15lorg3.95.git522/apt-pkg/contrib/progress.h
+--- apt-0.5.15lorg3.95.git522/apt-pkg/contrib/progress.h.gcc47	2012-03-26 12:49:24.841272233 +0300
++++ apt-0.5.15lorg3.95.git522/apt-pkg/contrib/progress.h	2012-03-26 12:49:34.113245024 +0300
+@@ -24,6 +24,7 @@
+ #include <map>
+ #include <string>
+ #include <sys/time.h>
++#include <sys/types.h>
+ 
+ using std::string;
+ using std::map;
+diff -up apt-0.5.15lorg3.95.git522/apt-pkg/pkgcache.h.gcc47 apt-0.5.15lorg3.95.git522/apt-pkg/pkgcache.h
+--- apt-0.5.15lorg3.95.git522/apt-pkg/pkgcache.h.gcc47	2012-03-26 12:48:54.276361471 +0300
++++ apt-0.5.15lorg3.95.git522/apt-pkg/pkgcache.h	2012-03-26 12:49:02.107338589 +0300
+@@ -21,6 +21,7 @@
+ 
+ #include <string>
+ #include <time.h>
++#include <sys/types.h>
+ #include <apt-pkg/mmap.h>
+ 
+ using std::string;
+diff -up apt-0.5.15lorg3.95.git522/apt-pkg/srcrecords.h.gcc47 apt-0.5.15lorg3.95.git522/apt-pkg/srcrecords.h
+--- apt-0.5.15lorg3.95.git522/apt-pkg/srcrecords.h.gcc47	2012-03-26 12:50:02.745161198 +0300
++++ apt-0.5.15lorg3.95.git522/apt-pkg/srcrecords.h	2012-03-26 12:50:19.495112171 +0300
+@@ -15,6 +15,7 @@
+ 
+ #include <string>
+ #include <vector>    
++#include <sys/types.h>
+ 
+ using std::string;
+ using std::vector;

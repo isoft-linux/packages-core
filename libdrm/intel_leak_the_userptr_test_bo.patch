@@ -1,0 +1,28 @@
+diff -Nur libdrm-2.4.62/intel/intel_bufmgr_gem.c libdrm-2.4.62n/intel/intel_bufmgr_gem.c
+--- libdrm-2.4.62/intel/intel_bufmgr_gem.c	2015-07-12 15:46:58.602303203 +0000
++++ libdrm-2.4.62n/intel/intel_bufmgr_gem.c	2015-07-12 15:49:57.625311296 +0000
+@@ -1841,18 +1841,12 @@
+ 		}
+ 	}
+ 
+-	/* Release userptr bo kept hanging around for optimisation. */
+-	if (bufmgr_gem->userptr_active.ptr) {
+-		memclear(close_bo);
+-		close_bo.handle = bufmgr_gem->userptr_active.handle;
+-		ret = drmIoctl(bufmgr_gem->fd, DRM_IOCTL_GEM_CLOSE, &close_bo);
+-		free(bufmgr_gem->userptr_active.ptr);
+-		if (ret)
+-			fprintf(stderr,
+-				"Failed to release test userptr object! (%d) "
+-				"i915 kernel driver may not be sane!\n", errno);
+-	}
+-
++   /* We don't release the userptr bo here as we want to keep the
++    * kernel mm tracking alive for our lifetime. The first time we
++    * create a userptr object the kernel has to install a mmu_notifer
++    * which is a heavyweight operation (e.g. it requires taking all
++    * mm_locks and stop_machine()).
++    */
+ 	free(bufmgr);
+ }
+ 

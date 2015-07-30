@@ -1,0 +1,21 @@
+please refer to:
+http://lists.freedesktop.org/archives/xlibs/2004-March/000245.html
+http://osdir.com/ml/xfree86.internationalization/2003-05/msg00025.html
+
+This is an old problem.
+If use PreeditCallbacks style, XNSpotLocation will not received.
+Java awt/swing cursor follow fix need this patch.
+
+By Cjacker.
+diff -Nur libX11-1.6.3/modules/im/ximcp/imRm.c libX11-1.6.3n/modules/im/ximcp/imRm.c
+--- libX11-1.6.3/modules/im/ximcp/imRm.c	2015-03-09 22:28:45.000000000 +0000
++++ libX11-1.6.3n/modules/im/ximcp/imRm.c	2015-07-07 22:51:11.573231242 +0000
+@@ -1947,7 +1947,7 @@
+ 		0,
+ 		0},
+     {OFFSET_XNSPOTLOCATION,
+-		0, /*(XIM_MODE_PRE_SET | XIM_MODE_PRE_GET),*/
++		(XIM_MODE_PRE_SET | XIM_MODE_PRE_GET),
+ 		(XIM_MODE_PRE_CREATE | XIM_MODE_PRE_SET | XIM_MODE_PRE_GET),
+ 		0,
+ 		(XIM_MODE_PRE_SET | XIM_MODE_PRE_GET),

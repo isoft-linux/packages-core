@@ -1,0 +1,47 @@
+From 2a0e3188588bce1759d3cef4d190909df2ca07ff Mon Sep 17 00:00:00 2001
+From: cjacker <cjacker@gmail.com
+Date: Mon, 13 Oct 2008 12:55:56 -0400
+Subject: [PATCH] Fix java window display under compiz
+
+---
+ hw/xfree86/common/Makefile.am    |    3 +-
+ hw/xfree86/common/xf86Mode.c     |   14 +--
+ hw/xfree86/ddc/ddcProperty.c     |   11 ++-
+ hw/xfree86/ddc/edid.h            |    5 +-
+ hw/xfree86/ddc/interpret_edid.c  |   14 +++
+ hw/xfree86/ddc/print_edid.c      |   28 +++--
+ hw/xfree86/ddc/xf86DDC.c         |  241 +++++++++++++++++++++++---------------
+ hw/xfree86/ddc/xf86DDC.h         |    6 +
+ hw/xfree86/loader/xf86sym.c      |    1 +
+ hw/xfree86/modes/xf86Crtc.c      |   11 +-
+ hw/xfree86/modes/xf86EdidModes.c |  228 +++++++++++++++++++++++++++++++-----
+ hw/xfree86/modes/xf86Modes.c     |   12 ++
+ hw/xfree86/modes/xf86Modes.h     |    3 +
+ 13 files changed, 422 insertions(+), 155 deletions(-)
+
+
+
+diff -Nur xorg-server-1.11.0/include/misc.h xorg-server-1.11.0n/include/misc.h
+--- xorg-server-1.11.0/include/misc.h	2011-05-14 04:59:36.000000000 +0800
++++ xorg-server-1.11.0n/include/misc.h	2011-09-27 09:06:55.000000000 +0800
+@@ -84,7 +84,7 @@
+ #ifndef MAXSCREENS
+ #define MAXSCREENS	16
+ #endif
+-#define MAXCLIENTS	256
++#define MAXCLIENTS 1024	
+ #define MAXEXTENSIONS   128
+ #define MAXFORMATS	8
+ #define MAXDEVICES	40 /* input devices */
+--- xorg-server-1.11.0n/include/resource.h	2011-09-27 09:06:40.000000000 +0800
++++ xorg-server-1.11.0/include/resource.h	2011-09-27 09:13:20.000000000 +0800
+@@ -100,6 +100,9 @@
+ #if MAXCLIENTS == 512
+ #define RESOURCE_CLIENT_BITS	9
+ #endif
++#if MAXCLIENTS == 1024 
++#define RESOURCE_CLIENT_BITS	10
++#endif
+ /* client field offset */
+ #define CLIENTOFFSET	    (RESOURCE_AND_CLIENT_COUNT - RESOURCE_CLIENT_BITS)
+ /* resource field */

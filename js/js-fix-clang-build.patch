@@ -1,0 +1,7 @@
+diff -Nur js-1.8.5/js/src/config/gcc_hidden.h js-1.8.5n/js/src/config/gcc_hidden.h
+--- js-1.8.5/js/src/config/gcc_hidden.h	2011-04-01 03:08:36.000000000 -0800
++++ js-1.8.5n/js/src/config/gcc_hidden.h	2014-10-24 12:28:18.871872439 -0800
+@@ -1,2 +1,2 @@
+ /* Begin all files as hidden visibility */
+-#pragma GCC visibility push(hidden)
++//#pragma GCC visibility push(hidden)

@@ -1,0 +1,12 @@
+diff -up apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.cc.rpm-suggest-fix apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.cc
+--- apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.cc.rpm-suggest-fix	2014-12-10 16:36:41.522839504 -0500
++++ apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.cc	2014-12-10 16:36:47.730798300 -0500
+@@ -206,7 +206,7 @@ bool RPMHdrHandler::PRCO(unsigned int Ty
+ 	 deptype = RPMTAG_PROVIDENAME;
+ 	 break;
+       case pkgCache::Dep::Suggests:
+-	 deptype = RPMTAG_SUGGESTSNAME;
++	 deptype = RPMTAG_SUGGESTNAME;
+ 	 break;
+ #if 0 // Enhances dep type is not even known to apt, sigh..
+       case pkgCache::Dep::Enhances:

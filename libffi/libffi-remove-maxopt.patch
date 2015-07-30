@@ -1,0 +1,15 @@
+diff -Nur libffi-3.1/configure.ac libffi-3.1n/configure.ac
+--- libffi-3.1/configure.ac	2014-05-11 13:57:49.000000000 +0000
++++ libffi-3.1n/configure.ac	2014-10-15 16:56:36.110409202 +0000
+@@ -45,7 +45,10 @@
+ AC_CHECK_SIZEOF([size_t])
+ 
+ AX_COMPILER_VENDOR
+-AX_CC_MAXOPT
++
++#remove MAXOPT
++#AX_CC_MAXOPT
++
+ # The AX_CFLAGS_WARN_ALL macro doesn't currently work for sunpro
+ # compiler.
+ if test "$ax_cv_c_compiler_vendor" != "sun"; then

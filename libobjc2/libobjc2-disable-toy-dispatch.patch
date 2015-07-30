@@ -1,0 +1,25 @@
+diff -Nur libobjc2-1.6.1/objc/toydispatch.h libobjc2-1.6.1.fix/objc/toydispatch.h
+--- libobjc2-1.6.1/objc/toydispatch.h	2011-04-04 20:01:58.000000000 +0800
++++ libobjc2-1.6.1.fix/objc/toydispatch.h	2012-12-12 14:30:03.128496129 +0800
+@@ -11,13 +11,13 @@
+  */
+ 
+ /* If the real libdispatch exists, use that instead of the toy one. */
+-#if !defined(__has_include)
++/*#if !defined(__has_include)
+ #define __has_include(x) 0
+ #endif
+ #if __has_include(<dispatch/dispatch.h>) && !defined(__TOY_DISPATCH__)
+ #	include <dispatch/dispatch.h>
+ #else
+-
++*/
+ /**
+  * Function type for functions that can be added to dispatch queues.
+  */
+@@ -44,4 +44,4 @@
+ 
+ #define dispatch_retain toy_dispatch_retain
+ void dispatch_retain(dispatch_queue_t queue);
+-#endif
++//#endif

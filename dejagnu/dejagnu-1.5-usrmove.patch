@@ -1,0 +1,12 @@
+diff -up dejagnu-1.5/runtest.usrmove dejagnu-1.5/runtest
+--- dejagnu-1.5/runtest.usrmove	2012-02-24 13:03:17.145409711 +0100
++++ dejagnu-1.5/runtest	2012-02-24 13:04:32.068473042 +0100
+@@ -109,7 +109,7 @@ fi
+ #
+ # .. which is a very weak assumption
+ 
+-for i in `echo ${execpath} | sed  -e 's@/[^/]*$@/share/dejagnu@'` `echo ${execpath} | sed  -e 's@/[^/]*/[^/]*$@/share/dejagnu@'` $execpath ; do
++for i in `echo ${execpath} | sed  -e 's@/[^/]*$@/share/dejagnu@'` `echo ${execpath} | sed  -e 's@/[^/]*/[^/]*$@/share/dejagnu@'` $execpath '/usr/share/dejagnu' '/usr/local/share/dejagnu' ; do
+     if expr $verbose \> 1 > /dev/null ; then
+ 	echo Looking for $i/runtest.exp.
+     fi

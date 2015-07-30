@@ -1,0 +1,12 @@
+diff -Nur setup-2.9.8/Makefile setup-2.9.8n/Makefile
+--- setup-2.9.8/Makefile	2015-05-13 07:48:53.000000000 +0000
++++ setup-2.9.8n/Makefile	2015-07-01 22:31:47.207098796 +0000
+@@ -7,8 +7,6 @@
+ 	@echo Sanity checking selected files....
+ 	bash -n bashrc
+ 	bash -n profile
+-	tcsh -f csh.cshrc
+-	tcsh -f csh.login
+ 	./uidgidlint ./uidgid
+ 	./serviceslint ./services
+ 

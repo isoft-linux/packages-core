@@ -1,0 +1,54 @@
+diff -Nur dejagnu-1.5.1/Makefile.am dejagnu-1.5.1n/Makefile.am
+--- dejagnu-1.5.1/Makefile.am	2013-03-07 23:58:19.000000000 +0000
++++ dejagnu-1.5.1n/Makefile.am	2014-10-10 14:30:57.144630433 +0000
+@@ -222,33 +222,3 @@
+ check_PROGRAMS = unit
+ unit_SOURCES = testsuite/libdejagnu/unit.cc
+ 
+-# Documentation.
+-
+-dist_man_MANS = doc/runtest.1
+-info_TEXINFOS = doc/dejagnu.texi
+-
+-DOCBOOK2PDF = @DOCBOOK2PDF@
+-DOCBOOK2RTF = @DOCBOOK2RTF@
+-DOCBOOK2PS = @DOCBOOK2PS@
+-DOCBOOK2HTML = @DOCBOOK2HTML@
+-DOCBOOK2TEXI = @DOCBOOK2TEXI@
+-
+-XML = doc/dejagnu.xml doc/legal.xml doc/ref.xml doc/user.xml
+-
+-dejagnu.pdf: $(XML)
+-	$(DOCBOOK2PDF) $(srcdir)/doc/dejagnu.xml
+-
+-dejagnu.ps: $(XML)
+-	$(DOCBOOK2PS) $(srcdir)/doc/dejagnu.xml
+-
+-dejagnu.rtf: $(XML)
+-	$(DOCBOOK2RTF) $(srcdir)/doc/dejagnu.xml
+-
+-html:
+-	$(DOCBOOK2HTML) -o html $(srcdir)/doc/dejagnu.xml
+-
+-if MAINTAINER_MODE
+-doc/dejagnu.texi: $(XML)
+-	$(DOCBOOK2TEXI) --string-param directory-description="The GNU testing framework." --string-param directory-category="Programming" $(srcdir)/doc/dejagnu.xml
+-	mv dejagnu.texi $(srcdir)/doc
+-endif
+diff -Nur dejagnu-1.5.1/configure.ac dejagnu-1.5.1n/configure.ac
+--- dejagnu-1.5.1/configure.ac	2013-03-08 02:44:14.000000000 +0000
++++ dejagnu-1.5.1n/configure.ac	2014-10-10 14:31:08.447630121 +0000
+@@ -30,13 +30,6 @@
+ AC_PROG_INSTALL
+ AC_EXEEXT
+ 
+-dnl Search for the Docbook utilities.
+-AC_PATH_PROG([DOCBOOK2HTML], [docbook2html], [false])
+-AC_PATH_PROG([DOCBOOK2RTF], [docbook2rtf], [false])
+-AC_PATH_PROG([DOCBOOK2PDF], [docbook2pdf], [false])
+-AC_PATH_PROG([DOCBOOK2PS], [docbook2ps], [false])
+-AC_PATH_PROG([DOCBOOK2TEXI], [docbook2x-texi], [false])
+-
+ dnl Search for expect.
+ AC_PATH_PROG([EXPECT], [expect])
+ if test -z $ac_cv_path_EXPECT ; then

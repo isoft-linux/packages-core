@@ -1,0 +1,21 @@
+diff -up apt-0.5.15lorg3.95.git522/methods/gpg.cc.format-security apt-0.5.15lorg3.95.git522/methods/gpg.cc
+--- apt-0.5.15lorg3.95.git522/methods/gpg.cc.format-security	2014-06-03 15:29:27.856287147 -0400
++++ apt-0.5.15lorg3.95.git522/methods/gpg.cc	2014-06-03 15:29:51.138133879 -0400
+@@ -369,7 +369,7 @@ bool GPGMethod::Fetch(FetchItem *Itm)
+       if (msg != NULL) 
+       {
+ 	 removeTmpDir(TempDir, SigCount);
+-	 return _error->Error(msg);
++	 return _error->Error("%s", msg);
+       }
+    }
+    else 
+@@ -393,7 +393,7 @@ bool GPGMethod::Fetch(FetchItem *Itm)
+ 	 if (msg != NULL)
+ 	 {
+ 	    removeTmpDir(TempDir, SigCount);	       
+-	    return _error->Error(msg);
++	    return _error->Error("%s", msg);
+ 	 }
+ 	 if (KeyList.empty())
+ 	    KeyList = KeyID;

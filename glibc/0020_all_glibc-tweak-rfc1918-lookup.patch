@@ -1,0 +1,13 @@
+diff -Nur glibc-2.17/posix/gai.conf glibc-2.17n/posix/gai.conf
+--- glibc-2.17/posix/gai.conf	2012-12-25 11:02:13.000000000 +0800
++++ glibc-2.17n/posix/gai.conf	2012-12-31 19:34:13.305271974 +0800
+@@ -60,6 +60,6 @@
+ #    used.  Changing these defaults should hardly ever be necessary.
+ #    The defaults are equivalent to:
+ #
+-#scopev4 ::ffff:169.254.0.0/112  2
+-#scopev4 ::ffff:127.0.0.0/104    2
+-#scopev4 ::ffff:0.0.0.0/96       14
++scopev4 ::ffff:169.254.0.0/112  2
++scopev4 ::ffff:127.0.0.0/104    2
++scopev4 ::ffff:0.0.0.0/96       14

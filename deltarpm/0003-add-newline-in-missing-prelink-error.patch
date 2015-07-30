@@ -1,0 +1,25 @@
+From 6b13095e1ae5b3ba2f2631ce750ac1d3d3d3e152 Mon Sep 17 00:00:00 2001
+From: Michael Schroeder <mls@suse.de>
+Date: Fri, 9 Jan 2015 12:39:39 +0100
+Subject: [PATCH 3/4] add newline in missing prelink error
+
+---
+ prelink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/prelink.c b/prelink.c
+index 07516f8..e74fbc5 100644
+--- a/prelink.c
++++ b/prelink.c
+@@ -130,7 +130,7 @@ prelinked_open(char *name)
+   if (stat("/usr/sbin/prelink", &stb))
+     {
+       perror("/usr/sbin/prelink");
+-      fprintf(stderr, "prelink not installed, cannot undo prelinking");
++      fprintf(stderr, "prelink not installed, cannot undo prelinking\n");
+       exit(1);
+     }
+   strcpy(template, "/tmp/deltarpm.XXXXXX");
+-- 
+2.1.0
+

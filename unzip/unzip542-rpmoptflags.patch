@@ -1,0 +1,11 @@
+--- unzip-5.42/unix/Makefile.rpmoptflags	Mon May 21 10:57:51 2001
++++ unzip-5.42/unix/Makefile	Mon May 21 10:58:22 2001
+@@ -735,7 +735,7 @@
+ # Linux (Posix, approximately SysV):  virtually any version since before 0.96,
+ # for any platform.  Change "-O" to "-O3" or whatever, as desired...
+ linux_noasm:	unix_make
+-	$(MAKE) unzips CC=gcc LD=gcc CF="-O -Wall -I. $(LOC)"
++	$(MAKE) unzips CC=gcc LD=gcc CF="$(RPM_OPT_FLAGS) -D_GNU_SOURCE -Wall -I. $(LOC)"
+ 
+ # Linux with lcc compiler:  __inline__ (stat.h) not recognized, and must edit
+ # /usr/include/gnu/types.h to get rid of "long long" if __LCC__ defined.  -O3

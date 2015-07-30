@@ -1,0 +1,16 @@
+diff -Nur ruby-2.1.1/test/ruby/test_exception.rb ruby-2.1.1n/test/ruby/test_exception.rb
+--- ruby-2.1.1/test/ruby/test_exception.rb	2013-12-10 22:02:16.000000000 +0800
++++ ruby-2.1.1n/test/ruby/test_exception.rb	2014-05-02 15:03:36.021086509 +0800
+@@ -480,10 +480,12 @@
+   def test_machine_stackoverflow
+     bug9109 = '[ruby-dev:47804] [Bug #9109]'
+     assert_separately([], <<-SRC)
++    Thread.new do
+     assert_raise(SystemStackError, #{bug9109.dump}) {
+       h = {a: ->{h[:a].call}}
+       h[:a].call
+     }
++    end
+     SRC
+   rescue SystemStackError
+   end

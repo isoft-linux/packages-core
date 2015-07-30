@@ -1,0 +1,11 @@
+--- patch-2.7.1/tests/corrupt-reject-files
++++ patch-2.7.1n/tests/corrupt-reject-files
+@@ -46,7 +46,7 @@
+ Status: 1
+ EOF
+ 
+-check 'cat -ve a.rej' <<EOF
++check 'cat a.rej|sed "s/$/\$/g"' <<EOF
+ *** a$
+ --- b$
+ ***************$

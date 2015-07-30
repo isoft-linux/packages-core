@@ -1,0 +1,30 @@
+diff -rupN src/clrun/Makefile src-patched/clrun/Makefile
+--- src/clrun/Makefile	2012-03-25 17:21:36.000000000 -0400
++++ src-patched/clrun/Makefile	2012-04-06 11:52:03.227832491 -0400
+@@ -1,16 +1,15 @@
+-all: compile
++all: libclrun.so
+ 
+-compile: genclrun gencl.c genclgl.c
+-	gcc -Wall -c gencl.c -o gencl.o
+-	gcc -Wall -c genclgl.c -o genclgl.o
+-	gcc -Wall -c clrun.c -o clrun.o -I../include
+-	gcc -Wall --shared dynamiclib.c clrun.o gencl.o genclgl.o -o libclrun.so -ldl
+-		strip libclrun.so
++CFLAGS   +=   -I../include -Wall -fPIC
+ 
+-genclrun: ../include/CL/cl.h ../include/CL/cl_gl.h
+-	./generateClRun.pl ../include/CL/cl.h > gencl.c
+-	./generateClRun.pl ../include/CL/cl_gl.h > genclgl.c
++libclrun.so : gencl.o genclgl.o clrun.o dynamiclib.o
++	gcc $(CFLAGS) --shared -ldl $? -o $@
+ 
++gencl.c: ../include/CL/cl.h 
++	./generateClRun.pl $? > $@
++
++genclgl.c: ../include/CL/cl_gl.h
++	./generateClRun.pl $? > $@
+ 
+ clean:
+-	rm -rf *~ *.o
++	rm -rf *~ *.o gencl.c genclgl.c

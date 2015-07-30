@@ -1,0 +1,247 @@
+.\" Copyright (C) 1992, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+.\" Copyright (C) 1998 Ben Pfaff.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of
+.\" this manual provided the copyright notice and this permission notice
+.\" are preserved on all copies.
+.\" 
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the entire
+.\" resulting derived work is distributed under the terms of a permission
+.\" notice identical to this one.
+.\" 
+.\" Permission is granted to copy and distribute translations of this manual
+.\" into another language, under the above conditions for modified versions,
+.\" except that this permission notice may be stated in a translation approved
+.\" by the Foundation.
+.\"
+.TH AUTOMAKE 1 "28 Jan 2002"
+.SH NAME
+automake - automatically create Makefile.in's from Makefile.am's
+.SH SYNOPSIS
+.B automake
+[
+.B -a
+|
+.B --add-missing
+] [
+.BR --amdir= DIR
+] [
+.BR --build-dir= DIR
+] [
+.B -c
+|
+.B --copy
+] [
+.B --cygnus
+] [
+.B -f
+|
+.B --force-missing
+] [
+.B --foreign
+] [
+.B --gnits
+] [
+.B --gnu
+] [
+.B --help
+] [
+.B -i
+|
+.B --ignore-deps
+] [
+.B --include-deps
+] [
+.B --no-force
+] [
+.B -o 
+DIR
+] [
+.BR --output-dir= DIR
+] [
+.BR --srcdir-name= DIR
+] [
+.B -v
+|
+.B --verbose
+] [
+.B --version
+] [
+.B --Werror
+|
+.B --Wno-error
+]
+.SH DESCRIPTION
+.PP
+To create all the 
+.BR Makefile.in s 
+for a package, run the 
+.B automake
+program in the top level directory, with no arguments.  
+.B automake
+will automatically find each appropriate 
+.B Makefile.am
+(by scanning
+.BR configure.in )
+and generate the corresponding 
+.BR Makefile.in .
+Note that 
+.B automake
+has a rather simplistic view of what constitutes a package; it assumes
+that a package has only one
+.BR configure.in , 
+at the
+top.  If your package has multiple 
+.BR configure.in s, 
+then you must run
+.B automake
+in each directory holding a 
+.BR configure.in .
+.PP
+You can optionally give 
+.B automake
+an argument; 
+.B .am
+is appended to the argument and the result is used as the name of the
+input file.  This feature is generally only used to automatically
+rebuild an out-of-date
+.BR Makefile.in .  
+Note that 
+.I automake
+must always be run from the topmost directory of a project, even if
+being used to regenerate the
+.B Makefile.in
+in some subdirectory.  This is necessary
+because 
+.I automake
+must scan 
+.BR configure.in ,
+and because 
+.I automake
+uses the knowledge that a 
+.B Makefile.in
+is in a subdirectory to change its behavior in some cases.
+.PP
+.I automake
+accepts the following options:
+.TP
+.BI -a
+.TP
+.BI --add-missing
+Automake requires certain common files to exist in certain
+situations; for instance 
+.B config.guess
+is required if
+.B configure.in
+runs 
+.BR AC_CANONICAL_HOST .  
+Automake is distributed with several of these files; this option will
+cause the missing ones to be automatically added to the package,
+whenever possible.  In general if Automake tells you a file is
+missing, try using this option. By default Automake tries to make a
+symbolic link pointing to its own copy of the missing file; this can
+be changed with \fB--copy\fP.
+.TP
+.BI --libdir=\fRDIR
+Look for Automake data files in directory DIR instead of in the
+installation directory.  This is typically used for debugging.
+.TP
+.BI -c
+.TP
+.BI --copy
+When used with \fB--add-missing\fP, causes installed files to be copied.
+The default is to make a symbolic link.
+.TP
+.BI --cygnus
+Causes the generated 
+.BR Makefile.in s 
+to follow Cygnus rules, instead of GNU or Gnits rules.
+.TP
+.BI -f
+.TP
+.BI --force-missing
+When used with \fB--add-missing\fP, causes standard files to be rebuilt
+even if they already exist in the source tree.
+This involves removing the file from the source tree before creating the
+new symlink (or, with \fB--copy\fP, copying the new file).
+.TP
+.BI --foreign
+Set the global strictness to 
+.BR foreign .
+.TP
+.BI --gnits
+Set the global strictness to 
+.BR gnits .
+.TP
+.BI --gnu
+Set the global strictness to 
+.BR gnu .
+This is the default strictness.
+.TP
+.BI --help
+Print a summary of the command line options and exit.
+.TP
+.BI -i
+.TP
+.BI --ignore-deps
+This disables the dependency tracking feature.
+.TP
+.BI --include-deps
+This enables the dependency tracking feature. This feature is
+enabled by default. This option is provided for historical
+reasons only and probably should not be used.
+.TP
+.BI --no-force
+Ordinarily 
+.B automake
+creates all 
+.BR Makefile.in s
+mentioned in
+.BR configure.in .
+This option causes it to only update those
+.BR Makefile.in s 
+which are out of date with respect to one of their dependents.
+.TP
+.BI -o\ \fRDIR
+.TP
+.BI --output-dir=\fRDIR
+Put the generated 
+.B Makefile.in
+in the directory DIR.  Ordinarily
+each 
+.B Makefile.in
+is created in the directory of the
+corresponding 
+.BR Makefile.am .  
+This option is used when making
+distributions.
+.TP
+.BI -v
+.TP
+.BI --verbose
+Cause Automake to print information about which files are being read
+or created.
+.TP
+.BI --version
+Print the version number of Automake and exit.
+.TP
+.BI --Werror
+.TP
+.BI --Wno-error
+.B --Werror
+will cause all warnings issued by
+.I automake
+to become errors. Errors affect the exit status of
+\fIautomake\fP, while warnings do not.
+\fB--Wno-error\fP, the default, causes warning to be treated as warnings only.
+.PP
+.SH "SEE ALSO"
+.BR aclocal (1),
+and the Texinfo documentation for automake
+.SH AUTHORS
+Automake was written primarily by David Mackenzie and Tom Tromey.
+This manpage written by Ben Pfaff <pfaffben@pilot.msu.edu> for the
+Debian GNU/Linux
+.B automake
+package.

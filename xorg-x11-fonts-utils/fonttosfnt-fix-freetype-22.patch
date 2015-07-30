@@ -1,0 +1,11 @@
+diff -Nur xorg-x11-font-utils-1.0.1/fonttosfnt-1.0.1/util.c xorg-x11-font-utils-1.0.1new/fonttosfnt-1.0.1/util.c
+--- xorg-x11-font-utils-1.0.1/fonttosfnt-1.0.1/util.c	2005-11-08 14:33:31.000000000 +0800
++++ xorg-x11-font-utils-1.0.1new/fonttosfnt-1.0.1/util.c	2006-05-26 22:28:52.000000000 +0800
+@@ -35,7 +35,6 @@
+ 
+ #include <ft2build.h>
+ #include FT_FREETYPE_H
+-#include FT_INTERNAL_OBJECTS_H
+ #include FT_BDF_H
+ #include "X11/Xos.h"
+ #include "fonttosfnt.h"

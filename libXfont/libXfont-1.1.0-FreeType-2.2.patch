@@ -1,0 +1,28 @@
+--- libXfont-X11R7.1-1.1.0/src/FreeType/ftfuncs.c.ark	2006-05-23 18:42:07.000000000 +0200
++++ libXfont-X11R7.1-1.1.0/src/FreeType/ftfuncs.c	2006-05-23 19:04:15.000000000 +0200
+@@ -47,6 +47,7 @@
+ #include <X11/fonts/fontutil.h>
+ #include <X11/fonts/FSproto.h>
+ #include <ft2build.h>
++#include <freetype/internal/internal.h>
+ #include FT_FREETYPE_H
+ #include FT_SIZES_H
+ #include FT_TRUETYPE_IDS_H
+@@ -484,7 +485,7 @@
+ 	tt_y_ppem  = (FT_UShort)( tt_dim_y >> 6 );
+ 	/* See Reset_SBit_Size() in ttobjs.c */
+ 	sfnt   = (SFNT_Service)tt_face->sfnt;
+-	err = sfnt->set_sbit_strike(tt_face,tt_x_ppem,tt_y_ppem,&instance->strike_index);
++	err = sfnt->set_sbit_strike_stub(tt_face,tt_x_ppem,tt_y_ppem,&instance->strike_index);
+ 	if ( err ) instance->strike_index=0xFFFFU;
+     }
+ 
+@@ -932,7 +933,7 @@
+     sfnt   = (SFNT_Service)face->sfnt;
+ 
+     if (strike_index != 0xFFFFU && sfnt && sfnt->find_sbit_image &&
+-            sfnt->load_sbits) {
++            sfnt->load_sbits_stub) {
+         /* Check whether there is a glyph sbit for the current index */
+         error = sfnt->find_sbit_image( face, glyph_index, strike_index,
+                                        &range, &strike, &glyph_offset );

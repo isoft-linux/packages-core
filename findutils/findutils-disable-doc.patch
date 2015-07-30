@@ -1,0 +1,12 @@
+diff -Nur findutils-4.5.11/Makefile.am findutils-4.5.11n/Makefile.am
+--- findutils-4.5.11/Makefile.am	2013-06-06 13:59:13.167015442 +0000
++++ findutils-4.5.11n/Makefile.am	2013-06-06 14:00:13.005016340 +0000
+@@ -9,7 +9,7 @@
+ 
+ 
+ # "tests" is the gnulib unit test dir.
+-SUBDIRS = gl tests build-aux lib find xargs doc po m4
++SUBDIRS = gl tests build-aux lib find xargs po m4
+ 
+ ACLOCAL_AMFLAGS = -I gl/m4 -I m4
+ 

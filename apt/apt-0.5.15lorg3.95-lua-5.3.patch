@@ -1,0 +1,51 @@
+diff -up apt-0.5.15lorg3.95.git522/apt-pkg/luaiface.cc.lua-53 apt-0.5.15lorg3.95.git522/apt-pkg/luaiface.cc
+--- apt-0.5.15lorg3.95.git522/apt-pkg/luaiface.cc.lua-53	2015-01-15 11:36:22.548854851 -0500
++++ apt-0.5.15lorg3.95.git522/apt-pkg/luaiface.cc	2015-01-15 11:36:31.492806064 -0500
+@@ -837,7 +837,7 @@ static int AptLua_confset(lua_State *L)
+    if (lua_gettop(L) >= 3 && lua_isboolean(L, 3))
+       cnd = lua_toboolean(L, 3);
+    else
+-      cnd = luaL_optint(L, 3, 0);
++      cnd = luaL_optinteger(L, 3, 0);
+    if (key != NULL && val != NULL) {
+       if (cnd != 0)
+ 	 _config->CndSet(key, val);
+diff -up apt-0.5.15lorg3.95.git522/luaext/lposix.c.lua-53 apt-0.5.15lorg3.95.git522/luaext/lposix.c
+--- apt-0.5.15lorg3.95.git522/luaext/lposix.c.lua-53	2015-01-15 11:34:08.660585176 -0500
++++ apt-0.5.15lorg3.95.git522/luaext/lposix.c	2015-01-15 11:35:40.740082906 -0500
+@@ -348,22 +348,22 @@ static int Pfork(lua_State *L)			/** for
+ 
+ static int Pwait(lua_State *L)			/** wait([pid]) */
+ {
+-	pid_t pid = luaL_optint(L, 1, -1);
++	pid_t pid = luaL_optinteger(L, 1, -1);
+ 	return pushresult(L, waitpid(pid, NULL, 0), NULL);
+ }
+ 
+ 
+ static int Pkill(lua_State *L)			/** kill(pid,[sig]) */
+ {
+-	pid_t pid = luaL_checkint(L, 1);
+-	int sig = luaL_optint(L, 2, SIGTERM);
++	pid_t pid = luaL_checkinteger(L, 1);
++	int sig = luaL_optinteger(L, 2, SIGTERM);
+ 	return pushresult(L, kill(pid, sig), NULL);
+ }
+ 
+ 
+ static int Psleep(lua_State *L)			/** sleep(seconds) */
+ {
+-	unsigned int seconds = luaL_checkint(L, 1);
++	unsigned int seconds = luaL_checkinteger(L, 1);
+ 	lua_pushnumber(L, sleep(seconds));
+ 	return 1;
+ }
+@@ -510,7 +510,7 @@ static int Pgetprocessid(lua_State *L)
+ 
+ static int Pttyname(lua_State *L)		/** ttyname(fd) */
+ {
+-	int fd=luaL_optint(L, 1, 0);
++	int fd=luaL_optinteger(L, 1, 0);
+ 	lua_pushstring(L, ttyname(fd));
+ 	return 1;
+ }

@@ -1,0 +1,37 @@
+diff -Nur xorg-x11-font-utils-1.0.1n/font-util-X11R7.1-1.0.1/configure.ac xorg-x11-font-utils-1.0.1/font-util-X11R7.1-1.0.1/configure.ac
+--- xorg-x11-font-utils-1.0.1n/font-util-X11R7.1-1.0.1/configure.ac	2006-05-26 22:25:30.000000000 +0800
++++ xorg-x11-font-utils-1.0.1/font-util-X11R7.1-1.0.1/configure.ac	2006-05-26 22:26:44.000000000 +0800
+@@ -33,13 +33,20 @@
+ 
+ m4_ifdef([AS_HELP_STRING], , [m4_define([AS_HELP_STRING], m4_defn([AC_HELP_STRING]))])
+ 
+-DEFAULT_MAPDIR=${libdir}/X11/fonts/util
++DEFAULT_MAPDIR=${datadir}/X11/fonts/util
+ AC_ARG_WITH(mapdir,
+ 	AS_HELP_STRING([--with-mapdir=MAPDIR], [Path to install font maps]),
+ 	[MAPDIR="$withval"],
+ 	[MAPDIR="$DEFAULT_MAPDIR"])
+ AC_SUBST(MAPDIR)
+ 
++DEFAULT_FONTDIR=${datadir}/X11/fonts
++AC_ARG_WITH(fontdir,
++       AS_HELP_STRING([--with-fontdir=FONTDIR], [Path to install Xorg fonts by default]),
++       [FONTDIR="$withval"],
++       [FONTDIR="$DEFAULT_FONTDIR"])
++AC_SUBST(FONTDIR)
++
+ XORG_MANPAGE_SECTIONS
+ XORG_RELEASE_VERSION
+ 
+diff -Nur xorg-x11-font-utils-1.0.1n/font-util-X11R7.1-1.0.1/fontutil.pc.in xorg-x11-font-utils-1.0.1/font-util-X11R7.1-1.0.1/fontutil.pc.in
+--- xorg-x11-font-utils-1.0.1n/font-util-X11R7.1-1.0.1/fontutil.pc.in	2006-05-26 22:25:30.000000000 +0800
++++ xorg-x11-font-utils-1.0.1/font-util-X11R7.1-1.0.1/fontutil.pc.in	2006-05-26 22:27:02.000000000 +0800
+@@ -2,7 +2,7 @@
+ exec_prefix=@exec_prefix@
+ libdir=@libdir@
+ mapdir=@MAPDIR@
+- 
++fontdir=@FONTDIR@ 
+ Name: FontUtil
+ Description: Font utilities dirs
+ Version: @PACKAGE_VERSION@

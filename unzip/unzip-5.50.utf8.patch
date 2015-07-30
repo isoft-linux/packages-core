@@ -1,0 +1,56 @@
+diff -uNr unzip-5.50.org/fileio.c unzip-5.50/fileio.c
+--- unzip-5.50.org/fileio.c	2004-10-27 03:46:02.557790200 +0800
++++ unzip-5.50/fileio.c	2004-10-27 03:59:08.736272904 +0800
+@@ -2133,10 +2133,35 @@
+             return PK_EOF;
+         G.filename[length] = '\0';      /* terminate w/zero:  ASCIIZ */
+ 
+-        /* translate the Zip entry filename coded in host-dependent "extended
+-           ASCII" into the compiler's (system's) internal text code page */
+-        Ext_ASCII_TO_Native(G.filename, G.pInfo->hostnum, G.pInfo->hostver,
+-                            G.pInfo->HasUxAtt, (option == DS_FN_L));
++        /* translate the Zip entry filename code to set utf-8 */
++#include <iconv.h>
++#include "utf.h"
++
++#define ICONV_BUF_SIZE	260
++		size_t ileft, oleft;
++		iconv_t cd;
++		size_t iconv_result;
++		size_t size;
++		char inbuf[ICONV_BUF_SIZE];
++		char outbuf[ICONV_BUF_SIZE];
++		char *inptr = inbuf;
++		char *outptr = outbuf;
++		
++		size = strlen(G.filename)+1;
++		strncpy(inbuf, G.filename, size);
++		ileft = size;
++		oleft = sizeof(outbuf);
++	
++		cd = iconv_open(m_szToCodepage, m_szFromCodepage);
++		
++		iconv_result = iconv(cd, &inptr, &ileft, &outptr, &oleft);
++		
++		
++		outbuf[ICONV_BUF_SIZE-oleft] = 0;
++		strcpy(G.filename, outbuf);
++		
++		iconv_close(cd);
++				
+ 
+         if (G.pInfo->lcflag)      /* replace with lowercase filename */
+             STRLOWER(G.filename, G.filename);
+diff -uNr unzip-5.50.org/utf.h unzip-5.50/utf.h
+--- unzip-5.50.org/utf.h	1970-01-01 08:00:00.000000000 +0800
++++ unzip-5.50/utf.h	2004-10-27 03:59:16.776050672 +0800
+@@ -0,0 +1,9 @@
++char				m_szToCodepage[256];	
++char				m_szFromCodepage[256];
++strcpy(m_szToCodepage, "UTF-8") ;		
++strcpy(m_szFromCodepage, "CP936");		
++
++
++
++
++

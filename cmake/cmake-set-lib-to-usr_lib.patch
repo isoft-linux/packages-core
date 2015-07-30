@@ -1,0 +1,15 @@
+diff -Nur cmake-3.0.0/Modules/GNUInstallDirs.cmake cmake-3.0.0n/Modules/GNUInstallDirs.cmake
+--- cmake-3.0.0/Modules/GNUInstallDirs.cmake	2014-06-09 23:46:52.000000000 +0800
++++ cmake-3.0.0n/Modules/GNUInstallDirs.cmake	2014-06-12 12:58:12.802348389 +0800
+@@ -149,9 +149,9 @@
+           "Please enable at least one language before including GNUInstallDirs.")
+       else()
+         if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-          set(_LIBDIR_DEFAULT "lib64")
++          set(_LIBDIR_DEFAULT "lib")
+           if(DEFINED _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX)
+-            set(__LAST_LIBDIR_DEFAULT "lib64")
++            set(__LAST_LIBDIR_DEFAULT "lib")
+           endif()
+         endif()
+       endif()

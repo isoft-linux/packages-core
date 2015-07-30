@@ -1,0 +1,79 @@
+--- tcp_wrappers_7.6/hosts_access.c.220015	2007-02-08 15:39:51.000000000 +0100
++++ tcp_wrappers_7.6/hosts_access.c	2007-02-08 15:39:51.000000000 +0100
+@@ -312,8 +312,28 @@
+     } else if ((mask = split_at(tok, '/')) != 0) {	/* net/mask */
+ 	return (masked_match(tok, mask, eval_hostaddr(host)));
+     } else {					/* anything else */
+-	return (string_match(tok, eval_hostaddr(host))
+-	    || (NOT_INADDR(tok) && string_match(tok, eval_hostname(host))));
++	int ret;
++	if ((ret = string_match(tok, eval_hostaddr(host))))
++	    return ret;
++
++	if (NOT_INADDR(tok)) {
++	    if ((ret = string_match(tok, eval_hostname(host))))
++		return ret;
++
++	    /* try to resolve the pattern and match the numeric
++	     * addresses */
++	    const char *tok_resolved = sock_resolve(tok, AF_INET);
++	    if (HOSTNAME_KNOWN(tok_resolved))
++		if ((ret = string_match(tok_resolved, eval_hostaddr(host))))
++		    return ret;
++
++	    tok_resolved = sock_resolve(tok, AF_INET6);
++	    if (HOSTNAME_KNOWN(tok_resolved))
++		if ((ret = string_match(tok_resolved, eval_hostaddr(host))))
++		    return ret;
++	}
++
++	return (NO);
+     }
+ }
+ 
+--- tcp_wrappers_7.6/socket.c.220015	2007-02-08 15:39:51.000000000 +0100
++++ tcp_wrappers_7.6/socket.c	2007-02-08 15:41:38.000000000 +0100
+@@ -435,3 +435,43 @@
+ 
+     (void) recvfrom(fd, buf, sizeof(buf), 0, (struct sockaddr *) & sin, &size);
+ }
++
++/* sock_resolve - resolve the hostname to ip and return a string */
++
++const char * sock_resolve(hostname, family)
++const char * hostname;
++int family;
++{
++    static struct host_info h;
++
++    memset(&h, 0, sizeof(h));
++
++    int ret;
++    struct addrinfo hints, *res;
++
++    memset(&hints, 0, sizeof(hints));
++    hints.ai_family = family;
++    hints.ai_socktype = SOCK_STREAM;
++    hints.ai_flags = AI_PASSIVE;
++
++    if ((ret = getaddrinfo(hostname, NULL, &hints, &res)) == 0) {
++	h.sin = res->ai_addr;
++	sock_hostaddr(&h);
++	freeaddrinfo(res);
++
++	/* we have to add [] to the ipv6 address, as the string_match funtion
++	 * will do a more correct match then */
++	if (family == AF_INET6) {
++	    int len = strlen(h.addr);
++	    memmove(h.addr + 1, h.addr, len + 1);
++	    h.addr[0] = '[';
++	    h.addr[len + 1] = ']';
++	    h.addr[len + 2] = 0;
++	}
++
++	return h.addr;
++    } else {
++	tcpd_warn("can't get pattern (%s) address: %s", hostname, gai_strerror(ret));
++	return STRING_UNKNOWN;
++    }
++}

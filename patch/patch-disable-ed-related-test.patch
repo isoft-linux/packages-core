@@ -1,0 +1,12 @@
+diff -Nur patch-2.7.1/tests/test-lib.sh patch-2.7.1n/tests/test-lib.sh
+--- patch-2.7.1/tests/test-lib.sh	2012-04-06 10:57:38.000000000 +0000
++++ patch-2.7.1n/tests/test-lib.sh	2014-09-20 03:45:18.270038807 +0000
+@@ -32,7 +32,7 @@
+ }
+ 
+ have_ed() {
+-    type ed >/dev/null 2>/dev/null
++    exit 77
+ }
+ 
+ use_tmpdir() {

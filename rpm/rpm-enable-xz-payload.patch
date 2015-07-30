@@ -1,0 +1,14 @@
+diff -Nur rpm-4.9.1.2/macros.in rpm-4.9.1.2.new/macros.in
+--- rpm-4.9.1.2/macros.in	2012-03-08 18:17:31.716217492 +0800
++++ rpm-4.9.1.2.new/macros.in	2012-03-08 18:18:12.218218103 +0800
+@@ -334,8 +334,8 @@
+ #		"w7.xzdio"	xz level 7, xz's default.
+ #		"w7.lzdio"	lzma-alone level 7, lzma's default
+ #
+-#%_source_payload	w9.gzdio
+-#%_binary_payload	w9.gzdio
++%_source_payload	w7.xzdio
++%_binary_payload	w7.xzdio
+ 
+ #	Algorithm to use for generating file checksum digests on build.
+ #	If not specified or 0, MD5 is used.

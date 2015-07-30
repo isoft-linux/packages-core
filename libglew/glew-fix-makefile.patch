@@ -1,0 +1,52 @@
+diff -Nur glew-1.12.0/Makefile glew-1.12.0n/Makefile
+--- glew-1.12.0/Makefile	2015-01-24 12:45:52.000000000 +0000
++++ glew-1.12.0n/Makefile	2015-06-20 17:52:07.777495031 +0000
+@@ -42,9 +42,9 @@
+ 
+ GLEW_PREFIX ?= /usr
+ GLEW_DEST ?= /usr
+-BINDIR    ?= $(GLEW_DEST)/bin
+-LIBDIR    ?= $(GLEW_DEST)/lib
+-INCDIR    ?= $(GLEW_DEST)/include/GL
++BINDIR    ?= $(GLEW_DEST)$(bindir)
++LIBDIR    ?= $(GLEW_DEST)$(libdir)
++INCDIR    ?= $(GLEW_DEST)$(includedir)/GL
+ 
+ ifneq ($(GLEW_NO_GLU), -DGLEW_NO_GLU)
+ LIBGLU = glu
+@@ -244,7 +244,7 @@
+ 	$(INSTALL) -d -m 0755 "$(DESTDIR)$(BINDIR)"
+ 	$(INSTALL) -m 0755 lib/$(LIB.SHARED) "$(DESTDIR)$(BINDIR)/"
+ else
+-	$(INSTALL) -m 0644 lib/$(LIB.SHARED) "$(DESTDIR)$(LIBDIR)/"
++	$(INSTALL) -m 0755 lib/$(LIB.SHARED) "$(DESTDIR)$(LIBDIR)/"
+ endif
+ ifneq ($(LN),)
+ 	$(LN) $(LIB.SHARED) "$(DESTDIR)$(LIBDIR)/$(LIB.SONAME)"
+@@ -266,7 +266,7 @@
+ 	$(INSTALL) -d -m 0755 "$(DESTDIR)$(BINDIR)"
+ 	$(INSTALL) -m 0755 lib/$(LIB.SHARED.MX) "$(DESTDIR)$(BINDIR)/"
+ else
+-	$(INSTALL) -m 0644 lib/$(LIB.SHARED.MX) "$(DESTDIR)$(LIBDIR)/"
++	$(INSTALL) -m 0755 lib/$(LIB.SHARED.MX) "$(DESTDIR)$(LIBDIR)/"
+ endif
+ ifneq ($(LN),)
+ 	$(LN) $(LIB.SHARED.MX) "$(DESTDIR)$(LIBDIR)/$(LIB.SONAME.MX)"
+diff -Nur glew-1.12.0/config/Makefile.linux glew-1.12.0n/config/Makefile.linux
+--- glew-1.12.0/config/Makefile.linux	2015-01-24 12:45:51.000000000 +0000
++++ glew-1.12.0n/config/Makefile.linux	2015-06-20 17:52:46.853493970 +0000
+@@ -9,13 +9,7 @@
+ ifeq (ppc64,${M_ARCH})
+   ARCH64 = true
+ endif
+-ifeq (${ARCH64},true)
+-  LDFLAGS.EXTRA = -L/usr/X11R6/lib64 -L/usr/lib64
+-  LIBDIR = $(GLEW_DEST)/lib64
+-else
+-  LDFLAGS.EXTRA = -L/usr/X11R6/lib -L/usr/lib
+-  LIBDIR = $(GLEW_DEST)/lib
+-endif
++LIBDIR = $(GLEW_DEST)$(libdir)
+ LDFLAGS.GL = -lGL -lX11
+ LDFLAGS.STATIC = -Wl,-Bstatic
+ LDFLAGS.DYNAMIC = -Wl,-Bdynamic

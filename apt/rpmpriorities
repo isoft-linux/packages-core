@@ -1,0 +1,22 @@
+Essential:
+  grub
+  libgcc
+  rpm
+  rsyslog
+  glibc
+  shadow-utils
+  coreutils
+  bash
+  vim-minimal
+  passwd
+  util-linux-ng
+  basesystem
+  setup
+  e2fsprogs
+  pam
+  procps
+  initscripts
+  filesystem
+  system-release
+  udev
+  systemd

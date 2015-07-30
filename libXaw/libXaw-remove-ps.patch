@@ -1,0 +1,21 @@
+diff -Nur libXaw-1.0.7/spec/Makefile.am libXaw-1.0.7n/spec/Makefile.am
+--- libXaw-1.0.7/spec/Makefile.am	2009-10-17 05:26:55.000000000 +0800
++++ libXaw-1.0.7n/spec/Makefile.am	2012-03-24 21:16:51.595377990 +0800
+@@ -49,7 +49,7 @@
+ EXTRA_DIST = $(spec_sources) $(XIDXMACROS) block.awk fixindex.awk widg.idxmac.t
+ 
+ if BUILD_DOCS
+-doc_DATA = widgets.ps widgets.index.ps widgets.txt widgets.html
++doc_DATA = widgets.txt widgets.html
+ 
+ CLEANFILES = $(doc_DATA)
+ MOSTLYCLEANFILES = index.*
+@@ -71,7 +71,7 @@
+ 	$(AM_V_GEN) $(GROFF) -Thtml $(GROFF_FLAGS) $(spec_input) \
+ 	 2> index.html.raw > $@
+ 
+-index.raw: widgets.ps
++index.raw:
+ 
+ index.pageno: index.raw
+ 	$(AM_V_GEN)$(SED) -n '$$p' index.raw > $@

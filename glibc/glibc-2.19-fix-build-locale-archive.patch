@@ -1,0 +1,24 @@
+diff -Nur glibc-2.19/locale/programs/locfile.c glibc-2.19.new/locale/programs/locfile.c
+--- glibc-2.19/locale/programs/locfile.c	2014-02-07 17:04:38.000000000 +0800
++++ glibc-2.19.new/locale/programs/locfile.c	2014-04-30 21:32:23.035604820 +0800
+@@ -542,7 +542,7 @@
+ 
+ /* True if the locale files use the opposite endianness to the
+    machine running localedef.  */
+-bool swap_endianness_p;
++//bool swap_endianness_p;
+ 
+ /* When called outside a start_locale_structure/end_locale_structure
+    or start_locale_prelude/end_locale_prelude block, record that the
+diff -Nur glibc-2.19/locale/programs/locfile.h glibc-2.19.new/locale/programs/locfile.h
+--- glibc-2.19/locale/programs/locfile.h	2014-02-07 17:04:38.000000000 +0800
++++ glibc-2.19.new/locale/programs/locfile.h	2014-04-30 21:32:15.891605075 +0800
+@@ -69,7 +69,7 @@
+ 				  const char *locname,
+ 				  const char *output_path);
+ 
+-extern bool swap_endianness_p;
++bool swap_endianness_p;
+ 
+ /* Change the output to be big-endian if BIG_ENDIAN is true and
+    little-endian otherwise.  */

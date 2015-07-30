@@ -1,0 +1,10 @@
+--- ../llvm-3.4.2.src/tools/clang/tools/extra/pp-trace/CMakeLists.txt	2013-10-31 20:23:32.000000000 +0800
++++ llvm-static-3.4.2/tools/clang/tools/extra/pp-trace/CMakeLists.txt	2014-06-26 03:06:20.085899565 +0800
+@@ -16,3 +16,7 @@
+   clangSema
+   clangTooling
+   )
++
++install(TARGETS pp-trace 
++  RUNTIME DESTINATION bin)
++

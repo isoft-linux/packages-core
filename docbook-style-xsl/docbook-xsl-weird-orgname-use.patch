@@ -1,0 +1,56 @@
+diff -urNp docbook-xsl-1.74.0-orig/common/common.xsl docbook-xsl-1.74.0/common/common.xsl
+--- docbook-xsl-1.74.0-orig/common/common.xsl	2008-06-01 23:37:07.000000000 +0200
++++ docbook-xsl-1.74.0/common/common.xsl	2008-12-12 11:02:23.000000000 +0100
+@@ -574,7 +574,7 @@ Defaults to the context node.</para>
+     <xsl:apply-templates select="$node//othername[1]"/>
+   </xsl:if>
+ 
+-  <xsl:if test="$node//orgname">
++  <xsl:if test="$node//orgname and $weird.use.of.orgname != 0">
+     <xsl:if test="$node//honorific or $node//firstname
+                   or ($node//othername and $author.othername.in.middle != 0)">
+       <xsl:text> </xsl:text>
+diff -urNp docbook-xsl-1.74.0-orig/fo/param.xsl docbook-xsl-1.74.0/fo/param.xsl
+--- docbook-xsl-1.74.0-orig/fo/param.xsl	2008-12-12 11:00:17.000000000 +0100
++++ docbook-xsl-1.74.0/fo/param.xsl	2008-12-12 11:08:16.000000000 +0100
+@@ -881,6 +881,7 @@ set       toc,title
+   <xsl:attribute name="linefeed-treatment">preserve</xsl:attribute>
+   <xsl:attribute name="text-align">start</xsl:attribute>
+ </xsl:attribute-set>
++<xsl:param name="weird.use.of.orgname" select="0"/>
+ <xsl:param name="xep.extensions" select="0"/>
+ <xsl:attribute-set name="xep.index.item.properties" use-attribute-sets="index.page.number.properties">
+   <xsl:attribute name="merge-subsequent-page-numbers">true</xsl:attribute>
+diff -urNp docbook-xsl-1.74.0-orig/html/param.xsl docbook-xsl-1.74.0/html/param.xsl
+--- docbook-xsl-1.74.0-orig/html/param.xsl	2008-12-12 11:00:17.000000000 +0100
++++ docbook-xsl-1.74.0/html/param.xsl	2008-12-12 11:07:50.000000000 +0100
+@@ -404,6 +404,7 @@ set       toc,title
+ <xsl:param name="variablelist.as.table" select="0"/>
+ <xsl:param name="variablelist.term.separator">, </xsl:param>
+ <xsl:param name="variablelist.term.break.after">0</xsl:param>
++<xsl:param name="weird.use.of.orgname" select="0"/>
+ <xsl:param name="xref.with.number.and.title" select="1"/>
+ <xsl:param name="xref.label-title.separator">: </xsl:param>
+ <xsl:param name="xref.label-page.separator"><xsl:text> </xsl:text></xsl:param>
+diff -urNp docbook-xsl-1.74.0-orig/xhtml/param.xsl docbook-xsl-1.74.0/xhtml/param.xsl
+--- docbook-xsl-1.74.0-orig/xhtml/param.xsl	2008-06-02 01:06:32.000000000 +0200
++++ docbook-xsl-1.74.0/xhtml/param.xsl	2008-12-12 11:08:41.000000000 +0100
+@@ -405,6 +405,7 @@ set       toc,title
+ <xsl:param name="variablelist.as.table" select="0"/>
+ <xsl:param name="variablelist.term.separator">, </xsl:param>
+ <xsl:param name="variablelist.term.break.after">0</xsl:param>
++<xsl:param name="weird.use.of.orgname" select="0"/>
+ <xsl:param name="xref.with.number.and.title" select="1"/>
+ <xsl:param name="xref.label-title.separator">: </xsl:param>
+ <xsl:param name="xref.label-page.separator"><xsl:text> </xsl:text></xsl:param>
+diff -urNp docbook-xsl-1.74.0-orig/xhtml-1_1/param.xsl docbook-xsl-1.74.0/xhtml-1_1/param.xsl
+--- docbook-xsl-1.74.0-orig/xhtml-1_1/param.xsl	2008-06-02 01:06:41.000000000 +0200
++++ docbook-xsl-1.74.0/xhtml-1_1/param.xsl	2008-12-12 11:09:25.000000000 +0100
+@@ -405,6 +405,7 @@ set       toc,title
+ <xsl:param name="variablelist.as.table" select="0"/>
+ <xsl:param name="variablelist.term.separator">, </xsl:param>
+ <xsl:param name="variablelist.term.break.after">0</xsl:param>
++<xsl:param name="weird.use.of.orgname" select="0"/>
+ <xsl:param name="xref.with.number.and.title" select="1"/>
+ <xsl:param name="xref.label-title.separator">: </xsl:param>
+ <xsl:param name="xref.label-page.separator"><xsl:text> </xsl:text></xsl:param>

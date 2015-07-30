@@ -1,0 +1,12 @@
+diff -Nur audit-2.4.2/audisp/plugins/Makefile.am audit-2.4.2n/audisp/plugins/Makefile.am
+--- audit-2.4.2/audisp/plugins/Makefile.am	2015-04-28 20:03:05.000000000 +0000
++++ audit-2.4.2n/audisp/plugins/Makefile.am	2015-06-30 11:18:18.273733912 +0000
+@@ -22,7 +22,7 @@
+ 
+ CONFIG_CLEAN_FILES = *.loT *.rej *.orig
+ 
+-SUBDIRS = builtins zos-remote remote
++SUBDIRS = builtins remote
+ #SUBDIRS = builtins zos-remote
+ if HAVE_PRELUDE
+ SUBDIRS += prelude
