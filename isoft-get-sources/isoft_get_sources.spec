@@ -1,6 +1,6 @@
 Name:	isoft-get-sources
 Version:	1.1
-Release:	1
+Release:	2
 Summary:	isoft get source from scms
 Group:	isoft-tools
 License:	GPLv3
@@ -10,7 +10,6 @@ BuildArch: noarch
 
 %description
 isoft get soure from scms
-
 
 %prep
 %setup -q
@@ -26,11 +25,13 @@ make install DEST=%{buildroot}
 
 %files
 %defattr(-,root,root)
-#%{_bindir}/%{name}
 %{_bindir}/isoft_get_sources
 
 
 %changelog
+* Wed Jul 30 2015 sulit <sulitsrc@163.com> - 1.1-2
+- just for test.
+
 * Wed Jul 29 2015 sulit <sulitsrc@163.com> - 1.1
 - update to 1.1
 
