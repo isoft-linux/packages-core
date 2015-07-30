@@ -1,7 +1,7 @@
 Name:	isoft-get-sources
-Version:	1.0
+Version:	1.1
 Release:	1
-Summary: 	isoft get source from scms
+Summary:	isoft get source from scms
 Group:	isoft-tools
 License:	GPLv3
 URL:		http://git.isoft.zhcn.cc/wangguofeng/%{name}
@@ -31,5 +31,8 @@ make install DEST=%{buildroot}
 
 
 %changelog
+* Wed Jul 29 2015 sulit <sulitsrc@163.com> - 1.1
+- update to 1.1
+
 * Wed Jul 29 2015 sulit <sulitsrc@163.com> - 1.0
 - init isoft-get-sources
