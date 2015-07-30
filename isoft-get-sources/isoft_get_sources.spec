@@ -6,7 +6,7 @@ Group:	isoft-tools
 License:	GPLv3
 URL:		http://git.isoft.zhcn.cc/wangguofeng/%{name}
 Source0:	http://git.isoft.zhcn.cc/wangguofeng/%{name}-%{version}.tar.gz
-
+BuildArch: noarch
 
 %description
 isoft get soure from scms
