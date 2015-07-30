@@ -5,7 +5,7 @@ Summary:	isoft get source from scms
 Group:	isoft-tools
 License:	GPLv3
 URL:		http://git.isoft.zhcn.cc/wangguofeng/%{name}
-Source0:	http://git.isoft.zhcn.cc/wangguofeng/%{name}-%{version}-%{release}.tar.gz
+Source0:	http://git.isoft.zhcn.cc/wangguofeng/%{name}-%{version}.tar.gz
 
 
 %description
