@@ -1,7 +1,7 @@
 Summary: The compression and decompression library
 Name: zlib
 Version: 1.2.8
-Release: 1
+Release: 2
 License: zlib and Boost
 Group:   Core/Runtime/Library
 URL:    http://www.zlib.net/
