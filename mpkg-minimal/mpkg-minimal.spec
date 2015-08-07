@@ -6,7 +6,7 @@ Summary:        Script to allow mpkg fetch to work
 Group:          Applications/System
 License:        GPLv2+
 URL:            http://git.isoft.zhcn.cc/version-4/%{name}
-Source0:	http://pkgs.isoft.zhcn.cc/repo/pkgs/%{name}/%{name}-%{version}.tar.gz/36a583874d4c30f44e0b82761475c23d/%{name}-%{version}.tar.gz
+Source0:	http://pkgs.isoft.zhcn.cc/repo/pkgs/%{name}/%{name}-%{version}.tar.gz/eadb68b02eb91f2447063e84645e5e41/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -25,7 +25,7 @@ Script for use in Koji to allow sources to be fetched
 %build
 
 %install
-make install PREFIX=%{_prefix}
+make PREFIX=%{buildroot}%{_prefix} install
 
 %files
 %doc README.md LICENSE
