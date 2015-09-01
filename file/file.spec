@@ -3,7 +3,7 @@
 Summary: A utility for determining file types
 Name: file
 Version: 5.23
-Release: 15
+Release: 16%{?dist}
 License: BSD
 Group:  Core/Runtime/Utility 
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
