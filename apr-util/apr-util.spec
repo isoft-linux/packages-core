@@ -10,7 +10,7 @@ Group: CoreDev/Runtime/Library
 URL: http://apr.apache.org/
 Source0: http://www.apache.org/dist/apr/%{name}-%{version}.tar.bz2
 BuildRequires: autoconf, apr-devel >= 1.3.0
-BuildRequires: libdb-devel, expat-devel, libuuid-devel
+BuildRequires: libdb-devel, expat-devel, libuuid-devel, sqlite-devel
 
 %description
 The mission of the Apache Portable Runtime (APR) is to provide a
