@@ -1,14 +1,13 @@
 %define debug_package %{nil}
 Summary: A portable x86 assembler which uses Intel-like syntax.
 Name:   nasm
-Version: 2.11.05
+Version: 2.11.08
 Release: 1
 License: LGPL
 Group:  CoreDev/Development/Language
-Source: http://www.nasm.us/pub/nasm/releasebuilds/2.11.05/nasm-%{version}.tar.bz2
+Source: http://www.nasm.us/pub/nasm/releasebuilds/2.11.05/nasm-%{version}.tar.xz
 URL: http://www.nasm.us
 BuildRequires: perl
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %package rdoff
 Summary: Tools for the RDOFF binary format, sometimes used with NASM.
@@ -67,3 +66,6 @@ rm -rf "$RPM_BUILD_ROOT"
 %{_bindir}/rdflib
 %{_bindir}/rdx
 
+%changelog
+* Thu Jul 30 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.11.08

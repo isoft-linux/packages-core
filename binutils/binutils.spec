@@ -1,16 +1,25 @@
 %define ld_bfd_priority 50
 %define ld_gold_priority 30
 
-Name:		binutils	
-Version:	2.25
-Release:    2	
-Summary:    A GNU collection of binary utilities	
+Name: binutils	
+Version: 2.25.1
+Release: 4 
+Summary: A GNU collection of binary utilities	
 
-Group:	    Core/Development/Utility	
-License:	MIT
-Source0:	%{name}-%{version}.tar.bz2
+License: MIT
+Source0: ftp://ftp.gnu.org/gnu/binutils/%{name}-%{version}.tar.bz2
 
-Patch0:     binutils-e9c1bdad.patch 
+#fix for gold exception_static_test/ifunc test failed 
+#https://sourceware.org/bugzilla/show_bug.cgi?id=14675
+#https://sourceware.org/bugzilla/show_bug.cgi?id=18521
+Patch0: gold-test-failure-fix1.patch  
+Patch1: gold-test-failure-fix2.patch  
+Patch2: gold-test-failure-fix3.patch  
+Patch3: gold-test-failure-fix4.patch  
+
+#fix bfd.h header
+Patch4: binutils-2.22.52.0.4-no-config-h-check.patch
+
 Requires(post): coreutils
 Requires(post): %{_sbindir}/alternatives
 Requires(preun): %{_sbindir}/alternatives
@@ -33,7 +42,6 @@ converting addresses to file and line).
 
 %package devel
 Summary: BFD and opcodes static and dynamic libraries and header files
-Group:   Core/Development/Library
 
 %description devel
 This package contains BFD and opcodes static and dynamic libraries.
@@ -52,38 +60,48 @@ using libelf instead of BFD.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+
 %build
-mkdir -p build
-pushd build
-../configure --prefix=/usr \
-	--disable-werror \
-	--enable-shared \
+mkdir -p %{_target_platform}
+pushd %{_target_platform}
+../configure \
+    --target=%{_target_platform} \
+    --host=%{_target_platform} \
+    --build=%{_target_platform} \
+    --prefix=%{_prefix} \
+    --libdir=%{_libdir} \
+    --disable-werror \
+    --enable-shared \
     --enable-ld \
     --enable-gold \
     --enable-plugins \
-	--disable-multilib \
+    --disable-multilib \
     --enable-threads \
     --with-pic \
-    --disable-gdb \
-	--target=x86_64-pure64-linux \
-	--host=x86_64-pure64-linux \
-	--build=x86_64-pure64-linux
+    --disable-gdb
 
 make %{?_smp_mflags} MAKEINFO=true
 popd
 
 %install
-pushd build
+pushd %{_target_platform}
 make install DESTDIR=%{buildroot} MAKEINFO=true
 popd
 
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 %check
-pushd build
-#gold exception_static_test will failed
-#http://lists.gnu.org/archive/html//bug-binutils/2014-09/msg00025.html
-make check MAKEINFO=true ||:
+pushd %{_target_platform} 
+#this is all checkes.
+make check-binutils
+make check-gas
+make check-ld
+make check-gold
 popd
 
 %post
@@ -109,8 +127,8 @@ exit 0
 %{_libdir}/libbfd-*.so
 %{_datadir}/locale/*/LC_MESSAGES/*
 %{_mandir}/man1/*
-%dir /usr/x86_64-pure64-linux
-/usr/x86_64-pure64-linux/*
+%dir %{_prefix}/x86_64-isoft-linux
+%{_prefix}/x86_64-isoft-linux/*
 
 %files devel
 %{_includedir}/*.h
@@ -118,3 +136,14 @@ exit 0
 %{_libdir}/libbfd.so
 %{_libdir}/libopcodes.a
 %{_libdir}/libopcodes.so
+
+%changelog
+* Fri Sep 18 2015 Cjacker <cjacker@foxmail.com>
+- refine build options.
+
+* Sun Aug 09 2015 Cjacker <cjacker@foxmail.com>
+- add patch4, remove config.h check from bfd.h
+
+* Wed Jul 29 2015 Cjacker <cjacker@foxmail.com>
+- add patch 0 to 3 to fix gold testfailed issues.
+- now all checks should passed. 

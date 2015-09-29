@@ -1,11 +1,11 @@
 Name: docbook-style-xsl
-Version: 1.74.0
-Release: 4
-Group:   CoreDev/Development/Utility/Documentation
+Version: 1.78.1
+Release: 4%{?dist}
+Group: Applications/Text
 
 Summary: Norman Walsh's XSL stylesheets for DocBook XML
 
-License: Freely redistributable without restriction
+License: DMIT
 URL: http://docbook.sourceforge.net/projects/xsl/
 
 Provides: docbook-xsl = %{version}
@@ -21,16 +21,22 @@ Conflicts: passivetex < 1.21
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildArch: noarch
-Source0: http://downloads.sourceforge.net/docbook/docbook-xsl-%{version}.tar.gz
+Source0: http://downloads.sourceforge.net/docbook/docbook-xsl-%{version}.tar.bz2
 Source1: %{name}.Makefile
 Source2: http://downloads.sourceforge.net/docbook/docbook-xsl-doc-%{version}.tar.bz2
 
+#Avoid proportional-column-width for passivetex (bug #176766).
 Patch1: docbook-xsl-pagesetup.patch
+#Hard-code the margin-left work around to expect passivetex (bug #113456).
 Patch2: docbook-xsl-marginleft.patch
+#fix of #161619 - adjustColumnWidths now available
 Patch3: docbook-xsl-newmethods.patch
+#change a few non-constant expressions to constant - needed for passivetex(#366441)
 Patch4: docbook-xsl-non-constant-expressions.patch
+#added fixes for passivetex extension and list-item-body(#161371)
 Patch5: docbook-xsl-list-item-body.patch
-Patch6: docbook-xsl-weird-orgname-use.patch
+#workaround missing mandir section problem (#727251)
+Patch6: docbook-xsl-mandir.patch
 
 
 %description
@@ -48,9 +54,17 @@ popd
 %patch3 -p1 -b .newmethods
 %patch4 -p1 -b .nonconstant
 %patch5 -p1 -b .listitembody
-%patch6 -p1 -b .orgname
+%patch6 -p1 -b .mandir
 
 cp -p %{SOURCE1} Makefile
+
+# fix of non UTF-8 files rpmlint warnings
+for fhtml in $(find ./doc -name '*.html' -type f)
+do
+  iconv -f ISO-8859-1 -t UTF-8 "$fhtml" -o "$fhtml".tmp
+  mv -f "$fhtml".tmp "$fhtml"
+  sed -i 's/charset=ISO-8859-1/charset=UTF-8/' "$fhtml"
+done
 
 for f in $(find -name "*'*")
 do
@@ -65,6 +79,7 @@ done
 DESTDIR=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
 make install BINDIR=$DESTDIR%{_bindir} DESTDIR=$DESTDIR%{_datadir}/sgml/docbook/xsl-stylesheets-%{version}
+cp -a VERSION.xsl $DESTDIR%{_datadir}/sgml/docbook/xsl-stylesheets-%{version}/VERSION.xsl
 ln -s xsl-stylesheets-%{version} \
 	$DESTDIR%{_datadir}/sgml/docbook/xsl-stylesheets
 
@@ -111,6 +126,3 @@ if [ "$1" = 0 ]; then
 fi
 
 %changelog
-* Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
-- first build, prepare for the new release.
-

@@ -4,7 +4,7 @@
 Summary:   Xorg X11 ati video driver
 Name:      xorg-x11-drv-ati
 Version:   7.6.0
-Release:   1.git
+Release:   2.git
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -59,5 +59,7 @@ rm -rf $RPM_BUILD_ROOT%{moduledir}/multimedia/
 %{_mandir}/man4/radeon.4*
 
 %changelog
+* Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
+- update to 3791fce
 * Tue Jul 15 2015 Cjacker <cjacker@foxmail.com>
 - update to lastest git codes.

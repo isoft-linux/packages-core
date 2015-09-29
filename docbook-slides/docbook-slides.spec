@@ -2,21 +2,24 @@
 Summary: DocBook Slides document type and stylesheets
 Name: docbook-slides
 Version: 3.4.0
-Release: 4
-License: BSD
-Group:   CoreDev/Development/Utility/Documentation
+Release: 16%{?dist}
+License: MIT
+Group: Applications/Text
 URL: http://sourceforge.net/projects/docbook
-#in upstream tarball is NOT included tests subdir, but you can download
-#it separately as docbook-slides-demo there if you wish to have it
 Source0: http://downloads.sourceforge.net/docbook/%{name}-%{version}.tar.gz
 Source1: %{name}.xml
 Source2: %{name}.cat
+Source3: %{name}.README.redhat
+#tests update and buildtools could be downloaded at upstream svn ... e.g.
+#http://docbook.svn.sourceforge.net/viewvc/docbook/trunk/slides/tests/
+Source4: %{name}-tests.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 Requires: docbook-dtds
 Requires: docbook-xsl
 Requires: docbook-simple
 Requires: sgml-common
+Requires(post): sed
 Requires(post): libxml2 >= 2.4.8
 Requires(postun): libxml2 >= 2.4.8
 
@@ -30,6 +33,7 @@ and stylesheets are for generating presentations, primarily in HTML.
 
 %prep
 %setup -q -n %{pkg}-%{version}
+tar xf %{SOURCE4}
 
 %build
 
@@ -55,6 +59,8 @@ SGML_CAT_DIR=$RPM_BUILD_ROOT%{_sysconfdir}/sgml
 mkdir -p $SGML_CAT_DIR
 install -p -m 644 %{SOURCE2} $SGML_CAT_DIR
 
+cp -p %{SOURCE3} ./README2
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -64,6 +70,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc tests
 %doc README
 %doc NEWS
+%doc README2
 %dir %{_datadir}/xml/docbook/slides/
 %{_datadir}/xml/docbook/slides/%{version}
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sgml/docbook-slides.cat
@@ -121,7 +128,7 @@ then
 
 # Hack to workaround bug in install-catalog
   sed -i '/^CATALOG.*log\"$/d' $PKG_SGML_CATALOG
-  sed -i '/^CATALOG.*log$/d' $PKG_SGML_CATALOG   
+  sed -i '/^CATALOG.*log$/d' $PKG_SGML_CATALOG
 fi
 
 ####################################################################
@@ -141,14 +148,11 @@ fi
 if [ "$1" = 0 ]; then
   %{_bindir}/xmlcatalog --sgml --noout --del \
     %{_sysconfdir}/sgml/catalog \
-    "%{_sysconfdir}/sgml/docbook-slides.cat" 
-  
+    "%{_sysconfdir}/sgml/docbook-slides.cat"
+
   %{_bindir}/xmlcatalog --noout --del \
     "file://%{_sysconfdir}/xml/docbook-slides.xml" \
-    %{_sysconfdir}/xml/catalog 
+    %{_sysconfdir}/xml/catalog
 fi
 
 %changelog
-* Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
-- first build, prepare for the new release.
-

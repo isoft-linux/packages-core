@@ -1,27 +1,65 @@
-%define rpmver 4.12.0.1
+%define rpmver 4.13.0
 %define bdbver  6.1.23
 
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
 Release: 1
-Group:  Core/Runtime/Utility 
 Url: http://www.rpm.org/
 License: GPLv2+
-Source0: http://rpm.org/releases/rpm-4.12.x/%{name}-%{version}.tar.bz2
+Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
 Source1: http://download.oracle.com/berkeley-db/db-%{bdbver}.tar.gz
 
 #A script for strip debug infos
 Source20: rpmclean
 
-Patch300: rpm-default-patch-fuzz-tune.patch
-Patch305: rpm-enable-unpackaged-file.patch
-Patch308: rpm-enable-xz-payload.patch
-Patch309: rpm-never-lib64.patch
-Patch310: rpm-remove-la.patch
-Patch500: rpm-macro-add-python3.patch
+#isoft rpmrc and macros
+Source30: rpmrc.isoft
+Source31: macros.isoft
 
-Patch600: rpm-lua-5.3.patch
+
+# Disable autoconf config.site processing (#962837)
+Patch1: rpm-4.11.x-siteconfig.patch
+# man-pages pkg owns all the localized man directories
+Patch3: rpm-4.9.90-no-man-dirs.patch
+# Temporary band-aid for rpm2cpio whining on payload size mismatch (#1142949)
+Patch5: rpm-4.12.0-rpm2cpio-hack.patch
+
+# Patches already upstream:
+Patch100: rpm-4.12.90-braces-expansion.patch
+Patch101: rpm-4.12.90-Fix-compressed-patches.patch
+Patch102: rpm-4.12.90-fix-macro-warning.patch
+Patch103: rpm-4.12.90-modify-rpmisglob.patch
+Patch104: rpm-4.12.90-try-unglobbed.patch
+Patch105: rpm-4.12.90-show-filetriggers.patch
+
+# These are not yet upstream
+Patch302: rpm-4.7.1-geode-i686.patch
+# Probably to be upstreamed in slightly different form
+Patch304: rpm-4.9.1.1-ld-flags.patch
+# Compressed debuginfo support (#833311)
+Patch305: rpm-4.10.0-dwz-debuginfo.patch
+# Minidebuginfo support (#834073)
+Patch306: rpm-4.10.0-minidebuginfo.patch
+# Fix CRC32 after dwz (#971119)
+Patch307: rpm-4.11.1-sepdebugcrcfix.patch
+# Fix race condidition where unchecked data is exposed in the file system
+Patch308: rpm-4.12.0.x-CVE-2013-6435.patch
+# Add check against malicious CPIO file name size
+Patch309: rpm-4.12.0.x-CVE-2014-8118.patch
+
+
+Patch1300: rpm-default-patch-fuzz-tune.patch
+Patch1305: rpm-enable-unpackaged-file.patch
+Patch1308: rpm-enable-xz-payload.patch
+Patch1309: rpm-never-lib64.patch
+Patch1310: rpm-remove-la.patch
+Patch1500: rpm-macro-add-python3.patch
+
+#iSOFT App isolation support
+Patch2000: 0001-isoftapp-skeleton.patch
+
+
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -32,6 +70,7 @@ Requires: librpm = %{version}-%{release}
 BuildRequires: zlib-devel
 BuildRequires: nss-devel
 BuildRequires: libcap-devel
+BuildRequires: binutils-devel
 
 # The popt version here just documents an older known-good version
 BuildRequires: popt-devel >= 1.10.2
@@ -48,6 +87,7 @@ BuildRequires: lua-devel
 BuildRequires: libarchive-devel
 #for rpm python module
 BuildRequires: python-devel
+BuildRequires: python3-devel
 
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
@@ -58,7 +98,6 @@ the package like its version, a description, etc.
 
 %package -n librpm
 Summary:  Libraries for manipulating RPM packages
-Group:  Core/Runtime/Library 
 License: GPLv2+ and LGPLv2+ with exceptions
 
 %description -n librpm
@@ -66,7 +105,6 @@ This package contains the RPM shared libraries.
 
 %package build
 Summary: Scripts and executable programs used to build packages
-Group:  Core/Development/Utility 
 Requires: rpm = %{version}-%{release}
 Requires: elfutils binutils
 Requires: findutils sed grep gawk diffutils file patch
@@ -80,7 +118,6 @@ that are used to build packages using the RPM Package Manager.
 
 %package -n librpm-devel
 Summary:  Development files for manipulating RPM packages
-Group: Core/Development/Library
 License: GPLv2+ and LGPLv2+ with exceptions
 Requires: librpm = %{version}-%{release}
 Requires: popt-devel
@@ -98,7 +135,6 @@ will manipulate RPM packages and databases.
 
 %package -n python-rpm
 Summary: Python bindings for apps which will manipulate RPM packages
-Group:  Core/Runtime/Library
 Requires: librpm = %{version}-%{release}
 
 %description -n python-rpm
@@ -109,39 +145,90 @@ supplied by RPM Package Manager libraries.
 This package should be installed if you want to develop Python
 programs that will manipulate RPM packages and databases.
 
+
+
+%package -n python3-rpm
+Summary: Python 3 bindings for apps which will manipulate RPM packages
+Requires: librpm = %{version}-%{release}
+
+%description -n python3-rpm
+The rpm-python3 package contains a module that permits applications
+written in the Python programming language to use the interface
+supplied by RPM Package Manager libraries.
+
+This package should be installed if you want to develop Python 3
+programs that will manipulate RPM packages and databases.
+
 %prep
-%setup -q -n %{name}-%{version} -a 1
-%patch300 -p1
-%patch305 -p1 -b .unpackaged
+%setup -q -n %{name}-%{version}-rc1 -a 1
+%patch1 -p1
+%patch3 -p1
+%patch5 -p1
+
+%patch302 -p1
+%patch304 -p1
+%patch305 -p1
+%patch306 -p1
+%patch307 -p1
 %patch308 -p1
 %patch309 -p1
-%patch310 -p1
-%patch500 -p1
-%patch600 -p1
+
+
+%patch1300 -p1
+%patch1305 -p1
+%patch1308 -p1
+%patch1309 -p1
+%patch1310 -p1
+%patch1500 -p1
+
+%patch2000 -p1
 
 ln -s db-%{bdbver} db
 
 %build
-CPPFLAGS="$CPPFLAGS -I/usr/include/nss3 -I/usr/include/nspr4"
-CFLAGS="$RPM_OPT_FLAGS"
+CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss` -DLUA_COMPAT_APIINTCASTS"
+CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags} -DLUA_COMPAT_APIINTCASTS"
 export CPPFLAGS CFLAGS LDFLAGS
+#autoreconf -i
 %configure \
     --with-archive \
     --with-lua \
     --with-cap \
     --enable-plugins \
     --enable-python \
-    --with-vendor=pure64
+    --with-vendor=isoft
 
 make %{?_smp_mflags}
+
+pushd python
+%{__python} setup.py build
+%{__python3} setup.py build
+popd
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make DESTDIR="$RPM_BUILD_ROOT" install
 
+# We need to build with --enable-python for the self-test suite, but we
+# actually package the bindings built with setup.py (#531543#c26)
+rm -rf $RPM_BUILD_ROOT/%{python_sitearch}
+pushd python
+%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+%{__python3} setup.py install --skip-build --root $RPM_BUILD_ROOT
+popd
+
+
+#isoft rpmrc/macros
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/rpm/isoft
+install -m 0644 %{SOURCE30} $RPM_BUILD_ROOT%{_libdir}/rpm/isoft/rpmrc
+install -m 0644 %{SOURCE31} $RPM_BUILD_ROOT%{_libdir}/rpm/isoft/macros
+
+
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 
 mkdir -p $RPM_BUILD_ROOT/var/lib/rpm
+mkdir -p $RPM_BUILD_ROOT/var/lib/isoft-app
 for dbi in \
     Basenames Conflictname Dirnames Group Installtid Name Obsoletename \
     Packages Providename Requirename Triggername Sha1header Sigmd5 \
@@ -149,6 +236,7 @@ for dbi in \
     __db.008 __db.009
 do
     touch $RPM_BUILD_ROOT/var/lib/rpm/$dbi
+    touch $RPM_BUILD_ROOT/var/lib/isoft-app/$dbi
 done
 
 
@@ -156,12 +244,15 @@ install -m 0755 %{SOURCE20} $RPM_BUILD_ROOT/%{_bindir}/rpmclean
 
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d
 echo "r /var/lib/rpm/__db.*" > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/rpm.conf
+echo "r /var/lib/isoft-app/__db.*" > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/isoft-app.conf
 
 
 #do not import so many perl deps.
-chmod 0644 $RPM_BUILD_ROOT%{_libdir}/rpm/perldeps.pl
+#chmod 0644 $RPM_BUILD_ROOT%{_libdir}/rpm/perldeps.pl
 
 rm -rf   $RPM_BUILD_ROOT%{_mandir}/{fr,ja,ko,pl,ru,sk}
+
+rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %find_lang %{name}
 
@@ -175,9 +266,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %{_sysconfdir}/tmpfiles.d/rpm.conf
+%{_sysconfdir}/tmpfiles.d/isoft-app.conf
 %dir %{_sysconfdir}/rpm
 %attr(0755, root, root) %dir /var/lib/rpm
 %attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
+%attr(0755, root, root) %dir /var/lib/isoft-app
+%attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/isoft-app/*
 
 /bin/rpm
 %{_bindir}/rpm2cpio
@@ -207,6 +301,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/rpm/tgpg
 %{_libdir}/rpm/platform
 
+%{_libdir}/rpm/isoft/rpmrc
+%{_libdir}/rpm/isoft/macros
+
 %files build
 %{_bindir}/rpmbuild
 %{_bindir}/gendiff
@@ -220,6 +317,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/rpm/brp-*
 %{_libdir}/rpm/check-*
 %{_libdir}/rpm/debugedit
+%{_libdir}/rpm/sepdebugcrcfix
 %{_libdir}/rpm/find-debuginfo.sh
 %{_libdir}/rpm/find-lang.sh
 %{_libdir}/rpm/*provides*
@@ -249,4 +347,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n python-rpm
 %{python_sitearch}/rpm
+%{python_sitearch}/rpm_python-*.egg-info
+
+%files -n python3-rpm
+%defattr(-,root,root)
+%{python3_sitearch}/rpm
+%{python3_sitearch}/rpm_python-*.egg-info
+
+
+%changelog
+* Thu Sep 24 2015 LeslieZhai <xiang.zhai@i-soft.com.cn>
+- add patch2000, support isoft-app seperately app db.
 

@@ -2,13 +2,12 @@
 %global snapshot_build 0 
 
 %define realname sqlite-autoconf
-%define realver 3081002 
+%define realver 3081101
 Summary: Library that implements an embeddable SQL database engine
 Name: sqlite
-Version: 3.8.7
-Release: 1.snapshot
+Version: 3.8.11.1
+Release: 2 
 License: Public Domain
-Group:  Core/Runtime/Library	
 URL: http://www.sqlite.org/
 
 %if %snapshot_build
@@ -43,7 +42,6 @@ are named to permit each to be installed on a single host
 
 %package devel
 Summary: Development tools for the sqlite3 embeddable SQL database engine.
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -60,7 +58,7 @@ you will need to install %{name}-devel.
 
 %build
 export LTLINK_EXTRAS="-ldl"
-export CFLAGS+="$CFLAGS -DSQLITE_ENABLE_FTS3=1 -DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_SECURE_DELETE -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_ENABLE_RTREE=1 -DSQLITE_USE_URI -Iext/fts3"
+export CFLAGS+="$CFLAGS -DSQLITE_ENABLE_FTS3=1 -DSQLITE_ENABLE_COLUMN_METADATA=1 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_SECURE_DELETE -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_ENABLE_RTREE=1 -DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_USE_URI -Iext/fts3"
 %configure \
         --enable-threadsafe \
         --disable-static \
@@ -112,3 +110,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Sep 25 2015 Cjacker <cjacker@foxmail.com>
+- rebuild with SQLITE_ENABLE_DBSTAT_VTAB, firefox >= 41.0 need it. 

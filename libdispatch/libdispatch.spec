@@ -9,6 +9,7 @@ Source0:    https://github.com/mheily/opengcd/archive/REL_0_2.tar.gz
 
 BuildRequires: libBlocksRuntime-devel
 BuildRequires: libkqueue-devel
+BuildRequires: libpthread_workqueue-devel
 
 %description
 The libdispatch project consists of the user space implementation of the Grand Central Dispatch API as seen in Mac OS X version 10.6 (Snow Leopard).
@@ -29,7 +30,7 @@ you will need to install %{name}-devel.
 %build
 pushd libdispatch-197
 export CC=clang
-export CXX="clang++ -stdlib=libc++"
+export CXX="clang++ -stdlib=libc++ -lc++abi"
 autoreconf -ivf
 %configure
 make %{?_smp_mflags}

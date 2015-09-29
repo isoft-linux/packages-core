@@ -53,7 +53,7 @@ syn match specURLMacro contained '\<\(\(https\{0,1}\|ftp\)://\|\(www[23]\{0,1}\.
 syn match specListedFilesPrefix contained '/\(usr\|local\|opt\|X11R6\|X11\)/'me=e-1
 syn match specListedFilesBin    contained '/s\=bin/'me=e-1
 syn match specListedFilesLib    contained '/\(lib\|include\)/'me=e-1
-syn match specListedFilesDoc    contained '/\(man\d*\|doc\|info\)\>'
+syn match specListedFilesDoc    contained '/\(man\d*\|doc\|license\|info\)\>'
 syn match specListedFilesEtc    contained '/etc/'me=e-1
 syn match specListedFilesShare  contained '/share/'me=e-1
 syn cluster specListedFiles contains=specListedFilesBin,specListedFilesLib,specListedFilesDoc,specListedFilesEtc,specListedFilesShare,specListedFilesPrefix,specVariables,specSpecialChar
@@ -88,9 +88,9 @@ syn region specSectionMacroBracketArea oneline matchgroup=specSectionMacro start
 "%% Files Section %%
 "TODO %config valid parameters: missingok\|noreplace
 "TODO %verify valid parameters: \(not\)\= \(md5\|atime\|...\)
-syn region specFilesArea matchgroup=specSection start='^%[Ff][Ii][Ll][Ee][Ss]\>' skip='%\(attrib\|defattr\|attr\|dir\|config\|docdir\|doc\|lang\|verify\|ghost\)\>' end='^%[a-zA-Z]'me=e-2 contains=specFilesOpts,specFilesDirective,@specListedFiles,specComment,specCommandSpecial,specMacroIdentifier
+syn region specFilesArea matchgroup=specSection start='^%[Ff][Ii][Ll][Ee][Ss]\>' skip='%\(attrib\|defattr\|attr\|dir\|config\|docdir\|doc\|license\|exclude\|lang\|verify\|ghost\)\>' end='^%[a-zA-Z]'me=e-2 contains=specFilesOpts,specFilesDirective,@specListedFiles,specComment,specCommandSpecial,specMacroIdentifier
 "tip: remember to include new itens in specFilesArea above
-syn match  specFilesDirective contained '%\(attrib\|defattr\|attr\|dir\|config\|docdir\|doc\|lang\|verify\|ghost\)\>'
+syn match  specFilesDirective contained '%\(attrib\|defattr\|attr\|dir\|config\|docdir\|doc\|license\|exclude\|lang\|verify\|ghost\)\>'
 
 "valid options for certain section headers
 syn match specDescriptionOpts contained '\s-[ln]\s*\a'ms=s+1,me=e-1

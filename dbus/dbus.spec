@@ -16,11 +16,10 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.9.16
+Version: 1.9.20
 Release: 2%{?dist}
 Summary: D-BUS message bus
 
-Group:   System Environment/Libraries
 # The effective license of the majority of the package, including the shared
 # library, is "GPL-2+ or AFL-2.1". Certain utilities are "GPL-2+" only.
 License: (GPLv2+ or AFL) and GPLv2+
@@ -67,14 +66,12 @@ per-user-login-session messaging facility.
 
 %package libs
 Summary: Libraries for accessing D-BUS
-Group: Development/Libraries
 
 %description libs
 This package contains lowlevel libraries for accessing D-BUS.
 
 %package doc
 Summary: Developer documentation for D-BUS
-Group: Documentation
 Requires: %{name} = %{epoch}:%{version}-%{release}
 BuildArch: noarch
 
@@ -84,7 +81,6 @@ other supporting documentation such as the introspect dtd file.
 
 %package devel
 Summary: Development files for D-BUS
-Group: Development/Libraries
 # The server package can be a different architecture.
 Requires: %{name} = %{epoch}:%{version}-%{release}
 
@@ -94,7 +90,6 @@ developing software that uses D-BUS.
 
 %package tests
 Summary: Tests for the %{name} package
-Group: Development/Libraries
 Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description tests
@@ -103,7 +98,6 @@ the functionality of the installed %{name} package.
 
 %package x11
 Summary: X11-requiring add-ons for D-BUS
-Group: Development/Libraries
 # The server package can be a different architecture.
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: xorg-x11-xinit
@@ -139,6 +133,7 @@ popd
 
 
 %install
+rm -rf %{buildroot}
 pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p"
 popd
@@ -259,9 +254,8 @@ popd
 %exclude %{_pkgdocdir}/system-activation.txt
 %exclude %{_pkgdocdir}/*.html
 %dir %{_sysconfdir}/dbus-1
-%config %{_sysconfdir}/dbus-1/*.conf
-%dir %{_sysconfdir}/dbus-1/system.d
-%dir %{_sysconfdir}/dbus-1/session.d
+%config %{_sysconfdir}/dbus-1/session.conf
+%config %{_sysconfdir}/dbus-1/system.conf
 %ghost %dir /run/%{name}
 %dir %{_localstatedir}/lib/dbus/
 %{_bindir}/dbus-daemon
@@ -281,6 +275,8 @@ popd
 %{_mandir}/man1/dbus-update-activation-environment.1*
 %{_mandir}/man1/dbus-uuidgen.1*
 %dir %{_datadir}/dbus-1
+%{_datadir}/dbus-1/session.conf
+%{_datadir}/dbus-1/system.conf
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
 %{_datadir}/dbus-1/interfaces
@@ -328,3 +324,5 @@ popd
 
 
 %changelog
+* Sun Aug 23 2015 Cjacker <cjacker@foxmail.com>
+- update to 1.9.20

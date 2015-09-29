@@ -1,6 +1,6 @@
 Name: libgcrypt
 Version: 1.6.3
-Release: 1
+Release: 2 
 URL: http://www.gnupg.org/
 Source0: libgcrypt-%{version}.tar.bz2
 License: LGPLv2+

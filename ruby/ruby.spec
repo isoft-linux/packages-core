@@ -1,17 +1,11 @@
-%global patch_level 353
-
 Summary: An interpreter of object-oriented scripting language
 Name: ruby
-Version: 2.1.1
-Release: 2
-#.p%{patch_level}
-Group: CoreDev/Development/Language
+Version: 2.2.3
+Release: 3 
 License: (Ruby or BSD) and Public Domain
 URL: http://ruby-lang.org/
-Source0: ftp://ftp.ruby-lang.org/pub/%{name}/2.0/%{name}-%{version}.tar.gz
-#Source0: ftp://ftp.ruby-lang.org/pub/%{name}/2.0/%{name}-%{version}-p%{patch_level}.tar.gz
-Patch0:   ruby-test_exception-segfault.patch 
-Patch3:   ruby-with-libressl.patch
+Source0: ftp://ftp.ruby-lang.org/pub/%{name}/2.2/%{name}-%{version}.tar.gz
+
  
 BuildRequires: autoconf
 BuildRequires: ncurses-devel
@@ -20,6 +14,13 @@ BuildRequires: libffi-devel
 BuildRequires: openssl-devel
 BuildRequires: libyaml-devel
 BuildRequires: readline-devel
+BuildRequires: gmp-devel
+BuildRequires: tcl-devel tk-devel
+BuildRequires: gdbm-devel
+
+#avoid any chance link to system ruby library.
+BuildConflicts: ruby-devel
+
 Provides: /usr/bin/ruby
 
 %description
@@ -30,7 +31,6 @@ straight-forward, and extensible.
 
 %package devel
 Summary:    A Ruby development environment
-Group:      CoreDev/Development/Library
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
@@ -39,7 +39,6 @@ Ruby or an application embedding Ruby.
 
 %package doc
 Summary:    Documentation for %{name}
-Group:      CoreDev/Development/Document
 Requires:   %{name} = %{version}-%{release} 
 BuildArch:  noarch
 
@@ -48,18 +47,17 @@ This package contains documentation for %{name}.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1
-#%patch3 -p1
 
 %build
-export CFLAGS="$CFLAGS -fno-omit-frame-pointer -fno-strict-aliasing"
+export CFLAGS="$RPM_OPT_FLAGS -fno-omit-frame-pointer -fno-strict-aliasing"
 # the configure script does not detect isnan/isinf as macros
 export ac_cv_func_isnan=yes
 export ac_cv_func_isinf=yes
 
 %configure \
         --disable-rpath \
-        --enable-shared
+        --enable-shared \
+	--with-ruby-pc=ruby.pc
 
 make %{?_smp_mflags}
 
@@ -67,8 +65,6 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 make DESTDIR=%{buildroot} install-doc install-capi
-
-rpmclean
 
 %check
 #DISABLE_TESTS=""
@@ -111,5 +107,15 @@ rpmclean
 %{_datadir}/ri/*
 
 %changelog
+* Mon Sep 07 2015 Cjacker <cjacker@foxmail.com>
+- rename ruby-<version>.pc to ruby.pc
+
+* Fri Aug 21 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.2.3
+
+* Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.2.2
+- CVE-2015-1855
+
 * Fri Dec 20 2013 Cjacker <cjacker@gmail.com>
 - update to 2.0.0-353

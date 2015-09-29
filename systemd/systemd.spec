@@ -2,16 +2,16 @@
 #the package contains pkg-config files, but DO NOT let it depend on pkgconfig
 %global __requires_exclude pkg-config
 
-%global enable_terminal 0 
+%global enable_terminal 1 
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        221
+Version:        226
 Release:        1
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 Group:          Core/Runtime/Utility
-Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.xz
+Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
@@ -28,7 +28,8 @@ BuildRequires:  kmod-devel
 BuildRequires:  pkgconfig
 BuildRequires:  intltool
 BuildRequires:  gperf
-BuildRequires:  python-devel
+BuildRequires:  libcurl-devel
+BuildRequires:  audit-libs-devel
 
 %if %enable_terminal
 BuildRequires:  libxkbcommon-devel
@@ -42,7 +43,6 @@ Requires(pre):  coreutils
 Requires(pre):  /usr/bin/getent
 Requires(pre):  /usr/sbin/groupadd
 Requires:       dbus
-Requires:       nss-myhostname
 Requires:       %{name}-libs = %{version}-%{release}
 
 Provides:       /bin/systemctl
@@ -61,9 +61,6 @@ Conflicts:      systemd < 185-4
 # added F18, drop at F20
 Obsoletes:      system-setup-keyboard < 0.9
 Provides:       system-setup-keyboard = 0.9
-# nss-myhostname got integrated in F19, drop at F21
-Obsoletes:      nss-myhostname < 0.4
-Provides:       nss-myhostname = 0.4
 # systemd-analyze got merged in F19, drop at F21
 Obsoletes:      systemd-analyze < 198
 Provides:       systemd-analyze = 198
@@ -120,27 +117,27 @@ glib-based applications using libudev functionality.
 %setup -q
 
 %build
-autoreconf
+if [ ! -f "configure" ]; then ./autogen.sh; fi
 %configure \
         --libexecdir=%{_prefix}/lib \
+        --enable-compat-libs \
+        --enable-myhostname \
+        --enable-machined \
+        --enable-networkd \
+	--enable-manpages \
+        --enable-resolved \
+        --enable-libcurl \
         --disable-gtk-doc \
         --disable-static \
         --disable-qrencode \
-        --disable-manpages \
-        --enable-compat-libs \
         --disable-ima \
         --disable-kdbus \
         --disable-microhttpd \
-        --disable-myhostname \
-        --disable-machined \
-        --disable-resolved \
         --disable-libidn \
-        --disable-networkd \
         --disable-sysusers \
-        --disable-libcurl \
         --disable-selinux \
-        --disable-smack \
-        --disable-audit \
+        --enable-smack \
+        --enable-audit \
         --enable-polkit \
 %if %enable_terminal
         --enable-terminal \
@@ -148,11 +145,12 @@ autoreconf
         --disable-terminal \
 %endif
         --enable-tests \
+	--with-ntp-servers="asia.pool.ntp.org 0.asia.pool.ntp.org 1.asia.pool.ntp.org 2.asia.pool.ntp.org 3.asia.pool.ntp.org 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org" \
+	--with-certificate-root=/etc/pki/tls \
         --with-sysvinit-path=/etc/rc.d/init.d \
         --with-rc-local-script-path-start=/etc/rc.d/rc.local \
         --enable-introspection=no
         
-
 #-fno-lto to fix compile with gcc-4.9
 make CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
 
@@ -351,7 +349,7 @@ fi
 %post -n libgudev1 -p /sbin/ldconfig
 %postun -n libgudev1 -p /sbin/ldconfig
 
-%files 
+%files
 %doc %{_docdir}/systemd
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pam.d/systemd-user
 %dir %{_sysconfdir}/systemd
@@ -371,6 +369,8 @@ fi
 %config(noreplace) %{_sysconfdir}/systemd/bootchart.conf
 %config(noreplace) %{_sysconfdir}/systemd/timesyncd.conf
 %config(noreplace) %{_sysconfdir}/systemd/coredump.conf
+%config(noreplace) %{_sysconfdir}/systemd/journal-upload.conf
+%config(noreplace) %{_sysconfdir}/systemd/resolved.conf
 %config(noreplace) %{_sysconfdir}/udev/udev.conf
 
 %ghost %{_sysconfdir}/udev/hwdb.bin
@@ -408,6 +408,7 @@ fi
 %{_prefix}/lib/tmpfiles.d/etc.conf
 %{_prefix}/lib/tmpfiles.d/home.conf
 %{_prefix}/lib/tmpfiles.d/systemd-nspawn.conf
+%{_prefix}/lib/tmpfiles.d/journal-nocow.conf
 %{_datadir}/factory/etc/nsswitch.conf
 %{_datadir}/factory/etc/pam.d/other
 %{_datadir}/factory/etc/pam.d/system-auth
@@ -435,18 +436,30 @@ fi
 %{_datadir}/polkit-1/actions/org.freedesktop.login1.policy
 %{_datadir}/polkit-1/actions/org.freedesktop.locale1.policy
 %{_datadir}/polkit-1/actions/org.freedesktop.timedate1.policy
+%{_datadir}/polkit-1/actions/org.freedesktop.import1.policy
+%{_datadir}/polkit-1/actions/org.freedesktop.machine1.policy
 %{_datadir}/pkgconfig/systemd.pc
 %{_datadir}/pkgconfig/udev.pc
 %{_datadir}/bash-completion/completions/*
 %{_datadir}/zsh/site-functions/*
 %if %enable_terminal
-%{_datadir}/systemd/unifont-glyph-array.bin
+#%{_datadir}/systemd/unifont-glyph-array.bin
 %endif
 
 %{_libdir}/security/pam_systemd.so
 
+%{_mandir}/man1/*
+%{_mandir}/man5/*
+%{_mandir}/man7/*
+%{_mandir}/man8/*
+
+%{_datadir}/locale/*/LC_MESSAGES/systemd.mo
+
+
 %files libs
-#%{_libdir}/libnss_myhostname.so.2
+%{_libdir}/libnss_myhostname.so.2
+%{_libdir}/libnss_mymachines.so.2
+%{_libdir}/libnss_resolve.so.2
 %{_libdir}/libudev.so.*
 %{_libdir}/libsystemd.so.*
 %{_libdir}/libsystemd-*.so.*
@@ -459,10 +472,4 @@ fi
 %{_includedir}/systemd/*.h
 %{_includedir}/libudev.h
 %{_libdir}/pkgconfig/*.pc
-#%dir %{_datadir}/gtk-doc/html/libudev
-#%{_datadir}/gtk-doc/html/libudev/*
-#%files python
-#%{python_sitearch}/systemd/*
-
-
-%changelog
+%{_mandir}/man3/*

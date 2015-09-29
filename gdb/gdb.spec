@@ -1,6 +1,6 @@
 Summary: A GNU source-level debugger for C, C++, Java and other languages
 Name: gdb
-Version: 7.9.1
+Version: 7.10
 Release: 1
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ and GPLv2+ with exceptions and GPL+ and LGPLv2+ and GFDL and BSD and Public Domain
 Group: CoreDev/Development/Utility
@@ -34,29 +34,29 @@ cd gdb_build
 export CFLAGS="$RPM_OPT_FLAGS"
 
 ../configure							\
-	--prefix=%{_prefix}					\
-	--libdir=%{_libdir}					\
-	--sysconfdir=%{_sysconfdir}				\
-	--mandir=%{_mandir}					\
-	--infodir=%{_infodir}					\
+    --prefix=%{_prefix}					\
+    --libdir=%{_libdir}					\
+    --sysconfdir=%{_sysconfdir}				\
+    --mandir=%{_mandir}					\
+    --infodir=%{_infodir}					\
     --with-system-gdbinit=%{_sysconfdir}/gdbinit  \
-	--with-gdb-datadir=%{_datadir}/gdb			\
-	--enable-gdb-build-warnings=,-Wno-unused		\
-	--disable-werror					\
-	--with-separate-debug-dir=/usr/lib/debug		\
-	--disable-sim						\
+    --with-gdb-datadir=%{_datadir}/gdb			\
+    --enable-gdb-build-warnings=,-Wno-unused		\
+    --disable-werror					\
+    --with-separate-debug-dir=/usr/lib/debug		\
+    --disable-sim						\
     --disable-gdbserver \
-	--disable-rpath						\
-	--with-expat						\
-	--without-libexpat-prefix				\
-	--enable-tui						\
-	--with-python					\
-	--without-rpm						\
-	--without-libunwind					\
-	--enable-64-bit-bfd					\
+    --disable-rpath						\
+    --with-expat						\
+    --without-libexpat-prefix				\
+    --enable-tui						\
+    --with-python					\
+    --without-rpm						\
+    --without-libunwind					\
+    --enable-64-bit-bfd					\
     --with-auto-load-dir='$debugdir:$datadir/auto-load:%{_datadir}/gdb/auto-load'                \
     --with-auto-load-safe-path='$debugdir:$datadir/auto-load:%{_datadir}/gdb/auto-load:%{_bindir}/mono-gdb.py'    \
-	%{_target_platform}
+    %{_target_platform}
 
 make %{?_smp_mflags}
 
@@ -93,6 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gdb
 
 %changelog
+* Sun Aug 30 2015 Cjacker <cjacker@foxmail.com>
+- update to 7.10
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

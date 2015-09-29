@@ -1,6 +1,6 @@
 Summary: A library of handy utility functions
 Name: glib2
-Version: 2.45.3
+Version: 2.46.0
 Release: 2 
 License: LGPL
 Group: Core/Runtime/Library
@@ -132,3 +132,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-gettextize.1.gz
 
 %changelog
+* Thu Sep 24 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.46.0 with gnome 3.18
+
+* Wed Sep 16 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.45.8
+
+* Fri Aug 21 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.45.6
+- fix inotify issue.

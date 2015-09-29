@@ -5,14 +5,16 @@
 Summary:        Xorg X11 openchrome video driver
 Name:           xorg-x11-drv-openchrome
 Version:        0.3.3
-Release:        14
+Release:        14.git
 URL:            http://www.freedesktop.org/wiki/Openchrome/
 License:        MIT
 Group:          User Interface/X Hardware Support
 
-Source0:        http://xorg.freedesktop.org/archive/individual/driver/%{tarball}-%{version}.tar.bz2
+#Source0:        http://xorg.freedesktop.org/archive/individual/driver/%{tarball}-%{version}.tar.bz2
+#git://anongit.freedesktop.org/openchrome/xf86-video-openchrome
+Source0:	%{tarball}.tar.gz
 
-Patch0:         xf86-video-openchrome-0.3.3-build-fix.patch
+#Patch0:         xf86-video-openchrome-0.3.3-build-fix.patch
 
 ExclusiveArch:  %{ix86} x86_64
 
@@ -41,10 +43,11 @@ Requires:       %{name} = %{version}-%{release}
 X.Org X11 openchrome video driver XvMC development package.
 
 %prep
-%setup -q -n %{tarball}-%{?gitdate:%{gitdate}}%{?!gitdate:%{version}}
-%patch0 -p1
+%setup -q -n %{tarball}
+#%patch0 -p1
 
 %build
+if [ ! -f "configure" ]; then ./autogen.sh; fi
 %configure --disable-static --enable-viaregtool
 
 make %{?_smp_mflags}

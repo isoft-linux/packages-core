@@ -5,7 +5,6 @@ Name: util-linux
 Version: 2.26.2
 Release: 6 
 License: GPLv2 and GPLv2+ and LGPLv2+ and BSD with advertising and Public Domain
-Group: Core/Runtime/Utility
 URL: http://en.wikipedia.org/wiki/Util-linux
 
 %define upstream_version %{version}
@@ -75,7 +74,6 @@ program.
 
 %package -n libmount
 Summary: Device mounting library
-Group: Core/Runtime/Library
 License: LGPLv2+
 Requires: libblkid = %{version}-%{release}
 Requires: libuuid = %{version}-%{release}
@@ -87,7 +85,6 @@ This is the device mounting library, part of util-linux.
 
 %package -n libmount-devel
 Summary: Device mounting library
-Group: Core/Development/Library
 License: LGPLv2+
 Requires: libmount = %{version}-%{release}
 Requires: pkgconfig
@@ -98,7 +95,6 @@ part of util-linux.
 
 %package -n python-libmount
 Summary: Python binding of device mounting library
-Group:  Core/Runtime/Library/Python
 License: LGPLv2+
 Requires: libmount = %{version}-%{release}
 Requires: python 
@@ -109,7 +105,6 @@ part of util-linux.
 
 %package -n libblkid
 Summary: Block device ID library
-Group:  Core/Runtime/Library 
 License: LGPLv2+
 Requires: libuuid = %{version}-%{release}
 Conflicts: filesystem < 3
@@ -120,7 +115,6 @@ This is block device identification library, part of util-linux.
 
 %package -n libblkid-devel
 Summary: Block device ID library
-Group: Core/Development/Library
 License: LGPLv2+
 Requires: libblkid = %{version}-%{release}
 Requires: pkgconfig
@@ -131,7 +125,6 @@ part of util-linux.
 
 %package -n libsmartcols
 Summary: Table or tree library
-Group: Core/Runtime/Library
 License: LGPLv2+
 Conflicts: filesystem < 3
 Requires(post): coreutils
@@ -141,7 +134,6 @@ This is Table or tree library, part of util-linux.
 
 %package -n libsmartcols-devel
 Summary: Table or tree library
-Group: Core/Development/Library
 License: LGPLv2+
 Requires: libsmartcols = %{version}-%{release}
 Requires: pkgconfig
@@ -153,7 +145,6 @@ part of util-linux.
 
 %package -n libfdisk
 Summary: fdisk library
-Group: Core/Runtime/Library
 License: LGPLv2+
 Conflicts: filesystem < 3
 Requires(post): coreutils
@@ -163,7 +154,6 @@ This is fdisk library, part of util-linux.
 
 %package -n libfdisk-devel
 Summary: fdisk library
-Group: Core/Development/Library
 License: LGPLv2+
 Requires: libfdisk = %{version}-%{release}
 Requires: pkgconfig
@@ -175,7 +165,6 @@ part of util-linux.
 
 %package -n libuuid
 Summary: Universally unique ID library
-Group: Core/Runtime/Library
 License: BSD
 Conflicts: filesystem < 3
 
@@ -193,7 +182,6 @@ See also the "uuid" package, which is a separate implementation.
 
 %package -n libuuid-devel
 Summary: Universally unique ID library
-Group: Core/Development/Library
 License: BSD
 Requires: libuuid = %{version}-%{release}
 Requires: pkgconfig
@@ -214,7 +202,6 @@ See also the "uuid-devel" package, which is a separate implementation.
 
 %package -n uuidd
 Summary: Helper daemon to guarantee uniqueness of time-based UUIDs
-Group: Core/Runtime/Daemon
 Requires: libuuid = %{version}-%{release}
 License: GPLv2
 %if %{with_systemd}
@@ -231,7 +218,6 @@ SMP systems.
 
 %package -n fstrim
 Summary: Discard unused blocks on a mounted filesystem
-Group: Core/Runtime/Daemon
 License: GPLv2
 %if %{with_systemd}
 Requires: systemd
@@ -264,6 +250,7 @@ export SUID_LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
 	--enable-write \
 	--enable-raw \
 	--without-udev \
+	--without-user \
 	--disable-makeinstall-chown \
 %if %{with_systemd}
 	--with-systemdsystemunitdir=%{_unitdir} \

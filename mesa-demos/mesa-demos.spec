@@ -5,39 +5,41 @@
 Summary: Mesa demos
 Name: mesa-demos
 Version: 8.2.0
-Release: 4
+Release: 6.git 
 License: MIT
-Group: System Environment/Libraries
 URL: http://www.mesa3d.org
-Source0: ftp://ftp.freedesktop.org/pub/mesa/demos/8.1.0/%{tarball}-%{version}.tar.bz2
+#git clone git://anongit.freedesktop.org/mesa/demos
+Source0: mesa-demos.tar.gz
+
+#Source0: ftp://ftp.freedesktop.org/pub/mesa/demos/8.1.0/%{tarball}-%{version}.tar.bz2
 Source1: http://www.x.org/pub/individual/app/%{xdriinfo}.tar.bz2
 
 # Patch pointblast/spriteblast out of the Makefile for legal reasons
 Patch0: mesa-demos-8.0.1-legal.patch
 Patch1: mesa-demos-as-needed.patch
+Patch2: 0001-mesa-demos-Fix-build-when-EGL_MESA_screen_surface-ex.patch
 
 BuildRequires: pkgconfig autoconf automake libtool
 BuildRequires: freeglut-devel
 BuildRequires: libGL-devel
 BuildRequires: libGLU-devel
 BuildRequires: libglew-devel
-Group: Development/Libraries
 
 %description
 This package provides some demo applications for testing Mesa.
 
 %package -n glx-utils
 Summary: GLX utilities
-Group: Development/Libraries
 Provides: glxinfo
 
 %description -n glx-utils
 The glx-utils package provides the glxinfo and glxgears utilities.
 
 %prep
-%setup -q -n %{tarball}-%{version} -b1
+%setup -q -n %{tarball} -b1
 %patch0 -p1 -b .legal
 %patch1 -p1 -b .asneeded
+%patch2 -p1
 
 # These two files are distributable, but non-free (lack of permission to modify).
 rm -rf src/demos/pointblast.c
@@ -75,3 +77,6 @@ install -m 0755 src/xdemos/glxinfo %{buildroot}%{_bindir}/glxinfo%{?__isa_bits}
 %{_datadir}/man/man1/xdriinfo.1*
 
 %changelog
+* Thu Sep 15 2015 Cjacker <cjacker@foxmail.com>
+- add patch2, fix build with new mesa.
+

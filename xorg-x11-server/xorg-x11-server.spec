@@ -3,7 +3,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.17.2
-Release:   12
+Release:   13
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X
@@ -256,6 +256,7 @@ export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
 	--disable-xorgcfg \
 	--enable-record \
     --disable-xtrap \
+    --disable-libunwind \
 	--enable-install-libxf86config \
 	--disable-xselinux \
     --disable-config-hal \

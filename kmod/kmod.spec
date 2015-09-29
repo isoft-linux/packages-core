@@ -1,27 +1,26 @@
-Name:		kmod
-Version:    21	
-Release:	1
-Summary:	Linux kernel module management utilities
+Name: kmod
+Version: 21	
+Release: 2 
+Summary: Linux kernel module management utilities
 
-Group:	    Core/Runtime/Utility	
-License:	GPLv2+
-URL:		http://git.kernel.org/?p=utils/kernel/kmod/kmod.git;a=summary
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/kernel/kmod/%{name}-%{version}.tar.xz
+License: GPLv2+
+URL: http://git.kernel.org/?p=utils/kernel/kmod/kmod.git;a=summary
+Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/kmod/%{name}-%{version}.tar.xz
 
-Source1:	weak-modules
+Source1: weak-modules
 #example blacklist.conf and blacklist pcspkr
-Source2:    blacklist.conf
+Source2: blacklist.conf
 
-Exclusiveos:	Linux
+Exclusiveos: Linux
 
-BuildRequires:	zlib-devel
-BuildRequires:	xz-devel
+BuildRequires: zlib-devel
+BuildRequires: xz-devel
 
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
-Provides:	module-init-tools = 4.0-1
-Obsoletes:	module-init-tools < 4.0-1
-Provides:	/sbin/modprobe
+Provides: module-init-tools = 4.0-1
+Obsoletes: module-init-tools < 4.0-1
+Provides: /sbin/modprobe
 
 %description
 The kmod package provides various programs needed for automatic
@@ -30,18 +29,16 @@ as other module management programs. Device drivers and filesystems are two
 examples of loaded and unloaded modules.
 
 %package libs
-Summary:	Libraries to handle kernel module loading and unloading
-License:	LGPLv2+
-Group:	    Core/Runtime/Library	
+Summary: Libraries to handle kernel module loading and unloading
+License: LGPLv2+
 
 %description libs
 The kmod-libs package provides runtime libraries for any application that
 wishes to load or unload Linux kernel modules from the running system.
 
 %package devel
-Summary:	Header files for kmod development
-Group:		Core/Development/Library
-Requires:	%{name} = %{version}-%{release}
+Summary: Header files for kmod development
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 The kmod-devel package provides header files used for development of
@@ -115,3 +112,6 @@ make check ||:
 %{_libdir}/libkmod.so
 
 %changelog
+* Sat Sep 12 2015 Cjacker <cjacker@foxmail.com>
+- clean spec file.
+

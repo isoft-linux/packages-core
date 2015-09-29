@@ -2,17 +2,23 @@
 %define withhunspell 0
 
 %define baseversion 7.4
+#should as same as Source1
+%define patchlevel 796
 %define vimdir vim74
 
 Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
-Version: %{baseversion}
-Release: 7 
+Version: %{baseversion}.%{patchlevel}
+Release: 8
 License: GPL
 Group:   Core/Runtime/Utility
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
-Source1: vimrc
+#from ftp://ftp.vim.org/pub/vim/patches/7.4/
+#download all patches and tar them.
+Source1: vim-patches.tar.gz
+
+Source2: vimrc
 
 Source10: new-rpm-spec-syntax.vim
  
@@ -45,7 +51,13 @@ still very popular.  VIM improves on vi by adding new features:
 multiple windows, multi-level undo, block highlighting and more.
 
 %prep
-%setup -q  -n %{vimdir}
+%setup -q  -n %{vimdir} -a1
+
+for i in `ls vim-patches/7.4.*`
+do
+    cat $i|patch -p0
+done 
+
 #update rpm spec syntax highlight defines...
 rm -rf runtime/syntax/spec.vim
 cp -r %{SOURCE10} runtime/syntax/spec.vim
@@ -79,12 +91,14 @@ cp -r src mini
 #build a minimum vi
 cd mini
 %configure \
+        --with-features=small \
+        --enable-multibyte \
         --without-x \
         --disable-nls \
-        --enable-multibyte \
-        --enable-gui=no \
-        --enable-perlinterp=no \
-        --enable-pythoninterp=no \
+        --disable-netbeans \
+        --disable-gui \
+        --disable-perlinterp \
+        --disable-pythoninterp \
         --disable-tclinterp \
         --disable-gpm
 make %{?_smp_mflags}
@@ -93,12 +107,15 @@ cd ..
 #build vim with python/perl support.
 cd src
 %configure \
+        --with-features=huge \
         --without-x \
         --enable-multibyte \
         --enable-gui=no \
         --enable-perlinterp=yes \
-        --enable-pythoninterp=yes \
+        --enable-pythoninterp=dynamic \
+        --enable-luainterp=dynamic \
         --disable-tclinterp \
+        --disable-netbeans \
         --enable-gpm
 make %{?_smp_mflags}
 cd ..
@@ -115,7 +132,7 @@ mkdir -p %{buildroot}/%{_datadir}/%{name}/vimfiles/
 cp -f %{SOURCE20} %{buildroot}/%{_datadir}/%{name}/vimfiles/template.spec
 
 mkdir -p $RPM_BUILD_ROOT/etc
-install -m0644 %{SOURCE1} $RPM_BUILD_ROOT/etc/vimrc
+install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/vimrc
 
 #remove this files, do not import unneeded dependencies
 rm -rf $RPM_BUILD_ROOT%{_datadir}/vim/vim74/tools

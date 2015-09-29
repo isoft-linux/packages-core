@@ -1,0 +1,15 @@
+diff -Nur e2fsprogs/misc/e4crypt.c e2fsprogsn/misc/e4crypt.c
+--- e2fsprogs/misc/e4crypt.c	2015-08-02 13:26:25.000000000 +0000
++++ e2fsprogsn/misc/e4crypt.c	2015-08-02 15:50:31.013164741 +0000
+@@ -726,9 +726,9 @@
+ 		exit(1);
+ 	}
+ 
+-	printf("arg %s\n", argv[optind]);
++	/*printf("arg %s\n", argv[optind]);
+ 	exit(0);
+-
++	*/
+ 	strcpy(saltbuf.key_ref_str, argv[optind]);
+ 	if ((strlen(argv[optind]) != (EXT4_KEY_DESCRIPTOR_SIZE * 2)) ||
+ 	    hex2byte(argv[optind], (EXT4_KEY_DESCRIPTOR_SIZE * 2),

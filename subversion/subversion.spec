@@ -1,9 +1,8 @@
 Summary: Modern Version Control System designed to replace CVS
 Name: subversion
-Version: 1.8.8
+Version: 1.9.0
 Release: 1   
 License: BSD
-Group: CoreDev/Development/Utility
 URL: http://subversion.tigris.org/
 Source0: http://subversion.tigris.org/tarballs/subversion-%{version}.tar.bz2
 Source1: svn-editor.sh
@@ -11,9 +10,9 @@ Source1: svn-editor.sh
 BuildRequires: apr-util-devel
 BuildRequires: apr-devel
 BuildRequires: libserf-devel
-Requires:	apr
-Requires:	apr-util
-Requires:   libserf
+Requires:apr
+Requires:apr-util
+Requires:libserf
 
 %description
 Subversion is a concurrent version control system which enables one
@@ -51,9 +50,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/etc/profile.d
 
-%find_lang subversion
+#pkgconfig is in wrong place.
+mv %{buildroot}%{_datadir}/pkgconfig %{buildroot}%{_libdir}/
 
-rpmclean
+%find_lang subversion
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -68,6 +68,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %files devel
 %defattr(-,root,root)
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/*.pc
 %dir %{_includedir}/subversion-1
 %{_includedir}/subversion-1/*
 

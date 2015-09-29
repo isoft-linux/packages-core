@@ -1,6 +1,6 @@
 Summary: A set of basic GNU tools commonly used in shell scripts
 Name:    coreutils
-Version: 8.23
+Version: 8.24
 Release: 1
 License: GPLv3+
 Group:   Core/Runtime/Utility
@@ -50,6 +50,8 @@ BuildRequires: libacl-devel
 BuildRequires: gettext
 BuildRequires: libattr-devel
 BuildRequires: attr
+BuildRequires: libsmack-devel
+BuildRequires: libcap-devel
 
 Requires:       ncurses
 
@@ -74,7 +76,8 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -fpic"
 %configure --enable-largefile \
             --without-gmp \
             --enable-no-install-program=su,kill,uptime \
-            --disable-libcap \
+	    --enable-libsmack \
+            --enable-libcap \
             --with-tty-group \
            DEFAULT_POSIX2_VERSION=200112 alternative=199209 || :
 
@@ -133,6 +136,7 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 %check
 #failed, test-getaddrinfo need network
+#failed, if smack enabled, two test about xattr will fail.
 make check||:
 
 %postun
@@ -154,3 +158,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/locale/*
 
 %changelog
+* Sun Aug 02 2015 Cjacker <cjacker@foxmail.com>
+- update to 8.24

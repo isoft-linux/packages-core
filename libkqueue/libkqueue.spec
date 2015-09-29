@@ -28,7 +28,7 @@ you will need to install %{name}-devel.
 export CC=clang
 autoreconf -ivf
 %configure
-make
+make %{?_smp_mflags}
 
 %install
 make DESTDIR=$RPM_BUILD_ROOT install

@@ -28,8 +28,7 @@ xkeyboard-config alternative xkb data files
     --disable-runtime-deps \
     --enable-compat-rules \
     --with-xkb-base=%{_datadir}/X11/xkb \
-    --with-xkb-rules-symlink=xorg \
-    --localedir=%{_datadir}/locale
+    --with-xkb-rules-symlink=xorg 
 
 make %{?_smp_mflags}
 
@@ -50,36 +49,17 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/X11/xkb/compiled
    popd
 }
 
-rpmclean
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-{
-  # Upgrade section
-  if [ "$1" -gt "1" ] ; then
-    # The modular X11R7.0 xkbdata package has symbols/pc as a directory, however
-    # xkeyboard-config has it as a file.  rpm can't deal with this during package
-    # upgrades from xorg-x11-xkbdata to xkeyboard-config, so we have to remove
-    # the directory here first as a super-ugly hack.  It seems this is the only
-    # way to make upgrades work properly.  Later, once FC5 has shipped, we can
-    # remove this ugly hack, and just claim to not support upgrades from FC5testN
-    # releases that included the X11R7.0 xkbdata.
-    XKBDATA_PC=%{_datadir}/X11/xkb/symbols/pc
-    if [ -d "$XKBDATA_PC" ] ; then
-      rm -rf "$XKBDATA_PC" || : &>/dev/null
-    fi
-  fi
-}
-
-%files -f files.list
+%files -f files.list -f %{name}.lang
 %defattr(-,root,root,-)
 %{_datadir}/X11/xkb/rules/xorg
 %{_datadir}/X11/xkb/rules/xorg.lst
 %{_datadir}/X11/xkb/rules/xorg.xml
 %{_datadir}/pkgconfig/*.pc
-%{_datadir}/locale/*/LC_MESSAGES/*
 %{_mandir}/man7/xkeyboard-config.7.gz
 
 %changelog

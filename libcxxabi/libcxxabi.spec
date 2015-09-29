@@ -2,31 +2,40 @@
 
 Name:	    libcxxabi	
 Summary:    A new implementation of low level support for a standard C++ library.
-Version:    3.6.2
-Release:    1
-License:   	University of llinois/NCSA Open Source License 
-Group:      Core/Runtime/Library 
+Version:    3.7.0
+Release:    3 
+License:  University of llinois/NCSA Open Source License 
 URL:        http://llvm.org
 
-Source:     %{name}-%{version}.src.tar.xz
+Source0:    http://llvm.org/releases/3.7.0/libcxxabi-%{version}.src.tar.xz
+Source1:    http://llvm.org/releases/3.7.0/libunwind-%{version}.src.tar.xz
+Source2:    http://llvm.org/releases/3.7.0/libcxx-%{version}.src.tar.xz
 
-BuildRequires: clang
+BuildRequires: clang cmake
+
+%if %{build_with_ninja}
+BuildRequires: ninja-build
+%else 
+BuildRequires: make
+%endif
+
+BuildRequires: libunwind-devel
 
 %description
 %{summary}
 
 %package devel 
 Summary: Headers and libraries for libcxxabi
-Group:   Core/Development/Library 
 Requires: %{name} = %{version}-%{release}
 
 %description devel 
 Headers and libbraries for libcxxabi
 
 %prep
-%setup -q -n %{name}-%{version}.src
+%setup -q -c -a1 -a2
 
 %build
+pushd %{name}-%{version}.src
 #build shared library
 mkdir build-shared
 pushd build-shared
@@ -36,11 +45,11 @@ pushd build-shared
     %endif
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++  \
-    -DCMAKE_C_FLAGS="-fPIC -fPIE" \
-    -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++ -fPIC -fPIE" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-pie -nodefaultlibs" \
-    -DCMAKE_MODULE_LINKER_FLAGS="-pie -nodefaultlibs" \
-    -DCMAKE_EXE_LINKER_FLAGS="-pie -nodefaultlibs" \
+    -DCMAKE_C_FLAGS="-fPIC" \
+    -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
+    -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+    -DLIBCXXABI_LIBUNWIND_PATH="`pwd`/../../libunwind-%{version}.src" \
+    -DLIBCXXABI_LIBCXX_INCLUDES="`pwd`/../../libcxx-%{version}.src/include" \
     -DLIBCXXABI_ENABLE_SHARED=ON \
     ..
 
@@ -60,11 +69,11 @@ pushd build-static
     %endif
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++  \
-    -DCMAKE_C_FLAGS="-fPIC -fPIE" \
-    -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++ -fPIC -fPIE" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-pie -nodefaultlibs" \
-    -DCMAKE_MODULE_LINKER_FLAGS="-pie -nodefaultlibs" \
-    -DCMAKE_EXE_LINKER_FLAGS="-pie -nodefaultlibs" \
+    -DCMAKE_C_FLAGS="-fPIC" \
+    -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
+    -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+    -DLIBCXXABI_LIBUNWIND_PATH="`pwd`/../../libunwind-%{version}.src" \
+    -DLIBCXXABI_LIBCXX_INCLUDES="`pwd`/../../libcxx-%{version}.src/include" \
     -DLIBCXXABI_ENABLE_SHARED=OFF \
     ..
 
@@ -75,8 +84,12 @@ make %{_smp_mflags}
 %endif
 popd
 
+popd
+
 
 %install
+pushd %{name}-%{version}.src
+
 rm -rf $RPM_BUILD_ROOT
 pushd build-shared
 %if %{build_with_ninja}
@@ -95,9 +108,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
 
-#install headers of libcxxabi for compile libcxx with it.
-mkdir -p %{buildroot}%{_includedir}/libcxxabi 
-cp -r include/* %{buildroot}%{_includedir}/libcxxabi
+popd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -113,8 +124,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_libdir}/*.so
 %{_libdir}/*.a
-%{_includedir}/libcxxabi
 
 %changelog
-* Fri Jul 16 2015 Cjacker <cjacker@foxmail.com>
+* Wed Sep 02 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.0
+
+* Sat Jul 25 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.0rc1
+
+* Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.6.2

@@ -1,11 +1,10 @@
 Name:	    openmp 
 Summary:    openmp support for clang
-Version:    3.6.2
-Release:    1
+Version:    3.7.0
+Release:    3 
 License:   	University of llinois/NCSA Open Source License 
 URL:        http://llvm.org
-Group:      Core/Runtime/Library 
-Source:     %{name}-%{version}.src.tar.xz
+Source:     http://llvm.org/releases/3.7.0/openmp-%{version}.src.tar.xz
 BuildRequires: clang, compiler-wrapper, cmake, ninja-build
 BuildRequires: libcxx-devel
 
@@ -14,7 +13,6 @@ The OpenMP subproject of LLVM is intended to contain all of the components requi
 
 %package devel 
 Summary: Headers and libraries for openmp. 
-Group:   Core/Development/Library 
 Requires: %{name} = %{version}-%{release}
 
 %description devel 
@@ -26,7 +24,6 @@ Headers and libbraries for libcxx
 %Build
 mkdir -p runtime/build
 pushd runtime/build
-#    -DCMAKE_C_FLAGS="-fnolibgcc" \
 %cmake \
     -G Ninja \
     -DCMAKE_C_COMPILER=clang \
@@ -38,17 +35,16 @@ popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}/clang/`llvm-config --version`/include
 pushd runtime/build
-install -m0644 omp.h $RPM_BUILD_ROOT/usr/lib/clang/`llvm-config --version`/include/
-install -m0755 libiomp5.so $RPM_BUILD_ROOT%{_libdir}
-pushd $RPM_BUILD_ROOT%{_libdir}
-ln -s libiomp5.so libiomp.so
-popd
+DESTDIR=$RPM_BUILD_ROOT ninja install
 popd
 
-rpmclean
+#avoid conflicts with gcc.
+rm -rf %{buildroot}%{_libdir}/libgomp.so
+
+#install omp.h to private path.
+mkdir -p %{buildroot}%{_libdir}/clang/`llvm-config --version`/include
+mv %{buildroot}%{_includedir}/omp.h %{buildroot}%{_libdir}/clang/`llvm-config --version`/include/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -65,5 +61,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/clang/*/include/*.h
 
 %changelog
-* Fri Jul 16 2015 Cjacker <cjacker@foxmail.com>
+* Wed Sep 02 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.0
+
+* Sat Jul 25 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.0rc1
+
+* Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.6.2

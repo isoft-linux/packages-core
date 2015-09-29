@@ -1,4 +1,66 @@
+#we never build gcj/ada
+#up to 20150807, we had no plan to ship libgccjit
+
+#control check log in package or not.
 %global build_check_log 0 
+
+#control build objc or not.
+%global build_objc 0 
+
+%ifarch %{ix86} x86_64 
+%global build_libquadmath 1
+%else
+%global build_libquadmath 0
+%endif
+
+%ifarch %{ix86} x86_64
+%global build_libasan 1
+%else
+%global build_libasan 0
+%endif
+
+%ifarch x86_64
+%global build_libtsan 1
+%else
+%global build_libtsan 0
+%endif
+
+%ifarch x86_64
+%global build_liblsan 1
+%else
+%global build_liblsan 0
+%endif
+
+%ifarch %{ix86} x86_64
+%global build_libubsan 1
+%else
+%global build_libubsan 0
+%endif
+
+%ifarch %{ix86} x86_64
+%global build_libcilkrts 1
+%else
+%global build_libcilkrts 0
+%endif
+
+%ifarch %{ix86} x86_64
+%global build_libatomic 1
+%else
+%global build_libatomic 0
+%endif
+
+%ifarch %{ix86} x86_64
+%global build_libitm 1
+%else
+%global build_libitm 0
+%endif
+
+%ifarch %{ix86} x86_64
+%global build_libmpx 1
+%else
+%global build_libmpx 0
+%endif
+
 
 %define gcc_version 5.2.0 
 %define gcc_release 12
@@ -11,7 +73,6 @@ Name: gcc
 Version: %{gcc_version}
 Release: %{gcc_release}
 License: GPLv3+ and GPLv2+ with exceptions
-Group:  Core/Development/Language
 Source0: gcc-%{version}.tar.bz2
 
 Patch0:  gcc-64bit-use-lib-as-libdir.patch
@@ -32,6 +93,9 @@ Requires: mpc >= 1.0.2
 Requires: binutils >= 2.17.50.0.17-3
 Requires: libgcc = %{version}-%{release}
 Requires: libstdc++-devel = %{version}-%{release}
+
+Provides: gcc-c++ = %{version}-%{release}
+
 AutoReq: true
 
 %description
@@ -41,7 +105,6 @@ You'll need this package in order to compile C code.
 
 %package -n libgcc
 Summary: GCC shared library
-Group: Core/Runtime/Library
 Autoreq: false
 
 %description -n libgcc
@@ -50,7 +113,6 @@ e.g. for exception handling support.
 
 %package -n libstdc++
 Summary: GNU Standard C++ Library
-Group: Core/Runtime/Library 
 Autoreq: true
 
 %description -n libstdc++
@@ -59,7 +121,6 @@ C++ Library.
 
 %package -n libstdc++-devel
 Summary: Header files and libraries for C++ development
-Group: Core/Development/Library 
 Requires: libstdc++ = %{version}-%{release}, %{_prefix}/%{_lib}/libstdc++.so.6
 Autoreq: false 
 
@@ -70,26 +131,52 @@ development. This includes rewritten implementation of STL.
 
 %package go
 Summary: go lang support for GCC
-Group: Development/Languages
 Requires: gcc = %{version}-%{release}
 Requires: libgo = %{version}-%{release}
+Requires(post): %{_sbindir}/update-alternatives
+Requires(postun): %{_sbindir}/update-alternatives
 Autoreq: true
+
 
 %description go
 This package adds go lang support to the GNU Compiler Collection.
 
 %package -n libgo
 Summary: go library
-Group: System Environment/Libraries
 Autoreq: true
 
 %description -n libgo
 The libgo package contains a go library.
 
+%package objc
+Summary: Objective-C support for GCC
+Requires: gcc = %{version}-%{release}
+Requires: libobjc = %{version}-%{release}
+Autoreq: true
+
+%description objc
+gcc-objc provides Objective-C support for the GCC.
+Mainly used on systems running NeXTSTEP, Objective-C is an
+object-oriented derivative of the C language.
+
+%package objc++
+Summary: Objective-C++ support for GCC
+Requires: gcc = %{version}-%{release}, gcc-objc = %{version}-%{release}
+Autoreq: true
+
+%description objc++
+gcc-objc++ package provides Objective-C++ support for the GCC.
+
+%package -n libobjc
+Summary: Objective-C runtime
+Autoreq: true
+
+%description -n libobjc
+This package contains Objective-C shared library which is needed to run
+Objective-C dynamically linked programs.
 
 %package gfortran
 Summary: Fortran support
-Group: Development/Languages
 Requires: gcc = %{version}-%{release}
 Requires: libgfortran = %{version}-%{release}
 Requires: libquadmath = %{version}-%{release}
@@ -102,7 +189,6 @@ programs with the GNU Compiler Collection.
 
 %package -n libgfortran
 Summary: Fortran runtime
-Group: System Environment/Libraries
 Autoreq: true
 Requires: libquadmath = %{version}-%{release}
 
@@ -110,11 +196,8 @@ Requires: libquadmath = %{version}-%{release}
 This package contains Fortran shared library which is needed to run
 Fortran dynamically linked programs.
 
-
-
 %package -n libgomp
 Summary: GCC OpenMP v3.0 shared support library
-Group: Core/Runtime/Library 
 
 %description -n libgomp
 This package contains GCC shared support library which is needed
@@ -122,7 +205,6 @@ for OpenMP v3.0 support.
 
 %package -n libquadmath
 Summary: GCC Quad-Precision Math shared support library
-Group: Core/Runtime/Library 
 
 %description -n libquadmath
 This package contains GCC shared support library which is needed
@@ -130,7 +212,6 @@ for Quad-Precision Math support.
 
 %package -n libitm
 Summary: The GNU Transactional Memory library
-Group: Core/Runtime/Library 
 
 %description -n libitm
 This package contains the GNU Transactional Memory library
@@ -138,46 +219,63 @@ which is a GCC transactional memory support runtime library.
 
 %package -n libatomic
 Summary:  The GNU Atomic library
-Group: Core/Runtime/Library 
 
 %description -n libatomic
 This package contains the GNU Atomic library
 
 %package -n libcilkrts
 Summary: The Cilk runtime library
-Group: Core/Runtime/Library 
 
 %description -n libcilkrts
 This package contains the Cilk runtime library
 
-%package -n libvtv
-Summary: The virtual table verification library
-Group: Core/Runtime/Library 
-
-%description -n libvtv
-This package contains the virtual table verification library
-
-%package -n libssp
-Summary: The stack smashing protection library
-Group: Core/Runtime/Library
-
-%description -n libssp
-This package contains the stack smashing protection library
-
 %package -n libsanitizer
 Summary: Various sanitizer runtime libraries
-Group: Core/Runtime/Library 
 
 %description -n libsanitizer
 This package contains various sanitizer libraries
 
-%package -n libcc1
-Summary: GCC cc1 plugin for GDB
-Group: System Environment/Libraries
+%package -n libmpx
+Summary: The Memory Protection Extensions runtime libraries
 
-%description -n libcc1
+%description -n libmpx
+This package contains the Memory Protection Extensions runtime libraries
+which is used for -fcheck-pointer-bounds -mmpx instrumented programs.
+
+%package gdb-plugin
+Summary: GCC cc1 plugin for GDB
+Requires: gcc = %{version}-%{release}
+
+%description gdb-plugin
 GCC cc1 plugin for GDB
 
+
+#Up to now, we had no plan to ship it.
+%package -n libgccjit
+Summary: Library for embedding GCC inside programs and libraries
+Requires: gcc = %{version}-%{release}
+
+%description -n libgccjit
+This package contains shared library with GCC JIT front-end.
+
+%package -n libgccjit-devel
+Summary: Support for embedding GCC inside programs and libraries
+Requires: libgccjit = %{version}-%{release}
+
+%description -n libgccjit-devel
+This package contains header files and documentation for GCC JIT front-end.
+
+#%package -n libvtv
+#Summary: The virtual table verification library
+#
+#%description -n libvtv
+#This package contains the virtual table verification library
+#
+#%package -n libssp
+#Summary: The stack smashing protection library
+#
+#%description -n libssp
+#This package contains the stack smashing protection library
 
 
 
@@ -187,7 +285,7 @@ GCC cc1 plugin for GDB
 %patch1 -p1
 %patch2 -p1
 
-echo 'Pure64 %{version}-%{gcc_release}' > gcc/DEV-PHASE
+echo 'iSoft %{version}-%{gcc_release}' > gcc/DEV-PHASE
 
 # Do not run fixincludes
 sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
@@ -200,30 +298,46 @@ pushd build
 	--host=%{gcc_target_platform} \
 	--build=%{gcc_target_platform} \
 	--with-cpu=generic \
-	--prefix=/usr \
+	--prefix=%{_prefix} \
 	--enable-bootstrap \
 	--enable-shared \
 	--enable-threads=posix \
-    --enable-checking=release \
+    	--enable-checking=release \
+%if %{build_objc}
+	--enable-languages=c,c++,lto,go,fortran,objc,obj-c++ \
+%else
 	--enable-languages=c,c++,lto,go,fortran \
-    --enable-plugin \
-    --enable-initfini-array \
-    --enable-gnu-unique-object \
+%endif
+    	--enable-plugin \
+    	--enable-initfini-array \
+    	--enable-gnu-unique-object \
+	--enable-linker-build-id \
+	--with-linker-hash-style=gnu \
 	--enable-__cxa_atexit \
+	--enable-gnu-indirect-function \
 	--enable-c99 \
 	--enable-long-long \
-    --enable-libgomp \
+    	--enable-libgomp \
 	--enable-lto \
 	--enable-libsanitizer \
-    --enable-libatomic \
-    --enable-libquadmath \
-    --enable-symvers \
-    --disable-libstdcxx-pch \
-	--disable-libitm \
-	--disable-libvtv \
+%if %{build_libatomic}
+    	--enable-libatomic \
+%endif
+%if %{build_libquadmath}
+    	--enable-libquadmath \
+%endif
+%if %{build_libitm}
+	--enable-libitm \
+%endif
+%if %{build_libcilkrts}
+	--enable-libcilkrts \
+%endif
+%if %{build_libmpx}
+	--enable-libmpx \
+%endif
+    	--enable-symvers \
+    	--disable-libstdcxx-pch \
 	--disable-multilib \
-	--disable-libmudflap \
-	--disable-libcilkrts \
 	--disable-libunwind-exceptions
 
 make %{?_smp_mflags} BOOT_CFLAGS="$OPT_FLAGS" bootstrap
@@ -250,10 +364,18 @@ rm -rf $RPM_BUILD_ROOT%{_prefix}/bin/c++
 
 ln -sf gfortran %{buildroot}%{_prefix}/bin/f95
 
+mv %{buildroot}%{_prefix}/bin/go{,.gcc}
+mv %{buildroot}%{_prefix}/bin/gofmt{,.gcc}
+ln -sf /etc/alternatives/go %{buildroot}%{_prefix}/bin/go
+ln -sf /etc/alternatives/gofmt %{buildroot}%{_prefix}/bin/gofmt
+
+
 #remove files we do not ship.
 rm -rf %{buildroot}/%{_bindir}/gcc-ar
 rm -rf %{buildroot}/%{_bindir}/gcc-nm
 rm -rf %{buildroot}/%{_bindir}/gcc-ranlib
+rm -rf %{buildroot}%{_prefix}/%{_lib}/libssp* || :
+rm -rf %{buildroot}%{_prefix}/%{_lib}/libvtv* || :
 rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gcc-ar
 rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gcc-nm
 rm -rf %{buildroot}/%{_bindir}/%{gcc_target_platform}-gcc-ranlib
@@ -298,24 +420,60 @@ rm -rf $RPM_BUILD_ROOT
 %post -n libgo -p /sbin/ldconfig
 %postun -n libgo -p /sbin/ldconfig
 
+%if %{build_objc}
+%post -n libobjc -p /sbin/ldconfig
+%postun -n libobjc -p /sbin/ldconfig
+%endif
+
 %post -n libgfortran -p /sbin/ldconfig
 %postun -n libgfortran -p /sbin/ldconfig
 
 %post -n libsanitizer -p /sbin/ldconfig
 %postun -n libsanitizer -p /sbin/ldconfig
 
+%post gdb-plugin -p /sbin/ldconfig
+%postun gdb-plugin -p /sbin/ldconfig
 
-%post -n libssp -p /sbin/ldconfig
-%postun -n libssp -p /sbin/ldconfig
-
-%post -n libcc1 -p /sbin/ldconfig
-%postun -n libcc1 -p /sbin/ldconfig
-
+%if %{build_libquadmath}
 %post -n libquadmath -p /sbin/ldconfig
 %postun -n libquadmath -p /sbin/ldconfig
+%endif
 
+%if %{build_libatomic}
 %post -n libatomic -p /sbin/ldconfig
 %postun -n libatomic -p /sbin/ldconfig
+%endif
+
+%if %{build_libitm}
+%post -n libitm -p /sbin/ldconfig
+%postun -n libitm -p /sbin/ldconfig
+%endif
+
+%if %{build_libcilkrts}
+%post -n libcilkrts -p /sbin/ldconfig
+%postun -n libcilkrts -p /sbin/ldconfig
+%endif
+
+%if %{build_libmpx}
+%post -n libmpx -p /sbin/ldconfig
+%postun -n libmpx -p /sbin/ldconfig
+%endif
+
+#%post -n libvtv -p /sbin/ldconfig
+#%postun -n libvtv -p /sbin/ldconfig
+#
+#%post -n libssp -p /sbin/ldconfig
+#%postun -n libssp -p /sbin/ldconfig
+
+%post go
+%{_sbindir}/update-alternatives --install \
+  %{_prefix}/bin/go go %{_prefix}/bin/go.gcc 92 \
+  --slave %{_prefix}/bin/gofmt gofmt %{_prefix}/bin/gofmt.gcc
+
+%preun go
+if [ $1 = 0 ]; then
+  %{_sbindir}/update-alternatives --remove go %{_prefix}/bin/go.gcc
+fi
 
 
 %files -f gcc.lang
@@ -338,7 +496,13 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_prefix}/libexec/gcc/%{gcc_target_platform}
 %dir %{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}
 %dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include
-%{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include/*
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/*.h
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/ssp
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/sanitizer
+
+%if %{build_libcilkrts}
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/cilk
+%endif
 
 %dir %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include-fixed
 %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/include-fixed/*
@@ -398,16 +562,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgomp-plugin-host_nonshm.so.*
 
 
-%files -n libatomic
-%{_libdir}/libatomic.so.*
-%{_libdir}/libatomic.a
-%{_libdir}/libatomic.so
-
-
 %files go
 %defattr(-,root,root)
-%{_bindir}/go
-%{_bindir}/gofmt
+%ghost %{_prefix}/bin/go
+%{_prefix}/bin/go.gcc
+%ghost %{_prefix}/bin/gofmt
+%{_prefix}/bin/gofmt.gcc
 %{_bindir}/gccgo
 %{_prefix}/bin/%{gcc_target_platform}-gccgo
 %{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/go*
@@ -444,40 +604,81 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/%{_lib}/libgfortran.a
 %{_prefix}/%{_lib}/libgfortran.spec
 
-#%files -n libcilkrts
-#%{_libdir}/libcilkrts.so.*
-#%{_libdir}/libcilkrts.a
-#%{_libdir}/libcilkrts.so
-#%{_libdir}/libcilkrts.spec
+%if %{build_objc}
+%files objc
+%defattr(-,root,root,-)
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/cc1obj
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/objc
 
-#%files -n libitm
-#%{_libdir}/libitm.so.*
-#%{_libdir}/libitm.a
-#%{_libdir}/libitm.so
-#%{_libdir}/libitm.spec
+%files objc++
+%defattr(-,root,root,-)
+%{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/cc1objplus
 
+%files -n libobjc
+%{_prefix}/%{_lib}/libobjc.a
+%{_prefix}/%{_lib}/libobjc.so
+%{_prefix}/%{_lib}/libobjc.so.*
+%endif
+
+
+%if %{build_libatomic}
+%files -n libatomic
+%{_libdir}/libatomic.so.*
+%{_libdir}/libatomic.a
+%{_libdir}/libatomic.so
+%endif
+
+%if %{build_libcilkrts}
+%files -n libcilkrts
+%{_libdir}/libcilkrts.so.*
+%{_libdir}/libcilkrts.a
+%{_libdir}/libcilkrts.so
+%{_libdir}/libcilkrts.spec
+%endif
+
+%if %{build_libitm}
+%files -n libitm
+%{_libdir}/libitm.so.*
+%{_libdir}/libitm.a
+%{_libdir}/libitm.so
+%{_libdir}/libitm.spec
+%endif
+
+%if %{build_libquadmath}
 %files -n libquadmath
 %{_libdir}/libquadmath.so.*
 %{_libdir}/libquadmath.a
 %{_libdir}/libquadmath.so
+%endif
 
-%files -n libssp
-%defattr(-,root,root,-)
-%{_libdir}/libssp.a
-%{_libdir}/libssp.so
-%{_libdir}/libssp.so.0
-%{_libdir}/libssp.so.0.0.0
-%{_libdir}/libssp_nonshared.a
+%if %{build_libmpx}
+%files -n libmpx
+%{_libdir}/libmpx.spec
+%{_libdir}/libmpx.so.*
+%{_libdir}/libmpx.a
+%{_libdir}/libmpx.so
+%{_libdir}/libmpxwrappers.a
+%{_libdir}/libmpxwrappers.so
+%{_libdir}/libmpxwrappers.so.*
+%endif
 
 %files -n libsanitizer
 %defattr(-,root,root)
 %{_libdir}/libsanitizer.spec
+%if %{build_libtsan}
 %{_prefix}/%{_lib}/libtsan.*
+%endif
+%if %{build_libasan}
 %{_prefix}/%{_lib}/libasan*
+%endif
+%if %{build_liblsan}
 %{_prefix}/%{_lib}/liblsan*
+%endif
+%if %{build_libubsan}
 %{_prefix}/%{_lib}/libubsan*
+%endif
 
-%files -n libcc1
+%files gdb-plugin
 %{_libdir}/libcc1.so
 %{_libdir}/libcc1.so.*
 %{_libdir}/gcc/%{gcc_target_platform}/%{gcc_version}/plugin/libcc1plugin.so*
@@ -486,7 +687,21 @@ rm -rf $RPM_BUILD_ROOT
 #%{_libdir}/libvtv.so.*
 #%{_libdir}/libvtv.a
 #%{_libdir}/libvtv.so
+#
+#%files -n libssp
+#%defattr(-,root,root,-)
+#%{_libdir}/libssp.a
+#%{_libdir}/libssp.so
+#%{_libdir}/libssp.so.0
+#%{_libdir}/libssp.so.0.0.0
+#%{_libdir}/libssp_nonshared.a
+
 
 %changelog
+* Fri Aug 07 2015 Cjacker <cjacker@foxmail.com>
+- enable libmpx, libitm, libcilkrts
+- remove libssp/vtv
+- add macros to control whether to build a lot of libs or not.
+
 * Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - update to 5.2.0

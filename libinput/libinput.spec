@@ -1,9 +1,8 @@
 Summary: libinput is a library to handle input devices in Wayland compositors and to provide a generic X.Org input driver. 
 Name:    libinput 
-Version: 0.20.0 
+Version: 1.0.1
 Release: 1
 License: GPL
-Group:  Core/Runtime/Library
 Source0: http://www.freedesktop.org/software/libinput/libinput-%{version}.tar.xz
 
 BuildRequires: libevdev-devel
@@ -14,7 +13,6 @@ libinput is a library to handle input devices in Wayland compositors and to prov
 
 %package devel
 Summary: Libraries and headers for %{name} 
-Group:   Core/Development/Library
 Requires: %name = %{version}
 
 %description devel
@@ -31,7 +29,6 @@ make %{?_smp_flags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-rpmclean
 
 %clean
 rm -rf %{buildroot}
@@ -49,8 +46,8 @@ rm -rf %{buildroot}
 %{_libdir}/udev/libinput-device-group
 %{_libdir}/udev/rules.d/80-libinput-device-groups.rules
 %{_libdir}/udev/rules.d/90-libinput-model-quirks.rules
-%{_libdir}/udev/80-libinput-device-groups-litest.rules
-%{_libdir}/udev/90-libinput-model-quirks-litest.rules
+#%{_libdir}/udev/80-libinput-device-groups-litest.rules
+#%{_libdir}/udev/90-libinput-model-quirks-litest.rules
 %{_libdir}/udev/libinput-model-quirks
 
 %{_mandir}/man1/libinput-debug-events.1.gz
@@ -63,5 +60,12 @@ rm -rf %{buildroot}
 %{_includedir}/*
 
 %changelog
+* Thu Sep 03 2015 Cjacker <cjacker@foxmail.com>
+- update to 1.0.1
+
+* Fri Aug 21 2015 Cjacker <cjacker@foxmail.com>
+- update to 0.99.1
+* Tue Aug 04 2015 Cjacker <cjacker@foxmail.com>
+- update to 0.21.0
 * Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - update to 0.20.0

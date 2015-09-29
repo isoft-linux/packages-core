@@ -1,16 +1,21 @@
 Summary: Utilities for managing ext2, ext3, and ext4 filesystems
 Name: e2fsprogs
-Version: 1.42.13
-Release: 7
+Version: 1.42.14
+Release: 7.git
 License: GPLv2
 Group:  Core/Runtime/Utility
-Source0: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Url: http://e2fsprogs.sourceforge.net/
+#Source0: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+#git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
+Source0: %{name}.tar.gz
+Patch0: e2fsprogs-enable-e4crypt.patch
+
 Requires: e2fsprogs-libs = %{version}-%{release}
 
 BuildRequires: pkgconfig
 BuildRequires: libblkid-devel
 BuildRequires: libuuid-devel
+BuildRequires: fuse-devel
 
 %description
 The e2fsprogs package contains a number of utilities for creating,
@@ -111,7 +116,8 @@ parses a command table to generate a simple command-line interface parser.
 It was originally inspired by the Multics SubSystem library.
 
 %prep
-%setup -q
+%setup -q -n %{name}
+%patch0 -p1
 
 %build
 %configure \
@@ -119,7 +125,7 @@ It was originally inspired by the Multics SubSystem library.
     --enable-nls \
     --disable-uuidd \
     --disable-fsck \
-	--disable-e2initrd-helper \
+    --disable-e2initrd-helper \
     --disable-libblkid \
     --disable-libuuid
 
@@ -133,9 +139,9 @@ make install install-libs DESTDIR=%{buildroot} INSTALL="%{__install} -p" \
 
 rm -f %{buildroot}%{_libdir}/*.a
 
-%find_lang %{name}
+rm -rf %{buildroot}%{_infodir}
 
-rpmclean
+%find_lang %{name}
 
 %check
 make check
@@ -177,6 +183,8 @@ rm -rf %{buildroot}
 %{_sbindir}/filefrag
 %{_sbindir}/e2freefrag
 %{_sbindir}/e4defrag
+%{_sbindir}/e4crypt
+%{_sbindir}/fuse2fs
 %{_sbindir}/mklost+found
 
 %{_bindir}/chattr
@@ -210,9 +218,11 @@ rm -rf %{buildroot}
 %{_mandir}/man8/resize2fs.8*
 %{_mandir}/man8/tune2fs.8*
 %{_mandir}/man8/e4defrag.8*
-%{_mandir}/man5/ext2.5.gz
-%{_mandir}/man5/ext3.5.gz
-%{_mandir}/man5/ext4.5.gz
+%{_mandir}/man8/e4crypt.8*
+%{_mandir}/man5/ext2.5*
+%{_mandir}/man5/ext3.5*
+%{_mandir}/man5/ext4.5*
+
 
 %files libs
 %defattr(-,root,root)

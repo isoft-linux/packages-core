@@ -1,14 +1,18 @@
 %define tarball xf86-video-nouveau
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
+
 Summary:   Xorg X11 nouveau video driver(s)
 Name:      xorg-x11-drv-nouveau
 Version:   1.0.11
-Release:   2 
+Release:   4.git 
 URL:       http://www.x.org
 License:   MIT
-Group:     User Interface/X Hardware Support
-Source0:   %{tarball}-%{version}.tar.bz2
+
+#Source0:   %{tarball}-%{version}.tar.bz2
+#git://anongit.freedesktop.org/nouveau/xf86-video-nouveau
+Source0: %{tarball}.tar.gz
+Patch0: fix-glamor-build.patch
 
 BuildRequires: pkgconfig
 BuildRequires: autoconf automake libtool
@@ -23,9 +27,11 @@ Requires:  xorg-x11-server-Xorg >= 1.1.0-1
 X.Org X11 nouveau video driver.
 
 %prep
-%setup -q -n xf86-video-nouveau-%{version} 
+%setup -q -n xf86-video-nouveau
+#%patch0 -p1
 
 %build
+if [ ! -f "configure" ]; then ./autogen.sh; fi
 %configure --disable-static
 make %{?_smp_mflags}
 
@@ -45,6 +51,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/nouveau.4*
 
 %changelog
+* Fri Sep 04 2015 Cjacker <cjacker@foxmail.com>
+- add patch1, should fix build with xorg-server 1.8rc1, althouth we did not update yet.
+* Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
+- update to git master.
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

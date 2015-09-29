@@ -1,6 +1,3 @@
-#if defined __sparc__ && defined __arch64__
-register void *__thread_self __asm ("g7");
-#endif
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -27,9 +24,43 @@ __attribute__((noinline)) void sayn (long num);
 __attribute__((noinline)) void message (char *const path[]);
 __attribute__((noinline)) int check_elf (const char *name);
 
+#ifdef __i386__
+static int
+is_ia64 (void)
+{
+  unsigned int fl1, fl2;
+
+  /* See if we can use cpuid.  */
+  __asm__ ("pushfl; pushfl; popl %0; movl %0,%1; xorl %2,%0;"
+	   "pushl %0; popfl; pushfl; popl %0; popfl"
+	   : "=&r" (fl1), "=&r" (fl2)
+	   : "i" (0x00200000));
+  if (((fl1 ^ fl2) & 0x00200000) == 0)
+    return 0;
+
+  /* Host supports cpuid.  See if cpuid gives capabilities, try
+     CPUID(0).  Preserve %ebx and %ecx; cpuid insn clobbers these, we
+     don't need their CPUID values here, and %ebx may be the PIC
+     register.  */
+  __asm__ ("pushl %%ecx; pushl %%ebx; cpuid; popl %%ebx; popl %%ecx"
+	   : "=a" (fl1) : "0" (0) : "edx", "cc");
+  if (fl1 == 0)
+    return 0;
+
+  /* Invoke CPUID(1), return %edx; caller can examine bits to
+     determine what's supported.  */
+  __asm__ ("pushl %%ecx; pushl %%ebx; cpuid; popl %%ebx; popl %%ecx"
+	   : "=d" (fl2), "=a" (fl1) : "1" (1) : "cc");
+  return (fl2 & (1 << 30)) != 0;
+}
+#else
+#define is_ia64() 0
+#endif
+
 int
 main (void)
 {
+  struct stat statbuf;
   char initpath[256];
 
   char buffer[4096];
@@ -42,16 +73,14 @@ main (void)
   int i, j, fd;
   off_t base;
   ssize_t ret;
+#ifdef __i386__
+  const char *remove_dirs[] = { "/lib/tls", "/lib/i686", "/lib/tls/i486", "/lib/tls/i586", "/lib/tls/i686" };
+#else
 #ifndef LIBTLS
 #define LIBTLS "/lib/tls"
 #endif
-#ifndef LD_SO_CONF
-#define LD_SO_CONF "/etc/ld.so.conf"
-#endif
-#ifndef GCONV_MODULES_DIR
-#define GCONV_MODULES_DIR "/usr/lib/gconv"
-#endif
   const char *remove_dirs[] = { LIBTLS };
+#endif
   for (j = 0; j < sizeof (remove_dirs) / sizeof (remove_dirs[0]); ++j)
     {
       size_t rmlen = strlen (remove_dirs[j]);
@@ -126,6 +155,11 @@ main (void)
 #endif
       const char *iconv_cache = GCONV_MODULES_DIR"/gconv-modules.cache";
       const char *iconv_dir = GCONV_MODULES_DIR;
+      if (is_ia64 ())
+	{
+	  iconv_cache = "/emul/ia32-linux"GCONV_MODULES_DIR"/gconv-modules.cache";
+	  iconv_dir = "/emul/ia32-linux"GCONV_MODULES_DIR;
+	}
       verbose_exec (113, ICONVCONFIG, "/usr/sbin/iconvconfig",
 		    "-o", iconv_cache,
 		    "--nostdlib", iconv_dir);
@@ -135,12 +169,24 @@ main (void)
      or upstart telinit.  */
   if (access ("/sbin/telinit", X_OK)
       || ((!!access ("/dev/initctl", F_OK))
-      ^ !access ("/sbin/initctl", X_OK)))
+	  ^ !access ("/sbin/initctl", X_OK)))
     _exit (0);
+
   /* Check if we are not inside of some chroot, because we'd just
-     timeout and leave /etc/initrunlvl.  */
+     timeout and leave /etc/initrunlvl.
+
+     On more modern systems this test is not sufficient to detect
+     if we're in a chroot.  */
   if (readlink ("/proc/1/exe", initpath, 256) <= 0 ||
       readlink ("/proc/1/root", initpath, 256) <= 0)
+    _exit (0);
+
+  /* Here's another well known way to detect chroot, at least on an
+     ext and xfs filesystems and assuming nothing mounted on the chroot's
+     root. */
+  if (stat ("/", &statbuf) != 0
+      || (statbuf.st_ino != 2
+	  && statbuf.st_ino != 128))
     _exit (0);
 
   if (check_elf ("/proc/1/exe"))
@@ -158,21 +204,6 @@ main (void)
 
   _exit(0);
 }
-
-/*int __libc_multiple_threads __attribute__((nocommon));
-int __libc_enable_asynccancel (void) { return 0; }
-void __libc_disable_asynccancel (int x) { }
-pid_t __fork (void) { return -1; }
-char thr_buf[65536];
-
-int
-__libc_start_main (int (*main) (void), int argc, char **argv,
-		   void (*init) (void), void (*fini) (void),
-		   void (*rtld_fini) (void), void * stack_end)
-{
-  main();
-  return 0;
-}*/
 
 void
 vexec (int failcode, char *const path[])
@@ -278,7 +309,29 @@ check_elf (const char *name)
 	  if (ehdr.e_ident[EI_CLASS]
 	      == (sizeof (long) == 8 ? ELFCLASS64 : ELFCLASS32))
 	    {
+#if defined __i386__
+	      ret = ehdr.e_machine == EM_386;
+#elif defined __x86_64__
+	      ret = ehdr.e_machine == EM_X86_64;
+#elif defined __ia64__
+	      ret = ehdr.e_machine == EM_IA_64;
+#elif defined __powerpc64__
+	      ret = ehdr.e_machine == EM_PPC64;
+#elif defined __powerpc__
+	      ret = ehdr.e_machine == EM_PPC;
+#elif defined __s390__ || defined __s390x__
+	      ret = ehdr.e_machine == EM_S390;
+#elif defined __x86_64__
+	      ret = ehdr.e_machine == EM_X86_64;
+#elif defined __sparc__
+	      if (sizeof (long) == 8)
+		ret = ehdr.e_machine == EM_SPARCV9;
+	      else
+		ret = (ehdr.e_machine == EM_SPARC
+		       || ehdr.e_machine == EM_SPARC32PLUS);
+#else
 	      ret = 1;
+#endif
 	    }
 	}
       close (fd);

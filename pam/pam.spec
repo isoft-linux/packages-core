@@ -7,12 +7,13 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.2.1
-Release: 1%{?dist}
+Release: 3%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 # pam_timestamp, pam_loginuid, and pam_console modules are GPLv2+.
 License: BSD and GPLv2+
 Group: System Environment/Base
+EPoch: 1
 Source0: http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.bz2
 # This is the old location that might be revived in future:
 #Source0: http://ftp.us.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
@@ -89,7 +90,7 @@ having to recompile programs that handle authentication.
 %package devel
 Group: Development/Libraries
 Summary: Files needed for developing PAM-aware applications and modules for PAM
-Requires: pam%{?_isa} = %{version}-%{release}
+Requires: pam%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description devel
 PAM (Pluggable Authentication Modules) is a system security tool that

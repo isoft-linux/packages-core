@@ -1,12 +1,11 @@
-Name:	    tmux	
-Version:	1.9a
-Release:	1
-Summary:	Tool to control multiple terminals from a single terminal 
+Name: tmux	
+Version: 2.0 
+Release: 1
+Summary: Tool to control multiple terminals from a single terminal 
 
-Group:		Core/Runtime/Utility
-License:	BSD
-URL:		http://tmux.sourceforge.net
-Source0:	%{name}-%{version}.tar.gz
+License: BSD
+URL: http://tmux.github.io/
+Source0: https://github.com/tmux/tmux/releases/download/%{version}/tmux-%{version}.tar.gz
 
 #default config, almost empty, just set base-index to 1.
 Source1:    tmux.conf
@@ -14,6 +13,10 @@ Source1:    tmux.conf
 #link to libevent static library to avoid introduce libevent in core os.
 Source10:   libevent-2.0.18-stable.tar.gz
 
+BuildRequires: gcc
+BuildRequires: ncurses-devel
+BuildRequires: glibc-devel
+ 
 %description
 %{summary}
 
@@ -39,12 +42,11 @@ make install DESTDIR=%{buildroot}
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}
 install -m0644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/tmux.conf
 
-rpmclean
-
 %files
 %config(noreplace) %{_sysconfdir}/tmux.conf
 %{_bindir}/tmux
 %{_mandir}/man1/tmux.*
 
 %changelog
-
+* Wed Aug 19 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.0

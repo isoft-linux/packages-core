@@ -1,0 +1,1522 @@
+diff --git a/README b/README
+index 9b4f643..c3dc9d8 100644
+--- a/README
++++ b/README
+@@ -18,3 +18,72 @@ See the CREDITS file for a list of folks who have helped us out
+ tremendously.  RPM is Copyright (c) 1998 by Red Hat Software, Inc.,
+ and may be distributed under the terms of the GPL and LGPL (see  the
+ file COPYING for details).
++
++Build
++-------------------------------------------------------------------------------
++
++wget http://download.oracle.com/berkeley-db/db-6.1.23.tar.gz
++tar xvf db-6.1.23.tar.gz
++
++ln -s db-6.1.23 db
++
++export CPPFLAGS="$CPPFLAGS `pkg-config --cflags nss` -DLUA_COMPAT_APIINTCASTS"
++export CFLAGS="$RPM_OPT_FLAGS -DLUA_COMPAT_APIINTCASTS"
++./autogen.sh --prefix=/usr   \
++    --localstatedir=/var    \
++    --with-archive  \
++    --with-lua  \
++    --with-cap  \
++    --enable-plugins    \
++    --enable-python \
++    --with-vendor=isoft
++
++
++Db
++-------------------------------------------------------------------------------
++
++rpm --initdb --dbpath /var/lib/isoft-app
++
++
++RPM Next
++-------------------------------------------------------------------------------
++
++1.
++
++sudo rpm -e firefox-i18n-40.0-1.x86_64 firefox-40.0-12.x86_64
++
++sudo rpm -ivh --isoftapp firefox-40.0-12.x86_64.rpm
++
++rpm -q firefox
++
++rpm -q --isoftapp firefox
++
++rpm -V firefox
++
++rpm -V --isoftapp firefox
++
++sudo rpm -e firefox
++
++sudo rpm -e --isoftapp firefox
++
++sudo rpm --import --isoftapp ISOFT-APP-GPG-KEY
++
++rpm --resign /data/download/firefox-40.0-12.x86_64.rpm 
++
++rpm -qip --isoftapp /data/download/firefox-40.0-12.x86_64.rpm
++
++2.
++
++rpmbuild -ba --isoftapp libtar.spec
++
++rpmbuild -ba libtar.spec
++
++sudo rpm -ivh --isoftapp libtar-1.2.20-1.x86_64.rpm
++
++rpm -q --isoftapp libtar
++
++rpm -q libtar
++
++sudo rpm -e libtar
++
++sudo rpm -e --isoftapp libtar
+diff --git a/build/rpmbuild.h b/build/rpmbuild.h
+index 4777f58..b921d5e 100644
+--- a/build/rpmbuild.h
++++ b/build/rpmbuild.h
+@@ -94,6 +94,14 @@ Header rpmSpecSourceHeader(rpmSpec spec);
+ rpmps rpmSpecCheckDeps(rpmts ts, rpmSpec spec);
+ 
+ /** \ingroup rpmbuild
++ * Verify build depencies of a spec against.
++ * @param ts		(empty) transaction set
++ * @param spec		parsed spec control structure
++ * @return		rpm problem set or NULL on no problems
++ */
++rpmps rpmSpecCheckDepsISoftApp(rpmts ts, rpmSpec spec);
++
++/** \ingroup rpmbuild
+  * Retrieve build dependency set from spec.
+  * @param spec		parsed spec control structure
+  * @param tag		dependency tag
+diff --git a/build/spec.c b/build/spec.c
+index 7cb264a..58fae28 100644
+--- a/build/spec.c
++++ b/build/spec.c
+@@ -331,6 +331,24 @@ rpmps rpmSpecCheckDeps(rpmts ts, rpmSpec spec)
+     return probs;
+ }
+ 
++rpmps rpmSpecCheckDepsISoftApp(rpmts ts, rpmSpec spec)
++{
++    rpmps probs = NULL;
++
++    rpmtsEmpty(ts);
++
++    rpmtsAddInstallElement(ts, rpmSpecSourceHeader(spec), NULL, 0, NULL);
++    rpmtsCheck(ts);
++    probs = rpmtsProblems(ts);
++    if (probs) {
++        rpmtsCheckISoftApp(ts);
++        probs = rpmtsProblems(ts);
++    }
++
++    rpmtsEmpty(ts);
++    return probs;
++}
++
+ struct rpmSpecIter_s {
+     void *next;
+ };
+diff --git a/lib/depends.c b/lib/depends.c
+index fc413a9..c4d63cb 100644
+--- a/lib/depends.c
++++ b/lib/depends.c
+@@ -10,6 +10,7 @@
+ #include <rpm/rpmdb.h>
+ #include <rpm/rpmds.h>
+ #include <rpm/rpmfi.h>
++#include <rpm/rpmmacro.h>
+ 
+ #include "lib/rpmts_internal.h"
+ #include "lib/rpmte_internal.h"
+@@ -1047,3 +1048,177 @@ exit:
+ 	(void) rpmtsCloseDB(ts);
+     return rc;
+ }
++
++int rpmtsCheckISoftApp(rpmts ts)
++{
++    rpm_color_t tscolor = rpmtsColor(ts);
++    rpmtsi pi = NULL; rpmte p;
++    int closeatexit = 0;
++    int rc = 0;
++    depCache dcache = NULL;
++    filedepHash confilehash = NULL;	/* file conflicts of installed packages */
++    filedepHash connotfilehash = NULL;	/* file conflicts of installed packages */
++    depexistsHash connothash = NULL;
++    filedepHash reqfilehash = NULL;	/* file requires of installed packages */
++    filedepHash reqnotfilehash = NULL;	/* file requires of installed packages */
++    depexistsHash reqnothash = NULL;
++    fingerPrintCache fpc = NULL;
++    rpmdb rdb = NULL;
++
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++
++    (void) rpmswEnter(rpmtsOp(ts, RPMTS_OP_CHECK), 0);
++
++    /* Do lazy, readonly, open of rpm database. */
++    rdb = rpmtsGetRdb(ts);
++    if (rdb == NULL && rpmtsGetDBMode(ts) != -1) {
++	if ((rc = rpmtsOpenDB(ts, rpmtsGetDBMode(ts))) != 0)
++	    goto exit;
++	rdb = rpmtsGetRdb(ts);
++	closeatexit = 1;
++    }
++
++    if (rdb)
++	rpmdbCtrl(rdb, RPMDB_CTRL_LOCK_RO);
++
++    /* XXX FIXME: figure some kind of heuristic for the cache size */
++    dcache = depCacheCreate(5001, rstrhash, strcmp,
++				     (depCacheFreeKey)rfree, NULL);
++
++    /* build hashes of all confilict sdependencies */
++    confilehash = filedepHashCreate(257, rstrhash, strcmp,
++				    (filedepHashFreeKey)rfree,
++				    (filedepHashFreeData)rfree);
++    connothash = depexistsHashCreate(257, rstrhash, strcmp,
++				    (filedepHashFreeKey)rfree);
++    connotfilehash = filedepHashCreate(257, rstrhash, strcmp,
++				    (filedepHashFreeKey)rfree,
++				    (filedepHashFreeData)rfree);
++    addIndexToDepHashes(ts, RPMTAG_CONFLICTNAME, NULL, confilehash, connothash, connotfilehash);
++    if (!filedepHashNumKeys(confilehash))
++	confilehash = filedepHashFree(confilehash);
++    if (!depexistsHashNumKeys(connothash))
++	connothash= depexistsHashFree(connothash);
++    if (!filedepHashNumKeys(connotfilehash))
++	connotfilehash = filedepHashFree(connotfilehash);
++
++    /* build hashes of all requires dependencies */
++    reqfilehash = filedepHashCreate(8191, rstrhash, strcmp,
++				    (filedepHashFreeKey)rfree,
++				    (filedepHashFreeData)rfree);
++    reqnothash = depexistsHashCreate(257, rstrhash, strcmp,
++				    (filedepHashFreeKey)rfree);
++    reqnotfilehash = filedepHashCreate(257, rstrhash, strcmp,
++				    (filedepHashFreeKey)rfree,
++				    (filedepHashFreeData)rfree);
++    addIndexToDepHashes(ts, RPMTAG_REQUIRENAME, NULL, reqfilehash, reqnothash, reqnotfilehash);
++    if (!filedepHashNumKeys(reqfilehash))
++	reqfilehash = filedepHashFree(reqfilehash);
++    if (!depexistsHashNumKeys(reqnothash))
++	reqnothash= depexistsHashFree(reqnothash);
++    if (!filedepHashNumKeys(reqnotfilehash))
++	reqnotfilehash = filedepHashFree(reqnotfilehash);
++
++    /*
++     * Look at all of the added packages and make sure their dependencies
++     * are satisfied.
++     */
++    pi = rpmtsiInit(ts);
++    while ((p = rpmtsiNext(pi, TR_ADDED)) != NULL) {
++	rpmds provides = rpmdsInit(rpmteDS(p, RPMTAG_PROVIDENAME));
++
++	rpmlog(RPMLOG_DEBUG, "========== +++ %s %s/%s 0x%x\n",
++		rpmteNEVR(p), rpmteA(p), rpmteO(p), rpmteColor(p));
++
++	checkDS(ts, dcache, p, rpmteNEVRA(p), rpmteDS(p, RPMTAG_REQUIRENAME),
++		tscolor);
++	checkDS(ts, dcache, p, rpmteNEVRA(p), rpmteDS(p, RPMTAG_CONFLICTNAME),
++		tscolor);
++	checkDS(ts, dcache, p, rpmteNEVRA(p), rpmteDS(p, RPMTAG_OBSOLETENAME),
++		tscolor);
++
++	/* Check provides against conflicts in installed packages. */
++	while (rpmdsNext(provides) >= 0) {
++	    const char *dep = rpmdsN(provides);
++	    checkInstDeps(ts, dcache, p, RPMTAG_CONFLICTNAME, dep);
++	    if (reqnothash && depexistsHashHasEntry(reqnothash, dep))
++		checkNotInstDeps(ts, dcache, p, RPMTAG_REQUIRENAME, dep);
++	}
++
++	/* Skip obsoletion checks for source packages (ie build) */
++	if (rpmteIsSource(p))
++	    continue;
++
++	/* Check package name (not provides!) against installed obsoletes */
++	checkInstDeps(ts, dcache, p, RPMTAG_OBSOLETENAME, rpmteN(p));
++
++	/* Check filenames against installed conflicts */
++        if (confilehash || reqnotfilehash) {
++	    rpmfiles files = rpmteFiles(p);
++	    rpmfi fi = rpmfilesIter(files, RPMFI_ITER_FWD);
++	    while (rpmfiNext(fi) >= 0) {
++		if (confilehash)
++		    checkInstFileDeps(ts, dcache, p, RPMTAG_CONFLICTNAME, fi, 0, confilehash, &fpc);
++		if (reqnotfilehash)
++		    checkInstFileDeps(ts, dcache, p, RPMTAG_REQUIRENAME, fi, 1, reqnotfilehash, &fpc);
++	    }
++	    rpmfiFree(fi);
++	    rpmfilesFree(files);
++	}
++    }
++    rpmtsiFree(pi);
++
++    /*
++     * Look at the removed packages and make sure they aren't critical.
++     */
++    pi = rpmtsiInit(ts);
++    while ((p = rpmtsiNext(pi, TR_REMOVED)) != NULL) {
++	rpmds provides = rpmdsInit(rpmteDS(p, RPMTAG_PROVIDENAME));
++
++	rpmlog(RPMLOG_DEBUG, "========== --- %s %s/%s 0x%x\n",
++		rpmteNEVR(p), rpmteA(p), rpmteO(p), rpmteColor(p));
++
++	/* Check provides and filenames against installed dependencies. */
++	while (rpmdsNext(provides) >= 0) {
++	    const char *dep = rpmdsN(provides);
++	    checkInstDeps(ts, dcache, p, RPMTAG_REQUIRENAME, dep);
++	    if (connothash && depexistsHashHasEntry(connothash, dep))
++		checkNotInstDeps(ts, dcache, p, RPMTAG_CONFLICTNAME, dep);
++	}
++
++	if (reqfilehash || connotfilehash) {
++	    rpmfiles files = rpmteFiles(p);
++	    rpmfi fi = rpmfilesIter(files, RPMFI_ITER_FWD);;
++	    while (rpmfiNext(fi) >= 0) {
++		if (RPMFILE_IS_INSTALLED(rpmfiFState(fi))) {
++		    if (reqfilehash)
++			checkInstFileDeps(ts, dcache, p, RPMTAG_REQUIRENAME, fi, 0, reqfilehash, &fpc);
++		    if (connotfilehash)
++			checkInstFileDeps(ts, dcache, p, RPMTAG_CONFLICTNAME, fi, 1, connotfilehash, &fpc);
++		}
++	    }
++	    rpmfiFree(fi);
++	    rpmfilesFree(files);
++	}
++    }
++    rpmtsiFree(pi);
++
++    if (rdb)
++	rpmdbCtrl(rdb, RPMDB_CTRL_UNLOCK_RO);
++
++exit:
++    depCacheFree(dcache);
++    filedepHashFree(confilehash);
++    filedepHashFree(connotfilehash);
++    depexistsHashFree(connothash);
++    filedepHashFree(reqfilehash);
++    filedepHashFree(reqnotfilehash);
++    depexistsHashFree(reqnothash);
++    fpCacheFree(fpc);
++
++    (void) rpmswExit(rpmtsOp(ts, RPMTS_OP_CHECK), 0);
++
++    if (closeatexit)
++	(void) rpmtsCloseDB(ts);
++    return rc;
++}
+diff --git a/lib/query.c b/lib/query.c
+index d0274d0..211a680 100644
+--- a/lib/query.c
++++ b/lib/query.c
+@@ -298,6 +298,23 @@ static int rpmcliShowMatches(QVA_t qva, rpmts ts, rpmdbMatchIterator mi)
+     return ec;
+ }
+ 
++static int rpmcliShowMatchesISoftApp(QVA_t qva, rpmts ts, rpmdbMatchIterator mi)
++{
++    Header h;
++    int ec = 0;
++
++    if (mi == NULL)
++        return 1;
++
++    while ((h = rpmdbNextIteratorISoftApp(mi)) != NULL) {
++	    int rc;
++	    rpmdbCheckSignals();
++	    if ((rc = qva->qva_showPackage(qva, ts, h)) != 0)
++	        ec = rc;
++    }
++    return ec;
++}
++
+ static rpmdbMatchIterator initQueryIterator(QVA_t qva, rpmts ts, const char * arg)
+ {
+     const char * s;
+@@ -565,6 +582,42 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
+     return ec;
+ }
+ 
++int rpmcliArgIterISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv)
++{
++    int ec = 0;
++
++    switch (qva->qva_source) {
++    case RPMQV_ALL: {
++	    rpmdbMatchIterator mi = initFilterIterator(ts, argv);
++	    ec = rpmcliShowMatches(qva, ts, mi);
++	    rpmdbFreeIterator(mi);
++	    break;
++    }
++    case RPMQV_RPM: {
++	    rpmgi gi = rpmgiNew(ts, giFlags, argv);
++	    ec = rpmgiShowMatches(qva, ts, gi);
++	    rpmgiFree(gi);
++	    break;
++    }
++    case RPMQV_SPECRPMS:
++    case RPMQV_SPECSRPM:
++	    for (ARGV_const_t arg = argv; arg && *arg; arg++) {
++	        ec += ((qva->qva_specQuery != NULL)
++		        ? qva->qva_specQuery(ts, qva, *arg) : 1);
++	    }
++	    break;
++    default:
++	    for (ARGV_const_t arg = argv; arg && *arg; arg++) {
++	        rpmdbMatchIterator mi = initQueryIterator(qva, ts, *arg);
++	        ec += rpmcliShowMatchesISoftApp(qva, ts, mi);
++	        rpmdbFreeIterator(mi);
++	    }
++	    break;
++    }
++
++    return ec;
++}
++
+ int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
+ {
+     rpmVSFlags vsflags, ovsflags;
+@@ -607,3 +660,48 @@ int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
+ 
+     return ec;
+ }
++
++int rpmcliQueryISoftApp(rpmts ts, QVA_t qva, char * const *argv)
++{
++    rpmVSFlags vsflags, ovsflags;
++    int ec = 0;
++
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++
++    if (qva->qva_showPackage == NULL)
++	qva->qva_showPackage = showQueryPackage;
++
++    /* If --queryformat unspecified, then set default now. */
++    if (!(qva->qva_flags & _QUERY_FOR_BITS) && qva->qva_queryFormat == NULL) {
++	char * fmt = rpmExpand("%{?_query_all_fmt}\n", NULL);
++	if (fmt == NULL || strlen(fmt) <= 1) {
++	    free(fmt);
++	    fmt = xstrdup("%{nvra}\n");
++	}
++	qva->qva_queryFormat = fmt;
++    }
++
++    if (!(qva->qva_source & RPMQV_RPM) &&
++	rpmExpandNumeric("%{?_vsflags_query_rpmdb:1}")) {
++
++	vsflags = rpmExpandNumeric("%{?_vsflags_query_rpmdb}");
++    } else {
++	vsflags = rpmExpandNumeric("%{?_vsflags_query}");
++    }
++
++    if (rpmcliQueryFlags & VERIFY_DIGEST)
++	vsflags |= _RPMVSF_NODIGESTS;
++    if (rpmcliQueryFlags & VERIFY_SIGNATURE)
++	vsflags |= _RPMVSF_NOSIGNATURES;
++    if (rpmcliQueryFlags & VERIFY_HDRCHK)
++	vsflags |= RPMVSF_NOHDRCHK;
++
++    ovsflags = rpmtsSetVSFlags(ts, vsflags);
++    ec = rpmcliArgIter(ts, qva, argv);
++    rpmtsSetVSFlags(ts, ovsflags);
++
++    if (qva->qva_showPackage == showQueryPackage)
++	qva->qva_showPackage = NULL;
++
++    return ec;
++}
+diff --git a/lib/rpmchecksig.c b/lib/rpmchecksig.c
+index f17a18a..5d71ba8 100644
+--- a/lib/rpmchecksig.c
++++ b/lib/rpmchecksig.c
+@@ -119,6 +119,45 @@ int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv)
+     return res;
+ }
+ 
++int rpmcliImportPubkeysISoftApp(rpmts ts, ARGV_const_t argv)
++{
++    int res = 0;
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++    for (ARGV_const_t arg = argv; arg && *arg; arg++) {
++	const char *fn = *arg;
++	uint8_t *buf = NULL;
++	ssize_t blen = 0;
++	char *t = NULL;
++	int iorc;
++
++	/* If arg looks like a keyid, then attempt keyserver retrieve. */
++	if (rstreqn(fn, "0x", 2)) {
++	    const char * s = fn + 2;
++	    int i;
++	    for (i = 0; *s && isxdigit(*s); s++, i++)
++		{};
++	    if (i == 8 || i == 16) {
++		t = rpmExpand("%{_hkp_keyserver_query}", fn+2, NULL);
++		if (t && *t != '%')
++		    fn = t;
++	    }
++	}
++
++	/* Read the file and try to import all contained keys */
++	iorc = rpmioSlurp(fn, &buf, &blen);
++	if (iorc || buf == NULL || blen < 64) {
++	    rpmlog(RPMLOG_ERR, _("%s: import read failed(%d).\n"), fn, iorc);
++	    res++;
++	} else {
++	    res += doImport(ts, fn, (char *)buf, blen);
++	}
++
++	free(t);
++	free(buf);
++    }
++    return res;
++}
++
+ /**
+  * @todo If the GPG key was known available, the md5 digest could be skipped.
+  */
+@@ -395,3 +434,29 @@ int rpmcliVerifySignatures(rpmts ts, ARGV_const_t argv)
+     rpmKeyringFree(keyring);
+     return res;
+ }
++
++int rpmcliVerifySignaturesISoftApp(rpmts ts, ARGV_const_t argv)
++{
++    const char * arg;
++    int res = 0;
++    rpmKeyring keyring = rpmtsGetKeyring(ts, 1);
++    rpmVerifyFlags verifyFlags = (VERIFY_DIGEST|VERIFY_SIGNATURE);
++    
++    verifyFlags &= ~rpmcliQueryFlags;
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++    while ((arg = *argv++) != NULL) {
++	FD_t fd = Fopen(arg, "r.ufdio");
++	if (fd == NULL || Ferror(fd)) {
++	    rpmlog(RPMLOG_ERR, _("%s: open failed: %s\n"), 
++		     arg, Fstrerror(fd));
++	    res++;
++	} else if (rpmpkgVerifySigs(keyring, verifyFlags, fd, arg)) {
++	    res++;
++	}
++
++	Fclose(fd);
++	rpmdbCheckSignals();
++    }
++    rpmKeyringFree(keyring);
++    return res;
++}
+diff --git a/lib/rpmcli.h b/lib/rpmcli.h
+index 4adb3d1..bb719b6 100644
+--- a/lib/rpmcli.h
++++ b/lib/rpmcli.h
+@@ -230,6 +230,15 @@ int showQueryPackage(QVA_t qva, rpmts ts, Header h);
+ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv);
+ 
+ /** \ingroup rpmcli
++ * Iterate over query/verify arg list for iSOFT App.
++ * @param ts		transaction set
++ * @param qva		parsed query/verify options
++ * @param argv		query argument(s) (or NULL)
++ * @return		0 on success, else no. of failures
++ */
++int rpmcliArgIterISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv);
++
++/** \ingroup rpmcli
+  * Display package information.
+  * @todo hack: RPMQV_ALL can pass char ** arglist = NULL, not char * arg. Union?
+  * @param ts		transaction set
+@@ -240,6 +249,16 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv);
+ int rpmcliQuery(rpmts ts, QVA_t qva, ARGV_const_t argv);
+ 
+ /** \ingroup rpmcli
++ * Display package information.
++ * @todo hack: RPMQV_ALL can pass char ** arglist = NULL, not char * arg. Union?
++ * @param ts		transaction set
++ * @param qva		parsed query/verify options
++ * @param argv		query argument(s) (or NULL)
++ * @return		0 on success, else no. of failures
++ */
++int rpmcliQueryISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv);
++
++/** \ingroup rpmcli
+  * Display results of package verify.
+  * @param qva		parsed query/verify options
+  * @param ts		transaction set
+@@ -268,6 +287,16 @@ int rpmVerifySignatures(QVA_t qva, rpmts ts, FD_t fd, const char * fn);
+  */
+ int rpmcliVerify(rpmts ts, QVA_t qva, ARGV_const_t argv);
+ 
++/** \ingroup rpmcli
++ * Verify iSOFT App install.
++ * @todo hack: RPMQV_ALL can pass char ** arglist = NULL, not char * arg. Union?
++ * @param ts		transaction set
++ * @param qva		parsed query/verify options
++ * @param argv		verify argument(s) (or NULL)
++ * @return		0 on success, else no. of failures
++ */
++int rpmcliVerifyISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv);
++
+ /* ==================================================================== */
+ /** \name RPMEIU */
+ /* --- install/upgrade/erase modes */
+@@ -359,6 +388,18 @@ struct rpmInstallArguments_s {
+ int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
+ 
+ /** \ingroup rpmcli
++ * Install/upgrade/freshen/reinstall binary rpm package.
++ * @param ts		transaction set
++ * @param ia		mode flags and parameters
++ * @param fileArgv	array of package file names (NULL terminated)
++ * @return		0 on success
++ *
++ * @todo		fileArgv is modified on errors, should be ARGV_const_t
++ */
++int rpmInstallISoftApp(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
++
++
++/** \ingroup rpmcli
+  * Erase binary rpm package.
+  * @param ts		transaction set
+  * @param ia		control args/bits
+@@ -369,6 +410,16 @@ int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
+ int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv);
+ 
+ /** \ingroup rpmcli
++ * Erase binary rpm package.
++ * @param ts		transaction set
++ * @param ia		control args/bits
++ * @param argv		array of package file names (NULL terminated)
++ * @return		0 on success
++ */
++
++int rpmEraseISoftApp(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv);
++
++/** \ingroup rpmcli
+  */
+ extern struct rpmInstallArguments_s rpmIArgs;
+ 
+@@ -386,6 +437,16 @@ extern struct poptOption rpmInstallPoptTable[];
+  */
+ int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
+ 
++/* ==================================================================== */
++/** \name RPMK */
++
++/** Import public key(s) to iSOFT App keyring
++ * @param ts		transaction set
++ * @param argv		array of pubkey path arguments (NULL terminated)
++ * @return		0 on success
++ */
++int rpmcliImportPubkeysISoftApp(rpmts ts, ARGV_const_t argv);
++
+ /** \ingroup rpmcli
+  * Verify package signatures
+  * @param ts		transaction set
+@@ -394,6 +455,14 @@ int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
+  */
+ int rpmcliVerifySignatures(rpmts ts, ARGV_const_t argv);
+ 
++/** \ingroup rpmcli
++ * Verify iSOFT App signatures
++ * @param ts		transaction set
++ * @param argv		array of package path arguments (NULL terminated)
++ * @return		0 on success
++ */
++int rpmcliVerifySignaturesISoftApp(rpmts ts, ARGV_const_t argv);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/lib/rpmdb.c b/lib/rpmdb.c
+index 6499efc..51c8098 100644
+--- a/lib/rpmdb.c
++++ b/lib/rpmdb.c
+@@ -1619,6 +1619,111 @@ top:
+     return mi->mi_h;
+ }
+ 
++Header rpmdbNextIteratorISoftApp(rpmdbMatchIterator mi)
++{
++    dbiIndex dbi = NULL;
++    unsigned char * uh;
++    unsigned int uhlen;
++    int rc;
++    headerImportFlags importFlags = HEADERIMPORT_FAST;
++    rpmdb osdb = NULL;  /* db for default /var/lib/rpm */
++
++    if (mi == NULL)
++	    goto exit;
++
++    openDatabase("/", "/var/lib/rpm", &osdb, O_RDONLY, 0644, 0);
++    /* TODO: open osdb instead of mi->mi_db */
++    if (pkgdbOpen(osdb, 0, &dbi)) {
++	    printf("ERROR: %s, line %d, %s: fail to open pkgdb\n", 
++               __FILE__, __LINE__, __func__);
++        goto exit;
++    }
++
++#if defined(_USE_COPY_LOAD)
++    importFlags |= HEADERIMPORT_COPY;
++#endif
++    /*
++     * Cursors are per-iterator, not per-dbi, so get a cursor for the
++     * iterator on 1st call. If the iteration is to rewrite headers,
++     * then the cursor needs to marked with DBC_WRITE as well.
++     */
++    if (mi->mi_dbc == NULL)
++	    mi->mi_dbc = dbiCursorInit(dbi, mi->mi_cflags);
++
++top:
++    uh = NULL;
++    uhlen = 0;
++
++    do {
++	    if (mi->mi_set) {
++	        if (!(mi->mi_setx < mi->mi_set->count))
++		        goto exit;
++	        mi->mi_offset = dbiIndexRecordOffset(mi->mi_set, mi->mi_setx);
++	        mi->mi_filenum = dbiIndexRecordFileNumber(mi->mi_set, mi->mi_setx);
++	    } else {
++	        rc = pkgdbGet(dbi, mi->mi_dbc, 0, &uh, &uhlen);
++	        if (rc == 0)
++		        mi->mi_offset = pkgdbKey(dbi, mi->mi_dbc);
++
++	        /* Terminate on error or end of keys */
++	        if (rc || (mi->mi_setx && mi->mi_offset == 0))
++		        goto exit;
++	    }
++	    mi->mi_setx++;
++    } while (mi->mi_offset == 0);
++
++    /* If next header is identical, return it now. */
++    if (mi->mi_prevoffset && mi->mi_offset == mi->mi_prevoffset)
++	    return mi->mi_h;
++
++    /* Retrieve next header blob for index iterator. */
++    if (uh == NULL) {
++	    rc = pkgdbGet(dbi, mi->mi_dbc, mi->mi_offset, &uh, &uhlen);
++	    if (rc)
++	        goto exit;
++    }
++
++    /* Rewrite current header (if necessary) and unlink. */
++    miFreeHeader(mi, dbi);
++
++    /* Is this the end of the iteration? */
++    if (uh == NULL)
++	    goto exit;
++
++    /* Verify header if enabled, skip damaged and inconsistent headers */
++    if (miVerifyHeader(mi, uh, uhlen) == RPMRC_FAIL)
++	    goto top;
++
++    /* Did the header blob load correctly? */
++    mi->mi_h = headerImport(uh, uhlen, importFlags);
++    if (mi->mi_h == NULL || !headerIsEntry(mi->mi_h, RPMTAG_NAME)) {
++	    rpmlog(RPMLOG_ERR,
++		       _("rpmdb: damaged header #%u retrieved -- skipping.\n"),
++		       mi->mi_offset);
++	    goto top;
++    }
++
++    /*
++     * Skip this header if iterator selector (if any) doesn't match.
++     */
++    if (mireSkip(mi)) {
++	    goto top;
++    }
++    headerSetInstance(mi->mi_h, mi->mi_offset);
++
++    mi->mi_prevoffset = mi->mi_offset;
++    mi->mi_modified = 0;
++
++    return mi->mi_h;
++
++exit:
++    if (osdb) {
++        rpmdbClose(osdb);
++        osdb = NULL;
++    }
++    return NULL;
++}
++
+ /** \ingroup rpmdb
+  * sort the iterator by (recnum, filenum)
+  * Return database iterator.
+diff --git a/lib/rpmdb.h b/lib/rpmdb.h
+index 4bbd465..9c17706 100644
+--- a/lib/rpmdb.h
++++ b/lib/rpmdb.h
+@@ -146,6 +146,13 @@ rpmdbMatchIterator rpmdbInitIterator(rpmdb db, rpmDbiTagVal rpmtag,
+ Header rpmdbNextIterator(rpmdbMatchIterator mi);
+ 
+ /** \ingroup rpmdb
++ * Return next package header from iteration for iSOFT App.
++ * @param mi		rpm database iterator
++ * @return		NULL on end of iteration.
++ */
++Header rpmdbNextIteratorISoftApp(rpmdbMatchIterator mi);
++
++/** \ingroup rpmdb
+  * Check for and exit on termination signals.
+  */
+ int rpmdbCheckSignals(void);
+diff --git a/lib/rpminstall.c b/lib/rpminstall.c
+index 03d9ea1..a5e0e59 100644
+--- a/lib/rpminstall.c
++++ b/lib/rpminstall.c
+@@ -249,7 +249,7 @@ struct rpmEIU {
+ };
+ 
+ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
+-		      int numPackages)
++		      int numPackages, int isoftApp)
+ {
+     rpmps ps;
+ 
+@@ -266,6 +266,9 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
+ 	}
+ 
+ 	ps = rpmtsProblems(ts);
++    if (isoftApp && ps) {
++        ps = rpmtsCheckISoftApp(ts);
++    }
+ 	if (!stop && rpmpsNumProblems(ps) > 0) {
+ 	    rpmlog(RPMLOG_ERR, _("Failed dependencies:\n"));
+ 	    rpmpsPrint(NULL, ps);
+@@ -286,7 +289,10 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
+ 	rpmlog(RPMLOG_DEBUG, eflags ? "erasing packages\n" :
+ 				      "installing binary packages\n");
+ 	rpmtsClean(ts);
+-	rc = rpmtsRun(ts, NULL, ia->probFilter);
++    if (isoftApp)
++        rc = rpmtsRunISoftApp(ts, NULL, ia->probFilter);
++    else
++	    rc = rpmtsRun(ts, NULL, ia->probFilter);
+ 
+ 	ps = rpmtsProblems(ts);
+ 
+@@ -609,7 +615,263 @@ restart:
+     if (eiu->numFailed) goto exit;
+ 
+     if (eiu->numRPMS) {
+-        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs);
++        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs, 0);
++        if (rc < 0)
++            eiu->numFailed += eiu->numRPMS;
++	else if (rc > 0)
++            eiu->numFailed += rc;
++    }
++
++    if (eiu->numSRPMS && (eiu->sourceURL != NULL)) {
++	rpmcliProgressState = 0;
++	rpmcliProgressTotal = 0;
++	rpmcliProgressCurrent = 0;
++	for (i = 0; i < eiu->numSRPMS; i++) {
++	    rpmdbCheckSignals();
++	    if (eiu->sourceURL[i] != NULL) {
++	        rc = RPMRC_OK;
++		if (!(rpmtsFlags(ts) & RPMTRANS_FLAG_TEST))
++		    rc = rpmInstallSource(ts, eiu->sourceURL[i], NULL, NULL);
++		if (rc != 0)
++		    eiu->numFailed++;
++	    }
++	}
++    }
++
++exit:
++    if (eiu->pkgURL != NULL) {
++        for (i = 0; i < eiu->numPkgs; i++) {
++	    if (eiu->pkgURL[i] == NULL) continue;
++	    if (eiu->pkgState[i] == 1)
++	        (void) unlink(eiu->pkgURL[i]);
++	    eiu->pkgURL[i] = _free(eiu->pkgURL[i]);
++	}
++    }
++    eiu->pkgState = _free(eiu->pkgState);
++    eiu->pkgURL = _free(eiu->pkgURL);
++    eiu->argv = _free(eiu->argv);
++    rc = eiu->numFailed;
++    free(eiu);
++
++    rpmtsEmpty(ts);
++    rpmtsSetVSFlags(ts, ovsflags);
++
++    return rc;
++}
++
++int rpmInstallISoftApp(rpmts ts,
++                       struct rpmInstallArguments_s *ia,
++                       ARGV_t fileArgv)
++{
++    struct rpmEIU * eiu = xcalloc(1, sizeof(*eiu));
++    rpmRelocation * relocations;
++    char * fileURL = NULL;
++    rpmVSFlags vsflags, ovsflags;
++    int rc;
++    int i;
++
++    vsflags = setvsFlags(ia);
++    ovsflags = rpmtsSetVSFlags(ts, (vsflags | RPMVSF_NEEDPAYLOAD));
++
++    if (fileArgv == NULL) goto exit;
++
++    (void) rpmtsSetFlags(ts, ia->transFlags);
++
++    relocations = ia->relocations;
++
++    setNotifyFlag(ia, ts); 
++
++    if ((eiu->relocations = relocations) != NULL) {
++	while (eiu->relocations->oldPath)
++	    eiu->relocations++;
++	if (eiu->relocations->newPath == NULL)
++	    eiu->relocations = NULL;
++    }
++
++    /* Build fully globbed list of arguments in argv[argc]. */
++    for (eiu->fnp = fileArgv; *eiu->fnp != NULL; eiu->fnp++) {
++    	ARGV_t av = NULL;
++    	int ac = 0;
++
++	if (giFlags & RPMGI_NOGLOB) {
++	    rc = rpmNoGlob(*eiu->fnp, &ac, &av);
++	} else {
++	    char * fn = rpmEscapeSpaces(*eiu->fnp);
++	    rc = rpmGlob(fn, &ac, &av);
++	    fn = _free(fn);
++	}
++	if (rc || ac == 0) {
++	    if (giFlags & RPMGI_NOGLOB) {
++		rpmlog(RPMLOG_ERR, _("File not found: %s\n"), *eiu->fnp);
++	    } else {
++		rpmlog(RPMLOG_ERR, _("File not found by glob: %s\n"), *eiu->fnp);
++	    }
++	    eiu->numFailed++;
++	    continue;
++	}
++
++	argvAppend(&(eiu->argv), av);
++	argvFree(av);
++	eiu->argc += ac;
++    }
++
++restart:
++    /* Allocate sufficient storage for next set of args. */
++    if (eiu->pkgx >= eiu->numPkgs) {
++	eiu->numPkgs = eiu->pkgx + eiu->argc;
++	eiu->pkgURL = xrealloc(eiu->pkgURL,
++			(eiu->numPkgs + 1) * sizeof(*eiu->pkgURL));
++	memset(eiu->pkgURL + eiu->pkgx, 0,
++			((eiu->argc + 1) * sizeof(*eiu->pkgURL)));
++	eiu->pkgState = xrealloc(eiu->pkgState,
++			(eiu->numPkgs + 1) * sizeof(*eiu->pkgState));
++	memset(eiu->pkgState + eiu->pkgx, 0,
++			((eiu->argc + 1) * sizeof(*eiu->pkgState)));
++    }
++
++    /* Retrieve next set of args, cache on local storage. */
++    for (i = 0; i < eiu->argc; i++) {
++	fileURL = _free(fileURL);
++	fileURL = eiu->argv[i];
++	eiu->argv[i] = NULL;
++
++	switch (urlIsURL(fileURL)) {
++	case URL_IS_HTTPS:
++	case URL_IS_HTTP:
++	case URL_IS_FTP:
++	{   char *tfn = NULL;
++	    FD_t tfd;
++
++	    if (rpmIsVerbose())
++		fprintf(stdout, _("Retrieving %s\n"), fileURL);
++
++	    tfd = rpmMkTempFile(rpmtsRootDir(ts), &tfn);
++	    if (tfd && tfn) {
++		Fclose(tfd);
++	    	rc = urlGetFile(fileURL, tfn);
++	    } else {
++		rc = -1;
++	    }
++
++	    if (rc != 0) {
++		rpmlog(RPMLOG_ERR,
++			_("skipping %s - transfer failed\n"), fileURL);
++		eiu->numFailed++;
++		eiu->pkgURL[eiu->pkgx] = NULL;
++		tfn = _free(tfn);
++		break;
++	    }
++	    eiu->pkgState[eiu->pkgx] = 1;
++	    eiu->pkgURL[eiu->pkgx] = tfn;
++	    eiu->pkgx++;
++	}   break;
++	case URL_IS_PATH:
++	case URL_IS_DASH:	/* WRONG WRONG WRONG */
++	case URL_IS_HKP:	/* WRONG WRONG WRONG */
++	default:
++	    eiu->pkgURL[eiu->pkgx] = fileURL;
++	    fileURL = NULL;
++	    eiu->pkgx++;
++	    break;
++	}
++    }
++    fileURL = _free(fileURL);
++
++    if (eiu->numFailed) goto exit;
++
++    /* Continue processing file arguments, building transaction set. */
++    for (eiu->fnp = eiu->pkgURL+eiu->prevx;
++	 *eiu->fnp != NULL;
++	 eiu->fnp++, eiu->prevx++)
++    {
++	Header h = NULL;
++	const char * fileName;
++
++	rpmlog(RPMLOG_DEBUG, "============== %s\n", *eiu->fnp);
++	(void) urlPath(*eiu->fnp, &fileName);
++
++	if (tryReadHeader(ts, eiu, &h) == RPMRC_FAIL)
++	    continue;
++
++	if (eiu->rpmrc == RPMRC_NOTFOUND) {
++	    rc = tryReadManifest(eiu);
++	    if (rc == RPMRC_OK) {
++	        eiu->prevx++;
++	        goto restart;
++	    }
++	}
++
++	if (headerIsSource(h)) {
++	    rpmlog(RPMLOG_DEBUG, "\tadded source package [%d]\n",
++		eiu->numSRPMS);
++	    eiu->sourceURL = xrealloc(eiu->sourceURL,
++				(eiu->numSRPMS + 2) * sizeof(*eiu->sourceURL));
++	    eiu->sourceURL[eiu->numSRPMS] = *eiu->fnp;
++	    *eiu->fnp = NULL;
++	    eiu->numSRPMS++;
++	    eiu->sourceURL[eiu->numSRPMS] = NULL;
++	    continue;
++	}
++
++	if (eiu->relocations) {
++	    struct rpmtd_s prefixes;
++
++	    headerGet(h, RPMTAG_PREFIXES, &prefixes, HEADERGET_DEFAULT);
++	    if (rpmtdCount(&prefixes) == 1) {
++		eiu->relocations->oldPath = xstrdup(rpmtdGetString(&prefixes));
++		rpmtdFreeData(&prefixes);
++	    } else {
++		rpmlog(RPMLOG_ERR, _("package %s is not relocatable\n"),
++		       headerGetString(h, RPMTAG_NAME));
++		eiu->numFailed++;
++		goto exit;
++	    }
++	}
++
++	if (ia->installInterfaceFlags & INSTALL_FRESHEN)
++	    if (checkFreshenStatus(ts, h) != 1) {
++		headerFree(h);
++	        continue;
++	    }
++
++	if (ia->installInterfaceFlags & INSTALL_REINSTALL)
++	    rc = rpmtsAddReinstallElement(ts, h, (fnpyKey)fileName);
++	else
++	    rc = rpmtsAddInstallElement(ts, h, (fnpyKey)fileName,
++			(ia->installInterfaceFlags & INSTALL_UPGRADE) != 0,
++			relocations);
++
++	headerFree(h);
++	if (eiu->relocations)
++	    eiu->relocations->oldPath = _free(eiu->relocations->oldPath);
++
++	switch(rc) {
++	case 0:
++	    rpmlog(RPMLOG_DEBUG, "\tadded binary package [%d]\n",
++			eiu->numRPMS);
++	    break;
++	case 1:
++	    rpmlog(RPMLOG_ERR,
++			    _("error reading from file %s\n"), *eiu->fnp);
++	    eiu->numFailed++;
++	    goto exit;
++	    break;
++	default:
++	    eiu->numFailed++;
++	    goto exit;
++	    break;
++	}
++
++	eiu->numRPMS++;
++    }
++
++    rpmlog(RPMLOG_DEBUG, "found %d source and %d binary packages\n",
++		eiu->numSRPMS, eiu->numRPMS);
++
++    if (eiu->numFailed) goto exit;
++
++    if (eiu->numRPMS) {
++        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs, 1);
+         if (rc < 0)
+             eiu->numFailed += eiu->numRPMS;
+ 	else if (rc > 0)
+@@ -706,7 +968,72 @@ int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv)
+     free(qfmt);
+ 
+     if (numFailed) goto exit;
+-    numFailed = rpmcliTransaction(ts, ia, numPackages);
++    numFailed = rpmcliTransaction(ts, ia, numPackages, 0);
++exit:
++    rpmtsEmpty(ts);
++    rpmtsSetVSFlags(ts, ovsflags);
++
++    return numFailed;
++}
++
++int rpmEraseISoftApp(rpmts ts, 
++                     struct rpmInstallArguments_s *ia, 
++                     ARGV_const_t argv)
++{
++    char * const * arg;
++    char *qfmt = NULL;
++    int numFailed = 0;
++    int numPackages = 0;
++    rpmVSFlags vsflags, ovsflags;
++
++    if (argv == NULL) return 0;
++
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++
++    vsflags = setvsFlags(ia);
++    ovsflags = rpmtsSetVSFlags(ts, vsflags);
++
++    (void) rpmtsSetFlags(ts, ia->transFlags);
++
++    setNotifyFlag(ia, ts);
++
++    qfmt = rpmExpand("%{?_query_all_fmt}\n", NULL);
++    for (arg = argv; *arg; arg++) {
++	rpmdbMatchIterator mi = rpmtsInitIterator(ts, RPMDBI_LABEL, *arg, 0);
++	int matches = rpmdbGetIteratorCount(mi);
++	int erasing = 1;
++
++	if (! matches) {
++	    rpmlog(RPMLOG_ERR, _("package %s is not installed\n"), *arg);
++	    numFailed++;
++	} else {
++	    Header h;	/* XXX iterator owns the reference */
++
++	    if (matches > 1 && 
++		!(ia->installInterfaceFlags & UNINSTALL_ALLMATCHES)) {
++		rpmlog(RPMLOG_ERR, _("\"%s\" specifies multiple packages:\n"),
++			*arg);
++		numFailed++;
++		erasing = 0;
++	    }
++
++	    while ((h = rpmdbNextIterator(mi)) != NULL) {
++		if (erasing) {
++		    (void) rpmtsAddEraseElement(ts, h, -1);
++		    numPackages++;
++		} else {
++		    char *nevra = headerFormat(h, qfmt, NULL);
++		    rpmlog(RPMLOG_NOTICE, "  %s", nevra);
++		    free(nevra);
++		}
++	    }
++	}
++	rpmdbFreeIterator(mi);
++    }
++    free(qfmt);
++
++    if (numFailed) goto exit;
++    numFailed = rpmcliTransaction(ts, ia, numPackages, 1);
+ exit:
+     rpmtsEmpty(ts);
+     rpmtsSetVSFlags(ts, ovsflags);
+diff --git a/lib/rpmts.h b/lib/rpmts.h
+index 5231c80..b5b2d8d 100644
+--- a/lib/rpmts.h
++++ b/lib/rpmts.h
+@@ -175,6 +175,19 @@ typedef rpmFlags rpmtxnFlags;
+ int rpmtsCheck(rpmts ts);
+ 
+ /** \ingroup rpmts
++ * Perform dependency resolution on the transaction set. for example, under 
++ * /var/lib/rpm and /var/lib/isoft-app
++ *
++ * Any problems found by rpmtsCheck() can be examined by retrieving the
++ * problem set with rpmtsProblems(), success here only means that
++ * the resolution was successfully attempted for all packages in the set.
++ *
++ * @param ts        transaction set
++ * @return      0 on success
++ */
++int rpmtsCheckISoftApp(rpmts ts);
++
++/** \ingroup rpmts
+  * Determine package order in a transaction set according to dependencies.
+  *
+  * Order packages, returning error if circular dependencies cannot be
+@@ -212,6 +225,25 @@ int rpmtsOrder(rpmts ts);
+ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet);
+ 
+ /** \ingroup rpmts
++ * Process all package elements in a transaction set.  Before calling
++ * rpmtsRun be sure to have:
++ *
++ *    - setup the rpm root dir via rpmtsSetRoot().
++ *    - setup the rpm notify callback via rpmtsSetNotifyCallback().
++ *    - setup the rpm transaction flags via rpmtsSetFlags().
++ * 
++ * Additionally, though not required you may want to:
++ *
++ *    - setup the rpm verify signature flags via rpmtsSetVSFlags().
++ *       
++ * @param ts		transaction set
++ * @param okProbs	unused
++ * @param ignoreSet	bits to filter problem types
++ * @return		0 on success, -1 on error, >0 with newProbs set
++ */
++int rpmtsRunISoftApp(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet);
++
++/** \ingroup rpmts
+  * Reference a transaction set instance.
+  * @param ts		transaction set
+  * @return		new transaction set reference
+diff --git a/lib/transaction.c b/lib/transaction.c
+index 8f440b7..9fe94e4 100644
+--- a/lib/transaction.c
++++ b/lib/transaction.c
+@@ -1457,7 +1457,103 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
+     rpmtxn txn = NULL;
+     rpmps tsprobs = NULL;
+     int TsmPreDone = 0; /* TsmPre hook hasn't been called */
+-    
++
++    /* Force default 022 umask during transaction for consistent results */
++    mode_t oldmask = umask(022);
++
++    /* Empty transaction, nothing to do */
++    if (rpmtsNElements(ts) <= 0) {
++	rc = 0;
++	goto exit;
++    }
++
++    /* If we are in test mode, then there's no need for transaction lock. */
++    if (!(rpmtsFlags(ts) & RPMTRANS_FLAG_TEST)) {
++	if (!(txn = rpmtxnBegin(ts, RPMTXN_WRITE))) {
++	    goto exit;
++	}
++    }
++
++    /* Setup flags and such, open the DB */
++    if (rpmtsSetup(ts, ignoreSet)) {
++	goto exit;
++    }
++
++    /* Check package set for problems */
++    tsprobs = checkProblems(ts);
++
++    /* Run pre transaction hook for all plugins */
++    TsmPreDone = 1;
++    if (rpmpluginsCallTsmPre(rpmtsPlugins(ts), ts) == RPMRC_FAIL) {
++	goto exit;
++    }
++
++    /* Run pre-transaction scripts, but only if there are no known
++     * problems up to this point and not disabled otherwise. */
++    if (!((rpmtsFlags(ts) & (RPMTRANS_FLAG_BUILD_PROBS|RPMTRANS_FLAG_NOPRETRANS))
++     	  || (rpmpsNumProblems(tsprobs)))) {
++	rpmlog(RPMLOG_DEBUG, "running pre-transaction scripts\n");
++	runTransScripts(ts, PKG_PRETRANS);
++    }
++    tsprobs = rpmpsFree(tsprobs);
++
++    /* Compute file disposition for each package in transaction set. */
++    if (rpmtsPrepare(ts)) {
++	goto exit;
++    }
++    /* Check again for problems (now including file conflicts,  duh */
++    tsprobs = rpmtsProblems(ts);
++
++     /* If unfiltered problems exist, free memory and return. */
++    if ((rpmtsFlags(ts) & RPMTRANS_FLAG_BUILD_PROBS) || (rpmpsNumProblems(tsprobs))) {
++	rc = tsmem->orderCount;
++	goto exit;
++    }
++
++    /* Free up memory taken by problem sets */
++    tsprobs = rpmpsFree(tsprobs);
++    rpmtsCleanProblems(ts);
++
++    /*
++     * Free up the global string pool unless we expect it to be needed
++     * again. During the transaction, private pools will be used for
++     * rpmfi's etc.
++     */
++    if (!(rpmtsFlags(ts) & (RPMTRANS_FLAG_TEST|RPMTRANS_FLAG_BUILD_PROBS)))
++	tsmem->pool = rpmstrPoolFree(tsmem->pool);
++
++    /* Actually install and remove packages, get final exit code */
++    rc = rpmtsProcess(ts) ? -1 : 0;
++
++    /* Run post-transaction scripts unless disabled */
++    if (!(rpmtsFlags(ts) & (RPMTRANS_FLAG_NOPOSTTRANS))) {
++	rpmlog(RPMLOG_DEBUG, "running post-transaction scripts\n");
++	runTransScripts(ts, PKG_POSTTRANS);
++    }
++
++exit:
++    /* Run post transaction hook for all plugins */
++    if (TsmPreDone) /* If TsmPre hook has been called, call the TsmPost hook */
++	rpmpluginsCallTsmPost(rpmtsPlugins(ts), ts, rc);
++
++    /* Finish up... */
++    (void) umask(oldmask);
++    (void) rpmtsFinish(ts);
++    rpmpsFree(tsprobs);
++    rpmtxnEnd(txn);
++    return rc;
++}
++
++int rpmtsRunISoftApp(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
++{
++    int rc = -1; /* assume failure */
++    tsMembers tsmem = rpmtsMembers(ts);
++    rpmtxn txn = NULL;
++    rpmps tsprobs = NULL;
++    int TsmPreDone = 0; /* TsmPre hook hasn't been called */
++   
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++
+     /* Force default 022 umask during transaction for consistent results */
+     mode_t oldmask = umask(022);
+ 
+diff --git a/lib/verify.c b/lib/verify.c
+index 84e9843..2f904b1 100644
+--- a/lib/verify.c
++++ b/lib/verify.c
+@@ -568,3 +568,54 @@ exit:
+ 
+     return ec;
+ }
++
++int rpmcliVerifyISoftApp(rpmts ts, QVA_t qva, char * const * argv)
++{
++    rpmVSFlags vsflags, ovsflags;
++    int ec = 0;
++    FD_t scriptFd = fdDup(STDOUT_FILENO);
++
++    addMacro(NULL, "_dbpath", NULL, "/var/lib/isoft-app", RMIL_GLOBAL);
++
++    /* 
++     * Open the DB + indices explicitly before possible chroot,
++     * otherwises BDB is going to be unhappy...
++     */
++    rpmtsOpenDB(ts, O_RDONLY);
++    rpmdbOpenAll(rpmtsGetRdb(ts));
++    if (rpmChrootSet(rpmtsRootDir(ts)) || rpmChrootIn()) {
++	ec = 1;
++	goto exit;
++    }
++
++    if (qva->qva_showPackage == NULL)
++        qva->qva_showPackage = showVerifyPackage;
++
++    vsflags = rpmExpandNumeric("%{?_vsflags_verify}");
++    if (rpmcliQueryFlags & VERIFY_DIGEST)
++	vsflags |= _RPMVSF_NODIGESTS;
++    if (rpmcliQueryFlags & VERIFY_SIGNATURE)
++	vsflags |= _RPMVSF_NOSIGNATURES;
++    if (rpmcliQueryFlags & VERIFY_HDRCHK)
++	vsflags |= RPMVSF_NOHDRCHK;
++    vsflags &= ~RPMVSF_NEEDPAYLOAD;
++
++    rpmtsSetScriptFd(ts, scriptFd);
++    ovsflags = rpmtsSetVSFlags(ts, vsflags);
++    ec = rpmcliArgIterISoftApp(ts, qva, argv);
++    rpmtsSetVSFlags(ts, ovsflags);
++    rpmtsSetScriptFd(ts, NULL);
++
++    if (qva->qva_showPackage == showVerifyPackage)
++        qva->qva_showPackage = NULL;
++
++    rpmtsEmpty(ts);
++
++    if (rpmChrootOut() || rpmChrootSet(NULL))
++	ec = 1;
++
++exit:
++    Fclose(scriptFd);
++
++    return ec;
++}
+diff --git a/rpmbuild.c b/rpmbuild.c
+index 5d4b207..a608281 100644
+--- a/rpmbuild.c
++++ b/rpmbuild.c
+@@ -29,6 +29,7 @@ static struct rpmBuildArguments_s rpmBTArgs;
+ #define	POPT_RMSPEC		-1019
+ #define POPT_NODIRTOKENS	-1020
+ #define POPT_BUILDINPLACE	-1021
++#define PORT_ISOFTAPP   -1022
+ 
+ #define	POPT_REBUILD		0x4262 /* Bb */
+ #define	POPT_RECOMPILE		0x4369 /* Ci */
+@@ -64,6 +65,7 @@ static char buildChar = 0;		/*!< Build stage (one of "abcilps ") */
+ static rpmBuildFlags nobuildAmount = 0;	/*!< Build stage disablers */
+ static ARGV_t build_targets = NULL;	/*!< Target platform(s) */
+ static int buildInPlace = 0;		/*!< from --build-in-place */
++static int isoftApp = 0;    /*!< Build for iSOFT App */
+ 
+ static void buildArgCallback( poptContext con,
+ 	enum poptCallbackReason reason,
+@@ -129,6 +131,10 @@ static void buildArgCallback( poptContext con,
+ 	rpmDefineMacro(NULL, "_build_in_place 1", 0);
+ 	buildInPlace = 1;
+ 	break;
++
++    case PORT_ISOFTAPP:
++    isoftApp = 1;
++    break;
+     }
+ }
+ 
+@@ -244,6 +250,9 @@ static struct poptOption rpmBuildPoptTable[] = {
+ 	N_("skip straight to specified stage (only for c,i)"), NULL },
+  { "target", '\0', POPT_ARG_STRING, 0,  POPT_TARGETPLATFORM,
+ 	N_("override target platform"), "CPU-VENDOR-OS" },
++
++ { "isoftapp", '\0', 0, 0, PORT_ISOFTAPP,
++    N_("build for iSOFT App"), NULL },
+    POPT_TABLEEND
+ };
+ 
+@@ -277,7 +286,8 @@ static struct poptOption optionsTable[] = {
+ static int checkSpec(rpmts ts, rpmSpec spec)
+ {
+     int rc;
+-    rpmps ps = rpmSpecCheckDeps(ts, spec);
++    rpmps ps = isoftApp ? rpmSpecCheckDepsISoftApp(ts, spec) : 
++        rpmSpecCheckDeps(ts, spec);
+ 
+     if (ps) {
+ 	rpmlog(RPMLOG_ERR, _("Failed build dependencies:\n"));
+diff --git a/rpmkeys.c b/rpmkeys.c
+index fa4e4d86..ce7019a 100644
+--- a/rpmkeys.c
++++ b/rpmkeys.c
+@@ -18,6 +18,7 @@ enum modes {
+ 
+ static int mode = 0;
+ static int test = 0;
++static int isoftApp = 0;
+ 
+ static struct poptOption keyOptsTable[] = {
+     { "checksig", 'K', (POPT_ARG_VAL|POPT_ARGFLAG_OR), &mode, MODE_CHECKSIG,
+@@ -41,6 +42,9 @@ static struct poptOption optionsTable[] = {
+     { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,
+ 	N_("Common options for all rpm modes and executables:"), NULL },
+ 
++    { "isoftapp", '\0', POPT_ARGFLAG_OR, &isoftApp, 0, 
++      N_("Operate iSOFT App"), NULL},
++
+     POPT_AUTOALIAS
+     POPT_AUTOHELP
+     POPT_TABLEEND
+@@ -67,12 +71,16 @@ int main(int argc, char *argv[])
+ 
+     switch (mode) {
+     case MODE_CHECKSIG:
+-	ec = rpmcliVerifySignatures(ts, args);
++	ec = isoftApp ? 
++         rpmcliVerifySignaturesISoftApp(ts, args) : 
++         rpmcliVerifySignatures(ts, args);
+ 	break;
+     case MODE_IMPORTKEY:
+ 	if (test)
+ 	    rpmtsSetFlags(ts, (rpmtsFlags(ts)|RPMTRANS_FLAG_TEST));
+-	ec = rpmcliImportPubkeys(ts, args);
++	ec = isoftApp ? 
++         rpmcliImportPubkeysISoftApp(ts, args) : 
++         rpmcliImportPubkeys(ts, args);
+ 	break;
+     /* XXX TODO: actually implement these... */
+     case MODE_DELKEY:
+diff --git a/rpmqv.c b/rpmqv.c
+index 3081ce3..c3d7eb1 100644
+--- a/rpmqv.c
++++ b/rpmqv.c
+@@ -32,6 +32,7 @@ enum modes {
+ #define	MODES_FOR_TEST		(MODES_IE)
+ 
+ static int quiet;
++static int isoftApp = 0;
+ 
+ /* the structure describing the options we take and the defaults */
+ static struct poptOption optionsTable[] = {
+@@ -64,6 +65,10 @@ static struct poptOption optionsTable[] = {
+ 	N_("Common options for all rpm modes and executables:"),
+ 	NULL },
+ 
++ { "isoftapp", '\0', POPT_ARGFLAG_OR, &isoftApp, 0, 
++    N_("Operate iSOFT App"), 
++    NULL},
++
+    POPT_AUTOALIAS
+    POPT_AUTOHELP
+    POPT_TABLEEND
+@@ -256,7 +261,9 @@ int main(int argc, char *argv[])
+ 	if (!poptPeekArg(optCon)) {
+ 	    argerror(_("no packages given for erase"));
+ 	} else {
+-	    ec += rpmErase(ts, ia, (ARGV_const_t) poptGetArgs(optCon));
++	    ec += isoftApp ? 
++              rpmEraseISoftApp(ts, ia, (ARGV_const_t) poptGetArgs(optCon)) : 
++              rpmErase(ts, ia, (ARGV_const_t) poptGetArgs(optCon));
+ 	}
+ 	break;
+ 
+@@ -291,7 +298,9 @@ int main(int argc, char *argv[])
+ 	    argerror(_("no packages given for install"));
+ 	} else {
+ 	    /* FIX: ia->relocations[0].newPath undefined */
+-	    ec += rpmInstall(ts, ia, (ARGV_t) poptGetArgs(optCon));
++        ec += isoftApp ? 
++              rpmInstallISoftApp(ts, ia, (ARGV_t) poptGetArgs(optCon)) : 
++              rpmInstall(ts, ia, (ARGV_t) poptGetArgs(optCon));
+ 	}
+ 	break;
+ 
+@@ -302,7 +311,9 @@ int main(int argc, char *argv[])
+ 	if (!poptPeekArg(optCon) && !(qva->qva_source == RPMQV_ALL))
+ 	    argerror(_("no arguments given for query"));
+ 
+-	ec = rpmcliQuery(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
++	ec = isoftApp ? 
++         rpmcliQueryISoftApp(ts, qva, (ARGV_const_t) poptGetArgs(optCon)) : 
++         rpmcliQuery(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
+ 	break;
+ 
+     case MODE_VERIFY:
+@@ -313,7 +324,9 @@ int main(int argc, char *argv[])
+ 
+ 	if (!poptPeekArg(optCon) && !(qva->qva_source == RPMQV_ALL))
+ 	    argerror(_("no arguments given for verify"));
+-	ec = rpmcliVerify(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
++	ec = isoftApp ? 
++         rpmcliVerifyISoftApp(ts, qva, (ARGV_const_t) poptGetArgs(optCon)) : 
++         rpmcliVerify(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
+     }	break;
+ #endif	/* IAM_RPMQV */
+ 

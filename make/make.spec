@@ -1,7 +1,7 @@
 Summary: A GNU tool which simplifies the build process for users
 Name: make
 Epoch: 1
-Version: 4.0 
+Version: 4.1
 Release: 6
 License: GPL
 Group:  CoreDev/Development/Utility
@@ -40,7 +40,7 @@ rpmclean
 
 %check
 echo ============TESTING===============
-/usr/bin/env LANG=C make check ||:
+/usr/bin/env LANG=C make check
 echo ============END TESTING===========
 
 %clean
@@ -52,5 +52,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man*/*
 
 %changelog
+* Thu Jul 30 2015 Cjacker <cjacker@foxmail.com>
+- update to 4.1
+
 * Mon Jul 30 2007 Cjacker <cjacker@gmail.com>
 - prepare for 0.5

@@ -1,14 +1,17 @@
 %define     gitdate
  
 Name:           wayland
-Version:        1.8.1
-Release:        1%{?gitdate:.git%{gitdate}}
+Version:        1.9.0
+Release:        3%{?gitdate:.git%{gitdate}}
 Summary:        Wayland Compositor Infrastructure
 
 Group:          Core/Runtime/Library 
 License:        MIT
 URL:            http://%{name}.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{?gitdate:}%{!?gitdate:%{version}}.tar.xz
+#git clone git://anongit.freedesktop.org/wayland/wayland
+#Source0:	wayland.tar.gz
+
 BuildRequires:  autoconf automake libtool
 BuildRequires:  pkgconfig(libffi)
 BuildRequires:  expat-devel
@@ -82,6 +85,7 @@ Headers and symlinks for developing wayland server applications.
 %prep
 %setup -q -n %{name}-%{?gitdate:}%{!?gitdate:%{version}}
 %build
+if [ ! -f "configure" ]; then ./autogen.sh; fi
 %configure --disable-static --disable-documentation
 make %{?_smp_mflags}
 
@@ -151,3 +155,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libwayland-server.so
 %{_libdir}/pkgconfig/wayland-server.pc
 
+%changelog
+* Thu Sep 03 2015 Cjacker <cjacker@foxmail.com>
+- update to 1.8.92

@@ -4,7 +4,7 @@ Version:    0.4.1
 Release:    1
 License:    the MIT license and the UIUC License (a BSD-like license). 
 Group:      System Environment/Libraries
-Source0:    blocks-runtime-%version.tar.gz
+Source0:    https://github.com/mheily/blocks-runtime/releases/download/v0.4.1/libblocksruntime-%{version}.tar.gz
 
 %description
 Blocks are a proposed extension to the C, Objective C, and C++ languages developed by Apple to support the Grand Central Dispatch concurrency engine. Blocks are anonymous inline functions that automatically capture a read-only copy of local variables, and have read-write access to local variables that are declared with the "__block" storage class.
@@ -22,11 +22,11 @@ documentation for %{name}. If you like to develop programs using %{name},
 you will need to install %{name}-devel.
 
 %prep
-%setup -q -n blocks-runtime-%version 
+%setup -q -n libblocksruntime-%{version}
 
 %build
 export CC=clang
-export CFLAGS="-fPIC -fnolibgcc"
+export CFLAGS="-fPIC"
 autoreconf -ivf
 %configure
 make %{?_smp_mflags}
@@ -38,6 +38,10 @@ make DESTDIR=%{buildroot} install
 chmod +x %{buildroot}/%{_libdir}/*.so*
 
 install -m0755 .libs/libBlocksRuntime.a %{buildroot}/%{_libdir}
+
+%check
+make check
+
 %clean
 #[ %{buildroot} != "/" ] && rm -rf %{buildroot}
 

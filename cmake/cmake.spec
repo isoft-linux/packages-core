@@ -1,17 +1,15 @@
-Name:		cmake
-Version:    3.3.0	
-Release:	1
-Summary:	Cross-platform make system
+Name: cmake
+Version: 3.3.1
+Release: 1
+Summary: Cross-platform make system
 
-Group:		CoreDev/Development/Utility
-License:	BSD
-URL:		http://www.cmake.org
-Source0:	http://www.cmake.org/files/v2.4/cmake-%{version}-rc2.tar.gz
-Source2:        macros.cmake
-Source3: 	    cmake-init.el
-Patch0:         cmake-set-lib-to-usr_lib.patch
+License: BSD
+URL: http://www.cmake.org
+Source0: http://www.cmake.org/files/v3.3/cmake-%{version}.tar.gz
+Source2: macros.cmake
+Source3: cmake-init.el
+Patch0: cmake-set-lib-to-usr_lib.patch
 
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  ncurses-devel
 BuildRequires:  expat-devel, zlib-devel, libcurl-devel
 #BuildRequires:  libarchive-devel
@@ -28,7 +26,7 @@ generation, code generation, and template instantiation.
 
 
 %prep
-%setup -q -n cmake-%{version}-rc2
+%setup -q -n cmake-%{version}
 %patch0 -p1
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -77,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Wed Sep 16 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.3.1
+
 * Tue Aug 14 2007 Cjacker <cjacker@gmail.com> - 2.4.7-1
 - Update to 2.4.7
 

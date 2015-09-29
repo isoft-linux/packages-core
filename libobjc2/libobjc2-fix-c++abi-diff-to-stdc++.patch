@@ -1,0 +1,22 @@
+diff -Nur libobjc2-1.8/objcxx_eh.cc libobjc2-1.8n/objcxx_eh.cc
+--- libobjc2-1.8/objcxx_eh.cc	2015-07-12 11:17:46.000000000 +0000
++++ libobjc2-1.8n/objcxx_eh.cc	2015-07-25 14:50:45.618588773 +0000
+@@ -38,14 +38,18 @@
+ 				type_info(const char *name): __type_name(name) { }
+ 				public:
+ 				const char* name() const { return __type_name; }
++                #ifndef __clang__
+ 				virtual bool __is_pointer_p() const;
+ 				virtual bool __is_function_p() const;
++                #endif
+ 				virtual bool __do_catch(const type_info *thrown_type,
+ 				                        void **thrown_object,
+ 				                        unsigned outer) const;
++                #ifndef __clang__
+ 				virtual bool __do_upcast(
+ 				                const __class_type_info *target,
+ 				                void **thrown_object) const;
++                #endif
+ 	};
+ }
+ 

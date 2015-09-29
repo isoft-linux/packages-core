@@ -33,11 +33,11 @@ diff -ruNp docbook-xsl-1.74.0.orig/fo/lists.xsl docbook-xsl-1.74.0/fo/lists.xsl
 +      <xsl:choose>
 +        <!-- * work around broken passivetex list-item-body rendering -->
 +        <xsl:when test="$passivetex.extensions = '1'">
-+          <xsl:apply-templates/>
++          <xsl:apply-templates select="listitem"/>
 +        </xsl:when>
 +        <xsl:otherwise>
 +          <fo:block>
-+            <xsl:apply-templates/>
++            <xsl:apply-templates select="listitem"/>
 +          </fo:block>
 +        </xsl:otherwise>
 +      </xsl:choose>

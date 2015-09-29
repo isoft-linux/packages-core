@@ -5,7 +5,7 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   16.git
+Release:   26.git
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -32,7 +32,7 @@ X.Org X11 i810 video driver.
 ./autogen.sh
 %configure \
     --enable-kms-only \
-    --enable-tools 
+    --enable-tools
 
 make %{?_smp_mflags}
 
@@ -56,5 +56,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Wed Aug 12 2015 Cjacker <cjacker@foxmail.com>
+- update to 5a9a3e7
+
+* Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
+- update to 611ec7d
+
+* Thu Jul 30 2015 Cjacker <cjacker@foxmail.com>
+- update to 4246c63
+
+* Tue Jul 28 2015 Cjacker <cjacker@foxmail.com>
+- update to 4f0a58c
+
+* Fri Jul 24 2015 Cjacker <cjacker@foxmail.com>
+- update to ad20fd4
+
+* Thu Jul 23 2015 Cjacker <cjacker@foxmail.com>
+- update to a29e765
+* Wed Jul 22 2015 Cjacker <cjacker@foxmail.com>
+- update to git 7301516
 * Sun Jul 19 2015 Cjacker <cjacker@foxmail.com>
 - 2c50639..2cd7cb9

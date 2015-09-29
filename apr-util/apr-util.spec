@@ -4,13 +4,13 @@
 Summary: Apache Portable Runtime Utility library
 Name: apr-util
 Version: 1.5.4
-Release: 2
+Release: 1
 License: ASL 2.0
 Group: CoreDev/Runtime/Library
 URL: http://apr.apache.org/
 Source0: http://www.apache.org/dist/apr/%{name}-%{version}.tar.bz2
 BuildRequires: autoconf, apr-devel >= 1.3.0
-BuildRequires: libdb-devel, expat-devel, libuuid-devel, sqlite-devel
+BuildRequires: libdb-devel, expat-devel, libuuid-devel
 
 %description
 The mission of the Apache Portable Runtime (APR) is to provide a

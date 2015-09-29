@@ -1,15 +1,15 @@
 %define debug_package %{nil}
 %define freetype2 freetype
 
-Summary:	Font configuration and customization library
-Name:		fontconfig
-Version:	2.11.94
-Release:    4 
-License:	MIT
-URL:            http://fontconfig.org
-Source0:	http://fontconfig.org/release/fontconfig-%{version}.tar.bz2
+Summary: Font configuration and customization library
+Name: fontconfig
+Version: 2.11.94
+Release: 5 
+License: MIT
+URL: http://fontconfig.org
+Source0: http://fontconfig.org/release/fontconfig-%{version}.tar.bz2
 
-Source1:    99-lcd.conf
+Source1: 99-lcd.conf
 
 #NOTE, this config file will force monospace/serif automatch a English font.
 #since there is no really monospace chinesefont we used.
@@ -71,6 +71,13 @@ install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
 
 pushd $RPM_BUILD_ROOT/etc/fonts/conf.d
 ln -sf %{_datadir}/fontconfig/conf.avail/99-lcd.conf ./99-lcd.conf
+#this will cause some problems with old libXft based gui toolkit, such as fltk/fox fontrendering.
+#But it's very useful for GTK/Qt display correctly.
+#Display correctly not only means display Chinese/English characters, but also the font width, height and so on.
+#for example, without this, input 'g' in gtk lineedit, you will find the bottom was cutted.
+#this config means: always use Latin font display Latin character and let other languages auto-match.
+#try fc-match Sans/fc-match Sans:lang=zh
+#By Cjacker
 ln -sf %{_datadir}/fontconfig/conf.avail/99-force-monospace-serif.conf ./99-force-monospace-serif.conf
 ln -sf %{_datadir}/fontconfig/conf.avail/25-no-bitmap.conf ./25-no-bitmap.conf
 popd

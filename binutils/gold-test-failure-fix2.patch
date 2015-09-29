@@ -1,0 +1,52 @@
+From: Cary Coutant <ccoutant@gmail.com>
+Date: Sun, 22 Mar 2015 00:47:49 +0000 (-0700)
+Subject: Fix internal error in do_relocate_sections when using plugins.
+X-Git-Tag: users/hjl/linux/release/2.25.51.0.2~2^2~23^2~4
+X-Git-Url: https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff_plain;h=bd9e0d4628f1265c42516f90c4f162cefa787294;hp=71883406817425ea853f6a0dd7847f3e0a17dfc9
+
+Fix internal error in do_relocate_sections when using plugins.
+
+In a previous patch for PR 14675, to fix a problem with
+the .eh_frame section when static linking, I added a step to
+finalize the .eh_frame section at the end of the first link
+pass. This patch caused PR 18152, where a plugin-claimed
+object caused a non-claimed object's layout to be deferred
+until replacement files were read. The call to
+finalize_eh_frame_section() is happening before the layout of
+the deferred objects, leading to the internal error in
+do_relocate_sections.
+
+This patch moves the finalization of the .eh_frame section to
+after deferred objects have been processed.
+
+gold/
+	PR gold/14675
+	PR gold/18152
+	* gold.cc (queue_middle_tasks): Finalize .eh_frame after laying out
+	deferred objects.
+---
+
+diff --git a/gold/gold.cc b/gold/gold.cc
+index e345887..39843c2 100644
+--- a/gold/gold.cc
++++ b/gold/gold.cc
+@@ -492,9 +492,6 @@ queue_middle_tasks(const General_options& options,
+   if (timer != NULL)
+     timer->stamp(0);
+ 
+-  // Finalize the .eh_frame section.
+-  layout->finalize_eh_frame_section();
+-
+   // Add any symbols named with -u options to the symbol table.
+   symtab->add_undefined_symbols_from_command_line(layout);
+ 
+@@ -555,6 +552,9 @@ queue_middle_tasks(const General_options& options,
+       plugins->layout_deferred_objects();
+     }
+ 
++  // Finalize the .eh_frame section.
++  layout->finalize_eh_frame_section();
++
+   /* If plugins have specified a section order, re-arrange input sections
+      according to a specified section order.  If --section-ordering-file is
+      also specified, do not do anything here.  */

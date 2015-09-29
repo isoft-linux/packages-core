@@ -1,13 +1,12 @@
-Name:		man-pages
-Version:    4.00	
-Release:	1
-Summary:	Linux man pages
+Name: man-pages
+Version: 4.02
+Release: 1
+Summary: Linux man pages
 
-Group:		Core/Runtime/Data
-License:	GPL
-URL:		http://www.kernel.org/doc/man-pages/
-Source0:	https://www.kernel.org/pub/linux/docs/man-pages/man-pages-%{version}.tar.xz
-Source1:    https://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-2013-a.tar.xz
+License: GPL
+URL: http://www.kernel.org/doc/man-pages/
+Source0: https://www.kernel.org/pub/linux/docs/man-pages/man-pages-%{version}.tar.xz
+Source1: https://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-2013-a.tar.xz
 
 BuildRequires: sed, coreutils	
 
@@ -44,4 +43,5 @@ rm -rf $RPM_BUILD_ROOT/%{_mandir}/man5/attr.*
 
 
 %changelog
-
+* Thu Sep 17 2015 Cjacker <cjacker@foxmail.com>
+- update to 4.02

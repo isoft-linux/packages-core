@@ -1,12 +1,13 @@
 Summary: Terminal emulator for the X Window System
 Name: xterm
-Version: 318
+Version: 319
 Release: 2 
-URL: http://dickey.his.com/xterm
+URL: http://invisible-island.net/xterm/ 
 License: MIT
-Group: User Interface/X
 BuildRequires: pkgconfig ncurses-devel
-BuildRequires: libXft-devel libXaw-devel libXext-devel
+BuildRequires: libXft-devel libXaw-devel libXext-devel libXinerama-devel libICE-devel libX11-devel libXpm-devel
+BuildRequires: libXt-devel
+BuildRequires: fontconfig-devel
 
 Source0: ftp://invisible-island.net/xterm/%{name}-%{version}.tgz
 Source1: ftp://invisible-island.net/xterm/16colors.txt
@@ -41,8 +42,6 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 cp -fp %{SOURCE1} 16colors.txt
 
-rpmclean
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -56,7 +55,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/resize.1*
 %{_mandir}/man1/uxterm.1*
 %{_mandir}/man1/xterm.1*
-%{_datadir}/pixmaps/xterm*.xpm
 %{x11_app_defaults_dir}/KOI8RXTerm
 %{x11_app_defaults_dir}/UXTerm
 %{x11_app_defaults_dir}/XTerm
@@ -66,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/*
 
 %changelog
+* Tue Aug 25 2015 Cjacker <cjacker@foxmail.com>
+- update to 319
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

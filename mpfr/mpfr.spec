@@ -1,11 +1,10 @@
 Summary: A C library for multiple-precision floating-point computations
 Name: mpfr
-Version: 3.1.2
+Version: 3.1.3
 Release: 1 
 URL: http://www.mpfr.org/
-Source0: http://www.mpfr.org/mpfr-current/mpfr-%{version}.tar.bz2
+Source0: http://www.mpfr.org/mpfr-current/mpfr-%{version}.tar.xz
 License: LGPL 
-Group:  Core/Runtime/Library 
 Requires: gmp >= 4.2.1
 
 %description
@@ -17,7 +16,6 @@ ANSI/IEEE-754 standard for double-precision floating-point arithmetic
 
 %package devel
 Summary: Development tools A C library for mpfr library
-Group:  Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -38,10 +36,11 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+
+
 rm -rf $RPM_BUILD_ROOT%{_libdir}/libmpfr.a
 rm -rf $RPM_BUILD_ROOT/%{_docdir}
-
-rpmclean
+rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 %check
 make %{?_smp_mflags} check
@@ -64,3 +63,5 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
+* Thu Sep 03 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.1.3

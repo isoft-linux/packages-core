@@ -37,7 +37,7 @@ Name: ca-certificates
 # because all future versions will start with 2013 or larger.)
 
 Version: 2015.2.4
-Release: 4%{?dist}
+Release: 3%{?dist}
 License: Public Domain
 
 Group: System Environment/Base
@@ -285,9 +285,7 @@ if [ $1 -gt 1 ] ; then
     # no backup yet
     if ! test -L %{pkidir}/%{java_bundle}; then
       # it's an old regular file, not a link
-      if test -f %{pkidir}/%{java_bundle}; then
-        mv -f %{pkidir}/%{java_bundle} %{pkidir}/%{java_bundle}.rpmsave
-      fi
+      mv -f %{pkidir}/%{java_bundle} %{pkidir}/%{java_bundle}.rpmsave
     fi
   fi
 
@@ -295,9 +293,7 @@ if [ $1 -gt 1 ] ; then
     # no backup yet
     if ! test -L %{pkidir}/tls/certs/%{classic_tls_bundle}; then
       # it's an old regular file, not a link
-      if test -f %{pkidir}/tls/certs/%{classic_tls_bundle}; then
-        mv -f %{pkidir}/tls/certs/%{classic_tls_bundle} %{pkidir}/tls/certs/%{classic_tls_bundle}.rpmsave
-      fi
+      mv -f %{pkidir}/tls/certs/%{classic_tls_bundle} %{pkidir}/tls/certs/%{classic_tls_bundle}.rpmsave
     fi
   fi
 
@@ -305,9 +301,7 @@ if [ $1 -gt 1 ] ; then
     # no backup yet
     if ! test -L %{pkidir}/tls/certs/%{trusted_all_bundle}; then
       # it's an old regular file, not a link
-      if test -f %{pkgdir}/tls/certs/%{trusted_all_bundle};then
-        mv -f %{pkidir}/tls/certs/%{trusted_all_bundle} %{pkidir}/tls/certs/%{trusted_all_bundle}.rpmsave
-      fi
+      mv -f %{pkidir}/tls/certs/%{trusted_all_bundle} %{pkidir}/tls/certs/%{trusted_all_bundle}.rpmsave
     fi
   fi
 fi

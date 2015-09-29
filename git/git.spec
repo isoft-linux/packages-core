@@ -1,36 +1,62 @@
-%define _without_docs 1
 Name: 		git
-Version:    2.1.1
+Version:    	2.5.0
 Release: 	1
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		CoreDev/Development/Utility
 URL: 		http://kernel.org/pub/software/scm/git/
-Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
-Source1:	git-init.el
-Source2:	git.xinetd
-Source3:	git.conf.httpd
-Source4:    git.conf.lighttpd
-Source5:	gitweb.conf
-Patch0:		git-1.5-gitweb-home-link.patch
-Patch1:     git-dirty-fix-rpm-wrong-perl-request.patch
+Source0: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
+Source1: 	http://kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
 
-BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
+Source10:       git@.service
+Source11:       git.socket
+
+Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# http://thread.gmane.org/gmane.comp.version-control.git/266145
+# could be removed when update/branch of Michael will be merged in upstream
+Patch4:         git-infinite-loop.patch
+
+BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext
+
 #otherwise perl-Git will provide one.
 BuildRequires: perl-Error
 
 Requires:	zlib >= 1.2, libcurl, less, expat
-Provides:	git-core = %{version}-%{release}
-Obsoletes:	git-core <= 1.5.4.3
+Requires:   git-core = %{version}-%{release}
 
 %description
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
 and full access to internals.
 
-The git rpm installs the core tools with minimal dependencies.  To
-install all git packages, including tools for integrating with other
-SCMs, install the git-all meta-package.
+%package core
+Summary:        Core package of git with minimal funcionality
+Group:          Development/Tools
+Requires:       less
+Requires:       openssh-clients
+Requires:       rsync
+Requires:       zlib >= 1.2
+
+%description core
+Git is a fast, scalable, distributed revision control system with an
+unusually rich command set that provides both high-level operations
+and full access to internals.
+
+The git-core rpm installs really the core tools with minimal
+dependencies. Install git package for common set of tools.
+
+%package daemon
+Summary:        Git protocol dæmon
+Group:          Development/Tools
+Requires:       git = %{version}-%{release}
+Requires:   systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+
+%description daemon
+The git dæmon for supporting git:// access to git repositories
+
 
 %package -n perl-Git
 Summary:        Perl interface to Git
@@ -44,54 +70,32 @@ Perl interface to Git.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1
 %patch1 -p1
-%build
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS -D_DEFAULT_SOURCE" \
-     ETC_GITCONFIG=/etc/gitconfig \
-     gitexecdir=%{_bindir} \
-     prefix=%{_prefix} all %{!?_without_docs: doc}
+%patch4 -p1
 
+%build
+export CFLAGS="$RPM_OPT_FLAGS -D_DEFAULT_SOURCE"
+%configure \
+    --with-openssl \
+    --with-libpcre \
+    --with-curl \
+    --with-expat \
+    --with-gitconfig=%{_sysconfdir}/gitconfig \
+    --with-gitattributes=%{_sysconfdir}/gitattributes \
+    --with-perl \
+    --without-python \
+    --with-zlib \
+    --without-tcltk
+
+make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS -D_DEFAULT_SOURCE" DESTDIR=$RPM_BUILD_ROOT \
-     prefix=%{_prefix} mandir=%{_mandir} \
-     ETC_GITCONFIG=/etc/gitconfig \
-     gitexecdir=%{_bindir} \
-     INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
+make install DESTDIR=%{buildroot}
 
+#for gitdaemon
+mkdir -p %{buildroot}%{_var}/lib/git
 
-#drop git SVN/Gui/Web
-rm -rf $RPM_BUILD_ROOT/%{_datadir}/perl5/vendor_perl/Git/SVN
-rm -rf $RPM_BUILD_ROOT/%{_datadir}/perl5/vendor_perl/Git/SVN.pm
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-svn
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-archimport
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-cvsexportcommit
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-cvsimport
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-cvsserver
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-daemon
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-gui
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-gui--askpass
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-remote-testsvn
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/git-send-email
-rm -rf $RPM_BUILD_ROOT/%{_bindir}/gitk
-rm -rf $RPM_BUILD_ROOT/%{_datadir}/git-gui
-rm -rf $RPM_BUILD_ROOT/%{_datadir}/gitk
-rm -rf $RPM_BUILD_ROOT/%{_datadir}/gitweb
-
-
-find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
-(find $RPM_BUILD_ROOT%{_bindir} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citooli|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@)               > bin-man-doc-files
-(find $RPM_BUILD_ROOT%{perl_vendorlib} -type f | sed -e s@^$RPM_BUILD_ROOT@@) >> perl-files
-
-%if %{!?_without_docs:1}0
-(find $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT/Documentation -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
-%else
-rm -rf $RPM_BUILD_ROOT%{_mandir}
-%endif
-
+#install some helper scripts
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
 install -m 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
 
@@ -99,24 +103,121 @@ mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 install -m 0755 ./contrib/completion/git-prompt.sh $RPM_BUILD_ROOT/etc/profile.d
 
 
-rpmclean
+#git installed a lot of same binary with different names in /usr/libexec/git-core/
+#we process it.
+#GIT_MD5=`md5sum %{buildroot}%{_bindir}/git |awk -F " " '{print $1}'`
+#
+#for i in `ls %{buildroot}%{_libexecdir}/git-core/*`
+#do
+#    if [ x"$GIT_MD5" == x"`md5sum $i|awk -F " " '{print $1}'`" ]; then
+#        rm -rf $i
+#    fi
+#done
+
+
+#install manpages
+mkdir -p %{buildroot}%{_mandir}
+tar Jxf %{SOURCE1} -C %{buildroot}%{_mandir}
+
+#install systemd unit
+mkdir -p %{buildroot}%{_unitdir}/
+install -D -m 644 %{SOURCE10} %{buildroot}%{_unitdir}/
+install -D -m 644 %{SOURCE11} %{buildroot}%{_unitdir}/
+
+#drop some useless perl files.
+find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
+find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
+find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
+
+#drop git SVN support
+rm -rf %{buildroot}%{_datadir}/perl5/site_perl/Git/SVN
+rm -rf %{buildroot}%{_datadir}/perl5/site_perl/Git/SVN.pm
+rm -rf %{buildroot}%{_libexecdir}/git-core/git-svn
+rm -rf %{buildroot}%{_libexecdir}/git-core/git-remote-testsvn
+rm -rf %{buildroot}%{_mandir}/man1/git-svn.1*
+rm -rf %{buildroot}%{_mandir}/man3/Git::SVN*
+
+#drop un-used man pages.
+rm -rf %{buildroot}%{_mandir}/man1/git-citool.1*
+rm -rf %{buildroot}%{_mandir}/man1/git-gui.1*
+rm -rf %{buildroot}%{_mandir}/man1/gitk.1*
+
+
+#drop git CVS server 
+rm -rf %{buildroot}%{_mandir}/man1/git-cvsserver.1*
+rm -rf %{buildroot}%{_bindir}/git-cvsserver
+rm -rf %{buildroot}%{_libexecdir}/git-core/git-cvsserver
+
+#drop gitweb
+rm -rf %{buildroot}%{_datadir}/gitweb
+
+# git-archimport is not supported
+find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
+
+
+exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|gitk|p4|svn"
+(find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
+(find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
+(find %{buildroot}%{_mandir} -type f | grep -vE "$exclude_re|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
+
+# find translations
+%find_lang %{name} %{name}.lang
+cat %{name}.lang >> bin-man-doc-files
+
+# Split core files
+not_core_re="git-(add--interactive|am|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
+grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
+grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
+grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post daemon
+%systemd_post git@.service
 
-%files -f bin-man-doc-files
+%preun daemon
+%systemd_preun git@.service
+
+%postun daemon
+%systemd_postun_with_restart git@.service
+
+
+%files -f bin-man-doc-git-files 
 %defattr(-,root,root)
-%{_datadir}/git-core/
-%doc README COPYING Documentation/*.txt contrib/hooks
-%{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
-%{!?_without_docs: %doc Documentation/howto Documentation/technical}
-%{_sysconfdir}/bash_completion.d
+%{_libexecdir}/git-core/*cvs*
+%{_mandir}/man1/git-cvs*
+
+%{_libexecdir}/git-core/*p4*
+%{_libexecdir}/git-core/mergetools/p4merge
+%{_mandir}/man1/*p4*.1*
+
+%{_libexecdir}/git-core/*email*
+%{_mandir}/man1/*email*.1*
+
+
+%files core -f bin-files-core -f man-doc-files-core
+%defattr(-,root,root)
+%{_sysconfdir}/bash_completion.d/git
 %{_sysconfdir}/profile.d/*.sh
-#%{_libdir}/python*
-%{_datadir}/locale/*/LC_MESSAGES/*.mo
+%{_datadir}/git-core/
 
 
-%files -n perl-Git -f perl-files
+%files daemon
+%{_unitdir}/git.socket
+%{_unitdir}/git@.service
+%{_libexecdir}/git-core/git-daemon
+%{_mandir}/man1/git-daemon.1*
+%{_var}/lib/git
+
+
+%files -n perl-Git
 %defattr(-,root,root)
+%{_mandir}/man3/Git.3pm*
+%{_mandir}/man3/Git::I18N.3pm*
+%{_datadir}/perl5/site_perl/Git.pm
+%dir %{_datadir}/perl5/site_perl/Git
+%{_datadir}/perl5/site_perl/Git/I18N.pm
+%{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog

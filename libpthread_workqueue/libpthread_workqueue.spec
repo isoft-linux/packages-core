@@ -7,6 +7,7 @@ Group:      System Environment/Libraries
 Url:        https://github.com/mheily/libpwq/releases
 
 Source0:    libpwq-%version.tar.gz
+Patch0:	libpwq-fix-Werror.patch
 
 %description
 The pthread_workqueue library allows you to create one or more workqueues and submit work items for processing. The workqueues are serviced by a thread pool that is automatically created and dynamically managed by the library.
@@ -25,13 +26,13 @@ you will need to install %{name}-devel.
 
 %prep
 %setup -q -n libpwq-%{version} 
+%patch0 -p1
 
 %build
 export CC=clang
-export CXX="clang++ -stdlib=libc++ -fnolibgcc"
 autoreconf -ivf
 %configure
-make
+make %{?_smp_mflags}
 
 %install
 make DESTDIR=$RPM_BUILD_ROOT install

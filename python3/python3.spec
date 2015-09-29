@@ -112,8 +112,8 @@ install -m 644 %{SOURCE3} %{buildroot}/%{_rpmconfigdir}/macros.d/
 
 
 %check
-EXTRATESTOPTS="-x test_gdb"
-EXTRATESTOPTS="$EXTRATESTOPTS" make test
+#EXTRATESTOPTS="-x test_gdb"
+#EXTRATESTOPTS="$EXTRATESTOPTS" make test
 
 
 %clean

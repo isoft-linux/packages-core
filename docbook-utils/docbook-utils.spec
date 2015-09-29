@@ -1,9 +1,10 @@
 Name: docbook-utils
 Version: 0.6.14
-Release: 15
-Group:   CoreDev/Development/Utility/Documentation
+Release: 39%{?dist}
+Group: Applications/Text
+
 Summary: Shell scripts for managing DocBook documents
-URL: ftp://sources.redhat.com/pub/docbook-tools/new-trials/
+URL: http://sources.redhat.com/docbook-tools/
 
 License: GPLv2+
 
@@ -13,7 +14,6 @@ Requires: perl-SGMLSpm >= 1.03ii
 Requires: which grep gawk
 Requires: text-www-browser
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: perl-SGMLSpm, openjade, docbook-style-dsssl
 
 BuildArch: noarch
@@ -24,18 +24,40 @@ Source2: gdp-both.dsl
 #You could check it at http://sourceforge.net/projects/docbook2x/
 Source3: docbook2man-spec.pl
 
-Obsoletes: stylesheets <= %{version}-%{release} 
+Obsoletes: stylesheets < %{version}-%{release}
 Provides: stylesheets = %{version}-%{release}
 
 Patch0: docbook-utils-spaces.patch
 Patch1: docbook-utils-2ndspaces.patch
 Patch2: docbook-utils-w3mtxtconvert.patch
 Patch3: docbook-utils-grepnocolors.patch
+Patch4: docbook-utils-sgmlinclude.patch
+Patch5: docbook-utils-rtfmanpage.patch
+Patch6: docbook-utils-papersize.patch
+Patch7: docbook-utils-nofinalecho.patch
+Patch8: docbook-utils-newgrep.patch
 
 %description
 This package contains scripts are for easy conversion from DocBook
 files to other formats (for example, HTML, RTF, and PostScript), and
 for comparing SGML files.
+
+#%package pdf
+#Requires: jadetex >= 2.5
+#Requires: docbook-utils = %{version}
+#Requires: tex(dvips)
+#Requires: texlive-collection-fontsrecommended
+#Requires: texlive-collection-htmlxml
+#License: GPL+
+#Group: Applications/Text
+#Obsoletes: stylesheets-db2pdf <= %{version}-%{release}
+#Provides: stylesheets-db2pdf = %{version}-%{release}
+#Summary: A script for converting DocBook documents to PDF format
+#URL: http://sources.redhat.com/docbook-tools/
+#
+#%description pdf
+#This package contains a script for converting DocBook documents to
+#PDF format.
 
 %prep
 %setup -q
@@ -43,20 +65,26 @@ for comparing SGML files.
 %patch1 -p1 -b .2ndspaces
 %patch2 -p1 -b .w3mtxtconvert
 %patch3 -p1 -b .grepnocolors
+%patch4 -p1 -b .sgmlinclude
+%patch5 -p1 -b .rtfman
+%patch6 -p1 -b .papersize
+%patch7 -p1 -b .finalecho
+%patch8 -p1 -b .newgrep
 
 %build
 ./configure --prefix=%{_prefix} --mandir=%{_mandir} --libdir=%{_libdir}
 make %{?_smp_mflags}
 
 %install
-export DESTDIR=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
+export DESTDIR=$RPM_BUILD_ROOT
 make install prefix=%{_prefix} mandir=%{_mandir} docdir=/tmp
 for util in dvi html pdf ps rtf
 do
 	ln -s docbook2$util $RPM_BUILD_ROOT%{_bindir}/db2$util
 	ln -s jw.1.gz $RPM_BUILD_ROOT/%{_mandir}/man1/db2$util.1
 done
+ln -s jw.1.gz $RPM_BUILD_ROOT/%{_mandir}/man1/docbook2txt.1
 # db2html is not just a symlink, as it has to create the output directory
 rm -f $RPM_BUILD_ROOT%{_bindir}/db2html
 install -p -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_bindir}/db2html
@@ -65,25 +93,11 @@ install -p -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{_datadir}/sgml/docbook/utils-%{ver
 
 rm -rf $RPM_BUILD_ROOT/tmp
 
-#remove dvi/pdf/ps related files, we never ship latex.
-rm -rf $RPM_BUILD_ROOT%{_bindir}/db2dvi
-rm -rf $RPM_BUILD_ROOT%{_bindir}/db2pdf
-rm -rf $RPM_BUILD_ROOT%{_bindir}/db2ps
-rm -rf $RPM_BUILD_ROOT%{_bindir}/docbook2dvi
-rm -rf $RPM_BUILD_ROOT%{_bindir}/docbook2pdf
-rm -rf $RPM_BUILD_ROOT%{_bindir}/docbook2ps
-rm -rf $RPM_BUILD_ROOT%{_mandir}/man1/db2pdf.1
-rm -rf $RPM_BUILD_ROOT%{_mandir}/man1/docbook2dvi.1
-rm -rf $RPM_BUILD_ROOT%{_mandir}/man1/docbook2pdf.1
-rm -rf $RPM_BUILD_ROOT%{_mandir}/man1/docbook2ps.1
-
-
 %clean
-rm -rf $RPM_BUILD_ROOT
-
 
 %files
 %defattr (-,root,root,-)
+%doc README COPYING TODO
 %{_bindir}/jw
 %{_bindir}/docbook2html
 %{_bindir}/docbook2man
@@ -104,11 +118,22 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/docbook2man.*
 %{_mandir}/*/docbook2tex.*
 %{_mandir}/*/docbook2texi.*
+%{_mandir}/*/docbook2txt.*
 %{_mandir}/*/jw.*
 %{_mandir}/*/sgmldiff.*
 %{_mandir}/*/*-spec.*
 
-%changelog
-* Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
-- first build, prepare for the new release.
+#%files pdf
+#%defattr (-,root,root,-)
+#%{_bindir}/docbook2pdf
+#%{_bindir}/docbook2dvi
+#%{_bindir}/docbook2ps
+#%{_bindir}/db2dvi
+#%{_bindir}/db2pdf
+#%{_bindir}/db2ps
+#%{_mandir}/*/db2pdf.*
+#%{_mandir}/*/docbook2pdf.*
+#%{_mandir}/*/docbook2dvi.*
+#%{_mandir}/*/docbook2ps.*
 
+%changelog

@@ -1,9 +1,8 @@
 Name:           libvdpau
-Version:        1.1 
-Release:        1
+Version:        1.1.1 
+Release:        2 
 Summary:        Wrapper library for the Video Decode and Presentation API
 
-Group:          System Environment/Libraries
 License:        MIT
 URL:            http://freedesktop.org/wiki/Software/VDPAU
 Source0:        http://cgit.freedesktop.org/~aplattner/libvdpau/snapshot/libvdpau-%{version}.tar.bz2
@@ -22,7 +21,6 @@ hardware present in modern GPUs.
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       libX11-devel
 Requires:       pkgconfig
@@ -44,11 +42,8 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 
-rpmclean
-
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
-
 
 %files
 %config(noreplace) %{_sysconfdir}/vdpau_wrapper.cfg
@@ -60,9 +55,12 @@ rpmclean
 %{_includedir}/vdpau/
 %{_libdir}/libvdpau.so
 %{_libdir}/pkgconfig/vdpau.pc
-
+%{_docdir}/libvdpau
 
 %changelog
+* Tue Sep 01 2015 Cjacker <cjacker@foxmail.com>
+- Fix CVE-2015-5198, CVE-2015-5199, and CVE-2015-5200 for more details.
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

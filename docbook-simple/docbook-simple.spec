@@ -1,22 +1,21 @@
 Name: docbook-simple
 Version: 1.1
-Release: 4
-Group:   CoreDev/Development/Utility/Documentation 
+Release: 15%{?dist}
+Group: Applications/Text
 Summary: Simplified DocBook is a small subset of the DocBook XML DTD
 License: Freely redistributable without restriction
 URL: http://www.oasis-open.org/docbook/xml/simple/
 Source0: http://www.docbook.org/xml/simple/1.1/%{name}-%{version}.zip
+Source1: %{name}.README.redhat
 Source2: %{name}.xml
 Source3: %{name}.cat
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 BuildRequires: unzip
 Requires: sgml-common
+Requires(post): sed
 Requires(post): libxml2 >= 2.4.8
-Requires(post): sgml-common
-Requires(post): coreutils
 Requires(postun): libxml2 >= 2.4.8
-
 Requires: docbook-dtds
 
 %description
@@ -57,6 +56,11 @@ SGML_CAT_DIR=$RPM_BUILD_ROOT%{_sysconfdir}/sgml
 mkdir -p $SGML_CAT_DIR
 install -p -m 644 %{SOURCE3} $SGML_CAT_DIR
 
+####### FIXME: must copy README.redhat to source directory ########
+#######        for %doc to find it, ${SOURCE1} doesn't work ########
+
+cp -p %{SOURCE1} ./README
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 rm -rf ../%{version}
@@ -64,6 +68,7 @@ rm -rf ../%{version}
 %files
 %defattr (-,root,root,-)
 %doc sdocbook.css
+%doc README
 %dir %{_datadir}/xml/docbook/simple/
 %{_datadir}/xml/docbook/simple/%{version}
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/sgml/docbook-simple.cat
@@ -153,6 +158,3 @@ if [ "$1" = 0 ]; then
 fi
 
 %changelog
-* Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
-- first build, prepare for the new release.
-

@@ -1,5 +1,5 @@
 Name:		libva
-Version:	1.5.1
+Version:	1.6.1
 Release:	1
 Summary:	Video Acceleration (VA) API for Linux
 Group:		System Environment/Libraries
@@ -85,6 +85,10 @@ find %{buildroot} -regex ".*\.la$" | xargs rm -f --
 %{_bindir}/putsurface_wayland
 
 %changelog
+* Sat Sep 26 2015 Cjacker <cjacker@foxmail.com>
+- update to 1.6.1
+
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

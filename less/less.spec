@@ -1,7 +1,7 @@
 Summary: A text file browser similar to more, but better.
 Name: less
 Version: 458 
-Release: 4
+Release: 3
 License: GPL
 Group:  Core/Runtime/Utility 
 Source: http://www.greenwoodsoftware.com/less/%{name}-%{version}.tar.gz

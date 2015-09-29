@@ -1,6 +1,6 @@
 Name:           ninja-build
-Version:        1.4.0
-Release:        1 
+Version:        1.6.0
+Release:        2 
 Group:          CoreDev/Development/Utility
 Summary:        A small build system with a focus on speed
 
@@ -23,18 +23,22 @@ fast as possible.
 %build
 CFLAGS="%{optflags}"
 export CFLAGS
-./bootstrap.py --verbose -- --debug
+./configure.py --bootstrap
 
 %install
 # TODO: Install ninja_syntax.py?
 install -p -m 755 -d %{buildroot}%{_bindir}
 install -p -m 755 ninja %{buildroot}%{_bindir}/ninja
 
+pushd %{buildroot}%{_bindir}
+ln -sf ./ninja ninja-build
+popd
+
 #install -p -m 755 -d %{buildroot}%{_docdir}/%{name}-%{version}
 #install -p -m 644 doc/manual.html %{buildroot}%{_docdir}/%{name}-%{version}/manual.html
 
-install -p -m 755 -d %{buildroot}%{_sysconfdir}/bash_completion.d
-install -p -m 644 misc/bash-completion %{buildroot}%{_sysconfdir}/bash_completion.d/ninja-bash-completion
+install -p -m 755 -d %{buildroot}%{_datadir}/bash-completion/completions/
+install -p -m 644 misc/bash-completion %{buildroot}%{_datadir}/bash-completion/completions/ninja
 
 install -p -m 755 -d %{buildroot}%{_datadir}/vim/vimfiles/syntax
 install -p -m 644 misc/ninja.vim %{buildroot}%{_datadir}/vim/vimfiles/syntax/ninja.vim
@@ -45,13 +49,16 @@ install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/vim/vimfiles/ftdetect/ninja
 %files
 %doc COPYING README
 %{_bindir}/ninja
+%{_bindir}/ninja-build
 # bash-completion does not own this
-%{_sysconfdir}/bash_completion.d/
+%{_datadir}/bash-completion/completions/ninja
 %{_datadir}/vim/vimfiles/syntax/ninja.vim
 %{_datadir}/vim/vimfiles/ftdetect/ninja.vim
 
 
 %changelog
+* Thu Jul 30 2014 Cjacker <cjacker@foxmail.com>
+- update to 1.6.0
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

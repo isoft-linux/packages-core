@@ -1,2 +1,0 @@
-install i915 { /bin/grep "i915.modeset=0" /proc/cmdline ; if /usr/bin/test $? = 0 ; then MYASS="modeset=0" ; else MYASS="modeset=1"; fi ; /sbin/modprobe --ignore-install i915 $MYASS ; }
-

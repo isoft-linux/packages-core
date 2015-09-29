@@ -1,0 +1,54 @@
+diff -up xf86-video-nouveau-20150729/configure.ac.glamfix xf86-video-nouveau-20150729/configure.ac
+--- xf86-video-nouveau-20150729/configure.ac.glamfix	2015-07-29 12:59:45.461477080 +1000
++++ xf86-video-nouveau-20150729/configure.ac	2015-07-29 13:00:02.437922790 +1000
+@@ -145,6 +145,13 @@ AC_CHECK_HEADERS([glamor.h],[found_glamo
+ AC_MSG_CHECKING([whether to include GLAMOR support])
+ if test "x$found_glamor_header" = xyes && pkg-config --exists "xorg-server >= 1.15.99.901"
+ then
++
++	AC_CHECK_DECL(glamor_glyphs_init,
++                              [AC_DEFINE(HAVE_GLAMOR_GLYPHS_INIT, 1,
++                                         [Have glamor_glyphs_init API])], [],
++                              [#include "xorg-server.h"
++                               #include "glamor.h"])
++
+ 	AC_DEFINE(HAVE_GLAMOR, 1, [Build support for glamor acceleration])
+ 	AC_MSG_RESULT([yes])
+ else
+diff -up xf86-video-nouveau-20150729/src/nouveau_glamor.c.glamfix xf86-video-nouveau-20150729/src/nouveau_glamor.c
+--- xf86-video-nouveau-20150729/src/nouveau_glamor.c.glamfix	2015-07-29 13:00:26.830563209 +1000
++++ xf86-video-nouveau-20150729/src/nouveau_glamor.c	2015-07-29 13:00:50.214177136 +1000
+@@ -163,9 +163,10 @@ nouveau_glamor_create_screen_resources(S
+ 	ScrnInfoPtr scrn = xf86ScreenToScrn(screen);
+ 	NVPtr pNv = NVPTR(scrn);
+ 
++#ifdef HAVE_GLAMOR_GLYPHS_INIT
+ 	if (!glamor_glyphs_init(screen))
+ 		return FALSE;
+-
++#endif
+ 	if (!glamor_egl_create_textured_screen_ext(screen,
+ 						   pNv->scanout->handle,
+ 						   scrn->displayWidth *
+diff -up xf86-video-nouveau-20150729/src/nouveau_glamor.h.glamfix xf86-video-nouveau-20150729/src/nouveau_glamor.h
+--- xf86-video-nouveau-20150729/src/nouveau_glamor.h.glamfix	2015-07-29 13:00:21.390420381 +1000
++++ xf86-video-nouveau-20150729/src/nouveau_glamor.h	2015-07-29 13:01:17.495893407 +1000
+@@ -11,6 +11,18 @@
+ #define GLAMOR_FOR_XORG 1
+ #include "glamor.h"
+ 
++
++#ifndef GLAMOR_INVERTED_Y_AXIS
++#define GLAMOR_INVERTED_Y_AXIS 0
++#endif
++#ifndef GLAMOR_USE_SCREEN
++#define GLAMOR_USE_SCREEN 0
++#endif
++#ifndef GLAMOR_USE_PICTURE_SCREEN
++#define GLAMOR_USE_PICTURE_SCREEN 0
++#endif
++
++
+ Bool nouveau_glamor_pre_init(ScrnInfoPtr scrn);
+ Bool nouveau_glamor_init(ScreenPtr screen);
+ Bool nouveau_glamor_create_screen_resources(ScreenPtr screen);

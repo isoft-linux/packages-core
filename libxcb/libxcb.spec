@@ -2,7 +2,6 @@ Name:           libxcb
 Version:        1.11
 Release:        1.git 
 Summary:        A C binding to the X11 protocol
-Group:          CoreGUI/Runtime/Library 
 License:        MIT
 URL:            http://xcb.freedesktop.org/
 #Source0:        http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
@@ -23,7 +22,6 @@ threading support, and extensibility.
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          CoreGUI/Development/Library
 Requires:       %{name} = %{version}-%{release}
 Requires:       pkgconfig
 
@@ -33,7 +31,6 @@ developing applications that use %{name}.
 
 %package        doc
 Summary:        Documentation for %{name}
-Group:          CoreGUI/Development/Document 
 
 %description    doc
 The %{name}-doc package contains documentation for the %{name} library.

@@ -1,21 +1,21 @@
-%define osname pure64 
-%define osid   pure64 
-%define builtin_release_version 1.0 
-%define builtin_release_name Reborn 
+%define osname isoft 
+%define osid   isoft 
+%define builtin_release_version 4.0 
+%define builtin_release_name Nvwa 
 
 %define real_release_version %{?release_version}%{!?release_version:%{builtin_release_version}}
 %define real_release_name %{?release_name}%{!?release_name:%{builtin_release_name}}
-Summary: OS release file
+Summary: iSoft Enterprise Desktop release file
 Name: os-release
 Version: %{real_release_version}
-release: 1.0 
+release: 1.0
 License: GPL
 Group: Core/Runtime/Data
 
 #Fake a lsb provides for some comercial binary software.
 Provides: lsb > 4.0
 %description
-os release file
+iSoft Enterprise Desktop release file
 
 %prep
 %build
@@ -51,6 +51,10 @@ echo "" >>$RPM_BUILD_ROOT/etc/issue.net
 %defattr(-,root,root)
 %attr(0755,root,root) /etc/
 /usr/lib/os-release
+
 %changelog
+* Fri Aug 14 2015 Cjacker <cjacker@foxmail.com>
+- update for iSoft Enterprise Desktop 4.0
+
 * Tue Dec 24 2013 Cjacker <cjacker@gmail.com>
 - for pangu

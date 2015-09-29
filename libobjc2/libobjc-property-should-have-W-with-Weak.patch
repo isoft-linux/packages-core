@@ -1,0 +1,29 @@
+diff -Nur libobjc2-1.8/Test/PropertyIntrospectionTest2.m libobjc2-1.8n/Test/PropertyIntrospectionTest2.m
+--- libobjc2-1.8/Test/PropertyIntrospectionTest2.m	2015-07-12 11:17:46.000000000 +0000
++++ libobjc2-1.8n/Test/PropertyIntrospectionTest2.m	2015-07-26 16:27:26.190931438 +0000
+@@ -255,6 +255,7 @@
+ 	assert(strcmp(name, property_getName(p)) == 0);
+ 	const char *attrs = property_getAttributes(p);
+ 	assert(0 != attrs);
++	printf("types: %s: attrs: %s\n", types, attrs);
+ 	assert(strcmp(types, attrs) == 0);
+ 	unsigned int attrsCount = 0;
+ 	objc_property_attribute_t *attrsList = property_copyAttributeList(p, &attrsCount);
+@@ -517,7 +518,7 @@
+                                                                                          ATTR("R", ""),
+                                                                                          ATTR("N", ""),
+                                                                                          ATTR("V", "idReadonlyRetainNonatomic")));
+-	testProperty("idReadonlyWeakNonatomic", "T@,R,N,VidReadonlyWeakNonatomic", ATTRS(ATTR("T", "@"),
++	testProperty("idReadonlyWeakNonatomic", "T@,R,W,N,VidReadonlyWeakNonatomic", ATTRS(ATTR("T", "@"),
+                                                                                      ATTR("R", ""),
+                                                                                      ATTR("N", ""),
+                                                                                      ATTR("V", "idReadonlyWeakNonatomic")));
+@@ -580,7 +581,7 @@
+ 	testPropertyForProtocol(testProto, "idReadonlyRetainNonatomic", "T@,R,&,N", ATTRS(ATTR("T", "@"),
+ 																					ATTR("R", ""),
+ 																					ATTR("N", "")));
+-	testPropertyForProtocol(testProto, "idReadonlyWeakNonatomic", "T@,R,N", ATTRS(ATTR("T", "@"),
++	testPropertyForProtocol(testProto, "idReadonlyWeakNonatomic", "T@,R,W,N", ATTRS(ATTR("T", "@"),
+ 																				  ATTR("R", ""),
+ 																				  ATTR("N", "")));
+ 	testPropertyForProtocol(testProto, "idOther", "T@,&", ATTRS(ATTR("T", "@"), ATTR("&", "")));

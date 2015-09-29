@@ -1,14 +1,23 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.62
-Release: 3 
+Version: 2.4.64
+Release: 4 
 License: MIT
-Group:  Core/Runtime/Library
 URL: http://dri.sourceforge.net
-Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.gz
-Patch0: 5ba34e1aeed3c343bc9b53727220449d244b3296.patch  
-Patch1: 5c68f9f6f9bcc7edeacbc18b1052aed46a89c9f2.patch 
-Patch2: intel_leak_the_userptr_test_bo.patch
+Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+
+#git://anongit.freedesktop.org/mesa/drm
+#git repos, we just keep it here to "git pull"
+Source1: drm.tar.gz
+
+Source2: 91-drm-modeset.rules
+
+# hardcode the 666 instead of 660 for device nodes
+Patch3: libdrm-make-dri-perms-okay.patch
+# remove backwards compat
+Patch4: libdrm-2.4.0-no-bc.patch
+# make rule to print the list of test programs
+Patch5: libdrm-2.4.25-check-programs.patch
 
 Requires: libpciaccess
 BuildRequires: pkgconfig automake autoconf libtool
@@ -16,51 +25,69 @@ BuildRequires: pkgconfig automake autoconf libtool
 BuildRequires: kernel-headers libpthread-stubs-devel
 BuildRequires: libpciaccess-devel
 
-Source2: 91-drm-modeset.rules
-Source3: i915modeset
 
 %description
 Direct Rendering Manager runtime library
 
 %package devel
 Summary: Direct Rendering Manager development package
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 Requires: kernel-headers 
 
 %description devel
 Direct Rendering Manager development package
 
+%package -n drm-utils
+Summary: Direct Rendering Manager utilities
+
+%description -n drm-utils
+Utility programs for the kernel DRM interface.
+
 %prep
-%setup -q -n %{name}-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%setup -q
+%patch3 -p1 -b .forceperms
+%patch4 -p1 -b .no-bc
+%patch5 -p1 -b .check
 
 %build
-
+if [ ! -f "configure" ]; then ./autogen.sh; fi
+#2.4.64 need autoreconf
+autoreconf -ivf
 %configure \
+    --enable-install-test-programs \
     --enable-udev \
     --enable-libkms \
     --enable-intel \
     --enable-radeon \
     --enable-nouveau \
     --enable-vmwgfx \
+    --enable-amdgpu \
     --enable-manpages 
-make
+make %{?_smp_mflags}
+
+pushd tests
+make %{?smp_mflags} `make check-programs`
+popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+
+pushd tests
+mkdir -p %{buildroot}%{_bindir}
+for foo in $(make check-programs) ; do
+ install -m 0755 .libs/$foo %{buildroot}%{_bindir}
+done
+popd
+
+
 # SUBDIRS=libdrm
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/udev/rules.d/
 install -m 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/udev/rules.d/
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/modprobe.d/
-install -m 0644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/modprobe.d/i915modeset.conf
+
 
 find $RPM_BUILD_ROOT -type f -name '*.la' | xargs rm -f -- || :
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -72,7 +99,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 %{_libdir}/*.so.*
 %{_sysconfdir}/udev/rules.d/91-drm-modeset.rules
-%{_sysconfdir}/modprobe.d/i915modeset.conf
 
 %files devel
 %defattr(-,root,root,-)
@@ -93,4 +119,36 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/drm-ttm.7.gz
 %{_mandir}/man7/drm.7.gz
 
+%files -n drm-utils
+%{_bindir}/dristat
+%{_bindir}/drmstat
+%{_bindir}/getclient
+%{_bindir}/getstats
+%{_bindir}/getversion
+%{_bindir}/name_from_fd
+%{_bindir}/openclose
+%{_bindir}/setversion
+%{_bindir}/updatedraw
+%{_bindir}/modetest
+%{_bindir}/modeprint
+%{_bindir}/vbltest
+%{_bindir}/kmstest
+%exclude %{_bindir}/exynos*
+%exclude %{_bindir}/drmsl
+%exclude %{_bindir}/hash
+%exclude %{_bindir}/proptest
+%exclude %{_bindir}/random
+
 %changelog
+* Fri Aug 14 2015 Cjacker <cjacker@foxmail.com>
+- finally, libdrm-2.4.63 have amdgpu support.
+
+* Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
+- update to c8df9e7
+
+* Thu Aug 06 2015 Cjacker <cjacker@foxmail.com>
+- amdgpu in mainline, update.
+
+* Sun Jul 26 2015 Cjacker <cjacker@foxmail.com>
+- add amdgpu-in-development codes.
+- should remove when it enter mainline.

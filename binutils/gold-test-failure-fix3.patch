@@ -1,0 +1,59 @@
+From: H.J. Lu <hjl.tools@gmail.com>
+Date: Wed, 22 Jul 2015 10:35:47 +0000 (-0700)
+Subject: Mark global with hidden attribute
+X-Git-Url: https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commitdiff_plain;h=cd78ea777c35c497fcc0f20d162789296dc0a44d;hp=bb854a36d192bfa6609da9e3b1342e33da445598
+
+Mark global with hidden attribute
+
+GCC 5 will generate a relocation for protected symbol:
+
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65248
+
+when compiling for a shared library.  It is undefined to access protected
+symbol in IFUNC selector function inside a shared library.
+
+	PR gold/18628
+	* testsuite/ifuncdep2.c (global): Change protected to hidden.
+	* testsuite/ifuncmod1.c (global): Likewise.
+	* testsuite/ifuncmod5.c (global): Likewise.
+---
+
+diff --git a/gold/testsuite/ifuncdep2.c b/gold/testsuite/ifuncdep2.c
+index 758bae1..f2a11f1 100644
+--- a/gold/testsuite/ifuncdep2.c
++++ b/gold/testsuite/ifuncdep2.c
+@@ -2,7 +2,7 @@
+ 
+ #include "ifunc-sel.h"
+ 
+-int global __attribute__ ((visibility ("protected"))) = -1;
++int global __attribute__ ((visibility ("hidden"))) = -1;
+ 
+ static int
+ one (void)
+diff --git a/gold/testsuite/ifuncmod1.c b/gold/testsuite/ifuncmod1.c
+index e3b37cb..8ee11f1 100644
+--- a/gold/testsuite/ifuncmod1.c
++++ b/gold/testsuite/ifuncmod1.c
+@@ -6,7 +6,7 @@
+  */
+ #include "ifunc-sel.h"
+ 
+-int global __attribute__ ((visibility ("protected"))) = -1;
++int global __attribute__ ((visibility ("hidden"))) = -1;
+ 
+ static int
+ one (void)
+diff --git a/gold/testsuite/ifuncmod5.c b/gold/testsuite/ifuncmod5.c
+index 9a08e8c..1fd815b 100644
+--- a/gold/testsuite/ifuncmod5.c
++++ b/gold/testsuite/ifuncmod5.c
+@@ -1,7 +1,7 @@
+ /* Test STT_GNU_IFUNC symbols without direct function call.  */
+ #include "ifunc-sel.h"
+ 
+-int global __attribute__ ((visibility ("protected"))) = -1;
++int global __attribute__ ((visibility ("hidden"))) = -1;
+ 
+ static int
+ one (void)

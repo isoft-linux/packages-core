@@ -1,13 +1,9 @@
 if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
-   set fileencodings=utf-8,latin1
+   set fileencodings=ucs-bom,utf-8,latin1
 endif
 
 set nocompatible	" Use Vim defaults (much better!)
 set bs=indent,eol,start		" allow backspacing over everything in insert mode
-"set cindent         " use cindent
-set expandtab  " Insert spaces instead of <TAB> character 
-set sw=4       " Set shift width in programming 
-set ts=4       " Set TAB Stop
 "set ai			" always set autoindenting on
 "set backup		" keep a backup file
 set viminfo='20,\"50	" read/write a .viminfo file, don't store more
@@ -17,7 +13,7 @@ set ruler		" show the cursor position all the time
 
 " Only do this part when compiled with support for autocommands
 if has("autocmd")
-  augroup pure64group 
+  augroup pure64 
   autocmd!
   " In text files, always limit the width of text to 78 characters
   " autocmd BufRead *.txt set tw=78
@@ -40,7 +36,7 @@ if has("cscope") && filereadable("/usr/bin/cscope")
    set nocsverb
    " add any database in current directory
    if filereadable("cscope.out")
-      cs add cscope.out
+      cs add $PWD/cscope.out
    " else add database pointed to by environment
    elseif $CSCOPE_DB != ""
       cs add $CSCOPE_DB
@@ -53,10 +49,6 @@ endif
 if &t_Co > 2 || has("gui_running")
   syntax on
   set hlsearch
-  set gfn=Monospace\ 10
-endif
-if has("gui_running")
-  colorscheme slate
 endif
 
 filetype plugin on
@@ -66,3 +58,7 @@ if &term=="xterm"
      set t_Sb=[4%dm
      set t_Sf=[3%dm
 endif
+
+" Don't wake up system with blinking cursor:
+" http://www.linuxpowertop.org/known.php
+let &guicursor = &guicursor . ",a:blinkon0"

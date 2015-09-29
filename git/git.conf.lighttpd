@@ -1,7 +1,0 @@
-#remember to enable mod_alias support in modules.conf
-#and include this git.conf in lighttpd.conf
-alias.url += ( "/gitweb" => "/var/www/git/" )
-$HTTP["url"] =~ "^/gitweb/" {
-cgi.assign = (".cgi" => "/usr/bin/perl")
-server.indexfiles = ("gitweb.cgi")
-}

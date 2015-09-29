@@ -41,13 +41,12 @@
 %define lldb_ver 3.6.2
 %define test_suite_ver 3.6.2
 
-Name:		llvm
-Version:    3.6.2
-Release:    6 
-Summary:	Low Level Virtual Machine (LLVM) with clang	
-License:   	University of llinois/NCSA Open Source License 
-URL:        http://llvm.org
-Group:		Core/Development/Utility
+Name: llvm
+Version: 3.6.2
+Release: 8 
+Summary: Low Level Virtual Machine (LLVM) with clang	
+License: University of llinois/NCSA Open Source License 
+URL: http://llvm.org
 BuildRequires: clang
 
 %if %{rebuild_use_libcxx}
@@ -71,7 +70,7 @@ Requires: alternatives
 %endif
 
 Source:      llvm-%{llvm_ver}.src.tar.xz
-Source1:	 cfe-%{cfe_ver}.src.tar.xz
+Source1:     cfe-%{cfe_ver}.src.tar.xz
 Source2:     compiler-rt-%{compiler_rt_ver}.src.tar.xz
 Source3:     clang-tools-extra-%{clang_tools_extra_ver}.src.tar.xz
 
@@ -112,7 +111,6 @@ Low Level Virtual Machine (LLVM) is:
 
 %package -n libllvm
 Summary:        LLVM shared libraries
-Group:          Core/Runtime/Library 
 
 %description -n libllvm
 Shared libraries for the LLVM compiler infrastructure.
@@ -120,7 +118,6 @@ Shared libraries for the LLVM compiler infrastructure.
 
 %package -n libllvm-devel
 Summary:        Libraries and header files for LLVM
-Group:          Core/Development/Library
 Requires:       libllvm = %{version}-%{release}
 Requires:       libffi-devel
 
@@ -130,7 +127,6 @@ native programs that use the LLVM infrastructure.
 
 %package -n libllvm-static
 Summary:        Static libraries for LLVM
-Group:          Core/Development/Library
 Requires:       libllvm-devel = %{version}-%{release}
 
 %description -n libllvm-static
@@ -140,7 +136,6 @@ native programs that use the LLVM infrastructure.
 
 %package -n clang 
 Summary: A C language family frontend for LLVM
-Group:   Core/Development/Language
 Requires: llvm = %{version}-%{release} 
 Requires: libllvm = %{version}-%{release} 
 %if %{rebuild_use_libcxx}
@@ -153,7 +148,6 @@ The goal of the Clang project is to create a new C, C++, Objective C and Objecti
 
 %package -n clang-tools
 Summary:  Extra tools of clang
-Group:    Core/Development/Language
 Requires: clang = %{version}-%{release}
 
 %description -n clang-tools
@@ -161,7 +155,6 @@ Extra tools of clang.
 
 %package -n libclang
 Summary:        Libraries for develop program with libclang
-Group:          Core/Runtime/Library
 Requires:       libllvm = %{version}-%{release}
 
 %description -n libclang
@@ -169,7 +162,6 @@ This package contains libraries for develop program with libclang.
 
 %package -n libclang-devel
 Summary:        Header files for clang
-Group:          Core/Development/Library
 Requires:       libclang = %{version}-%{release}
 
 %description -n libclang-devel
@@ -177,7 +169,6 @@ This package contains header files for the Clang compiler.
 
 %package -n libclang-static
 Summary:        Static libraries for clang
-Group:          Core/Development/Library
 Requires:       libclang-devel = %{version}-%{release}
 
 %description -n libclang-static
@@ -186,7 +177,6 @@ This package contains static libraries for develop program with Clang library.
 
 %package -n lldb
 Summary:        LLDB is a next generation, high-performance debugger 
-Group:          Core/Development/Debugger
 Requires:       liblldb = %{version}-%{release}
 
 %description -n lldb 
@@ -194,7 +184,6 @@ LLDB is a next generation, high-performance debugger. It is built as a set of re
 
 %package -n liblldb
 Summary:        Libraries for develop program with liblldb
-Group:          Core/Runtime/Library 
 Requires:       libllvm = %{version}-%{release}
 
 %description -n liblldb
@@ -202,7 +191,6 @@ This package contains libraries for develop program with liblldb.
 
 %package -n liblldb-devel
 Summary:        Header files for lldb library. 
-Group:          Core/Development/Library
 Requires:       liblldb = %{version}-%{release}
 
 %description -n liblldb-devel
@@ -210,7 +198,6 @@ This package contains header files for lldb library.
 
 %package -n liblldb-static
 Summary:        Static libraries for lldb
-Group:          Core/Development/Library
 Requires:       liblldb-devel = %{version}-%{release}
 
 %description -n liblldb-static
@@ -219,7 +206,6 @@ This package contains static libraries for develop program with lldb library.
 
 %package -n polly 
 Summary:        LLVM Framework for High-Level Loop and Data-Locality Optimizations
-Group:          Core/Development/Language
 Requires:       clang = %{version}-%{release}
 Requires:       cloog-isl >= 0.18.1
 Requires:       gmp
@@ -229,14 +215,12 @@ LLVM Framework for High-Level Loop and Data-Locality Optimizations
 
 %package -n libpolly-devel
 Summary:        Header files for polly library.
-Group:          Core/Development/Library
 
 %description -n libpolly-devel
 This package contains header files for polly library.
 
 %package -n libpolly-static
 Summary:        Static libraries for polly 
-Group:          Core/Development/Library
 Requires:       libpolly-devel = %{version}-%{release}
 
 %description -n libpolly-static
@@ -245,7 +229,6 @@ This package contains static libraries for develop program with polly library.
 
 %package -n lld
 Summary:        The LLVM Linker
-Group:          Core/Development/Language
 
 %description -n lld
 The LLVM Linker
@@ -253,14 +236,12 @@ The LLVM Linker
 
 %package -n liblld-devel
 Summary:        Header files for lld library.
-Group:          Core/Development/Library
 
 %description -n liblld-devel
 This package contains header files for lld library.
 
 %package -n liblld-static
 Summary:        Static libraries for lld
-Group:          Core/Development/Library
 Requires:       liblld-devel = %{version}-%{release}
 
 %description -n liblld-static
@@ -326,9 +307,9 @@ tar xf %{SOURCE13} -C projects/test-suite --strip-components=1
 %patch11 -p1
 
 %patch12 -p1
-%patch13 -p1
+#%patch13 -p1
 
-%patch14 -p1
+#%patch14 -p1
 
 %patch15 -p1
 popd
@@ -370,8 +351,8 @@ pushd llvm-static-%{version}/build
     -DBUILD_SHARED_LIBS=OFF \
     -DLLVM_ENABLE_PIC=ON \
     -DLLVM_TARGETS_TO_BUILD="all" \
-    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-pure64-linux" \
-    -DCLANG_VENDOR="Pure64" ..
+    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-isoft-linux" \
+    -DCLANG_VENDOR="iSoft" ..
 time ninja
 popd
 
@@ -394,8 +375,8 @@ pushd llvm-shared-%{version}/build
     -DBUILD_SHARED_LIBS=ON \
     -DLLVM_ENABLE_PIC=ON \
     -DLLVM_TARGETS_TO_BUILD="all" \
-    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-pure64-linux" \
-    -DCLANG_VENDOR="Pure64" ..
+    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-isoft-linux" \
+    -DCLANG_VENDOR="iSoft" ..
 time ninja
 popd
 

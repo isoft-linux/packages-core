@@ -2,32 +2,19 @@
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 10.7.0
-Release: 5.git 
+Version: 11.0.1
+Release: 1 
 License: MIT
-Group: System Environment/Libraries
 URL: http://www.mesa3d.org
-#Source0: mesa-%{version}.tar.xz
-#20150710
-#git clone git://anongit.freedesktop.org/mesa/mesa
-Source0:    mesa.tar.gz
 
+Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.xz
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
 #By Cjacker.
 Patch0: mesa-fix-build-with-llvm-libc++.patch
 
-# https://bugs.freedesktop.org/show_bug.cgi?id=73512
-Patch10: 0001-opencl-use-versioned-.so-in-mesa.icd.patch
-
-#from mesa-10.4, intel dri had a critical crash problem 
-#and up to now, it's still not fixed.
-#this is a try to avoid irb->mt is null.
-#By Cjacker.
-Patch20: mesa-try-fix-intel-brw_meta_fast_clear-crash.patch
-#not sure, try to use plain_clear.
-Patch21: mesa-try-fix-intel-brw_meta_fast_clear-crash-use-PLAIN_CLEAR.patch
-
+#https://bugs.freedesktop.org/show_bug.cgi?id=86281
+Patch10: mesa-fix-BUG-86281-intel-crash.patch
 
 BuildRequires: pkgconfig autoconf automake
 BuildRequires: libdrm-devel >= 2.4.18-0.1
@@ -57,7 +44,6 @@ Mesa graphics libraries
 
 %package libGL
 Summary: Mesa libGL runtime libraries
-Group: System Environment/Libraries
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 Provides: libGL
@@ -69,7 +55,6 @@ Mesa libGL runtime library.
 
 %package libGL-devel
 Summary: Mesa libGL development package
-Group: Development/Libraries
 Requires: mesa-libGL = %{version}-%{release}
 Provides: libGL-devel
 Conflicts: xorg-x11-proto-devel <= 7.2-12
@@ -79,7 +64,6 @@ Mesa libGL development package
 
 %package libEGL
 Summary: Mesa libEGL runtime libraries
-Group: System Environment/Libraries
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 Provides: libEGL
@@ -92,14 +76,12 @@ Mesa libEGL runtime library.
 
 %package dri-drivers
 Summary: Mesa-based DRI drivers
-Group: User Interface/X Hardware Support
 %description dri-drivers
 Mesa-based DRI drivers.
 
 
 %package libEGL-devel
 Summary: Mesa libEGL development package
-Group: Development/Libraries
 Requires: mesa-libEGL = %{version}-%{release}
 Provides: libEGL-devel
 Conflicts: xorg-x11-proto-devel <= 7.2-12
@@ -110,7 +92,6 @@ Mesa libEGL development package
 
 %package libgbm
 Summary: Mesa gbm library
-Group: System Environment/Libraries
 Provides: libgbm
 
 %description libgbm
@@ -119,7 +100,6 @@ Mesa gbm runtime library.
 
 %package libgbm-devel
 Summary: Mesa libgbm development package
-Group: Development/Libraries
 Requires: mesa-libgbm = %{version}-%{release}
 Provides: libgbm-devel
 
@@ -128,7 +108,6 @@ Mesa libgbm development package
 
 %package libwayland-egl
 Summary: Mesa libwayland-egl library
-Group: System Environment/Libraries
 Provides: libwayland-egl
 
 %description libwayland-egl
@@ -137,7 +116,6 @@ Mesa libwayland-egl runtime library.
 
 %package libwayland-egl-devel
 Summary: Mesa libwayland-egl development package
-Group: Development/Libraries
 Requires: mesa-libwayland-egl = %{version}-%{release}
 Provides: libwayland-egl-devel
 
@@ -147,7 +125,6 @@ Mesa libwayland-egl development package
 
 %package libGLESv2
 Summary: Mesa libGLESv2 runtime libraries
-Group: System Environment/Libraries
 Provides: mesa-libGLES = %{version}-%{release}
 
 %description libGLESv2
@@ -155,7 +132,6 @@ Mesa GLESv2 runtime libraries
 
 %package libGLESv2-devel
 Summary: Mesa libGLESv2 development package
-Group: Development/Libraries
 Requires: mesa-libGLESv2 = %{version}-%{release}
 Provides: mesa-libGLES-devel = %{version}-%{release}
 
@@ -165,14 +141,12 @@ Mesa libGLESv2 development package
 
 %package libxatracker
 Summary: Xorg Gallium3D acceleration library 
-Group: System Environment/Libraries
 
 %description libxatracker
 Xorg Gallium3D acceleration library
 
 %package libxatracker-devel
 Summary: Mesa libxatracker development package
-Group: Development/Libraries
 Requires: mesa-libxatracker = %{version}-%{release}
 
 %description libxatracker-devel
@@ -180,14 +154,12 @@ Development libraries and headers for Xorg Gallium3D acceleration library
 
 %package libXvmc
 Summary: Mesa libXvmc runtime libraries
-Group: System Environment/Libraries
 
 %description libXvmc
 Mesa Xvmc runtime libraries
 
 %package libvdpau-plugins
 Summary: Mesa plugins for libvdpau.
-Group: System Environment/Libraries
 Requires: libvdpau
 
 %description libvdpau-plugins 
@@ -209,7 +181,6 @@ Mesa Direct3D9 state tracker development package
 
 %package libOSMesa
 Summary: Mesa offscreen rendering libraries
-Group: System Environment/Libraries
 Provides: libOSMesa
 
 %description libOSMesa
@@ -218,7 +189,6 @@ Mesa offscreen rendering libraries
 
 %package libOSMesa-devel
 Summary: Mesa offscreen rendering development package
-Group: Development/Libraries
 Requires: mesa-libOSMesa = %{version}-%{release}
 
 %description libOSMesa-devel
@@ -244,14 +214,8 @@ Mesa OpenCL development package.
 
 
 %prep
-%setup -q -n %{name} 
-
-%if 0%{?with_opencl}
-%patch10 -p1 -b .icd
-%endif
-
-%patch20 -p1
-#%patch21 -p1
+%setup -q -n %{name}-%{version} 
+%patch10 -p1
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -262,7 +226,7 @@ export CFLAGS="$RPM_OPT_FLAGS"
 #for opencl, dependen on LLVM build configuration.
 export CXXFLAGS="$RPM_OPT_FLAGS -frtti -fexceptions"
 
-./autogen.sh --disable-glx --with-egl-platforms=wayland,drm
+#./autogen.sh --disable-glx --with-egl-platforms=wayland,drm
 
 %configure \
 %ifarch %{ix86}
@@ -281,7 +245,7 @@ export CXXFLAGS="$RPM_OPT_FLAGS -frtti -fexceptions"
   --enable-gallium-llvm \
   --enable-llvm-shared-libs \
   --enable-gallium-egl \
-  --with-gallium-drivers="i915,nouveau,svga,r300,r600,radeonsi,swrast" \
+  --with-gallium-drivers="i915,ilo,nouveau,svga,r300,r600,radeonsi,swrast" \
   --with-dri-drivers="swrast,nouveau,radeon,r200,i915,i965" \
   --enable-egl \
   --enable-gles2 \
@@ -469,6 +433,64 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Sep 27 2015 Cjacker <cjacker@foxmail.com>
+- update to 11.0.1
+
+* Mon Aug 24 2015 Cjacker <cjacker@foxmail.com>
+- update to laste git codes.
+- revert radeon IB buffer size for better performance and other regular commits.
+
+* Fri Aug 14 2015 Cjacker <cjacker@foxmail.com>
+- update, amdgpu enter mainline
+
+* Wed Aug 12 2015 Cjacker <cjacker@foxmail.com>
+- update to 02a4fe2
+- add patch10 to fix intel crash bug.
+
+* Tue Aug 11 2015 Cjacker <cjacker@foxmail.com>
+- update to 87cea61
+
+* Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
+- update to a1adf0b
+
+* Fri Aug 07 2015 Cjacker <cjacker@foxmail.com>
+- update to 42d283a
+
+* Wed Aug 05 2015 Cjacker <cjacker@foxmail.com>
+- update to 03b7221
+- remove patch20
+
+* Tue Aug 04 2015 Cjacker <cjacker@foxmail.com>
+- update to 996349c
+
+* Thu Jul 30 2015 Cjacker <cjacker@foxmail.com>
+- update to c73a13e
+
+* Wed Jul 29 2015 Cjacker <cjacker@foxmail.com>
+- update to 2e04492
+
+* Sun Jul 26 2015 Cjacker <cjacker@foxmail.com>
+- update to bb9d59a
+
+* Sat Jul 25 2015 Cjacker <cjacker@foxmail.com>
+- update to 7b40d92
+
+* Fri Jul 24 2015 Cjacker <cjacker@foxmail.com>
+- update to git 30f97b5
+
+* Thu Jul 23 2015 Cjacker <cjacker@foxmail.com>
+- update to git c6267eb
+
+* Thu Jul 23 2015 Cjacker <cjacker@foxmail.com>
+- update to git 6d8e466
+
+* Wed Jul 22 2015 Cjacker <cjacker@foxmail.com>
+- update to git 13322a6
+- add OpenGL 4.x GL_ARB_get_texture_sub_image extension.
+
+* Tue Jul 21 2015 Cjacker <cjacker@foxmail.com>
+- update to git b298311
+
 * Sun Jul 19 2015 Cjacker <cjacker@foxmail.com>
 - update to git 8c8a71f
 

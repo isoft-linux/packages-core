@@ -1,0 +1,9 @@
+#!/bin/bash
+cd /lib/modules/`uname -r`/
+all_required_firmware=$(for i in `find . -name *.ko`; do	modinfo $i|grep "^firmware:"|awk -F " " '{print $2}'; done)
+
+for i in $all_required_firmware; do
+	if [ ! -f "/lib/firmware/$i" ]; then
+		echo $i
+	fi
+done

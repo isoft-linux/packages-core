@@ -5,7 +5,7 @@
 Summary: X.Org X11 Protocol headers
 Name: xorg-x11-proto-devel
 Version: 7.7
-Release: 26
+Release: 28
 License: The Open Group License
 Group: Development/System
 URL: http://www.x.org
@@ -33,7 +33,7 @@ Source19: http://xorg.freedesktop.org/archive/individual/proto//xf86dgaproto-2.1
 Source20: http://xorg.freedesktop.org/archive/individual/proto//xf86driproto-2.1.1.tar.bz2
 Source21: http://xorg.freedesktop.org/archive/individual/proto//xf86vidmodeproto-2.3.1.tar.bz2
 Source22: http://xorg.freedesktop.org/archive/individual/proto//xineramaproto-1.2.1.tar.bz2
-Source23: http://xorg.freedesktop.org/archive/individual/proto//xproto-7.0.27.tar.bz2
+Source23: http://xorg.freedesktop.org/archive/individual/proto//xproto-7.0.28.tar.bz2
 Source24: http://xorg.freedesktop.org/archive/individual/proto//printproto-1.0.5.tar.bz2
 Source25: http://xorg.freedesktop.org/archive/individual/proto//dri3proto-1.0.tar.bz2
 Source26: http://xorg.freedesktop.org/archive/individual/proto//presentproto-1.0.tar.bz2
