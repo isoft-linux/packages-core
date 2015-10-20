@@ -1,6 +1,6 @@
 Name:		xcb-util-image
 Version:	0.4.0
-Release:    1	
+Release: 2 
 Summary:	Port of Xlib's XImage and XShmImage functions on top of libxcb
 Group:		System Environment/Libraries
 License:	MIT

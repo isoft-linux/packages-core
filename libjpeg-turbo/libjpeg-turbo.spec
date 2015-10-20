@@ -1,5 +1,5 @@
 Name:		libjpeg-turbo
-Version:	1.4.1
+Version:	1.4.2
 Release:    1	
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 
@@ -136,3 +136,6 @@ make test
 %{_libdir}/libturbojpeg.so
 
 %changelog
+* Thu Oct 08 2015 Cjacker <cjacker@foxmail.com>
+- update to 1.4.2
+

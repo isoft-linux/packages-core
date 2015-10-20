@@ -1,9 +1,8 @@
 Name:          	xcb-proto 
 Version:        1.11
-Release:        1.git 
+Release:        4.git 
 Summary:        A C binding to the X11 protocol
 
-Group:          System Environment/Libraries
 License:        MIT
 URL:            http://xcb.freedesktop.org/
 
@@ -25,7 +24,6 @@ language bindings, protocol dissectors, or documentation generators.
 
 %package       	python 
 Summary:        python files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       python 
 
@@ -45,7 +43,6 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -57,13 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/xcb
-
-%files python 
-%defattr(-,root,root,-)
 %{_libdir}/python?.?/site-packages/xcbgen
 
 
 %changelog
-* Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
-- first build, prepare for the new release.
-
+* Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
+- rebuild

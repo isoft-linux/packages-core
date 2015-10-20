@@ -3,7 +3,7 @@
 %global _firmwarepath	/usr/lib/firmware
 
 Name: linux-firmware
-Version: 20150925
+Version: 20151013
 Release: %{firmware_release}.git%{?dist}
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
@@ -88,6 +88,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Thu Oct 13 2015 Cjacker <cjacker@foxmail.com>
+- update to latest git
 * Fri Sep 25 2015 Cjacker <cjacker@foxmail.com>
 - update to latest git for Intel Skylake & Broxton Linux Graphics
 

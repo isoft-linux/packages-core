@@ -1,5 +1,5 @@
 %define glibcversion 2.22
-%define glibcrelease 10
+%define glibcrelease 12
 
 Summary: The GNU libc libraries.
 Name: glibc
@@ -14,7 +14,10 @@ Source4: build-locale-archive.c
 Source5: nsswitch.conf
 Source6: nscd.conf
 
-Patch0: glibc-fix-build_locale_archive.patch
+Patch0: glibc-isoft-localedata-rh61908.patch  
+Patch1: glibc-isoft-localedef.patch           
+Patch2: glibc-isoft-locarchive.patch
+
 Patch7: glibc-sunrpc-rpcgen-cpp-path.patch
 Patch9: 1055_all_glibc-resolv-dynamic.patch
 Patch12: 0020_all_glibc-tweak-rfc1918-lookup.patch
@@ -35,6 +38,22 @@ Patch42: glibc-rh1238412-update-the-translit-files-to-unicode-7.0.0.patch
 Patch43: glibc-rh1238412-add-translit-rules-for-da-nb-nn-sv-locales.patch
 Patch44: glibc-rh1238412-unicode-8.0.0-update.patch
 
+# confstr _CS_PATH should only return /usr/bin on Fedora since /bin is just a
+# symlink to it.
+Patch53: glibc-cs-path.patch
+
+# Fix -Warray-bounds warning for GCC5, likely PR/59124 or PR/66422.
+# See Fedora bug #1263817.
+Patch54: glibc-res-hconf-gcc5.patch
+Patch55: glibc-ld-ctype-gcc5.patch
+Patch56: glibc-gethnamaddr-gcc5.patch
+Patch57: glibc-dns-host-gcc5.patch
+Patch58: glibc-bug-regex-gcc5.patch
+
+# Add C.UTF-8 locale into /usr/lib/locale/
+Patch59: glibc-c-utf8-locale.patch
+
+
 # http://sourceware.org/ml/libc-alpha/2012-12/msg00103.html
 Patch2000: glibc-rh697421.patch
 
@@ -45,7 +64,6 @@ Patch2002: glibc-rh827510.patch
 
 # Upstream BZ 14185
 Patch2003: glibc-rh819430.patch
-
 
 Provides: ldconfig
 Provides: rtld(GNU_HASH)
@@ -144,6 +162,9 @@ If unsure if you need this, don't install this package.
 %prep
 %setup -q 
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+
 %patch7 -p1
 %patch9 -p1
 %patch12 -p1
@@ -160,6 +181,14 @@ If unsure if you need this, don't install this package.
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
 
 %patch2000 -p1
 %patch2001 -p1
@@ -191,7 +220,7 @@ mkdir everest
 cp %{SOURCE3} everest
 cp %{SOURCE4} everest
 cd $builddir
-EnableKernel="--enable-kernel=2.6.9"
+EnableKernel="--enable-kernel=2.6.32"
 BuildFlags="$BuildFlags -DNDEBUG=1 -fasynchronous-unwind-tables"
 build_CFLAGS="$BuildFlags -g -O3 $*"
 
@@ -260,13 +289,14 @@ gcc -O2 -o glibc-build/hardlink everest/hardlink.c
 olddir=`pwd`
 pushd ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/locale
 rm locale-archive || :
+
 # Intentionally we do not pass --alias-file=, aliases will be added
 # by build-locale-archive.
 $olddir/glibc-build/elf/ld.so \
   --library-path $olddir/glibc-build/ \
   $olddir/glibc-build/locale/localedef \
     --prefix ${RPM_BUILD_ROOT} --add-to-archive \
-    *_*
+    C.utf8 *_*
 rm -rf *_*
 mv locale-archive{,.tmpl}
 popd
@@ -364,11 +394,14 @@ EOF
 
 
 cd everest
-gcc -Os -static -o build-locale-archive build-locale-archive.c \
+gcc -Os -g -static -o build-locale-archive build-locale-archive.c \
   ../glibc-build/locale/locarchive.o \
   ../glibc-build/locale/md5.o \
   -DDATADIR=\"%{_datadir}\" -DPREFIX=\"%{_prefix}\" \
-  -L../glibc-build
+  -L../glibc-build \
+  -Wl,--allow-shlib-undefined \
+  -B../glibc-build/csu/ -lc -lc_nonshared
+
 install -m 700 build-locale-archive $RPM_BUILD_ROOT/usr/sbin/build-locale-archive
 cd ..
 
@@ -465,7 +498,9 @@ fi
 %files -f common.filelist common
 %defattr(-,root,root)
 %dir %{_prefix}/%{_lib}/locale
-%attr(0644,root,root) %{_prefix}/%{_lib}/locale/locale-archive.tmpl
+%dir %{_prefix}/lib/locale/C.utf8
+%{_prefix}/lib/locale/C.utf8/*
+%attr(0644,root,root) %verify(not md5 size mtime) %{_prefix}/lib/locale/locale-archive.tmpl
 %attr(0644,root,root) %verify(not md5 size mtime mode) %ghost %config(missingok,noreplace) %{_prefix}/%{_lib}/locale/locale-archive
 #%dir %attr(755,root,root) /etc/default
 #%verify(not md5 size mtime) %config(noreplace) /etc/default/nss

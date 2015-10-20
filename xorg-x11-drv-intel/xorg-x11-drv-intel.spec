@@ -5,7 +5,7 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   26.git
+Release:   30.git
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -32,7 +32,8 @@ X.Org X11 i810 video driver.
 ./autogen.sh
 %configure \
     --enable-kms-only \
-    --enable-tools
+    --enable-tools \
+    --with-default-dri=3
 
 make %{?_smp_mflags}
 

@@ -1,74 +1,101 @@
-Name:           libxcb
-Version:        1.11
-Release:        1.git 
-Summary:        A C binding to the X11 protocol
-License:        MIT
-URL:            http://xcb.freedesktop.org/
-#Source0:        http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
-#git clone git://anongit.freedesktop.org/git/xcb/libxcb
-Source0:        libxcb.tar.gz
+%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
-BuildRequires:  autoconf automake libtool pkgconfig
-BuildRequires:  libXau-devel
+Name:       libxcb
+Version:    1.11.1
+Release:    6.git%{?dist}
+Summary:    A C binding to the X11 protocol
+License:    MIT
+URL:        http://xcb.freedesktop.org/
+
+#Source0:    http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
+Source0: libxcb.tar.gz
+Patch0: libxcb-not-close-fd.patch
+BuildRequires:  libtool
 BuildRequires:  libxslt
-BuildRequires:  xorg-x11-proto-devel
-BuildRequires:  xorg-x11-util-macros
-BuildRequires:  xcb-proto
+BuildRequires:  pkgconfig
+BuildRequires:  pkgconfig(xau) >= 0.99.2
+BuildRequires:  pkgconfig(xcb-proto) >= 1.11
+BuildRequires:  pkgconfig(xorg-macros) >= 1.18
+BuildRequires: libpthread-stubs-devel
 
 %description
 The X protocol C-language Binding (XCB) is a replacement for Xlib featuring a
 small footprint, latency hiding, direct access to the protocol, improved
 threading support, and extensibility.
 
-%package        devel
-Summary:        Development files for %{name}
-Requires:       %{name} = %{version}-%{release}
-Requires:       pkgconfig
+%package devel
+Summary:    Development files for %{name}
+Requires:   %{name}%{?_isa} = %{version}-%{release}
 
-%description    devel
-The %{name}-devel package contains libraries and header files for
-developing applications that use %{name}.
-
-%package        doc
-Summary:        Documentation for %{name}
-
-%description    doc
-The %{name}-doc package contains documentation for the %{name} library.
+%description devel
+The %{name}-devel package contains libraries and header files for developing
+applications that use %{name}.
 
 %prep
-%setup -q -n libxcb
+%autosetup -n %{name} -p1
 
 %build
-./autogen.sh
+if [ ! -f configure ]; then ./autogen.sh; fi
 %configure \
     --disable-static \
+    --disable-selinux \
     --enable-xkb \
     --enable-xinput \
-    --docdir=%{_datadir}/doc/%{name}-%{version}
+    --enable-xevie \
+    --disable-xprint \
+    --disable-silent-rules
+
+# Remove rpath from libtool (extra insurance if autoreconf is ever dropped)
+sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rpmclean
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+find $RPM_BUILD_ROOT -name '*.la' -delete
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
-%{_libdir}/*.so.*
+%{_libdir}/libxcb-composite.so.0*
+%{_libdir}/libxcb-damage.so.0*
+%{_libdir}/libxcb-dpms.so.0*
+%{_libdir}/libxcb-dri2.so.0*
+%{_libdir}/libxcb-dri3.so.0*
+%{_libdir}/libxcb-glx.so.0*
+%{_libdir}/libxcb-present.so.0*
+%{_libdir}/libxcb-randr.so.0*
+%{_libdir}/libxcb-record.so.0*
+%{_libdir}/libxcb-render.so.0*
+%{_libdir}/libxcb-res.so.0*
+%{_libdir}/libxcb-screensaver.so.0*
+%{_libdir}/libxcb-shape.so.0*
+%{_libdir}/libxcb-shm.so.0*
+%{_libdir}/libxcb-sync.so.1*
+%{_libdir}/libxcb-xevie.so.0*
+%{_libdir}/libxcb-xf86dri.so.0*
+%{_libdir}/libxcb-xfixes.so.0*
+%{_libdir}/libxcb-xinerama.so.0*
+%{_libdir}/libxcb-xinput.so.0*
+%{_libdir}/libxcb-xkb.so.1*
+#%{_libdir}/libxcb-xselinux.so.0*
+%{_libdir}/libxcb-xtest.so.0*
+%{_libdir}/libxcb-xv.so.0*
+%{_libdir}/libxcb-xvmc.so.0*
+%{_libdir}/libxcb.so.1*
 
 %files devel
-%defattr(-,root,root,-)
 %{_includedir}/xcb
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
-%{_docdir}/%{name}-%{version}
-%{_mandir}/man3/*
+%{_docdir}/libxcb
+%{_mandir}/man3/*.3*
+
+
+%changelog
+* Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
+- libxcb git 
 

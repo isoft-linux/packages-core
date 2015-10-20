@@ -1,6 +1,6 @@
 Name:		xcb-util-renderutil
 Version:	0.3.9
-Release:	4
+Release: 5
 Summary:	Convenience functions for the Render extension
 Group:		System Environment/Libraries
 License:	MIT

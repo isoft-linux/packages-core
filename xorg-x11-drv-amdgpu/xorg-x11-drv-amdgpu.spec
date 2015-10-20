@@ -11,16 +11,15 @@
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir %{moduledir}/drivers
 
-Summary:   Xorg amdgpu video driver
-Name:      xorg-x11-drv-amdgpu
-Version:   0.0.01
-Release:   3.git
-URL:       http://cgit.freedesktop.org/xorg/driver/xf86-video-amdgpu/
-License:   MIT
-Group:     User Interface/X Hardware Support
+Summary: Xorg amdgpu video driver
+Name: xorg-x11-drv-amdgpu
+Version: 0.0.01
+Release: 6.git
+URL: http://cgit.freedesktop.org/xorg/driver/xf86-video-amdgpu/
+License: MIT
 
 # git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-amdgpu
-Source0:   %{tarball}.tar.gz
+Source0: %{tarball}.tar.gz
 
 BuildRequires: pkgconfig
 BuildRequires: autoconf automake libtool
@@ -29,7 +28,7 @@ BuildRequires: libXvMC-devel
 BuildRequires: mesa-libGL-devel >= 6.5-9
 BuildRequires: libdrm-devel >= 2.4.62-3
 BuildRequires: xcb-util
-Requires:  xorg-x11-server-Xorg >= 1.1.0-1
+Requires: xorg-x11-server-Xorg >= 1.1.0-1
 
 %description 
 X.Org X11 AMD video driver.

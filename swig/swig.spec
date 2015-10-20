@@ -3,7 +3,7 @@
 
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
-Version: 3.0.0
+Version: 3.0.7
 Release: 1
 License: BSD
 Group: CoreDev/Development/Utility
@@ -79,3 +79,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ccache-swig.1*
 
 %changelog
+* Sat Oct 10 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.0.7

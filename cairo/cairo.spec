@@ -1,41 +1,33 @@
-%global with_x11 1 
-
 %define pixman_version 0.32.6
 %define freetype_version 2.1.9
 %define fontconfig_version 2.2.95
 
-Summary:	A 2D graphics library
-Name:		cairo
-Version:	1.14.2
-Release:	1
-URL:		http://cairographics.org
-License:	LGPLv2 or MPLv1.1
-Group:		System Environment/Libraries
+Summary: A 2D graphics library
+Name:  cairo
+Version: 1.14.2
+Release: 3 
+URL:  http://cairographics.org
+License: LGPLv2 or MPLv1.1
+Group:  System Environment/Libraries
 
-Source0:	%{name}-%{version}.tar.xz
+Source0: %{name}-%{version}.tar.xz
 #This patch is import to improve fonts rendering result.
 #be careful when update cairo.
 #By Cjacker
 Patch0: cairo-respect-fontconfig_pb.patch  
 
-
-Patch1: cairo-server-side-gradients.patch  
-Patch2: cairo-webkit-html5-fix.patch 
-
 BuildRequires: pkgconfig
+BuildRequires: libXrender-devel
+BuildRequires: libX11-devel
 BuildRequires: libpng-devel
 BuildRequires: libxml2-devel
 BuildRequires: pixman-devel >= %{pixman_version}
 BuildRequires: freetype-devel >= %{freetype_version}
 BuildRequires: fontconfig-devel >= %{fontconfig_version}
 BuildRequires: glib2-devel
-BuildRequires: mesa-libGLESv2-devel
-
-%if %with_x11
-BuildRequires: libXrender-devel
-BuildRequires: libX11-devel
-BuildRequires: libxcb-devel
-%endif
+BuildRequires: librsvg2-devel
+BuildRequires: mesa-libGL-devel
+BuildRequires: mesa-libEGL-devel
 
 %description
 Cairo is a 2D graphics library designed to provide high-quality display
@@ -102,33 +94,18 @@ This package contains tools for working with the cairo graphics library.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
 
 %build
-#--disable-xlib-xcb to workaround a bug happend to firefox when open a tab, it crash !!!
 CFLAGS="$RPM_OPT_FLAGS" %configure --disable-static \
-    --enable-atomic \
-    --enable-ft     \
-    --enable-ps     \
-    --enable-pdf        \
-    --enable-svg        \
-    --enable-tee        \
-    --disable-drm   \
-    --disable-lto \
-    --enable-gobject    \
-    %if %with_x11
-    --disable-glesv2 \
+    --enable-xlib \
+    --enable-ft \
+    --enable-ps \
+    --enable-pdf \
+    --enable-svg \
+    --enable-tee \
+    --enable-gobject \
     --enable-gl \
-    --enable-xcb    \
-    --disable-xlib-xcb \
-    %else
-    --enable-glesv2 \
-    --disable-gl \
-    --disable-xcb   \
-    --disable-xlib-xcb \
-    %endif
-    --disable-gtk-doc  \
+    --disable-gtk-doc \
     --disable-gtk-doc-html
 
 #add -rtlib=compiler-rt to fix cairo build with clang, without gcc, some symbol will missing.
@@ -144,7 +121,6 @@ make %{?_smp_mflags}
 make install V=1 DESTDIR=$RPM_BUILD_ROOT
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
-rpmclean
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -184,7 +160,6 @@ rpmclean
 %{_libdir}/pkgconfig/cairo-egl.pc
 %{_libdir}/pkgconfig/cairo-script.pc
 
-%if %with_x11
 %{_includedir}/cairo/cairo-xcb.h
 %{_includedir}/cairo/cairo-xlib-xrender.h
 %{_includedir}/cairo/cairo-xlib.h
@@ -195,9 +170,6 @@ rpmclean
 %{_libdir}/pkgconfig/cairo-xlib.pc
 %{_libdir}/pkgconfig/cairo-gl.pc
 %{_libdir}/pkgconfig/cairo-glx.pc
-%else
-%{_libdir}/pkgconfig/cairo-glesv2.pc
-%endif
 
 %{_datadir}/gtk-doc/html/cairo
 
@@ -214,6 +186,5 @@ rpmclean
 %{_libdir}/cairo/
 
 %changelog
-* Sat Dec 21 2013 Cjacker <cjacker@gmail.com>
-- Update to 1.13.1 git snapshot for device scale support
-
+* Mon Oct 12 2015 Cjacker <cjacker@foxmail.com>
+- rebuild, change configure options.

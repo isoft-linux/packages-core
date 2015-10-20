@@ -1,6 +1,6 @@
 Name:		xcb-util-wm
 Version:	0.4.1
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	Client and window-manager helper library on top of libxcb
 Group:		System Environment/Libraries
 License:	MIT

@@ -1,6 +1,6 @@
 Name:		xcb-util-keysyms
 Version:	0.4.0
-Release:    1	
+Release: 2 
 Summary:	Standard X key constants and keycodes conversion on top of libxcb
 Group:		System Environment/Libraries
 License:	MIT

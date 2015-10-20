@@ -2,19 +2,19 @@
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 11.0.1
-Release: 1 
+Version: 11.1.0
+Release: 39.git 
 License: MIT
 URL: http://www.mesa3d.org
+#Source0: mesa-%{version}.tar.xz
+#20150710
+#git clone git://anongit.freedesktop.org/mesa/mesa
+Source0:    mesa.tar.gz
 
-Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.xz
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
 #By Cjacker.
 Patch0: mesa-fix-build-with-llvm-libc++.patch
-
-#https://bugs.freedesktop.org/show_bug.cgi?id=86281
-Patch10: mesa-fix-BUG-86281-intel-crash.patch
 
 BuildRequires: pkgconfig autoconf automake
 BuildRequires: libdrm-devel >= 2.4.18-0.1
@@ -214,8 +214,7 @@ Mesa OpenCL development package.
 
 
 %prep
-%setup -q -n %{name}-%{version} 
-%patch10 -p1
+%setup -q -n %{name} 
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -226,7 +225,7 @@ export CFLAGS="$RPM_OPT_FLAGS"
 #for opencl, dependen on LLVM build configuration.
 export CXXFLAGS="$RPM_OPT_FLAGS -frtti -fexceptions"
 
-#./autogen.sh --disable-glx --with-egl-platforms=wayland,drm
+./autogen.sh --disable-glx --with-egl-platforms=wayland,drm
 
 %configure \
 %ifarch %{ix86}
@@ -433,9 +432,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Sep 27 2015 Cjacker <cjacker@foxmail.com>
-- update to 11.0.1
-
 * Mon Aug 24 2015 Cjacker <cjacker@foxmail.com>
 - update to laste git codes.
 - revert radeon IB buffer size for better performance and other regular commits.

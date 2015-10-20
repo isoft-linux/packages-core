@@ -2,7 +2,7 @@
 
 Summary: A collection of basic system utilities
 Name: util-linux
-Version: 2.26.2
+Version: 2.27
 Release: 6 
 License: GPLv2 and GPLv2+ and LGPLv2+ and BSD with advertising and Public Domain
 URL: http://en.wikipedia.org/wiki/Util-linux
@@ -24,7 +24,7 @@ Buildrequires: systemd-devel
 %endif
 
 ### Sources
-Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/util-linux-%{upstream_version}.tar.xz
+Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-%{upstream_version}.tar.xz
 Source1: util-linux-login.pamd
 Source2: util-linux-remote.pamd
 Source3: util-linux-chsh-chfn.pamd
@@ -475,6 +475,11 @@ fi
 %{_bindir}/uuidgen
 %{_bindir}/whereis
 %{_bindir}/lslogins
+%{_bindir}/lsipc
+%{_bindir}/setpriv
+%{_bindir}/uname26
+%{_sbindir}/zramctl
+
 %{_mandir}/man1/last.1.gz
 %{_mandir}/man1/lastb.1.gz
 %{_mandir}/man1/mesg.1.gz
@@ -526,6 +531,8 @@ fi
 %{_mandir}/man1/whereis.1*
 %{_mandir}/man1/write.1*
 %{_mandir}/man1/lslogins.1.gz
+%{_mandir}/man1/lsipc.1.gz
+%{_mandir}/man1/setpriv.1.gz
 
 %{_mandir}/man5/terminal-colors.d.5.gz
 
@@ -572,6 +579,8 @@ fi
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/wdctl.8.gz
 %{_mandir}/man8/wipefs.8*
+%{_mandir}/man8/uname26.8.gz
+%{_mandir}/man8/zramctl.8.gz
 %{_sbindir}/addpart
 %{_sbindir}/delpart
 %{_sbindir}/ldattach
@@ -730,3 +739,6 @@ fi
 
 
 %changelog
+* Thu Oct 08 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.27
+

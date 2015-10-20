@@ -1,11 +1,10 @@
 Summary:   a pixel manipulation library 
 Name:      pixman 
-Version:   0.32.6
+Version:   0.32.8
 Release:   1
 URL:       http://cairographics.org
 Source0:   http://www.cairographics.org/releases/%{name}-%{version}.tar.gz
 License:   LGPL/MPL
-Group:     System Environment/Libraries
 
 BuildRequires: pkgconfig
 BuildRequires: libpng-devel
@@ -19,7 +18,6 @@ features such as image compositing and trapezoid rasterization.
 
 %package devel
 Summary: pixman developmental libraries and header files
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: libpng-devel
 Requires: freetype-devel
@@ -63,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Oct 18 2015 Cjacker <cjacker@foxmail.com>
+- update to 0.32.8
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

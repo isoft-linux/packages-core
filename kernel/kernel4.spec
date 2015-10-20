@@ -1,5 +1,5 @@
 %define kversion 4.3.0
-%define release 98
+%define release 112
 
 %define extraversion -%{release}
 
@@ -62,6 +62,8 @@ Patch602: amd-xgbe-phy-a0-Add-support-for-XGBE-PHY-on-A0.patch
 Patch603: ath9k-rx-dma-stop-check.patch
 Patch604: disable-i8042-check-on-apple-mac.patch
 Patch606: drm-i915-turn-off-wc-mmaps.patch
+Patch607: drm-i915-hush-check-crtc-state.patch
+
 Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
 Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
 Patch610: usb-make-xhci-platform-driver-use-64-bit-or-32-bit-D.patch
@@ -69,6 +71,13 @@ Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
 Patch613: ideapad-laptop-Add-Lenovo-Yoga-3-14-to-no_hw_rfkill-.patch
 
+Patch614: kernel43-kdbus.patch
+
+#http://patchwork.ozlabs.org/patch/522709/
+Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
+
+#fix *ERROR* crtc 21: Can't calculate constants, dotclock = 0!
+Patch2001: drm-i915-assign-hwmode-after-encoder-statereadout.patch
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -163,6 +172,7 @@ cd linux-%{kversion}.%{_target_cpu}
 %patch603 -p1
 %patch604 -p1
 %patch606 -p1
+%patch607 -p1
 %patch608 -p1
 %patch609 -p1
 %patch610 -p1
@@ -170,7 +180,10 @@ cd linux-%{kversion}.%{_target_cpu}
 %patch612 -p1
 %patch613 -p1
 
+%patch614 -p1
 
+%patch2000 -p1
+%patch2001 -p1
 # END OF PATCH APPLICATIONS
 
 
@@ -461,6 +474,19 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
+- update to 4.3.0rc6.
+
+* Fri Oct 09 2015 Cjacker <cjacker@foxmail.com>
+- fix crash when 'insmod nf_conntrack_ftp.ko ports=76,76'
+- tune ipv6 releted options, build ipv6 into kernel
+
+* Mon Oct 05 2015 Cjacker <cjacker@foxmail.com>
+- update to 4.3.0-rc4
+
+* Tue Sep 29 2015 Cjacker <cjacker@foxmail.com>
+- update to 4.3.0-rc3
+
 * Tue Aug 25 2015 Cjacker <cjacker@foxmail.com>
 - tune kernel config file. hope to fix usb issue from Yetist.
 

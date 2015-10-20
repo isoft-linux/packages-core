@@ -1,7 +1,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.64
-Release: 4 
+Release: 5 
 License: MIT
 URL: http://dri.sourceforge.net
 Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2

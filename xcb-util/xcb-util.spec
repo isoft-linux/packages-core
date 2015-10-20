@@ -1,6 +1,6 @@
 Name:		xcb-util
 Version:	0.4.0
-Release:	1
+Release: 2	
 Summary:	Convenience libraries sitting on top of libxcb
 
 Group:		System Environment/Libraries

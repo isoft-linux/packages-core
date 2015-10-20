@@ -4,7 +4,7 @@
 Summary:   Xorg X11 ati video driver
 Name:      xorg-x11-drv-ati
 Version:   7.6.0
-Release:   2.git
+Release:   3.git
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support

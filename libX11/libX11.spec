@@ -1,7 +1,7 @@
 Summary: X.Org X11 libX11 runtime library
 Name:    libX11
 Version: 1.6.3
-Release: 6 
+Release: 7 
 License: MIT/X11
 Group:   CoreGUI/Runtime/Library
 URL:     http://www.x.org
@@ -55,7 +55,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 #remove useless file.
 rm -rf $RPM_BUILD_ROOT%{_datadir}/X11/Xcms.txt 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -85,6 +84,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/doc/libX11
 
 %changelog
-* Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
-- first build, prepare for the new release.
-
+* Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
+- rebuild.

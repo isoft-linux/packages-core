@@ -1,5 +1,5 @@
 Name: 		git
-Version:    	2.5.0
+Version:    	2.6.0
 Release: 	1
 Summary:  	Core git tools
 License: 	GPLv2
@@ -221,3 +221,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog
+* Tue Sep 29 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.6.0

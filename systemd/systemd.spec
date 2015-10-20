@@ -6,7 +6,7 @@
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        226
+Version:        227
 Release:        1
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -473,3 +473,8 @@ fi
 %{_includedir}/libudev.h
 %{_libdir}/pkgconfig/*.pc
 %{_mandir}/man3/*
+
+%changelog
+* Thu Oct 08 2015 Cjacker <cjacker@foxmail.com>
+- update to 227
+

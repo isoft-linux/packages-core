@@ -1,9 +1,8 @@
 Summary: A library of handy utility functions
 Name: glib2
-Version: 2.46.0
+Version: 2.46.1
 Release: 2 
 License: LGPL
-Group: Core/Runtime/Library
 URL: http://www.gtk.org
 Source: glib-%{version}.tar.xz
 Source2: glib2.sh
@@ -25,7 +24,6 @@ This package provides version 2 of GLib.
 
 %package devel
 Summary: The GIMP ToolKit (GTK+) and GIMP Drawing Kit (GDK) support library
-Group: Core/Development/Library
 Requires: pkgconfig >= 1:0.8
 Requires: %{name} = %{version}-%{release}
 
@@ -59,8 +57,6 @@ sed -i 's@#!/bin/python@#!/usr/bin/python@g' $RPM_BUILD_ROOT/%{_bindir}/gdbus-co
 sed -i 's@#!/bin/python@#!/usr/bin/python@g' $RPM_BUILD_ROOT/%{_bindir}/gtester-report
 
 %find_lang glib20
-
-rpmclean
 
 %check
 #requires dbus-launch, since we seperate it to dbus-x11 package
@@ -132,6 +128,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-gettextize.1.gz
 
 %changelog
+* Sat Oct 17 2015 Cjacker <cjacker@foxmail.com>
+- update to 2.46.1
+
 * Thu Sep 24 2015 Cjacker <cjacker@foxmail.com>
 - update to 2.46.0 with gnome 3.18
 

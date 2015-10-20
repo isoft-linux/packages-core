@@ -1,31 +1,36 @@
-Summary: busybox
 Name: busybox
-Version: 1.23.2
+Summary: BusyBox combines tiny versions of many common UNIX utilities into a single small executable 
+Version: 1.24.0
 Release: 1
 License: GPLv2+
-Group:   Core/Runtime/Utility
 Source0: busybox-%{version}.tar.bz2
 Source1: nologin.c
 
 Source10: busyboxconfig
 
-Patch0:	busybox-uname-is-not-gnu.patch
 Patch1:	bb-app-location.patch
 Patch2:	loginutils-sha512.patch
 Patch3:	udhcpc-discover-retries.patch
 Patch9:	0001-ifupdown-use-x-hostname-NAME-with-udhcpc.patch
-Patch16:	0001-diff-add-support-for-no-dereference.patch
-Patch17:	busybox-header1.patch
-Patch18:    busybox-fix-clang-make-flags.patch
+Patch16: 0001-diff-add-support-for-no-dereference.patch
+Patch17: busybox-header1.patch
+Patch18: busybox-fix-clang-make-flags.patch
 
-BuildRequires: kernel-headers
+BuildRequires: kernel-headers gcc glibc-devel
 
 %description
-busybox 
+BusyBox combines tiny versions of many common UNIX utilities into a single
+small executable.  It provides minimalist replacements for most of the
+utilities you usually find in bzip2, coreutils, dhcp, diffutils, e2fsprogs,
+file, findutils, gawk, grep, inetutils, less, modutils, net-tools, procps,
+sed, shadow, sysklogd, sysvinit, tar, util-linux, and vim.  The utilities
+in BusyBox often have fewer options than their full-featured cousins;
+however, the options that are included provide the expected functionality
+and behave very much like their larger counterparts.
+
 %prep
 %setup -q
 cp %{SOURCE1} loginutils
-%patch0  -p1
 %patch1  -p1
 %patch2  -p1
 %patch3  -p1
@@ -36,9 +41,10 @@ cp %{SOURCE1} loginutils
 
 %patch18 -p1
 
-%build
 cp %{SOURCE10} ./.config
 sed -i -e "s/CONFIG_EXTRA_COMPAT=y/CONFIG_EXTRA_COMPAT=n/" .config
+
+%build
 make oldconfig
 make
 
@@ -52,6 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /usr/bin/busybox --install -s
+
 %files 
 %defattr(-, root, root, -)
-/usr/bin/busybox
+%{_bindir}/busybox

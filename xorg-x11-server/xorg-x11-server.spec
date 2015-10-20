@@ -3,7 +3,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.17.2
-Release:   13
+Release:   16
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X
@@ -20,8 +20,9 @@ Patch11: xorg-server-maxclients.patch
 Patch20: 0001-dix-Add-unaccelerated-valuators-to-the-ValuatorMask.patch
 Patch21: 0002-dix-hook-up-the-unaccelerated-valuator-masks.patch
 
-
-
+# Trivial things to never merge upstream ever:
+# This really could be done prettier.
+Patch5002: xserver-1.4.99-ssh-isnt-local.patch
 # ajax needs to upstream this
 Patch6030: xserver-1.6.99-right-of.patch
 Patch7025: 0001-Always-install-vbe-and-int10-sdk-headers.patch
@@ -29,8 +30,12 @@ Patch7025: 0001-Always-install-vbe-and-int10-sdk-headers.patch
 Patch7027: xserver-autobind-hotplug.patch
 # submitted: http://lists.x.org/archives/xorg-devel/2013-October/037996.html
 Patch9100: exa-only-draw-valid-trapezoids.patch
+# http://lists.x.org/archives/xorg-devel/2015-September/047304.html
+Patch9200: 0001-present-Don-t-stash-the-MSC-value-when-present_get_u.patch
+# http://lists.x.org/archives/xorg-devel/2015-October/047558.html
+Patch9300: 0001-linux-Do-not-call-FatalError-from-xf86CloseConsole.patch
 # because the display-managers are not ready yet, do not upstream
-Patch10000: 0001-Fedora-hack-Make-the-suid-root-wrapper-always-start-.patch
+Patch10000: 0001-hack-Make-the-suid-root-wrapper-always-start-.patch
 # Fix build with gcc5, submitted upstream, likely needs a better fix
 Patch10001: 0001-sdksyms.sh-Make-sdksyms.sh-work-with-gcc5.patch
 Patch10003: 0001-include-Fix-endianness-setup.patch
@@ -38,6 +43,8 @@ Patch10003: 0001-include-Fix-endianness-setup.patch
 # rhbz1203780, submitted upstream
 Patch10005: 0001-linux-Add-linux_get_vtno-and-linux_get_keeptty-helpe.patch
 Patch10006: 0002-systemd-logind-Only-use-systemd-logind-integration-t.patch
+
+
 
 
 BuildRequires: automake autoconf libtool pkgconfig
@@ -218,11 +225,14 @@ drivers, input drivers, or other X modules should install this package.
 %patch20 -p1
 %patch21 -p1
 
+%patch5002 -p1
 
 %patch6030 -p1
 %patch7025 -p1
 %patch7027 -p1
 %patch9100 -p1
+%patch9200 -p1
+%patch9300 -p1
 %patch10000 -p1
 %patch10001 -p1
 %patch10003 -p1
@@ -244,21 +254,21 @@ export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
     --disable-xfake \
     --disable-xfbdev \
     --disable-kdrive-vesa \
-	--disable-static \
-	--with-pic \
-	--disable-{a,c,m}fb \
-	--with-int10=x86emu \
-	--with-default-font-path="/usr/share/fonts/X11/misc" \
-	--with-module-dir=%{moduledir} \
-	--with-builderstring="Build ID: %{name} %{version}-%{release}" \
-	--with-xkb-output=%{_localstatedir}/lib/xkb \
-	--with-rgb-path=%{_datadir}/X11/rgb \
-	--disable-xorgcfg \
-	--enable-record \
+    --disable-static \
+    --with-pic \
+    --disable-{a,c,m}fb \
+    --with-int10=x86emu \
+    --with-default-font-path="/usr/share/fonts/X11/misc" \
+    --with-module-dir=%{moduledir} \
+    --with-builderstring="Build ID: %{name} %{version}-%{release}" \
+    --with-xkb-output=%{_localstatedir}/lib/xkb \
+    --with-rgb-path=%{_datadir}/X11/rgb \
+    --disable-xorgcfg \
+    --enable-record \
     --disable-xtrap \
     --disable-libunwind \
-	--enable-install-libxf86config \
-	--disable-xselinux \
+    --enable-install-libxf86config \
+    --disable-xselinux \
     --disable-config-hal \
     --enable-config-udev \
     --enable-config-udev-kms \
@@ -269,9 +279,9 @@ export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
     --enable-xwayland \
     --enable-glamor \
     --enable-glx \
-	--with-dri-driver-path=%{drimoduledir} \
-	--enable-dri2 \
-	--enable-dri3 
+    --with-dri-driver-path=%{drimoduledir} \
+    --enable-dri2 \
+    --enable-dri3 
 
 make %{?_smp_mflags}
 
@@ -306,7 +316,6 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/X11/xorg.conf.d
     rm -f $RPM_BUILD_ROOT%{_mandir}/man1/pcitweak.1*
 }
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -359,9 +368,16 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/X11/xorg.conf.d/10-quirks.conf 
 
 
+%if 1
+%global Xorgperms %attr(4755, root, root)
+%else
+# disable until module loading is audited
+%global Xorgperms %attr(0711,root,root) %caps(cap_sys_admin,cap_sys_rawio,cap_dac_override=pe)
+%endif
+
 %files suid
 %defattr(-,root,root,-)
-%attr(4711, root, root) %{_libexecdir}/Xorg.wrap
+%{Xorgperms} %{_libexecdir}/Xorg.wrap
 %{_mandir}/man1/Xorg.wrap.1.gz
 %{_mandir}/man5/Xwrapper.config.5.gz
 

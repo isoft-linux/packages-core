@@ -1,7 +1,7 @@
 Summary: Network monitoring tools including ping
 Name: iputils
 Version: 20121221
-Release: 1 
+Release: 2 
 License: BSD and GPLv2+
 URL: http://www.skbuff.net/iputils
 Group: Core/Runtime/Utility
@@ -54,7 +54,6 @@ done
 
 %{_sbindir}/tracepath
 %{_sbindir}/tracepath6
-%{_bindir}/ping6
 %{_bindir}/traceroute6
 #%attr(644,root,root) %{_mandir}/man8/clockdiff.8.gz
 #%attr(644,root,root) %{_mandir}/man8/arping.8.gz
@@ -65,3 +64,6 @@ done
 #%attr(644,root,root) %{_mandir}/man8/tracepath6.8.gz
 #%attr(644,root,root) %{_mandir}/man8/ifenslave.8.gz
 
+%changelog
+* Fri Oct 09 2015 Cjacker <cjacker@foxmail.com>
+- fix ping6 caps.

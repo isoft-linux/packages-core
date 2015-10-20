@@ -4,13 +4,13 @@
 Summary: Apache Portable Runtime Utility library
 Name: apr-util
 Version: 1.5.4
-Release: 1
+Release: 4
 License: ASL 2.0
 Group: CoreDev/Runtime/Library
 URL: http://apr.apache.org/
 Source0: http://www.apache.org/dist/apr/%{name}-%{version}.tar.bz2
 BuildRequires: autoconf, apr-devel >= 1.3.0
-BuildRequires: libdb-devel, expat-devel, libuuid-devel
+BuildRequires: libdb-devel, expat-devel, libuuid-devel, sqlite-devel
 
 %description
 The mission of the Apache Portable Runtime (APR) is to provide a
@@ -30,13 +30,26 @@ build applications using the APR utility library.  The mission
 of the Apache Portable Runtime (APR) is to provide a free 
 library of C data structures and routines.
 
+%package ldap
+Group: Development/Libraries
+Summary: APR utility library LDAP support
+BuildRequires: openldap-devel
+Requires: apr-util%{?_isa} = %{version}-%{release}
+
+%description ldap
+This package provides the LDAP support for the apr-util.
+
 %prep
 %setup -q
 
+#        --without-ldap \
+#	--with-ldap=ldap_r \
 %build
 %configure --with-apr=%{_prefix} \
         --includedir=%{_includedir}/apr-%{apuver} \
-        --without-ldap \
+	--enable-authnz-ldap \
+	--enable-ldap \
+	--with-ldap=ldap_r \
         --without-gdbm \
         --with-sqlite3 \
         --without-pgsql \
@@ -104,9 +117,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/aclocal/*.m4
 
+%files ldap
+%defattr(-,root,root,-)
+%{_libdir}/apr-util-%{apuver}/apr_ldap*
+
 %changelog
+* Mon Sep 21 2015 sulit <sulitsrc@gmail.com>
+- update to 1.5.4-4
+
 * Tue Jul 14 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.5.4
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

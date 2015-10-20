@@ -1,9 +1,8 @@
 Summary: X.Org X11 X server utilities
 Name: xorg-x11-server-utils
 Version: 1.1.1
-Release: 5 
+Release: 7 
 License: MIT/X11
-Group: User Interface/X
 URL: http://www.x.org
 
 Source0:  iceauth-1.0.7.tar.bz2
@@ -94,7 +93,6 @@ rm -rf $RPM_BUILD_ROOT
 }
 
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 

@@ -5,7 +5,7 @@
 Summary: Mesa demos
 Name: mesa-demos
 Version: 8.2.0
-Release: 6.git 
+Release: 7.git 
 License: MIT
 URL: http://www.mesa3d.org
 #git clone git://anongit.freedesktop.org/mesa/demos
@@ -17,7 +17,6 @@ Source1: http://www.x.org/pub/individual/app/%{xdriinfo}.tar.bz2
 # Patch pointblast/spriteblast out of the Makefile for legal reasons
 Patch0: mesa-demos-8.0.1-legal.patch
 Patch1: mesa-demos-as-needed.patch
-Patch2: 0001-mesa-demos-Fix-build-when-EGL_MESA_screen_surface-ex.patch
 
 BuildRequires: pkgconfig autoconf automake libtool
 BuildRequires: freeglut-devel
@@ -39,7 +38,6 @@ The glx-utils package provides the glxinfo and glxgears utilities.
 %setup -q -n %{tarball} -b1
 %patch0 -p1 -b .legal
 %patch1 -p1 -b .asneeded
-%patch2 -p1
 
 # These two files are distributable, but non-free (lack of permission to modify).
 rm -rf src/demos/pointblast.c
