@@ -1,9 +1,8 @@
 Summary: GNU libraries and utilities for producing multi-lingual messages
 Name: gettext
-Version: 0.19.4
+Version: 0.19.6
 Release: 1 
 License: GPLv3 and LGPLv2+
-Group: Core/Development/Utility
 URL: http://www.gnu.org/software/gettext/
 Source: ftp://ftp.gnu.org/gnu/gettext/%{name}-%{version}.tar.xz
 Source2: msghack.py
@@ -163,3 +162,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/libasprintf.so.*
 %{_libdir}/libgettextpo.so.*
 
+%changelog
+* Wed Oct 21 2015 Cjacker <cjacker@foxmail.com>
+- Initial build.
