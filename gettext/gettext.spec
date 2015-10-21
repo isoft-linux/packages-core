@@ -1,7 +1,7 @@
 Summary: GNU libraries and utilities for producing multi-lingual messages
 Name: gettext
 Version: 0.19.6
-Release: 1 
+Release: 3 
 License: GPLv3 and LGPLv2+
 URL: http://www.gnu.org/software/gettext/
 Source: ftp://ftp.gnu.org/gnu/gettext/%{name}-%{version}.tar.xz
@@ -11,6 +11,8 @@ BuildRequires: automake >= 1.8
 %endif
 BuildRequires: autoconf >= 2.5
 BuildRequires: libtool, bison
+BuildRequires: ncurses-devel
+BuildRequires: libacl-devel
 
 %description
 The GNU gettext package provides a set of tools and documentation for
@@ -27,7 +29,6 @@ programs.
 
 %package devel
 Summary: Development files for %{name}
-Group:  Core/Development/Library
 License: LGPLv2+
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs = %{version}-%{release}
@@ -41,7 +42,6 @@ want to add gettext support for your project.
 
 %package libs
 Summary: Libraries for %{name}
-Group:  Core/Runtime/Library
 License: LGPLv2+
 
 %description libs
@@ -113,17 +113,12 @@ cat %{name}-*.lang > %{name}.lang
 
 # rename start-po.el to site-start.d/po-mode-init.el
 rm -rf $RPM_BUILD_ROOT/%{_datadir}/%{name}/*.class
-rpmclean
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
 %post -p /sbin/ldconfig
-
-
 %postun -p /sbin/ldconfig
-
-
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -163,5 +158,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/libgettextpo.so.*
 
 %changelog
-* Wed Oct 21 2015 Cjacker <cjacker@foxmail.com>
-- Initial build.
+* Wed Oct 21 2015 cjacker - 0.19.6-3
+- update to 0.19.6
+- fix build requires. 
+
