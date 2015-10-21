@@ -8,7 +8,7 @@ Version:   2.99.917
 Release:   32.git
 URL:       http://www.x.org
 License:   MIT
-Source0:   %{tarball}-ef859c8..tar.xz
+Source0:   %{tarball}-ef859c8.tar.xz
 Patch0:     intel-gcc-pr65873.patch
 
 BuildRequires: autoconf automake libtool
