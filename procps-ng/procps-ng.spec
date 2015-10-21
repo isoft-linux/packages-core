@@ -9,7 +9,7 @@ URL:		http://sourceforge.net/projects/procps-ng
 Source0:	%{name}-%{version}.tar.xz
 Patch0:     procps-ng-use-correct-scanf-format.patch
 Provides:   procps
-BuildRequires: expect, ncurses-devel
+BuildRequires: expect, ncurses-devel, systemd-devel
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
