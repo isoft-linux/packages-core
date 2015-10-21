@@ -1,6 +1,6 @@
 Name:		procps-ng
 Version:    3.3.10	
-Release:	1
+Release:	2
 Summary:	Utilities for monitoring your system and its processes
 
 Group:	    Core/Runtime/Utility 
@@ -35,6 +35,7 @@ developing applications that use %{name}.
     --bindir=/usr/bin \
     --sbindir=/usr/sbin \
     exec_prefix=/ \
+    --disable-modern-top \
     --with-systemd 
 make %{?_smp_mflags}
 
@@ -107,3 +108,7 @@ fi
 %{_mandir}/man3/openproc.3.gz
 %{_mandir}/man3/readproc.3.gz
 %{_mandir}/man3/readproctab.3.gz
+
+%changelog
+- Wed Oct 21 sulit <sulitsrc@gmail.com> - 3.3.10-2
+* fixed for top default show
