@@ -110,5 +110,5 @@ fi
 %{_mandir}/man3/readproctab.3.gz
 
 %changelog
-- Wed Oct 21 sulit <sulitsrc@gmail.com> - 3.3.10-2
-* fixed for top default show
+* Wed Oct 21 sulit <sulitsrc@gmail.com> - 3.3.10-2
+- fixed for top default show
