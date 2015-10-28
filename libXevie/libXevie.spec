@@ -1,9 +1,8 @@
 Summary: X Event Interceptor Library
 Name: libXevie
 Version: 1.0.3
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: MIT
-Group: System Environment/Libraries
 URL: http://www.x.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -19,7 +18,6 @@ X Event Interceptor Library.
 
 %package devel
 Summary: Development files for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: pkgconfig
 
@@ -72,3 +70,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.3-11
+- Rebuild for new 4.0 release
+

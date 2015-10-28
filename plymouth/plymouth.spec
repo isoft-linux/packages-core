@@ -6,9 +6,8 @@
 Summary: Graphical Boot Animation and Logger
 Name: plymouth
 Version: 0.8.9
-Release: 1
+Release: 2
 License: GPLv2+
-Group: Core/Runtime/Utility
 Source0: http://freedesktop.org/software/plymouth/releases/%{name}-%{version}.tar.bz2
 
 #for mkinitcpio
@@ -38,7 +37,6 @@ after boot.
 
 %package devel
 Summary: Libraries and headers for writing Plymouth splash plugins
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 Requires: pkgconfig
 
@@ -202,3 +200,6 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.8.9-2
+- Rebuild for new 4.0 release
+

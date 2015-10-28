@@ -1,9 +1,9 @@
+
 Summary: X.Org X11 developmental X transport library
 Name: xorg-x11-xtrans-devel
 Version: 1.3.5
-Release: 1
+Release: 2
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: http://xorg.freedesktop.org/releases/individual/lib/xtrans-%{version}.tar.bz2
 
@@ -11,9 +11,11 @@ Source0: http://xorg.freedesktop.org/releases/individual/lib/xtrans-%{version}.t
 BuildRequires: pkgconfig
 BuildRequires: xorg-x11-util-macros
 BuildRequires: xorg-x11-filesystem
+
 Requires: xorg-x11-filesystem
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
+BuildArch: noarch
 %description
 X.Org X11 developmental X transport library
 
@@ -26,7 +28,6 @@ X.Org X11 developmental X transport library
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -40,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pkgconfig/xtrans.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3.5-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

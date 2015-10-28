@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %global tarball xf86-input-vmmouse
 %global moduledir %(pkg-config xorg-server --variable=moduledir )
 %global driverdir %{moduledir}/input
@@ -8,10 +9,9 @@
 Summary:    Xorg X11 vmmouse input driver
 Name:	    xorg-x11-drv-vmmouse
 Version:    13.1.0
-Release:    1%{?gitdate:.%{gitdate}git%{gitversion}}%{?dist}
+Release:    2%{?gitdate:.%{gitdate}git%{gitversion}}%{?dist}
 URL:	    http://www.x.org
 License:    MIT
-Group:	    User Interface/X Hardware Support
 
 %if 0%{?gitdate}
 Source0:    %{tarball}-%{gitdate}.tar.bz2
@@ -28,6 +28,8 @@ BuildRequires: xorg-x11-server-devel >= 1.10.99.902 systemd-devel
 BuildRequires: automake autoconf libtool
 
 Requires:  xorg-x11-server-Xorg
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires xinput)
 
 %description 
 X.Org X11 vmmouse input driver.
@@ -62,3 +64,6 @@ rm -rf $RPM_BUILD_ROOT/%{_datadir}/hal/fdi/
 %{_prefix}/lib/udev/rules.d/*.rules
 
 %changelog
+* Fri Oct 23 2015 cjacker - 13.1.0-2
+- Rebuild for new 4.0 release
+

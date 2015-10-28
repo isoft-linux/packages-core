@@ -7,10 +7,9 @@
 Summary:          Network Security Services Softoken Module
 Name:             nss-softokn
 Version:          3.19.2
-Release:          2%{?dist}
+Release:          3%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
-Group:            System Environment/Libraries
 Requires:         nspr >= %{nspr_version}
 Requires:         nss-util >= %{nss_util_version}
 Requires:         nss-softokn-freebl%{_isa} >= %{version}-%{release}
@@ -59,7 +58,6 @@ Network Security Services Softoken Cryptographic Module
 
 %package freebl
 Summary:          Freebl library for the Network Security Services
-Group:            System Environment/Base
 Conflicts:        nss < 3.12.2.99.3-5
 Conflicts:        prelink < 0.4.3
 Conflicts:        filesystem < 3
@@ -72,7 +70,6 @@ library.
 
 %package freebl-devel
 Summary:          Header and Library files for doing development with the Freebl library for NSS
-Group:            System Environment/Base
 Provides:         nss-softokn-freebl-static = %{version}-%{release}
 Requires:         nss-softokn-freebl%{?_isa} = %{version}-%{release}
 
@@ -85,7 +82,6 @@ Developers should rely only on the officially supported NSS public API.
 
 %package devel
 Summary:          Development libraries for Network Security Services
-Group:            Development/Libraries
 Requires:         nss-softokn%{?_isa} = %{version}-%{release}
 Requires:         nss-softokn-freebl-devel%{?_isa} = %{version}-%{release}
 Requires:         nspr-devel >= %{nspr_version}
@@ -376,3 +372,6 @@ done
 %{_includedir}/nss3/shsign.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.19.2-3
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Name:           itstool
 Version:        2.0.0 
-Release:        1
+Release:        2
 Summary:        ITS-based XML translation tool
 
-Group:          CoreDev/Development/Utility/Documentation
 License:        GPLv3+
 URL:            http://itstool.org/
 Source0:        http://files.itstool.org/itstool/%{name}-%{version}.tar.bz2
@@ -33,6 +32,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %doc %{_mandir}/man1/itstool.1.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.0.0-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

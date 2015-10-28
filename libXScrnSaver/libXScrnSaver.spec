@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXss runtime library
 Name: libXScrnSaver
 Version: 1.2.2
-Release: 1
+Release: 2
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: libXScrnSaver-%{version}.tar.bz2 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -20,7 +19,6 @@ X.Org X11 libXss runtime library
 
 %package devel
 Summary: X.Org X11 libXScrnSaver development package
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
@@ -45,7 +43,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -66,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/X11/extensions/scrnsaver.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.2.2-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

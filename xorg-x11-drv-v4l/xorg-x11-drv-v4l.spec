@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-v4l
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
@@ -7,10 +8,9 @@
 Summary:   Xorg X11 v4l video driver
 Name:      xorg-x11-drv-v4l
 Version:   0.2.0
-Release:   44%{?dist}
+Release:   45%{?dist}
 URL:       http://www.x.org
 License:   MIT
-Group:     User Interface/X Hardware Support
 
 Source0:   ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 Patch0:    xorg-x11-drv-v4l-support_v4l2_only_drivers.patch
@@ -22,6 +22,8 @@ BuildRequires: xorg-x11-server-devel >= 1.10.99.902
 BuildRequires: autoconf automake libtool
 
 Requires:  xorg-x11-server-Xorg
+Requires:  Xorg %(xserver-sdk-abi-requires ansic)
+Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 v4l video driver.
@@ -54,3 +56,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/v4l.4*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.2.0-45
+- Rebuild for new 4.0 release
+

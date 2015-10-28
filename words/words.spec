@@ -1,9 +1,8 @@
 Summary: A dictionary of English words for the /usr/share/dict directory
 Name: words
 Version: 3.0
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: Public Domain
-Group: System Environment/Libraries
 # Note that Moby Project officially does not exist any more. The most complete
 # information about the project is in Wikipedia.
 URL: http://en.wikipedia.org/wiki/Moby_Project
@@ -80,5 +79,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/dict/words
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.0-25
+- Rebuild for new 4.0 release
+
 * Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - first build

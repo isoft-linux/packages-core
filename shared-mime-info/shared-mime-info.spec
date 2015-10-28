@@ -1,9 +1,8 @@
 Summary: Shared MIME information database
 Name: shared-mime-info
 Version: 1.4
-Release: 4
+Release: 5
 License: GPLv2+
-Group:  Framework/Runtime/Utility 
 URL: http://freedesktop.org/Software/shared-mime-info
 Source0: http://people.freedesktop.org/~hadess/%{name}-%{version}.tar.xz
 Source1: defaults.list
@@ -80,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4-5
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

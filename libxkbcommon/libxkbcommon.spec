@@ -1,7 +1,7 @@
 
 Name:           libxkbcommon
 Version:        0.5.0
-Release:        2
+Release:        3
 Summary:        X.Org X11 XKB parsing library
 License:        MIT
 URL:            http://www.x.org
@@ -95,3 +95,6 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -fv {} ';'
 %endif
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.5.0-3
+- Rebuild for new 4.0 release
+

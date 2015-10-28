@@ -1,9 +1,8 @@
 Name:           kbd
 Version:        2.0.2 
-Release:        10 
+Release:        11 
 Summary:        Tools for configuring the console (keyboard, virtual terminals, etc.)
 
-Group:          Core/Runtime/Utility 
 License:        GPLv2+
 URL:            http://ftp.altlinux.org/pub/people/legion/kbd
 Source0:        http://ftp.altlinux.org/pub/people/legion/kbd/kbd-%{version}.tar.xz
@@ -93,3 +92,6 @@ rm -rf $RPM_BUILD_ROOT
 /lib/kbd
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.0.2-11
+- Rebuild for new 4.0 release
+

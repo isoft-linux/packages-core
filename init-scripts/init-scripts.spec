@@ -1,6 +1,6 @@
 Name:		init-scripts
 Version:	0.1
-Release:	1
+Release:	2
 Summary:	System lang settings scripts
 
 License:    GPL	
@@ -31,4 +31,7 @@ install -m 0755 %{SOURCE1} %{buildroot}%{_sysconfdir}/init.d/
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.1-2
+- Rebuild for new 4.0 release
+
 

@@ -1,6 +1,6 @@
 Name:           p11-kit
 Version:        0.23.1
-Release:        4
+Release:        5
 Summary:        Library for loading and sharing PKCS#11 modules
 
 License:        BSD
@@ -126,3 +126,6 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.23.1-5
+- Rebuild for new 4.0 release
+

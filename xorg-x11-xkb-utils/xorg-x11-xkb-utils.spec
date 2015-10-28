@@ -3,9 +3,8 @@
 Summary: X.Org X11 xkb utilities
 Name: xorg-x11-%{pkgname}
 Version: 7.7 
-Release: 2.1 
+Release: 3.1 
 License: MIT/X11
-Group: User Interface/X
 URL: http://www.x.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %define xorgurl http://xorg.freedesktop.org/releases/X11R7.0-RC4/everything
@@ -53,7 +52,6 @@ rm -rf $RPM_BUILD_ROOT
       popd
    done
 }
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -72,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.7-3.1
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

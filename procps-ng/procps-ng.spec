@@ -1,9 +1,8 @@
 Name:		procps-ng
 Version:    3.3.10	
-Release:	2
+Release:	3
 Summary:	Utilities for monitoring your system and its processes
 
-Group:	    Core/Runtime/Utility 
 License:	GPL
 URL:		http://sourceforge.net/projects/procps-ng
 Source0:	%{name}-%{version}.tar.xz
@@ -18,7 +17,6 @@ Requires(postun): /sbin/ldconfig
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 
 %description    devel
@@ -50,7 +48,6 @@ rm -rf $RPM_BUILD_ROOT%{_docdir}
 
 %find_lang procps-ng
 
-rpmclean
 
 %check
 #some case failed.
@@ -110,5 +107,8 @@ fi
 %{_mandir}/man3/readproctab.3.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.3.10-3
+- Rebuild for new 4.0 release
+
 * Wed Oct 21 2015 sulit <sulitsrc@gmail.com> - 3.3.10-2
 - fixed for top default show

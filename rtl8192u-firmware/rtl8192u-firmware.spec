@@ -1,7 +1,7 @@
 Name:		rtl8192u-firmware
 Summary:	Firmware files for Realtek RTL8192 USB WLAN adapters
 Version:	1.0
-Release:	1.1
+Release:	2.1
 License:	Any Proprietary
 Url:		ftp://ftp.dlink.com/Wireless/dwa130_revC/Drivers/dwa130_revC_drivers_linux_006.zip
 Source0:	%{name}.tar.bz2
@@ -36,5 +36,8 @@ rm -rf $RPM_BUILD_ROOT
 /lib/firmware/RTL8192U/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0-2.1
+- Rebuild for new 4.0 release
+
 * Mon Aug 23 2015 Cjacker <cjacker@foxmail.com>
 - initial package

@@ -10,7 +10,7 @@
 Summary: iSoft Enterprise Desktop release file
 Name: os-release
 Version: %{real_release_version}
-release: 1.2
+release: 2.2
 License: GPL
 
 #Fake a lsb provides for some comercial binary software.
@@ -61,6 +61,9 @@ echo "" >>$RPM_BUILD_ROOT/etc/issue.net
 /usr/lib/os-release
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.0-2.2
+- Rebuild for new 4.0 release
+
 * Sun Oct 18 2015 Cjacker <cjacker@foxmail.com>
 - add lsb-release
 

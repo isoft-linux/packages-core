@@ -2,8 +2,8 @@
 
 Name:	    libcxxabi	
 Summary:    A new implementation of low level support for a standard C++ library.
-Version:    3.7.0
-Release:    3 
+Version:    3.7.1
+Release:    4.svn20151018
 License:  University of llinois/NCSA Open Source License 
 URL:        http://llvm.org
 
@@ -126,6 +126,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 
 %changelog
+* Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-4.svn20151018
+- Rebuild
+
+* Sun Oct 18 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.1svn
+- build with llvm-3.7.1svn
+
 * Wed Sep 02 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.7.0
 

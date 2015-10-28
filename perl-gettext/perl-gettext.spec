@@ -1,9 +1,8 @@
 Name:           perl-gettext
 Version:        1.05
-Release:        32%{?dist}
+Release:        33%{?dist}
 Summary:        Interface to gettext family of functions
 
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/gettext/
 Source0:        http://search.cpan.org/CPAN/authors/id/P/PV/PVANDRY/gettext-%{version}.tar.gz
@@ -64,3 +63,6 @@ make test
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.05-33
+- Rebuild for new 4.0 release
+

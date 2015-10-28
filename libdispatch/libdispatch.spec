@@ -1,9 +1,8 @@
 Name:       libdispatch 
 Summary:    user space implementation of the Grand Central Dispatch API 
 Version:    197
-Release:    1
+Release:    2
 License:    Apache License, Version 2.0 
-Group:      System Environment/Libraries
 Url:        https://github.com/mheily/opengcd/releases
 Source0:    https://github.com/mheily/opengcd/archive/REL_0_2.tar.gz
 
@@ -16,7 +15,6 @@ The libdispatch project consists of the user space implementation of the Grand C
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -66,6 +64,9 @@ popd
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 197-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

@@ -1,8 +1,7 @@
 Summary: An XML parser library
 Name: expat
 Version: 2.1.0
-Release: 5
-Group:   Core/Runtime/Library 
+Release: 6
 Source: http://downloads.sourceforge.net/expat/expat-%{version}.tar.gz
 URL: http://www.libexpat.org/
 License: MIT
@@ -18,7 +17,6 @@ register handlers.
 
 %package devel
 Summary: Libraries and header files to develop applications using expat
-Group:  Core/Development/Library 
 Requires: expat = %{version}-%{release}
 
 %description devel
@@ -27,7 +25,6 @@ to develop XML applications with expat.
 
 %package static
 Summary: expat XML parser static library
-Group: Core/Development/Library
 Requires: expat-devel%{?_isa} = %{version}-%{release}
 
 %description static
@@ -49,7 +46,6 @@ make %{?_smp_mflags}
 rm -rf ${RPM_BUILD_ROOT}
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rpmclean
 
 %check
 make check
@@ -75,4 +71,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %files static
 %defattr(-,root,root)
 %{_libdir}/lib*.a
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 2.1.0-6
+- Rebuild for new 4.0 release
 

@@ -1,9 +1,8 @@
 Summary: The basic directory layout for a Linux system.
 Name: filesystem
 Version: 6.8 
-Release: 2 
+Release: 3 
 License: Public Domain
-Group:  Core/Runtime/Data
 Buildroot: %{_tmppath}/%{name}-%{version}-root
 Requires(pre): setup >= 2.5.4-1
 
@@ -102,4 +101,9 @@ posix.symlink("../run/lock", "/var/lock")
 %attr(775,root,mail) /var/spool/mail
 %attr(1777,root,root) /var/tmp
 /var/yp
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 6.8-3
+- Rebuild for new 4.0 release
 

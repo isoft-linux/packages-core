@@ -1,9 +1,8 @@
 Summary: Tools to manage multipath devices using device-mapper
 Name: device-mapper-multipath
 Version: 0.4.9
-Release: 73%{?dist}
+Release: 74%{?dist}
 License: GPL+
-Group: System Environment/Base
 URL: http://christophe.varoqui.free.fr/
 
 Source0: multipath-tools-130222.tgz
@@ -144,7 +143,6 @@ The tools are :
 %package libs
 Summary: The %{name} modules and shared library
 License: GPL+
-Group: System Environment/Libraries
 
 %description libs
 The %{name}-libs provides the path checker
@@ -153,7 +151,6 @@ libmultipath.
 
 %package -n kpartx
 Summary: Partition device manager for device-mapper devices
-Group: System Environment/Base
 
 %description -n kpartx
 kpartx manages partition creation and removal for device-mapper devices.
@@ -350,3 +347,6 @@ fi
 %{_mandir}/man8/kpartx.8.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.4.9-74
+- Rebuild for new 4.0 release
+

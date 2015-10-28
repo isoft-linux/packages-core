@@ -1,9 +1,8 @@
 Name:           mtdev
 Version:        1.1.5
-Release:        1
+Release:        2
 Summary:        Multitouch Protocol Translation Library
 
-Group:          System Environment/Libraries
 License:        MIT
 URL:            http://bitmath.org/code/mtdev/
 
@@ -37,7 +36,6 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot} INSTALL="install -p"
 
-rpmclean
 
 %clean
 rm -rf %{buildroot}
@@ -59,6 +57,9 @@ rm -rf %{buildroot}
 %{_bindir}/mtdev-test
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.1.5-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

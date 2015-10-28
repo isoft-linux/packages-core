@@ -3,9 +3,8 @@
 Summary: An alternate posix capabilities library
 Name: libcap-ng
 Version: 0.7.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: LGPLv2+
-Group: System Environment/Libraries
 URL: http://people.redhat.com/sgrubb/libcap-ng
 Source0: http://people.redhat.com/sgrubb/libcap-ng/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -17,7 +16,6 @@ Libcap-ng is a library that makes using posix capabilities easier
 %package devel
 Summary: Header files for libcap-ng library
 License: LGPLv2+
-Group: Development/Libraries
 Requires: kernel-headers >= 2.6.11
 Requires: %{name} = %{version}-%{release}
 Requires: pkgconfig
@@ -29,7 +27,6 @@ applications that need to use the libcap-ng library.
 %package python
 Summary: Python bindings for libcap-ng library
 License: LGPLv2+
-Group: Development/Libraries
 BuildRequires: python-devel swig
 Requires: %{name} = %{version}-%{release}
 
@@ -40,7 +37,6 @@ and can be used by python applications.
 %package python3
 Summary: Python3 bindings for libcap-ng library
 License: LGPLv2+
-Group: Development/Libraries
 BuildRequires: python3-devel swig
 Requires: %{name} = %{version}-%{release}
 
@@ -51,7 +47,6 @@ and can be used by python3 applications.
 %package utils
 Summary: Utilities for analyzing and setting file capabilities
 License: GPLv2+
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description utils
@@ -129,3 +124,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man8/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.7.7-3
+- Rebuild for new 4.0 release
+

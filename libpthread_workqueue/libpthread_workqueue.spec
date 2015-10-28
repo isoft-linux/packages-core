@@ -1,9 +1,8 @@
 Name:       libpthread_workqueue 
 Summary:    thread pool library
 Version:    0.9.2
-Release:    1
+Release:    2
 License:    BSD
-Group:      System Environment/Libraries
 Url:        https://github.com/mheily/libpwq/releases
 
 Source0:    libpwq-%version.tar.gz
@@ -16,7 +15,6 @@ The API is based on the pthread_workqueue API in FreeBSD 8.0, which was designed
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -58,6 +56,9 @@ make check
 %{_libdir}/*.a
 %{_mandir}/man3/*
 %changelog
+* Fri Oct 23 2015 cjacker - 0.9.2-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

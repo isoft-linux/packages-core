@@ -1,9 +1,8 @@
 Name:           os-prober
 Version:        1.65
-Release:        1 
+Release:        2 
 Summary:        Probes disks on the system for installed operating systems
 
-Group:          Core/Runtime/Utility
 # For more information about licensing, see copyright file.
 License:        GPLv2+ and GPL+
 URL:            http://kitenet.net/~joey/code/os-prober/
@@ -96,3 +95,6 @@ fi
 %{_var}/lib/%{name}
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.65-2
+- Rebuild for new 4.0 release
+

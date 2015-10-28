@@ -5,10 +5,9 @@
 Summary: Tool Command Language, pronounced tickle
 Name: tcl
 Version: %{vers}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Epoch: 1
 License: TCL
-Group: Development/Languages
 URL: http://tcl.sourceforge.net/
 Source0: http://downloads.sourceforge.net/sourceforge/tcl/tcl-core%{version}-src.tar.gz
 Buildrequires: autoconf
@@ -35,7 +34,6 @@ applications.
 
 %package devel
 Summary: Tcl scripting language development environment
-Group: Development/Languages
 Requires: %{name} = %{epoch}:%{version}-%{release}
 
 %description devel
@@ -136,3 +134,6 @@ rm -rf %{buildroot}/%{_datadir}/%{name}%{majorver}/ldAix
 %{_datadir}/%{name}%{majorver}/tclAppInit.c
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:8.6.4-2
+- Rebuild for new 4.0 release
+

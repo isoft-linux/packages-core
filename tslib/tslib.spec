@@ -1,9 +1,8 @@
 Name:           tslib
 Version:        1.0
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Touchscreen Access Library
 
-Group:          System Environment/Libraries
 License:        LGPLv2
 URL:            http://tslib.berlios.de/
 Source0:        http://download.berlios.de/tslib/tslib-%{version}.tar.bz2
@@ -28,7 +27,6 @@ first.
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       pkgconfig
 
@@ -79,3 +77,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0-11
+- Rebuild for new 4.0 release
+

@@ -1,8 +1,7 @@
 Name:		xcb-util-renderutil
 Version:	0.3.9
-Release: 5
+Release: 6
 Summary:	Convenience functions for the Render extension
-Group:		System Environment/Libraries
 License:	MIT
 URL:		http://xcb.freedesktop.org
 Source0:	http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
@@ -17,7 +16,6 @@ XCB util-renderutil module provides the following library:
 
 %package 	devel
 Summary:	Development and header files for xcb-util-renderutil
-Group:		System Environment/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description	devel
@@ -55,3 +53,6 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.3.9-6
+- Rebuild for new 4.0 release
+

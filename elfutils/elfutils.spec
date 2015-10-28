@@ -2,10 +2,9 @@
 
 Name:	    elfutils
 Version:	0.162
-Release:	1
+Release:	2
 Summary:	ELF related library from elfutils 
 
-Group:		Core/Development/Utility
 License:	GPL2
 URL:		https://fedorahosted.org/elfutils/
 Source0:	https://fedorahosted.org/releases/e/l/elfutils/%{version}/elfutils-%{version}.tar.bz2
@@ -19,7 +18,6 @@ Requires:   libelfutils = %{version}-%{release}
 
 %package -n libelfutils
 Summary: Libraries to handle compiled objects
-Group:  Core/Runtime/Library 
 License: GPLv2+ or LGPLv3+
 
 %description -n libelfutils
@@ -30,7 +28,6 @@ other programs using these libraries.
 
 %package -n libelfutils-devel
 Summary: Development files for the libelf library
-Group:  Core/Development/Library 
 Requires: lib%{name} = %{version}-%{release}
 
 %description -n libelfutils-devel
@@ -54,7 +51,6 @@ make %{?_smp_mflags}
 make install DESTDIR=$RPM_BUILD_ROOT
 
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale
-rpmclean
 
 %check
 make check
@@ -96,4 +92,7 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.162-2
+- Rebuild for new 4.0 release
+
 

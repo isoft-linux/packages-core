@@ -2,13 +2,12 @@ Summary: Integer point manipulation library
 Name: isl
 Version: 0.14
 License: MIT
-Group: System Environment/Libraries
 URL: http://isl.gforge.inria.fr/
 
 %global libmajor 13
 %global libversion %{libmajor}.1.0
 
-Release: 4%{?buildid}%{?dist}
+Release: 5%{?buildid}%{?dist}
 
 BuildRequires: gmp-devel
 BuildRequires: pkgconfig
@@ -29,7 +28,6 @@ graphs), dependence analysis and bounds on piecewise step-polynomials.
 Summary: Development for building integer point manipulation library
 Requires: isl%{?_isa} == %{version}-%{release}
 Requires: gmp-devel%{?_isa}
-Group: Development/Libraries
 
 %description devel
 isl is a library for manipulating sets and relations of integer points
@@ -77,5 +75,8 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.14-5
+- Rebuild for new 4.0 release
+
 * Sun Oct 18 2015 Cjacker <cjacker@foxmail.com>
 - initial build.

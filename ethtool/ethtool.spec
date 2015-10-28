@@ -1,11 +1,10 @@
 Name:		ethtool
 Epoch:		2
 Version:	4.0
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	Settings tool for Ethernet NICs
 
 License:	GPLv2
-Group:		Applications/System
 #Old URL:	http://sourceforge.net/projects/gkernel/
 URL:		http://ftp.kernel.org/pub/software/network/%{name}/
 
@@ -49,3 +48,6 @@ make DESTDIR=%{buildroot} INSTALL='install -p' install
 %{_mandir}/man8/%{name}.8*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2:4.0-3
+- Rebuild for new 4.0 release
+

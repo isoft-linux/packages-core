@@ -1,9 +1,8 @@
 Name:		check
 Version:	0.9.13
-Release:	2
+Release:	3
 Summary:	A unit test framework for C
 Source0:	http://download.sourceforge.net/check/%{name}-%{version}.tar.gz
-Group:		CoreDev/Development/Library
 License:	LGPLv2+
 URL:		http://check.sourceforge.net/
 
@@ -16,7 +15,6 @@ The output from unit tests can be used within source code editors and IDEs.
 
 %package devel
 Summary:	Libraries and headers for developing programs with check
-Group:	    CoreDev/Development/Library	
 Requires:	pkgconfig
 Requires:	%{name} = %{version}-%{release}
 
@@ -25,7 +23,6 @@ Libraries and headers for developing programs with check
 
 %package static
 Summary:        Static libraries of check
-Group:      CoreDev/Development/Library	
 
 %description static
 Static libraries of check.
@@ -67,6 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libcheck.so.*
 %{_bindir}/checkmk
 %{_mandir}/man1/checkmk.1.gz
+
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/check.h
@@ -74,7 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_defaultdocdir}/%{name}/example/
 %{_libdir}/libcheck.so
 %{_libdir}/pkgconfig/check.pc
-%{_datadir}/doc/%{name}-%{version}
+%{_datadir}/doc/%{name}
 %{_datadir}/aclocal/check.m4
 
 #check used to be static only, hence this.
@@ -83,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libcheck.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.9.13-3
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

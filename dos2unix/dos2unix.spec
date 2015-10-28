@@ -1,8 +1,7 @@
 Summary: Text file format converter
 Name: dos2unix
 Version: 3.1
-Release: 24.2.1
-Group:  Core/Runtime/Utility 
+Release: 25.2.1
 License: Freely distributable
 Source: %{name}-%{version}.tar.bz2
 Patch0: %{name}-%{version}.patch
@@ -56,5 +55,8 @@ install -m444 mac2unix.1 $RPM_BUILD_ROOT%{_mandir}/man1
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1-25.2.1
+- Rebuild for new 4.0 release
+
 * Mon Jul 30 2007 Cjacker <cjacker@gmail.com>
 - prepare for 0.5

@@ -1,9 +1,8 @@
 Summary: A utility for displaying and/or setting hard disk parameters
 Name: hdparm
 Version: 9.48
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: BSD
-Group: Applications/System
 URL:    http://sourceforge.net/projects/hdparm/
 Source: http://download.sourceforge.net/hdparm/hdparm-%{version}.tar.gz
 Patch2: %{name}-9.43-ditch_dead_code.patch
@@ -41,3 +40,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/hdparm.8*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 9.48-2
+- Rebuild for new 4.0 release
+

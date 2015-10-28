@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 #this is a very early git codes
 #we know we will ship amdgpu support finally
 #so Just added it.
@@ -14,7 +15,7 @@
 Summary: Xorg amdgpu video driver
 Name: xorg-x11-drv-amdgpu
 Version: 0.0.01
-Release: 6.git
+Release: 8.git
 URL: http://cgit.freedesktop.org/xorg/driver/xf86-video-amdgpu/
 License: MIT
 
@@ -58,6 +59,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/X11/xorg.conf.d/10-amdgpu.conf
 
 %changelog
+* Mon Oct 26 2015 Cjacker <cjacker@foxmail.com> - 0.0.01-8.git
+- Update to git 3b0a3c8
+
+* Fri Oct 23 2015 cjacker - 0.0.01-7.git
+- Rebuild for new 4.0 release
+
 * Wed Aug 12 2015 Cjacker <cjacker@foxmail.com>
 - update to 55a4461
 

@@ -15,7 +15,7 @@
 Summary: An open source implementation of SSH protocol versions 1 and 2
 Name: openssh
 Version: %{openssh_ver}
-Release: %{openssh_rel}
+Release: %{openssh_rel}.1
 URL: http://www.openssh.com/portable.html
 Source0: ftp://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-%{version}.tar.gz
 Source2: sshd.pam
@@ -29,7 +29,6 @@ Source13: sshd-keygen
 Patch0: openssh-7.1p1-hostkeyalgorithms.patch
 
 License: BSD
-Group: Applications/Internet
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: /sbin/nologin
 
@@ -42,12 +41,10 @@ BuildRequires: libedit-devel ncurses-devel
 
 %package clients
 Summary: An open source SSH client applications
-Group: Applications/Internet
 Requires: openssh = %{version}-%{release}
 
 %package server
 Summary: An open source SSH server daemon
-Group: System Environment/Daemons
 Requires: openssh = %{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 Requires: pam >= 1.0.1-3
@@ -57,7 +54,6 @@ Requires(postun): systemd-units
 
 %package askpass
 Summary: A passphrase dialog for OpenSSH and X
-Group: Applications/Internet
 Requires: openssh = %{version}-%{release}
 Obsoletes: openssh-askpass-gnome
 Provides: openssh-askpass-gnome
@@ -233,6 +229,9 @@ getent passwd sshd >/dev/null || \
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.1p1-4.1
+- Rebuild for new 4.0 release
+
 * Mon Aug 24 2015 Cjacker <cjacker@foxmail.com>
 - add patch from http://lists.mindrot.org/pipermail/openssh-unix-dev/2015-August/034324.html
 - enable --with-ssh1 to fix keygen issue.

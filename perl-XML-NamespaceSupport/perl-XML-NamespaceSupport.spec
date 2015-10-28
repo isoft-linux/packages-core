@@ -1,9 +1,8 @@
 Name:           perl-XML-NamespaceSupport
 Version:        1.09
-Release:	1.2
+Release:	2.2
 Summary:        XML-NamespaceSupport Perl module
 
-Group:          CoreDev/Runtime/Library/Perl
 License:        GPL or Artistic
 Url:            http://search.cpan.org/dist/XML-NamespaceSupport/
 Source0:        http://www.cpan.org/authors/id/R/RB/RBERJON/XML-NamespaceSupport-%{version}.tar.gz
@@ -45,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/XML::NamespaceSupport.3pm.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.09-2.2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

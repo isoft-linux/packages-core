@@ -4,13 +4,12 @@ Summary: A GNU implementation of Scheme for application extensibility
 Name: guile
 %define mver 2.0
 Version: 2.0.11
-Release: 1 
+Release: 2 
 Source: ftp://ftp.gnu.org/pub/gnu/guile/guile-%{version}.tar.gz
 Source10: libunistring-%{unistring_ver}.tar.gz
 
 URL: http://www.gnu.org/software/guile/
 License: GPLv2+ and LGPLv2+ and GFDL and OFSFDL
-Group: CoreDev/Development/Language
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libtool libltdl-devel gmp-devel readline-devel
 BuildRequires: gettext-devel
@@ -31,7 +30,6 @@ that you are developing.
 
 %package devel
 Summary: Libraries and header files for the GUILE extensibility library
-Group: CoreDev/Development/Library
 Requires: guile = %{epoch}:%{version}-%{release} gmp-devel gc-devel
 Requires: pkgconfig
 
@@ -79,7 +77,6 @@ sed -i "s|`pwd`/inter-bin/lib/libunistring.a||g" ${RPM_BUILD_ROOT}/%{_libdir}/pk
 
 touch $RPM_BUILD_ROOT%{_datadir}/guile/%{mver}/slibcat
 ln -s ../../slib $RPM_BUILD_ROOT%{_datadir}/guile/%{mver}/slib
-rpmclean
 
 %check
 make %{?_smp_mflags} check ||:
@@ -117,4 +114,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libguile*.so
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/guile
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 5:2.0.11-2
+- Rebuild for new 4.0 release
 

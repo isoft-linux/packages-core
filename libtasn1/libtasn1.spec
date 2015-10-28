@@ -1,11 +1,10 @@
 Summary:	The ASN.1 library used in GNUTLS
 Name:		libtasn1
 Version:    4.5
-Release:	1
+Release:	2
 
 # The libtasn1 library is LGPLv2+, utilities are GPLv3+
 License:	GPLv3+ and LGPLv2+
-Group:		Core/Runtime/Library
 URL:		http://www.gnu.org/software/libtasn1/
 Source0:	http://ftp.gnu.org/gnu/libtasn1/%name-%version.tar.gz
 Patch1:		libtasn1-2.12-rpath.patch
@@ -19,7 +18,6 @@ Distinguished Encoding Rules (DER, as per X.690) encoding and decoding functions
 
 %package devel
 Summary:	Files for development of applications which will use libtasn1
-Group:		Core/Development/Library
 Requires:	%name = %version-%release
 Requires:	pkgconfig
 
@@ -30,7 +28,6 @@ use libtasn1.
 
 %package tools
 Summary:	Some ASN.1 tools
-Group:		Core/Runtime/Utility
 License:	GPLv3+
 Requires:	%name = %version-%release
 
@@ -54,7 +51,6 @@ make %{?_smp_mflags}
 make DESTDIR="$RPM_BUILD_ROOT" install
 
 rm -rf $RPM_BUILD_ROOT%{_infodir}
-rpmclean
 
 
 %check
@@ -86,3 +82,6 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.5-2
+- Rebuild for new 4.0 release
+

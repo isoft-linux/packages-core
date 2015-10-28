@@ -1,13 +1,12 @@
 Name:    libassuan
 Summary: GnuPG IPC library
 Version: 2.2.1
-Release: 5
+Release: 6
 
 # The library is LGPLv2+, the documentation GPLv3+
 License: LGPLv2+ and GPLv3+
 Source0: ftp://ftp.gnupg.org/gcrypt/libassuan/libassuan-%{version}.tar.bz2
 URL:     http://www.gnupg.org/
-Group:   Core/Runtime/Library
 
 BuildRequires: gawk
 BuildRequires: libgpg-error-devel >= 1.8
@@ -18,7 +17,6 @@ packages.
 
 %package devel 
 Summary: GnuPG IPC library 
-Group: Core/Development/Library
 Provides: libassuan2-devel = %{version}-%{release}
 Provides: libassuan2-devel%{?_isa} = %{version}-%{release}
 Requires: libassuan%{?_isa} = %{version}-%{release}
@@ -73,6 +71,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.2.1-6
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

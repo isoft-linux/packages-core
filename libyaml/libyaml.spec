@@ -4,10 +4,9 @@
 
 Name:       libyaml
 Version:    0.1.4
-Release:    2
+Release:    3
 Summary:    YAML 1.1 parser and emitter written in C
 
-Group:      CoreDev/Runtime/Library
 License:    MIT
 URL:        http://pyyaml.org/
 Source0:    http://pyyaml.org/download/libyaml/%{tarballname}-%{version}.tar.gz
@@ -22,7 +21,6 @@ emitter written in C.
 
 %package devel
 Summary:   Development files for LibYAML applications
-Group:     CoreDev/Development/Library
 Requires:  libyaml = %{version}-%{release}, pkgconfig
 
 
@@ -75,6 +73,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.1.4-3
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

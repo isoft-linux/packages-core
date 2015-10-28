@@ -1,9 +1,8 @@
 Summary: A system independent dlopen wrapper for GNU libtool 
 Name:    libltdl
 Version: 2.4.6
-Release: 16
+Release: 17
 License: GPLv2+ and LGPLv2+ and GFDL
-Group:   Core/Runtime/Library
 Source:  http://ftp.gnu.org/gnu/libtool/libtool-%{version}.tar.xz
 
 URL:     http://www.gnu.org/software/libtool/
@@ -18,7 +17,6 @@ A system independent dlopen wrapper for GNU libtool.
 
 %package devel
 Summary: Tools needed for development using the GNU Libtool Dynamic Module Loader
-Group:   Core/Development/Library
 
 Provides: libtool-ltdl-devel = %{version}-%{release} 
 Requires: %{name} = %{version}-%{release}
@@ -68,3 +66,6 @@ rm -rf %{buildroot}
 %{_includedir}/libltdl
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.4.6-17
+- Rebuild for new 4.0 release
+

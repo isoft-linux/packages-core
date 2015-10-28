@@ -1,9 +1,8 @@
 %global major_version 5.3
 Name:           lua
 Version:        %{major_version}.1
-Release:        1 
+Release:        2 
 Summary:        Powerful light-weight programming language
-Group:          Development/Languages
 License:        MIT
 URL:            http://www.lua.org/
 Source0:        http://www.lua.org/ftp/lua-%{version}.tar.gz
@@ -30,7 +29,6 @@ configuration, scripting, and rapid prototyping.
 
 %package devel
 Summary:        Development files for %{name}
-Group:          System Environment/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig
 
@@ -39,7 +37,6 @@ This package contains development files for %{name}.
 
 %package static
 Summary:        Static library for %{name}
-Group:          System Environment/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description static
@@ -99,3 +96,6 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/lua/%{major_version}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.3.1-2
+- Rebuild for new 4.0 release
+

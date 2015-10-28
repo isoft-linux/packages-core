@@ -4,9 +4,8 @@
 Summary: A text formatting package based on SGML
 Name: linuxdoc-tools
 Version: 0.9.68
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: Copyright only
-Group: Applications/Publishing
 Source: http://http.us.debian.org/debian/pool/main/l/linuxdoc-tools/%{name}_%{version}.tar.gz
 Patch0: linuxdoc-tools-0.9.13-letter.patch
 Patch1: linuxdoc-tools-0.9.20-lib64.patch
@@ -91,3 +90,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.9.68-10
+- Rebuild for new 4.0 release
+

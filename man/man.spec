@@ -1,8 +1,7 @@
 Name:		man 
 Version:	1.6g
-Release:	1
+Release:	2
 Summary:	A utility for reading man pages
-Group:		Core/Runtime/Utility
 License:	GPL
 URL:		http://primates.ximian.com/~flucifredi/man/
 Source0:	%{name}-%{version}.tar.gz
@@ -48,4 +47,7 @@ sed -i -e "s|-Tlatin1||g" \
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6g-2
+- Rebuild for new 4.0 release
+
 

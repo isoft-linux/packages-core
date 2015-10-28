@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-sisusb
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
@@ -7,10 +8,9 @@
 Summary:    Xorg X11 sisusb video driver
 Name:	    xorg-x11-drv-sisusb
 Version:    0.9.6
-Release:    21%{?dist}
+Release:    22%{?dist}
 URL:	    http://www.x.org
 License:    MIT
-Group:	    User Interface/X Hardware Support
 
 Source0:    ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 Patch0: 0001-Remove-mibstore.h.patch 
@@ -21,6 +21,8 @@ BuildRequires: xorg-x11-server-devel >= 1.10.99.902
 BuildRequires: autoconf automake libtool
 
 Requires:  xorg-x11-server-Xorg
+Requires:  Xorg %(xserver-sdk-abi-requires ansic)
+Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 sisusb video driver.
@@ -54,3 +56,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/*.4*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.9.6-22
+- Rebuild for new 4.0 release
+

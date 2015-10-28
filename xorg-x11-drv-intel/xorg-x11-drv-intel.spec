@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-intel
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir %{moduledir}/drivers
@@ -5,7 +6,7 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   32.git
+Release:   33.git
 URL:       http://www.x.org
 License:   MIT
 Source0:   %{tarball}-ef859c8.tar.xz
@@ -36,6 +37,8 @@ BuildRequires: python
 
 Requires: xorg-x11-server-Xorg >= 1.1.0-1
 Requires: polkit
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 Intel video driver.
@@ -73,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.99.917-33.git
+- Rebuild for new 4.0 release
+
 * Wed Oct 21 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-32.git
 - update to ef859c8
 * Wed Aug 12 2015 Cjacker <cjacker@foxmail.com>

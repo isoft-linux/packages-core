@@ -1,7 +1,6 @@
 Name: docbook-style-xsl
 Version: 1.78.1
-Release: 4%{?dist}
-Group: Applications/Text
+Release: 5%{?dist}
 
 Summary: Norman Walsh's XSL stylesheets for DocBook XML
 
@@ -126,3 +125,6 @@ if [ "$1" = 0 ]; then
 fi
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.78.1-5
+- Rebuild for new 4.0 release
+

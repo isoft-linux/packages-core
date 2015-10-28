@@ -1,9 +1,8 @@
 Name: fxload
 Version: 2008_10_13
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: A helper program to download firmware into FX and FX2 EZ-USB devices
 
-Group: System Environment/Kernel
 License: GPLv2+
 URL: http://linux-hotplug.sourceforge.net/
 Source0: fxload-%{version}-noa3load.tar.gz
@@ -53,3 +52,6 @@ rm -rf %{buildroot}
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2008_10_13-4
+- Rebuild for new 4.0 release
+

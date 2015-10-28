@@ -1,6 +1,6 @@
 Name:           libvdpau
 Version:        1.1.1 
-Release:        2 
+Release:        3 
 Summary:        Wrapper library for the Video Decode and Presentation API
 
 License:        MIT
@@ -55,9 +55,11 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 %{_includedir}/vdpau/
 %{_libdir}/libvdpau.so
 %{_libdir}/pkgconfig/vdpau.pc
-%{_docdir}/libvdpau
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.1.1-3
+- Rebuild for new 4.0 release
+
 * Tue Sep 01 2015 Cjacker <cjacker@foxmail.com>
 - Fix CVE-2015-5198, CVE-2015-5199, and CVE-2015-5200 for more details.
 

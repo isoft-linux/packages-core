@@ -4,10 +4,9 @@
 Summary: The graphical toolkit for the Tcl scripting language
 Name: tk
 Version: %{vers}
-Release: 2%{?dist}
+Release: 3%{?dist}
 Epoch:   1
 License: TCL
-Group: Development/Languages
 URL: http://tcl.sourceforge.net
 Source0: http://download.sourceforge.net/sourceforge/tcl/%{name}%{version}-src.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -33,7 +32,6 @@ way to create cross-platform GUI applications.
 
 %package devel
 Summary: Tk graphical toolkit development files
-Group: Development/Languages
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: tcl-devel = %{epoch}:%{version}
 Requires: libX11-devel libXft-devel
@@ -115,3 +113,6 @@ sed -i -e "s|$PWD/unix|%{_libdir}|; s|$PWD|%{_includedir}/%{name}-private|" %{bu
 %{_datadir}/%{name}%{majorver}/tkAppInit.c
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:8.6.4-3
+- Rebuild for new 4.0 release
+

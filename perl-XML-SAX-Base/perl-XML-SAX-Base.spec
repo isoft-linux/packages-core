@@ -1,9 +1,8 @@
 Name:           perl-XML-SAX-Base
 Version:        1.08
-Release:        7
+Release:        8
 Summary:        Base class SAX drivers and filters
 License:        GPL+ or Artistic
-Group:          CoreDev/Runtime/Library/Perl
 URL:            http://search.cpan.org/dist/XML-SAX-Base/
 Source0:        http://www.cpan.org/authors/id/G/GR/GRANTM/XML-SAX-Base-%{version}.tar.gz
 BuildArch:      noarch
@@ -36,7 +35,6 @@ find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
 
 mkdir -p $RPM_BUILD_ROOT/%{_docdir}/%{name}-%{version}
 mv $RPM_BUILD_ROOT/%{perl_vendorlib}/XML/SAX/BuildSAXBase.pl $RPM_BUILD_ROOT/%{_docdir}/%{name}-%{version}
-rpmclean
 
 %check
 make test
@@ -45,6 +43,9 @@ make test
 %{perl_vendorlib}/*
 %{_mandir}/man3/*
 %changelog
+* Fri Oct 23 2015 cjacker - 1.08-8
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

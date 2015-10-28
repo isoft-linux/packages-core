@@ -1,8 +1,7 @@
 Name:		    scons
 Version:	    2.3.5
-Release:	    1
+Release:	    2
 Summary:	    An Open Source software construction tool
-Group:		    Development/Tools
 License:	    MIT
 URL:		    http://www.scons.org
 Source:		    http://downloads.sourceforge.net/scons/scons-%{version}.tar.gz
@@ -50,3 +49,6 @@ rm -rf %{buildroot}
 %{_mandir}/man?/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.3.5-2
+- Rebuild for new 4.0 release
+

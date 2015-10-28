@@ -1,9 +1,8 @@
 Name:           libpciaccess
 Version:        0.13.4
-Release:        2
+Release:        3
 Summary:        PCI access library
 
-Group:          Core/Runtime/Library
 License:        MIT
 URL:            http://cgit.freedesktop.org/xorg/lib/libpciaccess/
 Source0:	    http://xorg.freedesktop.org/archive/individual/lib/%{name}-%{version}.tar.bz2
@@ -16,7 +15,6 @@ operating systems.
 
 %package devel
 Summary:        PCI access library development package
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 Requires:       pkgconfig
 
@@ -35,7 +33,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -55,5 +52,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/pciaccess.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.13.4-3
+- Rebuild for new 4.0 release
+
 * Thu Nov 14 2013 Cjacker <cjacker@gmail.com>
 - prepare for a new dist.

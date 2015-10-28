@@ -4,7 +4,7 @@
 
 Name: linux-firmware
 Version: 20151013
-Release: %{firmware_release}.git%{?dist}
+Release: %{firmware_release}.git%{?dist}.1
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
 URL: http://www.kernel.org/
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 20151013-56.git.1
+- Rebuild for new 4.0 release
+
 * Thu Oct 13 2015 Cjacker <cjacker@foxmail.com>
 - update to latest git
 * Fri Sep 25 2015 Cjacker <cjacker@foxmail.com>

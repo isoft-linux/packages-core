@@ -1,8 +1,7 @@
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 3.3 
-Release: 1
-Group:  Core/Development/Utility 
+Release: 2
 URL: http://www.gnu.org/software/diffutils/diffutils.html
 Source: ftp://ftp.gnu.org/gnu/diffutils/diffutils-%{version}.tar.xz
 License: GPL
@@ -32,7 +31,6 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-rpmclean
 %check
 make check
 
@@ -43,4 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/*
 %{_mandir}/*/*
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 3.3-2
+- Rebuild for new 4.0 release
 

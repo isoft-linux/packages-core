@@ -2,9 +2,8 @@ Summary: A GNU file archiving program
 Name: tar
 Epoch: 2
 Version: 1.28
-Release: 1
+Release: 2
 License: GPLv3+
-Group:  Core/Runtime/Utility 
 URL: http://www.gnu.org/software/tar/
 Source0: ftp://ftp.gnu.org/pub/gnu/tar/tar-%{version}.tar.xz
 BuildRequires: autoconf automake gzip gettext libacl-devel gawk
@@ -38,7 +37,6 @@ rm -rf $RPM_BUILD_ROOT/%{_infodir}
 # XXX Nuke unpackaged files.
 rm -f ${RPM_BUILD_ROOT}%{_sbindir}/rmt
 
-rpmclean
 
 %check
 make check
@@ -52,3 +50,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_datadir}/locale/*/LC_MESSAGES/*
 %{_mandir}/man1/tar.1.gz
 %changelog
+* Fri Oct 23 2015 cjacker - 2:1.28-2
+- Rebuild for new 4.0 release
+

@@ -2,7 +2,7 @@
 
 Name:           rpmdevtools
 Version:        8.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RPM Development Tools
 
 # rpmdev-setuptree is GPLv2, everything else GPLv2+
@@ -82,6 +82,9 @@ echo %%{_sysconfdir}/bash_completion.d > %{name}.files
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 8.6-2
+- Rebuild for new 4.0 release
+
 * Sun May 10 2015 Ville Skyttä <ville.skytta@iki.fi> - 8.6-1
 - Update to 8.6
 

@@ -1,9 +1,8 @@
 Name:           perl-XML-Parser
 Version:        2.41
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Perl module for parsing XML documents
 
-Group:          Core/Runtime/Library/Perl
 License:        GPL+ or Artistic
 Url:            http://search.cpan.org/dist/XML-Parser/
 Source0:        http://search.cpan.org/CPAN/authors/id/T/TO/TODDR/XML-Parser-%{version}.tar.gz
@@ -74,6 +73,9 @@ make test
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.41-10
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

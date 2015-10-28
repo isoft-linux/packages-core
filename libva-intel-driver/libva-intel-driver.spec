@@ -1,8 +1,7 @@
 Name:		libva-intel-driver
 Version:	1.6.1
-Release:	1
+Release:	2
 Summary:	VA driver for Intel G45 & HD Graphics family
-Group:		System Environment/Libraries
 License:	MIT
 URL:		http://freedesktop.org/wiki/Software/vaapi
 Source0:	http://www.freedesktop.org/software/vaapi/releases/libva-intel-driver/%{name}-%{version}.tar.bz2
@@ -26,6 +25,9 @@ find %{buildroot} -regex ".*\.la$" | xargs rm -f --
 %{_libdir}/dri/*.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6.1-2
+- Rebuild for new 4.0 release
+
 * Sat Sep 26 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.6.1
 

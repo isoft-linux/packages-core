@@ -1,11 +1,10 @@
 Summary: A library for password generation and password quality checking
 Name: libpwquality
 Version: 1.2.4
-Release: 4%{?dist}
+Release: 5%{?dist}
 # The package is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 License: BSD or GPLv2+
-Group: System Environment/Base
 Source0: http://fedorahosted.org/releases/l/i/libpwquality/libpwquality-%{version}.tar.bz2
 
 %global _pwqlibdir %{_libdir}
@@ -32,7 +31,6 @@ This library uses the cracklib and cracklib dictionaries
 to perform some of the checks.
 
 %package devel
-Group: Development/Libraries
 Summary: Support for development of applications using the libpwquality library
 Requires: libpwquality%{?_isa} = %{version}-%{release}
 Requires: pkgconfig
@@ -43,7 +41,6 @@ library.
 See the pwquality.h header file for the API.
 
 %package -n python-pwquality
-Group: Development/Libraries
 Summary: Python bindings for the libpwquality library
 Requires: libpwquality%{?_isa} = %{version}-%{release}
 
@@ -54,7 +51,6 @@ for easy password quality checking and generation of random
 pronounceable passwords from Python applications.
 
 %package -n python3-pwquality
-Group: Development/Libraries
 Summary: Python bindings for the libpwquality library
 Requires: libpwquality%{?_isa} = %{version}-%{release}
 
@@ -145,5 +141,8 @@ rm -f $RPM_BUILD_ROOT%{_moduledir}/*.la
 %{python3_sitearch}/*.egg-info
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.2.4-5
+- Rebuild for new 4.0 release
+
 * Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - first build.

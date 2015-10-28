@@ -1,11 +1,10 @@
 Summary: A tool for determining compilation options
 Name: pkgconfig
 Version: 0.28
-Release: 1
+Release: 2
 Epoch: 1
 License: GPL
 URL: http://pkgconfig.freedesktop.org
-Group:   Core/Development/Utility
 Source:  http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
 %description
 The pkgconfig tool determines compilation options. For each required
@@ -29,7 +28,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pkgconfig
 rm -rf $RPM_BUILD_ROOT%{_docdir}
-rpmclean
 
 %check
 make check
@@ -46,3 +44,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:0.28-2
+- Rebuild for new 4.0 release
+

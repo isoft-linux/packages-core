@@ -5,9 +5,8 @@
 Summary: Create deltas between rpms
 Name: deltarpm
 Version: 3.6
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: BSD
-Group: System Environment/Base
 URL: http://gitorious.org/deltarpm/deltarpm
 Source: ftp://ftp.suse.com/pub/projects/deltarpm/%{name}-%{version}.tar.bz2
 Patch1: 0002-do-not-finish-applydeltarpm-jobs-when-in-the-middle-.patch
@@ -34,7 +33,6 @@ deltarpms can also work with installed rpms.
 
 %package -n drpmsync
 Summary: Sync a file tree with deltarpms
-Group: System Environment/Base
 Requires: deltarpm%{_isa} = %{version}-%{release}
 
 %description -n drpmsync
@@ -43,7 +41,6 @@ deltarpms.
 
 %package -n deltaiso
 Summary: Create deltas between isos containing rpms
-Group: System Environment/Base
 Requires: deltarpm%{_isa} = %{version}-%{release}
 
 %description -n deltaiso
@@ -52,7 +49,6 @@ a difference between an old and a new iso containing rpms.
 
 %package -n python-deltarpm
 Summary: Python bindings for deltarpm
-Group: System Environment/Base
 Requires: deltarpm%{_isa} = %{version}-%{release}
 
 %description -n python-deltarpm
@@ -61,7 +57,6 @@ This package contains python bindings for deltarpm.
 %if 0%{?with_python3}
 %package -n python3-deltarpm
 Summary: Python bindings for deltarpm
-Group: System Environment/Base
 Requires: deltarpm%{_isa} = %{version}-%{release}
 
 %description -n python3-deltarpm
@@ -142,5 +137,8 @@ rm -rf %{buildroot}%{_libdir}/python3*
 %endif
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.6-11
+- Rebuild for new 4.0 release
+
 * Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - first build

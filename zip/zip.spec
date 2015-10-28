@@ -1,9 +1,8 @@
 Summary: A file compression and packaging utility compatible with PKZIP
 Name: zip
 Version: 3.0
-Release: 8 
+Release: 9 
 License: BSD
-Group:  Core/Runtime/Utility 
 Source: http://downloads.sourceforge.net/infozip/zip30.tar.gz
 URL: http://www.info-zip.org/Zip.html
 Patch1: zip-3.0-exec-shield.patch
@@ -50,3 +49,6 @@ make -f unix/Makefile prefix=$RPM_BUILD_ROOT%{_prefix} \
 %{_mandir}/man1/zipsplit.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.0-9
+- Rebuild for new 4.0 release
+

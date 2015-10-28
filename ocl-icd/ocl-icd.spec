@@ -1,6 +1,6 @@
 Name:		ocl-icd
 Version:	2.2.7
-Release:	1
+Release:	2
 Summary:	OpenCL ICD Bindings
 
 License:	BSD
@@ -64,3 +64,6 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.2.7-2
+- Rebuild for new 4.0 release
+

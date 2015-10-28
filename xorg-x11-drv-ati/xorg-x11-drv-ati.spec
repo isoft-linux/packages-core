@@ -1,17 +1,17 @@
+%define debug_package %{nil}
 %define tarball xf86-video-ati
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
 Summary:   Xorg X11 ati video driver
 Name:      xorg-x11-drv-ati
 Version:   7.6.0
-Release:   3.git
+Release:   5.git
 URL:       http://www.x.org
 License:   MIT
-Group:     User Interface/X Hardware Support
 
 #Source0:    http://www.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 #git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-ati
-Source0: %{tarball}.tar.gz
+Source0: %{tarball}-548e97b.tar.xz
 
 Patch10:    radeon-6.12.2-lvds-default-modes.patch
 Patch13:    fix-default-modes.patch
@@ -59,7 +59,14 @@ rm -rf $RPM_BUILD_ROOT%{moduledir}/multimedia/
 %{_mandir}/man4/radeon.4*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.6.0-5.git
+- Rebuild for new 4.0 release
+
+* Wed Oct 21 2015 Cjacker <cjacker@foxmail.com> - 7.6.0-4.git
+- Update to 548e97b,fix rotation issue
+
 * Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>
 - update to 3791fce
-* Tue Jul 15 2015 Cjacker <cjacker@foxmail.com>
+
+* Wed Jul 15 2015 Cjacker <cjacker@foxmail.com>
 - update to lastest git codes.

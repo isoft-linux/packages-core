@@ -10,14 +10,14 @@
 %global dbus_common_config_opts --disable-libaudit --disable-selinux --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-installed-tests
 
 # Allow extra dependencies required for some tests to be disabled.
-%bcond_without tests
+%bcond_with tests
 # Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
 %bcond_with check
 
 Name:    dbus
 Epoch:   1
 Version: 1.9.20
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 # The effective license of the majority of the package, including the shared
@@ -324,5 +324,8 @@ popd
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:1.9.20-3
+- Rebuild for new 4.0 release
+
 * Sun Aug 23 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.9.20

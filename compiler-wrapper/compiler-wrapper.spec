@@ -1,9 +1,8 @@
 Name:		compiler-wrapper
 Version:	1.0
-Release:	1
+Release:	2
 Summary:	Compiler Wrapper Scripts to between gcc and clang
 
-Group:	    Core/Development/Utility
 License:	BSD
 
 #default clang wrapper to disable libgcc/libstdc++
@@ -15,6 +14,7 @@ Source2:    cc.clang-nogcc-with-compiler-rt
 Source3:    c++.clang-nogcc-with-compiler-rt
 
 Requires(post): alternatives
+BuildArch: noarch
 
 %description
 Compiler Wrapper Scripts to toggle between gcc and clang.
@@ -77,4 +77,7 @@ exit 0
 %files
 %{_bindir}/*
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0-2
+- Rebuild for new 4.0 release
+
 

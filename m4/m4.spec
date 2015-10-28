@@ -1,9 +1,8 @@
 Summary: The GNU macro processor
 Name:    m4
 Version: 1.4.17
-Release: 1
+Release: 2
 License: GPL
-Group:   CoreDev/Development/Utility
 Source0: ftp://ftp.gnu.org/gnu/m4/m4-%{version}.tar.xz
 Patch1: m4-no-overflow-under-clang.patch
 
@@ -34,7 +33,6 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 rm -rf $RPM_BUILD_ROOT%{_infodir}
-rpmclean
 
 %check
 make check
@@ -48,3 +46,6 @@ make check
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4.17-2
+- Rebuild for new 4.0 release
+

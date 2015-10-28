@@ -1,9 +1,8 @@
 Summary:    A GNU tool for automatically configuring source code
 Name:       autoconf213
 Version:    2.13
-Release:    35%{?dist}
+Release:    36%{?dist}
 License:    GPLv2+
-Group:      Development/Tools
 URL:        http://www.gnu.org/software/autoconf/
 Source:     ftp://prep.ai.mit.edu/pub/gnu/autoconf/autoconf-%{version}.tar.gz
 Patch0:     autoconf-2.12-race.patch
@@ -84,3 +83,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %doc AUTHORS COPYING NEWS README TODO
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.13-36
+- Rebuild for new 4.0 release
+

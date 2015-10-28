@@ -7,9 +7,8 @@
 Summary: dmraid (Device-mapper RAID tool and library)
 Name: dmraid
 Version: 1.0.0.rc16
-Release: 25%{?dist}
+Release: 26%{?dist}
 License: GPLv2+
-Group: System Environment/Base
 URL: http://people.redhat.com/heinzm/sw/dmraid
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: device-mapper-devel >= 1.02.02-2
@@ -49,7 +48,6 @@ Linux >= 2.4 using device-mapper.
 
 %package -n dmraid-devel
 Summary: Development libraries and headers for dmraid.
-Group: Development/Libraries
 Requires: dmraid = %{version}-%{release}, sgpio
 
 %description -n dmraid-devel
@@ -58,7 +56,6 @@ RAID set activation and display of properties for ATARAID volumes.
 
 %package -n dmraid-events
 Summary: dmevent_tool (Device-mapper event tool) and DSO
-Group: System Environment/Base
 Requires: dmraid = %{version}-%{release}, sgpio
 Requires: device-mapper-event
 
@@ -182,3 +179,6 @@ rm -rf $RPM_BUILD_ROOT
 #%ghost /var/cache/logwatch/dmeventd/syslogpattern.txt
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.0.rc16-26
+- Rebuild for new 4.0 release
+

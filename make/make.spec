@@ -2,9 +2,8 @@ Summary: A GNU tool which simplifies the build process for users
 Name: make
 Epoch: 1
 Version: 4.1
-Release: 6
+Release: 7
 License: GPL
-Group:  CoreDev/Development/Utility
 URL: http://www.gnu.org/software/make/
 Source: ftp://ftp.gnu.org/gnu/make/make-%{version}.tar.bz2
 
@@ -36,7 +35,6 @@ rm -rf $RPM_BUILD_ROOT%{_includedir}
 
 %find_lang make
 
-rpmclean
 
 %check
 echo ============TESTING===============
@@ -52,6 +50,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:4.1-7
+- Rebuild for new 4.0 release
+
 * Thu Jul 30 2015 Cjacker <cjacker@foxmail.com>
 - update to 4.1
 

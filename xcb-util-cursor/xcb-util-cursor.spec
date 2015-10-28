@@ -1,9 +1,8 @@
 Name:		xcb-util-cursor
 Version:	0.1.2
-Release: 2	
+Release: 3	
 Summary:	Convenience libraries sitting on top of libxcb
 
-Group:		System Environment/Libraries
 License:	MIT
 URL:		http://xcb.freedesktop.org
 Source:    xcb-util-cursor-%{version}.tar.bz2 
@@ -24,7 +23,6 @@ the X protocol but which have traditionally been provided by Xlib.
 
 %package 	devel
 Summary:	Development and header files for xcb-util
-Group:		System Environment/Libraries
 Requires:	%{name} = %{version}-%{release}, pkgconfig
 %description	devel
 Development files for xcb-util.
@@ -44,7 +42,6 @@ chrpath --delete $RPM_BUILD_ROOT%{_prefix}/%{_lib}/libxcb-*.so.*
 
 rm %{buildroot}%{_libdir}/*.la
 
-rpmclean
 
 %check
 make check
@@ -70,6 +67,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.1.2-3
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

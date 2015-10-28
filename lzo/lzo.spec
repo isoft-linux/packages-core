@@ -1,8 +1,7 @@
 Name:           lzo
 Version:        2.09
-Release:        3 
+Release:        4 
 Summary:        Data compression library with very fast (de)compression
-Group:          Core/Runtime/Library
 License:        GPL
 URL:            http://www.oberhumer.com/opensource/lzo/
 Source0:        http://www.oberhumer.com/opensource/lzo/download/%{name}-%{version}.tar.gz
@@ -18,7 +17,6 @@ while still decompressing at this very high speed.
 
 %package devel
 Summary:        Development files for the lzo library
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 Requires:       zlib-devel
 
@@ -48,7 +46,6 @@ rm $RPM_BUILD_ROOT%{_libdir}/liblzo2.la
 #no need to ship
 rm -rf $RPM_BUILD_ROOT%{_docdir}/lzo
 
-rpmclean
 
 %check
 make check
@@ -72,4 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc/LZOAPI.TXT doc/LZO.FAQ doc/LZO.TXT
 %{_includedir}/lzo
 %{_libdir}/liblzo2.so
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 2.09-4
+- Rebuild for new 4.0 release
 

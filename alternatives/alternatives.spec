@@ -1,9 +1,8 @@
 Summary: alternatives management system.
 Name: alternatives 
 Version: 1.5
-Release: 2
+Release: 3
 License: GPLv2
-Group:   Core/Runtime/Utility 
 Source: http://fedorahosted.org/releases/c/h/chkconfig/chkconfig-%{version}.tar.bz2
 
 %description
@@ -27,7 +26,6 @@ install -D -m0755 alternatives $RPM_BUILD_ROOT/%{_sbindir}/update-alternatives
 
 install -D -m0644 alternatives.8 $RPM_BUILD_ROOT/%{_mandir}/man8/alternatives.8
 install -D -m0644 alternatives.8 $RPM_BUILD_ROOT/%{_mandir}/man8/update-alternatives.8
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -42,3 +40,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/alternatives*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.5-3
+- Rebuild for new 4.0 release
+

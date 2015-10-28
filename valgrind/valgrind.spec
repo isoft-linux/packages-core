@@ -1,7 +1,7 @@
 Summary: Tool for finding memory management bugs in programs
 Name: valgrind
 Version: 3.10.1
-Release: 1.svn20150713
+Release: 2.svn20150713
 Epoch: 1
 #Source0: http://www.valgrind.org/downloads/valgrind-%{version}.tar.bz2
 #svn co svn://svn.valgrind.org/valgrind/trunk valgrind
@@ -10,7 +10,6 @@ Patch0: valgrind-add-glibc-2.21.patch
 
 License: GPLv2
 URL: http://www.valgrind.org/
-Group: CoreDev/Development/Utility
 BuildRequires: glibc-devel
 
 # Disable build root strip policy
@@ -29,7 +28,6 @@ find/diagnose.
 
 %package devel
 Summary: Development files for valgrind
-Group: CoreDev/Development/Library
 Requires: valgrind = %{epoch}:%{version}-%{release}
 
 %description devel
@@ -78,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:3.10.1-2.svn20150713
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

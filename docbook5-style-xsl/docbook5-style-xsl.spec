@@ -1,7 +1,6 @@
 Name: docbook5-style-xsl
 Version: 1.78.1
-Release: 7%{?dist}
-Group: Applications/Text
+Release: 8%{?dist}
 
 Summary: Norman Walsh's XSL stylesheets for DocBook 5.X
 
@@ -33,7 +32,6 @@ information see W3C page about XSL.
 #Sources available in the docbook stylesheets svn repository, but not packaged.
 %if 0%{?rhel} >= 7
 %package extensions
-Group: Applications/Text
 Summary: Norman Walsh's XSL stylesheets extensions for DocBook 5.X
 # Package is licensed as MIT/X (http://wiki.docbook.org/topic/DocBookLicense),
 # some .js files under ./slides/browser/ are licensed MPLv1.1
@@ -107,3 +105,6 @@ if [ "$1" = 0 ]; then
 fi
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.78.1-8
+- Rebuild for new 4.0 release
+

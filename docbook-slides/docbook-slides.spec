@@ -2,9 +2,8 @@
 Summary: DocBook Slides document type and stylesheets
 Name: docbook-slides
 Version: 3.4.0
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: MIT
-Group: Applications/Text
 URL: http://sourceforge.net/projects/docbook
 Source0: http://downloads.sourceforge.net/docbook/%{name}-%{version}.tar.gz
 Source1: %{name}.xml
@@ -156,3 +155,6 @@ if [ "$1" = 0 ]; then
 fi
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.4.0-17
+- Rebuild for new 4.0 release
+

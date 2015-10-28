@@ -1,9 +1,8 @@
 Name:           rfkill
 Version:        0.5
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        A tool for enabling and disabling wireless devices
 
-Group:          System Environment/Base
 License:        ISC
 URL:            http://www.linuxwireless.org/en/users/Documentation/rfkill
 Source0:        https://www.kernel.org/pub/software/network/rfkill/rfkill-%{version}.tar.xz
@@ -40,3 +39,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.5-7
+- Rebuild for new 4.0 release
+

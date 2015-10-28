@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %global tarball xf86-input-synaptics
 %global moduledir %(pkg-config xorg-server --variable=moduledir )
 %global driverdir %{moduledir}/input
@@ -5,10 +6,9 @@
 Name:           xorg-x11-drv-synaptics
 Summary:        Xorg X11 Synaptics touchpad input driver
 Version:        1.8.2
-Release:        2
+Release:        3
 URL:            http://www.x.org
 License:        MIT
-Group:          User Interface/X Hardware Support
 
 Source0:        ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 Source3:        50-synaptics.conf
@@ -46,7 +46,6 @@ touchpad models are supported:
 
 %package devel
 Summary:        Xorg X11 synaptics input driver
-Group:          Development/Libraries
 Requires:       pkgconfig
 
 %description devel
@@ -93,3 +92,6 @@ udevadm control --reload-rules || :
 %{_includedir}/xorg/synaptics-properties.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.8.2-3
+- Rebuild for new 4.0 release
+

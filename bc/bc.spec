@@ -1,10 +1,9 @@
 Summary: GNU's bc (a numeric processing language) and dc (a calculator)
 Name: bc
 Version: 1.06.95
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2+
 URL: http://www.gnu.org/software/bc/
-Group: Applications/Engineering
 Source: ftp://alpha.gnu.org/pub/gnu/bc/bc-%{version}.tar.bz2
 Patch1: bc-1.06-dc_ibase.patch
 Patch2: bc-1.06.95-memleak.patch
@@ -49,3 +48,6 @@ echo "quit" | ./bc/bc -l Test/checklib.b
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.06.95-16
+- Rebuild for new 4.0 release
+

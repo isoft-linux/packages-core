@@ -1,8 +1,7 @@
 Name:		xcb-util-wm
 Version:	0.4.1
-Release:	7%{?dist}
+Release:	8%{?dist}
 Summary:	Client and window-manager helper library on top of libxcb
-Group:		System Environment/Libraries
 License:	MIT
 URL:		http://xcb.freedesktop.org
 Source0:	http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
@@ -18,7 +17,6 @@ XCB util-wm module provides the following libraries:
 
 %package 	devel
 Summary:	Development and header files for xcb-util-vm
-Group:		System Environment/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description	devel
@@ -57,3 +55,6 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.4.1-8
+- Rebuild for new 4.0 release
+

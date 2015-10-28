@@ -1,6 +1,6 @@
 Name:		polkit-pkla-compat
 Version:	0.1
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	Rules for polkit to add compatibility with pklocalauthority
 # GPLv2-licensed ltmain.sh and Apache-licensed mocklibc are not shipped in
 # the binary package.
@@ -46,3 +46,6 @@ make check
 %dir %{_localstatedir}/lib/polkit-1/localauthority/*.d
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.1-7
+- Rebuild for new 4.0 release
+

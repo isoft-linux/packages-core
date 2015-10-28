@@ -1,8 +1,7 @@
 Name:		b43-openfwwf
 Version:	5.2
-Release:	12%{?dist}
+Release:	13%{?dist}
 Summary:	Open firmware for some Broadcom 43xx series WLAN chips
-Group:		System Environment/Kernel
 License:	GPLv2
 URL:		http://www.ing.unibs.it/openfwwf/
 Source0:	http://www.ing.unibs.it/openfwwf/firmware/openfwwf-%{version}.tar.gz
@@ -52,3 +51,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.2-13
+- Rebuild for new 4.0 release
+

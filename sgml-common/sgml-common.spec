@@ -2,8 +2,7 @@
 
 Name: sgml-common
 Version: 0.6.3
-Release: 43%{?dist}
-Group: Applications/Text
+Release: 44%{?dist}
 
 Summary: Common SGML catalog and DTD files
 
@@ -40,7 +39,6 @@ included in multiple packages.  Sgml-common also includes an
 up-to-date Open Catalog file.
 
 %package -n xml-common
-Group: Applications/Text
 Summary: Common XML catalog and DTD files
 License: GPL+
 Requires(pre): %{_bindir}/xmlcatalog
@@ -167,3 +165,6 @@ fi
 %{_datadir}/xml/xml.xsd
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.6.3-44
+- Rebuild for new 4.0 release
+

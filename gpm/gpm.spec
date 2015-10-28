@@ -1,9 +1,8 @@
 Summary: A mouse server for the Linux console
 Name: gpm
 Version: 1.20.6
-Release: 1 
+Release: 2 
 License: GPLv2+
-Group:  Core/Runtime/Daemon
 URL: http://www.nico.schottelius.org/software/gpm/
 Source: http://www.nico.schottelius.org/software/gpm/archives/%{name}-%{version}.tar.lzma
 Source1: gpm.service
@@ -34,7 +33,6 @@ mouse button.
 
 %package libs
 Summary: Dynamic library for for the gpm
-Group: System Environment/Libraries
 
 %description libs
 This package contains the libgpm.so dynamic library which contains
@@ -44,7 +42,6 @@ the gpm system calls and library functions.
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs = %{version}-%{release}
 Summary: Development files for the gpm library
-Group: Development/Libraries
 
 %description devel
 The gpm-devel package includes header files and libraries necessary
@@ -54,7 +51,6 @@ mouse support to text-based Linux applications.
 %package static
 Requires: %{name} = %{version}-%{release}
 Summary: Static development files for the gpm library
-Group: Development/Libraries
 
 %description static
 The gpm-static package includes static libraries of gpm. The gpm provides
@@ -151,3 +147,6 @@ rm -rf %{buildroot}%{_mandir}
 %{_libdir}/libgpm.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.20.6-2
+- Rebuild for new 4.0 release
+

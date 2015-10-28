@@ -71,7 +71,7 @@
 Summary: Various compilers (C, C++, Objective-C, Java, ...)
 Name: gcc
 Version: %{gcc_version}
-Release: %{gcc_release}
+Release: %{gcc_release}.1
 License: GPLv3+ and GPLv2+ with exceptions
 Source0: gcc-%{version}.tar.bz2
 
@@ -698,6 +698,9 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.2.0-12.1
+- Rebuild for new 4.0 release
+
 * Fri Aug 07 2015 Cjacker <cjacker@foxmail.com>
 - enable libmpx, libitm, libcilkrts
 - remove libssp/vtv

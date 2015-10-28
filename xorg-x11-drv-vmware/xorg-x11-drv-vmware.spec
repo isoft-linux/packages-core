@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-vmware
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
@@ -5,10 +6,9 @@
 Summary:    Xorg X11 vmware video driver
 Name:	    xorg-x11-drv-vmware
 Version:    13.0.2
-Release:    9.git%{?dist}
+Release:    10.git%{?dist}
 URL:	    http://www.x.org
 License:    MIT
-Group:	    User Interface/X Hardware Support
 
 #Source0:   ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 #git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-vmware
@@ -23,6 +23,8 @@ BuildRequires: mesa-libxatracker-devel >= 8.0.1-4
 
 Requires:  xorg-x11-server-Xorg
 Requires: mesa-libxatracker >= 8.0.1-4
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 vmware video driver.
@@ -47,5 +49,8 @@ find $RPM_BUILD_ROOT -regex ".*\.la$" | xargs rm -f --
 %{_mandir}/man4/vmware.4*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 13.0.2-10.git
+- Rebuild for new 4.0 release
+
 * Sun Aug 09 2015 Cjacker <cjacker@foxmail.com>
 - update to git master.

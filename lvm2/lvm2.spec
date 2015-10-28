@@ -32,9 +32,8 @@
 Summary: Userland logical volume management tools 
 Name: lvm2
 Version: 2.02.116
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
-Group: System Environment/Base
 URL: http://sources.redhat.com/lvm2
 Source0: ftp://sources.redhat.com/pub/lvm2/releases/LVM2.%{version}.tgz
 Patch0: lvm2-set-default-preferred_names.patch
@@ -292,7 +291,6 @@ rm -rf $RPM_BUILD_ROOT
 ##############################################################################
 %package devel
 Summary: Development libraries and headers
-Group: Development/Libraries
 License: LGPLv2
 Requires: %{name} = %{version}-%{release}
 Requires: device-mapper-devel = %{device_mapper_version}-%{release}
@@ -315,7 +313,6 @@ the lvm2 libraries.
 %package libs
 Summary: Shared libraries for lvm2
 License: LGPLv2
-Group: System Environment/Libraries
 Requires: device-mapper-event = %{device_mapper_version}-%{release}
 
 %description libs
@@ -350,7 +347,6 @@ This package contains shared lvm2 libraries for applications.
 %package python-libs
 Summary: Python module to access LVM
 License: LGPLv2
-Group: Development/Libraries
 Provides: python-lvm = %{version}-%{release}
 Obsoletes: python-lvm < 2.02.98-2
 Requires: %{name}-libs = %{version}-%{release}
@@ -373,7 +369,6 @@ logical volumes, physical volumes, and volume groups.
 %package cluster
 Summary: Cluster extensions for userland logical volume management tools
 License: GPLv2
-Group: System Environment/Base
 Requires: lvm2 = %{version}-%{release}
 Requires(preun): device-mapper >= %{device_mapper_version}
 Requires(preun): lvm2 >= 2.02
@@ -406,7 +401,6 @@ fi
 %package cluster-standalone
 Summary: Additional files to support clustered LVM2 in standalone mode
 License: GPLv2
-Group: System Environment/Base
 Requires: lvm2-cluster = %{version}-%{release}
 
 %description cluster-standalone
@@ -442,7 +436,6 @@ involvement (e.g. pacemaker).
 
 %package -n cmirror
 Summary: Daemon for device-mapper-based clustered mirrors
-Group: System Environment/Base
 Requires: corosync >= %{corosync_version}
 Requires: device-mapper = %{device_mapper_version}-%{release}
 Requires: resource-agents >= %{resource_agents_version}
@@ -461,7 +454,6 @@ Daemon providing device-mapper-based mirrors in a shared-storage cluster.
 %package -n cmirror-standalone
 Summary: Additional files to support device-mapper-based clustered mirrors in standalone mode
 License: GPLv2
-Group: System Environment/Base
 Requires: cmirror >= %{epoch}:%{version}-%{release}
 
 %description -n cmirror-standalone
@@ -493,7 +485,6 @@ involvement (e.g. pacemaker).
 Summary: Device mapper utility
 Version: %{device_mapper_version}
 License: GPLv2
-Group: System Environment/Base
 URL: http://sources.redhat.com/dm
 Requires: device-mapper-libs = %{device_mapper_version}-%{release}
 Requires: util-linux >= %{util_linux_version}
@@ -523,7 +514,6 @@ for the kernel device-mapper.
 Summary: Development libraries and headers for device-mapper
 Version: %{device_mapper_version}
 License: LGPLv2
-Group: Development/Libraries
 Requires: device-mapper = %{device_mapper_version}-%{release}
 Requires: pkgconfig
 
@@ -541,7 +531,6 @@ the device-mapper libraries.
 Summary: Device-mapper shared library
 Version: %{device_mapper_version}
 License: LGPLv2
-Group: System Environment/Libraries
 Requires: device-mapper = %{device_mapper_version}-%{release}
 
 %description -n device-mapper-libs
@@ -559,7 +548,6 @@ This package contains the device-mapper shared library, libdevmapper.
 
 %package -n device-mapper-event
 Summary: Device-mapper event daemon
-Group: System Environment/Base
 Version: %{device_mapper_version}
 Requires: device-mapper = %{device_mapper_version}-%{release}
 Requires: device-mapper-event-libs = %{device_mapper_version}-%{release}
@@ -591,7 +579,6 @@ fi
 Summary: Device-mapper event daemon shared library
 Version: %{device_mapper_version}
 License: LGPLv2
-Group: System Environment/Libraries
 
 %description -n device-mapper-event-libs
 This package contains the device-mapper event daemon shared library,
@@ -611,7 +598,6 @@ libdevmapper-event.
 Summary: Development libraries and headers for the device-mapper event daemon
 Version: %{device_mapper_version}
 License: LGPLv2
-Group: Development/Libraries
 Requires: device-mapper-event = %{device_mapper_version}-%{release}
 Requires: pkgconfig
 
@@ -626,3 +612,6 @@ the device-mapper event library.
 %{_libdir}/pkgconfig/devmapper-event.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.02.116-4
+- Rebuild for new 4.0 release
+

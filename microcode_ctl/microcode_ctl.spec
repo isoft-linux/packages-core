@@ -3,9 +3,8 @@
 Summary:        Tool to transform and deploy CPU microcode update for x86.
 Name:           microcode_ctl
 Version:        2.1
-Release:        9.1%{?dist}
+Release:        10.1%{?dist}
 Epoch:          2
-Group:          System Environment/Base
 License:        GPLv2+ and Redistributable, no modification permitted
 URL:            http://fedorahosted.org/microcode_ctl
 Source0:        http://fedorahosted.org/released/microcode_ctl/%{name}-%{upstream_version}.tar.xz
@@ -40,3 +39,6 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2:2.1-10.1
+- Rebuild for new 4.0 release
+

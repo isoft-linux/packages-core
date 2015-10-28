@@ -1,7 +1,7 @@
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.21
-Release: 1 
+Release: 2 
 License: GPL
 URL: http://www.gnu.org/software/grep/
 
@@ -87,5 +87,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.21-2
+- Rebuild for new 4.0 release
+
 * Mon Jul 30 2007 Cjacker <cjacker@gmail.com>
 - prepare for 0.5

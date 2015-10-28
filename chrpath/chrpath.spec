@@ -1,9 +1,8 @@
 Summary: Modify rpath of compiled programs
 Name: chrpath
 Version: 0.13
-Release: 3
+Release: 4
 License: GPL+
-Group:  CoreDev/Development/Utility 
 URL: ftp://ftp.hungry.com/pub/hungry/chrpath/
 Source0: ftp://ftp.hungry.com/pub/hungry/chrpath/%{name}-%{version}.tar.gz
 
@@ -23,7 +22,6 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 rm -fr %{buildroot}/usr/doc
-rpmclean
 %clean
 rm -rf %{buildroot}
 
@@ -32,4 +30,9 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/chrpath
 %{_mandir}/man1/chrpath.1*
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 0.13-4
+- Rebuild for new 4.0 release
 

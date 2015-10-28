@@ -3,9 +3,8 @@
 Summary: Tools needed to create Texinfo format documentation files
 Name: texinfo
 Version: 6.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
-Group: Applications/Publishing
 Url: http://www.gnu.org/software/texinfo/
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.xz
 Source1: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%{version}.tar.xz.sig
@@ -39,7 +38,6 @@ are going to write documentation for the GNU Project.
 
 %package -n info
 Summary: A stand-alone TTY-based reader for GNU texinfo documentation
-Group: System Environment/Base
 
 %description -n info
 The GNU project uses the texinfo file format for much of its
@@ -175,5 +173,8 @@ fi
 #%{_mandir}/man1/pdftexi2dvi.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 6.0-2
+- Rebuild for new 4.0 release
+
 * Mon Aug 03 2015 Cjacker <cjacker@foxmail.com>
 - update to 6.0

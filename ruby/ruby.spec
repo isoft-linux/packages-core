@@ -1,7 +1,7 @@
 Summary: An interpreter of object-oriented scripting language
 Name: ruby
 Version: 2.2.3
-Release: 3 
+Release: 4 
 License: (Ruby or BSD) and Public Domain
 URL: http://ruby-lang.org/
 Source0: ftp://ftp.ruby-lang.org/pub/%{name}/2.2/%{name}-%{version}.tar.gz
@@ -107,6 +107,9 @@ make DESTDIR=%{buildroot} install-doc install-capi
 %{_datadir}/ri/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.2.3-4
+- Rebuild for new 4.0 release
+
 * Mon Sep 07 2015 Cjacker <cjacker@foxmail.com>
 - rename ruby-<version>.pc to ruby.pc
 

@@ -1,9 +1,8 @@
 Name:           perl-Archive-Zip
 Version:        1.48
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Perl library for accessing Zip archives
 
-Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/Archive-Zip/
 Source0:        http://search.cpan.org/CPAN/authors/id/P/PH/PHRED/Archive-Zip-%{version}.tar.gz
@@ -95,3 +94,6 @@ make test
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.48-2
+- Rebuild for new 4.0 release
+

@@ -4,9 +4,8 @@
 %global systemctl_bin /usr/bin/systemctl
 Name: openldap
 Version: 2.4.40
-Release: 12
+Release: 13
 Summary: LDAP support libraries
-Group:   System Environment/Daemons
 License: OpenLDAP
 URL: http://www.openldap.org/
 Source0: ftp://ftp.OpenLDAP.org/pub/OpenLDAP/openldap-release/openldap-%{version}.tgz
@@ -40,7 +39,6 @@ libraries, and documentation for OpenLDAP.
 
 %package devel
 Summary: LDAP development libraries and header files
-Group: Development/Libraries
 Requires: openldap%{?_isa} = %{version}-%{release}, cyrus-sasl-devel%{?_isa}
 
 %description devel
@@ -54,7 +52,6 @@ customized LDAP clients.
 %package clients
 Summary: LDAP client utilities
 Requires: openldap%{?_isa} = %{version}-%{release}
-Group: Applications/Internet
 
 %description clients
 OpenLDAP is an open-source suite of LDAP (Lightweight Directory Access
@@ -159,3 +156,6 @@ rm -rf %{buildroot}%{_mandir}/man5/slapo-*.5*
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.4.40-13
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Summary: Tracks and displays system calls associated with a running process
 Name: strace
 Version: 4.10
-Release: 1
+Release: 2
 License: BSD
-Group: CoreDev/Development/Utility
 URL: http://sourceforge.net/projects/strace/
 Source0: http://dl.sourceforge.net/strace/%{name}-%{version}.tar.xz
 BuildRequires: libacl-devel
@@ -45,6 +44,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.10-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

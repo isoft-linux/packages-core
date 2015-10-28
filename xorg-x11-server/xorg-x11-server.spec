@@ -1,16 +1,29 @@
 %define pkgname xorg-server
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#below definations should always match to xorg-server.pc
+%global ansic_major 0
+%global ansic_minor 4
+%global videodrv_major 19 
+%global videodrv_minor 0
+%global xinput_major 21
+%global xinput_minor 1
+%global extension_major 9
+%global extension_minor 0
+
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.17.2
-Release:   16
+Release:   17
 URL:       http://www.x.org
 License:   MIT
-Group:     User Interface/X
 
 Source0:   http://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.bz2
 
 Source4:   10-quirks.conf 
+
+# for ABI requires generation in drivers
+Source10: xserver-sdk-abi-requires.release
 
 Patch0:  autoconfig-sis.patch
 Patch1:  autoconfig-nvidia.patch
@@ -44,9 +57,6 @@ Patch10003: 0001-include-Fix-endianness-setup.patch
 Patch10005: 0001-linux-Add-linux_get_vtno-and-linux_get_keeptty-helpe.patch
 Patch10006: 0002-systemd-logind-Only-use-systemd-logind-integration-t.patch
 
-
-
-
 BuildRequires: automake autoconf libtool pkgconfig
 BuildRequires: xorg-x11-util-macros >= 1.1.5
 BuildRequires: xcb-util
@@ -67,6 +77,7 @@ BuildRequires: pixman-devel libpciaccess-devel byacc flex
 BuildRequires: mesa-libGL-devel >= 7.1-0.36
 BuildRequires: libdrm-devel kernel-devel
 BuildRequires: dbus-devel
+
 Requires: libdrm 
 
 %description
@@ -74,14 +85,12 @@ X.Org X11 X server
 
 %package common
 Summary: Xorg server common files
-Group: User Interface/X
 
 %description common
 Common files shared among all X servers.
 
 %package Xorg
 Summary: Xorg X server
-Group: User Interface/X
 Provides: Xorg = %{version}-%{release}
 Provides: Xserver
 # Requires: xorg-x11-drivers >= 0.99.2-4
@@ -89,6 +98,12 @@ Requires: xorg-x11-xkb-utils
 Requires: xorg-x11-server-utils
 Requires: xorg-x11-xkbdata 
 Requires: xorg-x11-server-common >= %{version}-%{release}
+
+Provides: xserver-abi(ansic-%{ansic_major}) = %{ansic_minor}
+Provides: xserver-abi(videodrv-%{videodrv_major}) = %{videodrv_minor}
+Provides: xserver-abi(xinput-%{xinput_major}) = %{xinput_minor}
+Provides: xserver-abi(extension-%{extension_major}) = %{extension_minor}
+
 # These drivers were dropped in F7 for being broken, so uninstall them.
 Obsoletes: xorg-x11-drv-elo2300 <= 1.1.0-2.fc7
 Obsoletes: xorg-x11-drv-joystick <= 1.1.0-2.fc7
@@ -106,7 +121,6 @@ upon.
 
 %package suid 
 Summary: SUID wrapper of X
-Group: User Interface/X
 Requires: xorg-x11-server-common >= %{version}-%{release}
 
 %description suid
@@ -114,7 +128,6 @@ SUID wrapper of X
 
 %package Xnest
 Summary: A nested server.
-Group: User Interface/X
 Obsoletes: xorg-x11-Xnest
 Requires: xorg-x11-server-common >= %{version}-%{release}
 Provides: Xnest
@@ -129,7 +142,6 @@ applications without running them on their real X server.
 
 %package Xdmx
 Summary: Distributed Multihead X Server and utilities
-Group: User Interface/X
 Obsoletes: xorg-x11-Xdmx
 Requires: xorg-x11-server-common >= %{version}-%{release}
 Provides: Xdmx
@@ -147,7 +159,6 @@ application for Xdmx would be to unify a 4 by 4 grid of 1280x1024 displays
 
 %package Xvfb
 Summary: A X Windows System virtual framebuffer X server.
-Group: User Interface/X
 Obsoletes: xorg-x11-Xvfb
 Requires: xorg-x11-server-common >= %{version}-%{release}
 Provides: Xvfb
@@ -162,7 +173,6 @@ is normally used for testing servers.
 
 %package Xwayland
 Summary: X Clients under Wayland (XWayland)
-Group: User Interface/X
 Requires: xorg-x11-server-common >= %{version}-%{release}
 Provides: Xwayland
 
@@ -171,7 +181,6 @@ X Clients under Wayland (XWayland)
 
 %package Xephyr
 Summary: A nested server.
-Group: User Interface/X
 Requires: xorg-x11-server-common >= %{version}-%{release}
 Provides: Xephyr
 
@@ -188,7 +197,6 @@ Render and Composite.
 
 %package devel
 Summary: SDK for X server driver module development
-Group: User Interface/X
 Obsoletes: xorg-x11-sdk xorg-x11-server-sdk
 Requires: xorg-x11-util-macros
 Requires: xorg-x11-proto-devel
@@ -303,6 +311,8 @@ install -m 644 %{SOURCE4} $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d
 #own this dir.
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/X11/xorg.conf.d 
 
+install -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_bindir}/xserver-sdk-abi-requires
+
 # Remove unwanted files/dirs
 {
     rm -f $RPM_BUILD_ROOT%{_bindir}/xorgconfig
@@ -402,6 +412,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root,-)
+%{_bindir}/xserver-sdk-abi-requires
 %{_libdir}/libxf86config.a
 %{_libdir}/pkgconfig/xorg-server.pc
 %dir %{_includedir}/xorg
@@ -409,5 +420,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.17.2-17
+- Rebuild for new 4.0 release
+
 * Mon Jul 13 2015 Cjacker <cjacker@foxmail.com>
 - rebuild, enable record extension.

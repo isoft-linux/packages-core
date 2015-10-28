@@ -1,9 +1,8 @@
 Summary: A utility for getting files from remote servers (FTP, HTTP, and others)
 Name:    curl 
 Version: 7.43.0
-Release: 2 
+Release: 3 
 License: MIT
-Group:   Core/Runtime/Utility 
 Source:  http://curl.haxx.se/download/%{name}-%{version}.tar.bz2
 URL:     http://curl.haxx.se/
 
@@ -19,7 +18,6 @@ offers many useful capabilities, like proxy support, user
 authentication, FTP upload, HTTP post, and file transfer resume.
 
 %package -n libcurl
-Group:  Core/Runtime/Library 
 Requires: openssl
 Summary: Runtime library of libcurl.
 
@@ -27,7 +25,6 @@ Summary: Runtime library of libcurl.
 Runtime library of libcurl
 
 %package -n libcurl-devel
-Group: Core/Development/Library
 Requires: libcurl = %{version}-%{release}
 Requires: openssl-devel, pkgconfig
 Provides: %{name}-devel = %{version}-%{release}
@@ -69,7 +66,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 # don't need curl's copy of the certs; use openssl's
 find ${RPM_BUILD_ROOT} -name ca-bundle.crt -exec rm -f '{}' \;
 
-rpmclean
 
 %check
 #totally 938 checks
@@ -103,6 +99,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.43.0-3
+- Rebuild for new 4.0 release
+
 * Wed Oct 15 2014 Cjacker <cjacker@gmail.com>
 - review package.
 - build for musl linux.

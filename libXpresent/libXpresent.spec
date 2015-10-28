@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXpresent runtime library
 Name: libXpresent
 Version: 1.0.0
-Release: 1
+Release: 2
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: libXpresent-%{version}.tar.bz2 
 
@@ -20,7 +19,6 @@ X.Org X11 libXpm runtime library
 
 %package devel
 Summary: X.Org X11 %{name} development package
-Group: Development/Libraries
 
 Requires: %{name} = %{version}-%{release}
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
@@ -43,7 +41,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -63,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.0-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

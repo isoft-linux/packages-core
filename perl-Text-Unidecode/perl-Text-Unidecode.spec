@@ -1,6 +1,6 @@
 Name:           perl-Text-Unidecode
 Version:        1.23
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        US-ASCII transliterations of Unicode text
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/Text-Unidecode/
@@ -51,3 +51,6 @@ make test
 %{_mandir}/man3/*.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.23-4
+- Rebuild for new 4.0 release
+

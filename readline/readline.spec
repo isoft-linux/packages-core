@@ -1,9 +1,8 @@
 Summary: A library for editing typed command lines
 Name: readline
 Version: 6.3
-Release: 1 
+Release: 2 
 License: GPL
-Group:  Core/Runtime/Library
 URL: http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
 Source: ftp://ftp.gnu.org/gnu/readline/readline-%{version}.tar.gz
 #upstream patch
@@ -29,7 +28,6 @@ commands.
 
 %package devel
 Summary: Files needed to develop programs which use the readline library
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 Requires: ncurses-devel
 
@@ -41,7 +39,6 @@ installed. You also need to have the readline package installed.
 
 %package static
 Summary: Static libraries for the readline library
-Group:  Core/Development/Library
 Requires: %{name}-devel = %{version}-%{release}
 
 %description static
@@ -73,7 +70,6 @@ make DESTDIR=$RPM_BUILD_ROOT install
 rm -rf $RPM_BUILD_ROOT%{_datadir}/readline
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -98,3 +94,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 6.3-2
+- Rebuild for new 4.0 release
+

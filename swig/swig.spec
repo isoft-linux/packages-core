@@ -4,9 +4,8 @@
 Summary: Connects C/C++/Objective C to some high-level programming languages.
 Name: swig
 Version: 3.0.7
-Release: 1
+Release: 2
 License: BSD
-Group: CoreDev/Development/Utility
 URL: http://swig.sourceforge.net/
 Source: http://downloads.sourceforge.net/project/swig/swig/swig-%{version}/swig-%{version}.tar.gz
 
@@ -64,7 +63,6 @@ done
 popd
 
 make DESTDIR=$RPM_BUILD_ROOT install
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -79,5 +77,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ccache-swig.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.0.7-2
+- Rebuild for new 4.0 release
+
 * Sat Oct 10 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.0.7

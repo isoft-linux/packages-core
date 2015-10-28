@@ -1,7 +1,8 @@
+%define debug_package %{nil}
 Name: busybox
 Summary: BusyBox combines tiny versions of many common UNIX utilities into a single small executable 
 Version: 1.24.0
-Release: 1
+Release: 2
 License: GPLv2+
 Source0: busybox-%{version}.tar.bz2
 Source1: nologin.c
@@ -62,3 +63,8 @@ rm -rf $RPM_BUILD_ROOT
 %files 
 %defattr(-, root, root, -)
 %{_bindir}/busybox
+
+%changelog
+* Fri Oct 23 2015 cjacker - 1.24.0-2
+- Rebuild for new 4.0 release
+

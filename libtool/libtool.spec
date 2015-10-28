@@ -1,10 +1,10 @@
+%define debug_package %{nil}
 
 Summary: The GNU Portable Library Tool
 Name:    libtool
 Version: 2.4.6
-Release: 16
+Release: 17
 License: GPLv2+ and LGPLv2+ and GFDL
-Group:   CoreDev/Development/Utility 
 Source:  http://ftp.gnu.org/gnu/libtool/libtool-%{version}.tar.xz
 
 URL:     http://www.gnu.org/software/libtool/
@@ -75,3 +75,6 @@ rm -rf %{buildroot}
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.4.6-17
+- Rebuild for new 4.0 release
+

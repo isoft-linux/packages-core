@@ -1,9 +1,8 @@
 Summary: Internationalization library for Perl, compatible with gettext
 Name: perl-libintl
 Version: 1.20
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: LGPLv2+
-Group: Development/Libraries
 URL: http://search.cpan.org/dist/libintl-perl/
 Source: http://search.cpan.org/CPAN/authors/id/G/GU/GUIDO/libintl-perl-%{version}.tar.gz
 Requires: perl(:MODULE_COMPAT_%(eval "`perl -V:version`"; echo $version))
@@ -57,3 +56,6 @@ make test
 %{_mandir}/man?/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.20-17
+- Rebuild for new 4.0 release
+

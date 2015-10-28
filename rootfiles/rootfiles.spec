@@ -1,9 +1,8 @@
 Summary: The basic required files for the root user's directory.
 Name: rootfiles
 Version: 8.1
-Release: 8.1 
+Release: 9.1 
 License: Public Domain
-Group:  Core/Runtime/Data
  
 Source0: dot-bashrc
 Source1: dot-bash_profile
@@ -13,7 +12,7 @@ Source4: dot-cshrc
 Source5: dot-vimrc
 Source6: dot-Xresources
 BuildRoot: %{_tmppath}/%{name}%{name}-root
-BuildArchitectures: noarch
+BuildArch: noarch
 
 %description
 The rootfiles package contains basic required files that are placed
@@ -41,3 +40,6 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /root/.[A-Za-z]*
 %config(noreplace) /etc/skel/.Xresources
 %changelog
+* Fri Oct 23 2015 cjacker - 8.1-9.1
+- Rebuild for new 4.0 release
+

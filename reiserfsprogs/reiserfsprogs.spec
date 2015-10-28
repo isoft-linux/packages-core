@@ -1,11 +1,10 @@
 Name: reiserfsprogs
 Version: 3.6.24
-Release: 11%{?dist}
+Release: 12%{?dist}
 Summary: Tools for creating, repairing, and debugging ReiserFS filesystems
 URL: http://ftp.kernel.org/pub/linux/utils/fs/reiserfs/
 Source0: https://www.kernel.org/pub/linux/kernel/people/jeffm/reiserfsprogs/v%{version}/reiserfsprogs-%{version}.tar.xz
 License: GPLv2 with exceptions
-Group: System Environment/Base
 
 BuildRequires: e2fsprogs-devel
 BuildRequires: libuuid-devel
@@ -65,3 +64,6 @@ install -m644 mkreiserfs/mkreiserfs.8 $RPM_BUILD_ROOT%{_mandir}/man8
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.6.24-12
+- Rebuild for new 4.0 release
+

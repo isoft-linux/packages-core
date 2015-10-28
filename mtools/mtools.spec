@@ -1,9 +1,8 @@
 Summary: Programs for accessing MS-DOS disks without mounting the disks.
 Name: mtools
 Version: 4.0.18
-Release: 1.2.1
+Release: 2.2.1
 License: GPL
-Group:  Core/Runtime/Utility 
 Source: http://mtools.linux.lu/mtools-%{version}.tar.gz
 Patch0: mtools-fix-build-with-clang.patch
 Url: http://mtools.linux.lu/
@@ -48,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.0.18-2.2.1
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

@@ -3,9 +3,8 @@
 Summary: A public domain Yacc parser generator
 Name: byacc
 Version: 1.9.%{byaccdate}
-Release: 1
+Release: 2
 License: Public Domain
-Group:  CoreDev/Development/Utility
 URL: http://dickey.his.com/byacc/byacc.html
 Source: ftp://invisible-island.net/byacc/byacc-%{byaccdate}.tgz
 
@@ -31,7 +30,6 @@ make DESTDIR=$RPM_BUILD_ROOT install
 ln -s yacc $RPM_BUILD_ROOT/usr/bin/byacc
 mv yacc.1 $RPM_BUILD_ROOT/%{_mandir}/man1/byacc.1
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -44,5 +42,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.9.20140527-2
+- Rebuild for new 4.0 release
+
 * Mon Jul 30 2007 Cjacker <cjacker@gmail.com>
 - prepare for 0.5

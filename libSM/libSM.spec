@@ -1,9 +1,8 @@
 Summary: X.Org X11 libSM runtime library
 Name: libSM
 Version: 1.2.2
-Release: 3.1
+Release: 4.1
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: ftp://ftp.x.org/pub/individual/lib/%{name}-%{version}.tar.bz2
 
@@ -19,7 +18,6 @@ X.Org X11 libSM runtime library
 
 %package devel
 Summary: X.Org X11 libSM development package
-Group: Development/Libraries
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
 Requires: %{name} = %{version}-%{release}
@@ -44,7 +42,6 @@ rm -rf $RPM_BUILD_ROOT
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -69,6 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/libSM/*.xml
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.2.2-4.1
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

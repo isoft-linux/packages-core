@@ -1,9 +1,8 @@
 Name:           fuse
 Version:        2.9.4
-Release:        10 
+Release:        11 
 Summary:        File System in Userspace (FUSE) utilities
 
-Group:          System Environment/Base
 License:        GPL+
 URL:            http://fuse.sf.net
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
@@ -20,7 +19,6 @@ mount a FUSE filesystem.
 
 %package libs
 Summary:        File System in Userspace (FUSE) libraries
-Group:          System Environment/Libraries
 License:        LGPLv2+
 Conflicts:      filesystem < 3
 
@@ -31,7 +29,6 @@ userspace program. This package contains the FUSE libraries.
 
 %package devel
 Summary:        File System in Userspace (FUSE) devel files
-Group:          Development/Libraries
 Requires:       %{name}-libs = %{version}-%{release}
 Requires:       pkgconfig
 License:        LGPLv2+
@@ -98,6 +95,9 @@ rm -f %{buildroot}%{_sysconfdir}/udev/rules.d/99-fuse.rules
 %{_includedir}/fuse
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.9.4-11
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

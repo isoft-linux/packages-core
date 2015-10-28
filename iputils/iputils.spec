@@ -1,10 +1,9 @@
 Summary: Network monitoring tools including ping
 Name: iputils
 Version: 20121221
-Release: 2 
+Release: 3 
 License: BSD and GPLv2+
 URL: http://www.skbuff.net/iputils
-Group: Core/Runtime/Utility
 
 Source0: http://www.skbuff.net/iputils/%{name}-s%{version}.tar.bz2
 
@@ -65,5 +64,8 @@ done
 #%attr(644,root,root) %{_mandir}/man8/ifenslave.8.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 20121221-3
+- Rebuild for new 4.0 release
+
 * Fri Oct 09 2015 Cjacker <cjacker@foxmail.com>
 - fix ping6 caps.

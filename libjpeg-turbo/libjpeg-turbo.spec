@@ -1,9 +1,8 @@
 Name:		libjpeg-turbo
 Version:	1.4.2
-Release:    1	
+Release:    2	
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 
-Group:		System Environment/Libraries
 License:	IJG
 URL:		http://sourceforge.net/projects/libjpeg-turbo
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
@@ -20,7 +19,6 @@ JPEG images.
 
 %package devel
 Summary:	Headers for the libjpeg-turbo library
-Group:		Development/Libraries
 Provides:	libjpeg-devel 
 Requires:	libjpeg-turbo = %{version}-%{release}
 
@@ -30,7 +28,6 @@ will manipulate JPEG files using the libjpeg-turbo library.
 
 %package utils
 Summary:	Utilities for manipulating JPEG images
-Group:		Applications/Multimedia
 Requires:	libjpeg-turbo = %{version}-%{release}
 
 %description utils
@@ -44,7 +41,6 @@ text comments into a JPEG file.
 
 %package static
 Summary:	Static version of the libjpeg-turbo library
-Group:		Development/Libraries
 Provides:	libjpeg-static
 Requires:	libjpeg-turbo-devel = %{version}-%{release}
 
@@ -54,14 +50,12 @@ JPEG images.
 
 %package -n turbojpeg
 Summary:	TurboJPEG library
-Group:		System Environment/Libraries
 
 %description -n turbojpeg
 The turbojpeg package contains the TurboJPEG shared library.
 
 %package -n turbojpeg-devel
 Summary:	Headers for the TurboJPEG library
-Group:		Development/Libraries
 Requires:	turbojpeg = %{version}-%{release}
 
 %description -n turbojpeg-devel
@@ -85,7 +79,6 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/libturbojpeg.a
 rm -rf $RPM_BUILD_ROOT%{_bindir}/tjbench
 rm -rf $RPM_BUILD_ROOT%{_docdir}/*
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -136,6 +129,9 @@ make test
 %{_libdir}/libturbojpeg.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4.2-2
+- Rebuild for new 4.0 release
+
 * Thu Oct 08 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.4.2
 

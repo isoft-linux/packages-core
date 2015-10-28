@@ -1,9 +1,8 @@
 Summary: Tracks runtime library calls from dynamically linked executables
 Name: ltrace
 Version: 0.7.3
-Release: 1 
+Release: 2 
 License: GPLv2+
-Group: CoreDev/Development/Utility
 URL: http://ltrace.alioth.debian.org/
 #git clone git://git.debian.org/git/collab-maint/ltrace.git
 Source: ltrace.tar.gz
@@ -51,7 +50,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man5/ltrace.conf.*
 %dir %{_datadir}/ltrace
 %{_datadir}/ltrace/*
+
 %changelog
+* Fri Oct 23 2015 cjacker - 0.7.3-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

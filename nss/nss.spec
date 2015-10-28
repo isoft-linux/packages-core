@@ -21,10 +21,9 @@ Name:             nss
 Version:          3.19.2
 # for Rawhide, please always use release >= 2
 # for Fedora release branches, please use release < 2 (1.0, 1.1, ...)
-Release:          3%{?dist}
+Release:          4%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
-Group:            System Environment/Libraries
 Requires:         nspr >= %{nspr_version}
 Requires:         nss-util >= %{nss_util_version}
 # TODO: revert to same version as nss once we are done with the merge
@@ -104,7 +103,6 @@ v3 certificates, and other security standards.
 
 %package tools
 Summary:          Tools for the Network Security Services
-Group:            System Environment/Base
 Requires:         %{name}%{?_isa} = %{version}-%{release}
 
 %description tools
@@ -119,7 +117,6 @@ manipulate the NSS certificate and key database.
 
 %package sysinit
 Summary:          System NSS Initialization
-Group:            System Environment/Base
 # providing nss-system-init without version so that it can
 # be replaced by a better one, e.g. supplied by the os vendor
 Provides:         nss-system-init
@@ -134,7 +131,6 @@ any system or user configured modules.
 
 %package devel
 Summary:          Development libraries for Network Security Services
-Group:            Development/Libraries
 Provides:         nss-static = %{version}-%{release}
 Requires:         nss = %{version}-%{release}
 Requires:         nss-util-devel
@@ -149,7 +145,6 @@ Header and Library files for doing development with Network Security Services.
 
 %package pkcs11-devel
 Summary:          Development libraries for PKCS #11 (Cryptoki) using NSS
-Group:            Development/Libraries
 Provides:         nss-pkcs11-devel-static = %{version}-%{release}
 Requires:         nss-devel = %{version}-%{release}
 Requires:         nss-softokn-freebl-devel >= %{nss_softokn_version}
@@ -785,3 +780,6 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.19.2-4
+- Rebuild for new 4.0 release
+

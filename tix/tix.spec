@@ -8,9 +8,8 @@ Summary: A set of extension widgets for Tk
 Name: tix
 Epoch: 1
 Version: %{tixmajor}.3
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: BSD
-Group: Development/Languages
 URL: http://tix.sourceforge.net/
 Source0: http://downloads.sourceforge.net/project/%{name}/%{name}/%{version}/Tix%{version}-src.tar.gz
 #  0: Fixes BZ#81297 (soname of libraries)
@@ -30,7 +29,6 @@ appearance and functionality of your application.
 
 %package devel
 Summary: Tk Interface eXtension development files
-Group: Development/Languages
 Requires: tix = %{epoch}:%{version}-%{release}
 
 %description devel
@@ -44,7 +42,6 @@ tix applications.
 
 %package doc
 Summary: Tk Interface eXtension documentation
-Group: Development/Languages
 Requires: tix = %{epoch}:%{version}-%{release}
 
 %description doc
@@ -127,3 +124,6 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/Tix%{tixmajor}/license.terms
 %doc %{tcl_sitelib}/Tix%{tixmajor}
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:8.4.3-17
+- Rebuild for new 4.0 release
+

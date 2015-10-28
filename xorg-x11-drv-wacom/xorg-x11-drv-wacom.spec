@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %global tarball xf86-input-wacom
 %global moduledir %(pkg-config xorg-server --variable=moduledir )
 %global driverdir %{moduledir}/input
@@ -5,10 +6,9 @@
 Summary:    Xorg X11 wacom input driver
 Name:       xorg-x11-drv-wacom
 Version:    0.30.0
-Release:    2 
+Release:    3 
 URL:        http://www.x.org
 License:    GPLv2+
-Group:      User Interface/X Hardware Support
 
 Source0: http://prdownloads.sourceforge.net/linuxwacom/xf86-input-wacom-%{version}.tar.bz2
 Source3: 70-wacom.rules
@@ -21,7 +21,8 @@ BuildRequires: libX11-devel libXi-devel libXrandr-devel libXinerama-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd-devel
 
-Requires: Xorg
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires xinput)
 
 Provides:  linuxwacom = %{version}-%{release}
 Obsoletes: linuxwacom <= 0.8.4.3
@@ -31,7 +32,6 @@ X.Org X11 wacom input driver for Wacom tablets.
 
 %package devel
 Summary:    Xorg X11 wacom input driver development package
-Group:      Development/Libraries
 
 Requires: xorg-x11-server-devel >= 1.7.0
 Requires: pkgconfig
@@ -84,3 +84,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/isdv4-serial-debugger
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.30.0-3
+- Rebuild for new 4.0 release
+

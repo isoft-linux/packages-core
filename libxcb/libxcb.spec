@@ -2,7 +2,7 @@
 
 Name:       libxcb
 Version:    1.11.1
-Release:    6.git%{?dist}
+Release:    7.git%{?dist}
 Summary:    A C binding to the X11 protocol
 License:    MIT
 URL:        http://xcb.freedesktop.org/
@@ -96,6 +96,9 @@ find $RPM_BUILD_ROOT -name '*.la' -delete
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.11.1-7.git
+- Rebuild for new 4.0 release
+
 * Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
 - libxcb git 
 

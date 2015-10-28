@@ -1,7 +1,6 @@
 Name: docbook-utils
 Version: 0.6.14
-Release: 39%{?dist}
-Group: Applications/Text
+Release: 40%{?dist}
 
 Summary: Shell scripts for managing DocBook documents
 URL: http://sources.redhat.com/docbook-tools/
@@ -137,3 +136,6 @@ rm -rf $RPM_BUILD_ROOT/tmp
 #%{_mandir}/*/docbook2ps.*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.6.14-40
+- Rebuild for new 4.0 release
+

@@ -2,10 +2,9 @@
 
 Name:           lz4
 Version:        r130
-Release:        1
+Release:        2
 Summary:        Extremely fast compression algorithm
 
-Group:          Applications/System
 License:        GPLv2+ and BSD
 URL:            https://code.google.com/p/lz4/
 Source0:        https://github.com/Cyan4973/%{name}/archive/%{commit}/%{name}-%{commit}.tar.gz
@@ -19,7 +18,6 @@ reaching RAM speed limits on multi-core systems.
 
 %package        devel
 Summary:        Development library for lz4
-Group:          Development/Libraries
 License:        BSD
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
@@ -30,7 +28,6 @@ applications using liblz4 library.
 
 %package        static
 Summary:        Static library for lz4
-Group:          Development/Libraries
 License:        BSD
 
 %description    static
@@ -81,3 +78,6 @@ chmod -x %{buildroot}%{_includedir}/*.h
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - r130-2
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Name:       libBlocksRuntime
 Summary:    Blocks Runtime library 
 Version:    0.4.1
-Release:    1
+Release:    2
 License:    the MIT license and the UIUC License (a BSD-like license). 
-Group:      System Environment/Libraries
 Source0:    https://github.com/mheily/blocks-runtime/releases/download/v0.4.1/libblocksruntime-%{version}.tar.gz
 
 %description
@@ -13,7 +12,6 @@ This package contains a library that is needed by programs that use Blocks.
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -59,6 +57,9 @@ make check
 %{_includedir}/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.4.1-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

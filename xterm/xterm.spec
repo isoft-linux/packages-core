@@ -1,7 +1,7 @@
 Summary: Terminal emulator for the X Window System
 Name: xterm
 Version: 319
-Release: 2 
+Release: 3 
 URL: http://invisible-island.net/xterm/ 
 License: MIT
 BuildRequires: pkgconfig ncurses-devel
@@ -64,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 319-3
+- Rebuild for new 4.0 release
+
 * Tue Aug 25 2015 Cjacker <cjacker@foxmail.com>
 - update to 319
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>

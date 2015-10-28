@@ -1,6 +1,6 @@
 Name: smack-utils
 Version: 1.1.0
-Release: 1
+Release: 2
 Summary: Utilities for configuring Linux SMACK 	
 
 License: GPL	
@@ -26,7 +26,6 @@ way to identify the kind of accesses that should be allowed.
 
 %package -n libsmack-devel
 Summary:        Development files for smack
-Group:          Development/Libraries
 
 %description -n libsmack-devel
 Library allows applications to work with the smack kernel interface.
@@ -85,4 +84,7 @@ popd
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.1.0-2
+- Rebuild for new 4.0 release
+
 

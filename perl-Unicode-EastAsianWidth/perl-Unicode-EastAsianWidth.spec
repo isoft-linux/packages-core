@@ -1,8 +1,7 @@
 Name:		perl-Unicode-EastAsianWidth
 Version:	1.33
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	East Asian Width properties
-Group:		Development/Libraries
 License:	CC0
 URL:		http://search.cpan.org/dist/Unicode-EastAsianWidth/
 Source0:	http://search.cpan.org/CPAN/authors/id/A/AU/AUDREYT/Unicode-EastAsianWidth-%{version}.tar.gz
@@ -49,3 +48,6 @@ make test
 %{_mandir}/man3/Unicode::EastAsianWidth.3pm*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.33-7
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Summary:        SAX parser access API for Perl
 Name:           perl-XML-SAX
 Version:        0.99
-Release:        9
+Release:        10
 
-Group:          CoreDev/Runtime/Library/Perl
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/XML-SAX/
 # Original source
@@ -105,6 +104,9 @@ rm -rf "%{perl_vendorlib}/XML/SAX/ParserDetails.ini.backup" || :
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.99-10
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

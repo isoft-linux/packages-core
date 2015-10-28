@@ -1,9 +1,8 @@
 Name:		help2man
 Version:    1.47.1	
-Release:	1
+Release:	2
 Summary:    Conversion tool to create man files	
 
-Group:	    CoreDev/Development/Utility/Documentation	
 License:	GPL
 URL:		http://www.gnu.org/software/help2man/
 Source0:	http://ftp.gnu.org/gnu/help2man/help2man-%{version}.tar.xz
@@ -34,4 +33,7 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}/{[a-l]*,[n-z]*}
 %{_mandir}/man1/help2man.1.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.47.1-2
+- Rebuild for new 4.0 release
+
 

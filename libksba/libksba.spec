@@ -1,12 +1,11 @@
 Summary: CMS and X.509 library
 Name:    libksba
 Version: 1.3.3
-Release: 3
+Release: 4
 
 # The library is licensed under LGPLv3+ or GPLv2+,
 # the rest of the package under GPLv3+
 License: (LGPLv3+ or GPLv2+) and GPLv3+
-Group:   Core/Runtime/Library
 URL:     http://www.gnupg.org/
 Source0: ftp://ftp.gnupg.org/gcrypt/libksba/libksba-%{version}.tar.bz2
 
@@ -21,7 +20,6 @@ specifications are building blocks of S/MIME and TLS.
 
 %package devel
 Summary: Development headers and libraries for %{name}
-Group:   Core/Development/Library
 Requires: %{name}%{?_isa} = %{version}-%{release}
 %description devel
 %{summary}.
@@ -72,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3.3-4
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

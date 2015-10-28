@@ -1,9 +1,8 @@
 Name:           nettle
 Version:        3.1.1 
-Release:        1 
+Release:        2 
 Summary:        A low-level cryptographic library
 
-Group:          Core/Runtime/Library
 License:        LGPLv2+
 URL:            http://www.lysator.liu.se/~nisse/nettle/
 Source0:        http://www.lysator.liu.se/~nisse/archive/%{name}-%{version}.tar.gz
@@ -12,7 +11,6 @@ BuildRequires:  gmp-devel m4
 
 %package devel
 Summary:        Development headers for a low-level cryptographic library
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 Requires:       gmp-devel%{?_isa}
 
@@ -75,3 +73,6 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1.1-2
+- Rebuild for new 4.0 release
+

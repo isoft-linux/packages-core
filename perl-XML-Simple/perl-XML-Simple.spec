@@ -1,9 +1,8 @@
 Name:           perl-XML-Simple
 Version:        2.14
-Release:        3 
+Release:        4 
 Summary:        Easy API to maintain XML in Perl
 
-Group:          CoreDev/Runtime/Library/Perl
 License:        GPL or Artistic
 URL:            http://search.cpan.org/dist/XML-Simple/
 Source0:        http://www.cpan.org/authors/id/G/GR/GRANTM/XML-Simple-%{version}.tar.gz
@@ -52,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.14-4
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

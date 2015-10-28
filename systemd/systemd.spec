@@ -7,10 +7,9 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        227
-Release:        1
+Release:        2
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
-Group:          Core/Runtime/Utility
 Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
@@ -78,7 +77,6 @@ work as a drop-in replacement for sysvinit.
 %package libs
 Summary:        systemd libraries
 License:        LGPLv2+ and MIT
-Group:          Core/Runtime/Library
 
 %description libs
 Libraries for systemd and udev, as well as the systemd PAM module.
@@ -86,7 +84,6 @@ Libraries for systemd and udev, as well as the systemd PAM module.
 %package devel
 Summary:        Development headers for systemd
 License:        LGPLv2+ and MIT
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 Provides:       libudev-devel = %{version}
 
@@ -96,7 +93,6 @@ Development headers and auxiliary files for developing applications for systemd.
 %package -n libgudev1
 Summary:        Libraries for adding libudev support to applications that use glib
 License:        LGPLv2+
-Group:          Core/Runtime/Library
 Requires:       %{name} = %{version}-%{release}
 
 %description -n libgudev1
@@ -107,7 +103,6 @@ functionality from applications that use glib.
 Summary:        Header files for adding libudev support to applications that use glib
 Requires:       libgudev1 = %{version}-%{release}
 License:        LGPLv2+
-Group:          Core/Development/Library
 
 %description -n libgudev1-devel
 This package contains the header and pkg-config files for developing
@@ -475,6 +470,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 227-2
+- Rebuild for new 4.0 release
+
 * Thu Oct 08 2015 Cjacker <cjacker@foxmail.com>
 - update to 227
 

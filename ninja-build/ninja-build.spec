@@ -1,7 +1,6 @@
 Name:           ninja-build
 Version:        1.6.0
-Release:        2 
-Group:          CoreDev/Development/Utility
+Release:        3 
 Summary:        A small build system with a focus on speed
 
 License:        ASL 2.0
@@ -57,6 +56,9 @@ install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/vim/vimfiles/ftdetect/ninja
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6.0-3
+- Rebuild for new 4.0 release
+
 * Thu Jul 30 2014 Cjacker <cjacker@foxmail.com>
 - update to 1.6.0
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>

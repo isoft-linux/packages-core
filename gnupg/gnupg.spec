@@ -2,9 +2,8 @@
 Summary: A GNU utility for secure communication and data storage
 Name: gnupg
 Version: 1.4.19
-Release: 1 
+Release: 2 
 License: GPLv3+ with exceptions
-Group:  Core/Runtime/Utility
 Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/gnupg-%{version}.tar.bz2
 
 URL: http://www.gnupg.org/
@@ -70,3 +69,6 @@ rm -rf %{buildroot}/%{_infodir}
 %{_mandir}/man1/gpgv.1.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4.19-2
+- Rebuild for new 4.0 release
+

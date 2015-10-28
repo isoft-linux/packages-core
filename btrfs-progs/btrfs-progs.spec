@@ -1,9 +1,8 @@
 Name:		btrfs-progs
 Version:    4.0.1 
-Release:	1
+Release:	2
 Summary:	Userspace programs for btrfs
 
-Group:	    Core/Runtime/Utility
 License:	GPLv2
 URL:		http://btrfs.wiki.kernel.org/index.php/Main_Page
 Source0:	https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/%{name}-v%{version}.tar.xz
@@ -19,14 +18,12 @@ check, modify and correct any inconsistencies in the btrfs filesystem.
 
 %package -n libbtrfs
 Summary:    btrfs filesystem-specific libraries and headers
-Group:      Core/Runtime/Library
 
 %description -n libbtrfs
 %{summary}
 
 %package -n libbtrfs-devel
 Summary:	btrfs filesystem-specific libraries and headers
-Group:		Core/Development/Library
 Requires:	libbtrfs = %{version}-%{release}
 
 %description -n libbtrfs-devel
@@ -46,7 +43,6 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make mandir=%{_mandir} bindir=%{_sbindir} libdir=%{_libdir} incdir=%{_includedir}/btrfs install DESTDIR=$RPM_BUILD_ROOT
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -78,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libbtrfs.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.0.1-2
+- Rebuild for new 4.0 release
+
 * Sat Dec 21 2013 Cjacker <cjacker@gmail.com>
 - New upstream snapshot
 

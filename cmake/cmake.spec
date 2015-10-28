@@ -1,6 +1,6 @@
 Name: cmake
 Version: 3.3.1
-Release: 1
+Release: 2
 Summary: Cross-platform make system
 
 License: BSD
@@ -54,7 +54,6 @@ install -m 0644 %{SOURCE3} $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/site-start
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm
 install -m 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -75,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.3.1-2
+- Rebuild for new 4.0 release
+
 * Wed Sep 16 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.3.1
 

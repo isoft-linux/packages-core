@@ -1,7 +1,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.64
-Release: 5 
+Release: 6 
 License: MIT
 URL: http://dri.sourceforge.net
 Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
@@ -140,6 +140,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.4.64-6
+- Rebuild for new 4.0 release
+
 * Fri Aug 14 2015 Cjacker <cjacker@foxmail.com>
 - finally, libdrm-2.4.63 have amdgpu support.
 

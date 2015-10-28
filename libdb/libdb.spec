@@ -4,11 +4,10 @@
 Summary: The Berkeley DB database library for C
 Name: libdb
 Version: 6.1.23
-Release: 1 
+Release: 2 
 Source0: http://download.oracle.com/berkeley-db/db-%{version}.tar.gz
 URL:    http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
 License: BSD
-Group: Core/Runtime/Library
 BuildRequires: perl
 Conflicts: filesystem < 3
 
@@ -24,7 +23,6 @@ be installed on all systems.
 
 %package utils
 Summary: Command line tools for managing Berkeley DB databases
-Group: Core/Runtime/Utility
 Requires: %{name} = %{version}-%{release}
 
 %description utils
@@ -37,7 +35,6 @@ recovery. DB supports C, C++, Java and Perl APIs.
 
 %package devel
 Summary: C development files for the Berkeley DB library
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -49,7 +46,6 @@ Berkeley DB.
 
 %package devel-doc
 Summary: C development documentation files for the Berkeley DB library
-Group: Core/Development/Document
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-devel = %{version}-%{release}
 
@@ -62,7 +58,6 @@ Berkeley DB.
 
 %package static
 Summary: Berkeley DB static libraries
-Group:   Core/Development/Library 
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-devel = %{version}-%{release}
 
@@ -75,7 +70,6 @@ Berkeley DB.
 
 %package cxx-devel
 Summary: The Berkeley DB database library for C++
-Group:   Core/Development/Library 
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-devel = %{version}-%{release}
 
@@ -91,7 +85,6 @@ be installed on all systems.
 
 %package sql-devel
 Summary: Development files for using the Berkeley DB with sql
-Group:  Core/Development/Library 
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-devel = %{version}-%{release}
 
@@ -171,7 +164,6 @@ rm -rf examples/csharp
 rm -rf docs/installation
 mv examples docs
 
-rpmclean
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -240,3 +232,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_includedir}/%{name}/dbsql.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 6.1.23-2
+- Rebuild for new 4.0 release
+

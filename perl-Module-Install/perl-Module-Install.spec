@@ -1,9 +1,8 @@
 Name:           perl-Module-Install
 Version:        1.16
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Standalone, extensible Perl module installer
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/Module-Install/
 Source0:        http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Module-Install-%{version}.tar.gz
 BuildArch:      noarch
@@ -113,3 +112,6 @@ make test
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.16-7
+- Rebuild for new 4.0 release
+

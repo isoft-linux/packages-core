@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-openchrome
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir %{moduledir}/drivers
@@ -5,10 +6,9 @@
 Summary:        Xorg X11 openchrome video driver
 Name:           xorg-x11-drv-openchrome
 Version:        0.3.3
-Release:        14.git
+Release:        15.git
 URL:            http://www.freedesktop.org/wiki/Openchrome/
 License:        MIT
-Group:          User Interface/X Hardware Support
 
 #Source0:        http://xorg.freedesktop.org/archive/individual/driver/%{tarball}-%{version}.tar.bz2
 #git://anongit.freedesktop.org/openchrome/xf86-video-openchrome
@@ -36,7 +36,6 @@ X.Org X11 openchrome video driver.
 
 %package devel
 Summary:        Xorg X11 openchrome video driver XvMC development package
-Group:          Development/System
 Requires:       %{name} = %{version}-%{release}
 
 %description devel
@@ -86,3 +85,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libchromeXvMCPro.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.3.3-15.git
+- Rebuild for new 4.0 release
+

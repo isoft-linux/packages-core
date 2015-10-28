@@ -1,7 +1,7 @@
 Summary: A C library for multiple-precision floating-point computations
 Name: mpfr
 Version: 3.1.3
-Release: 1 
+Release: 2 
 URL: http://www.mpfr.org/
 Source0: http://www.mpfr.org/mpfr-current/mpfr-%{version}.tar.xz
 License: LGPL 
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1.3-2
+- Rebuild for new 4.0 release
+
 
 * Thu Sep 03 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.1.3

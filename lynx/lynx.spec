@@ -1,9 +1,8 @@
 Summary: A text-based Web browser
 Name: lynx
 Version: 2.8.7
-Release: 7
+Release: 8
 License: GPLv2
-Group:   CoreDev/Development/Utility/Documentation
 Source: http://lynx.isc.org/lynx%{version}/lynx%{version}.tar.bz2
 URL: http://lynx.isc.org/
 Patch0: lynx-2.8.6-default-config.patch
@@ -113,6 +112,9 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace,missingok) %{_sysconfdir}/lynx-site.cfg
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.8.7-8
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

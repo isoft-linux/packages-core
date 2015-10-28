@@ -1,6 +1,6 @@
 Name: man-pages
 Version: 4.02
-Release: 1
+Release: 2
 Summary: Linux man pages
 
 License: GPL
@@ -9,6 +9,8 @@ Source0: https://www.kernel.org/pub/linux/docs/man-pages/man-pages-%{version}.ta
 Source1: https://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-2013-a.tar.xz
 
 BuildRequires: sed, coreutils	
+
+BuildArch: noarch
 
 %description
 A large collection of man pages (documentation) from the Linux
@@ -43,5 +45,8 @@ rm -rf $RPM_BUILD_ROOT/%{_mandir}/man5/attr.*
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.02-2
+- Rebuild for new 4.0 release
+
 * Thu Sep 17 2015 Cjacker <cjacker@foxmail.com>
 - update to 4.02

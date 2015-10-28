@@ -1,8 +1,7 @@
 Summary: A program for synchronizing files over a network.
 Name: rsync
 Version: 3.1.1
-Release: 1
-Group: Applications/Internet
+Release: 2
 # TAG: for pre versions use
 #Source:	ftp://rsync.samba.org/pub/rsync/rsync-%{version}pre1.tar.gz
 Source:	ftp://rsync.samba.org/pub/rsync/rsync-%{version}.tar.gz
@@ -28,7 +27,6 @@ make %{_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
-rpmclean
 
 %check
 make check
@@ -43,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man5/rsyncd.conf.5*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1.1-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

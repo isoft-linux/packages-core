@@ -2,7 +2,7 @@
 Summary: A DSSSL implementation.
 Name: openjade
 Version: 1.3.2
-Release: 16
+Release: 17
 Requires(pre): sgml-common >= 0.5
 Requires(pre): docbook-dtds
 Source0: http://download.sourceforge.net/openjade/openjade-%{version}.tar.gz
@@ -14,7 +14,6 @@ Patch5: msggen.pl.patch
 Patch10: opensp-1.5-gcc34.patch
 
 License: Distributable
-Group:  CoreDev/Development/Utility/Documentation
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Prefix: /usr
 Obsoletes: jade
@@ -33,7 +32,6 @@ XML, RTF, TeX, MIF (FrameMaker), SGML, or XML.
 %package devel
 Summary: Files for developing applications that use openjade/OpenSP.
 Requires: %{name} = %{version}
-Group: CoreDev/Development/Library
 
 %description devel
 The header files, static library, libtool library and man pages for
@@ -121,7 +119,6 @@ cp %{openjadetop}/openjade-%{version}/dsssl/dsssl.dtd \
 rm -rf $RPM_BUILD_ROOT/usr/doc/OpenSP
 rm -rf $RPM_BUILD_ROOT/%{prefix}/share/sgml/%{name}-%{version}/doc
 rm -rf $RPM_BUILD_ROOT/%{_libdir}/*.la
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -143,6 +140,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3.2-17
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

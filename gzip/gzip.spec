@@ -1,9 +1,8 @@
 Summary: The GNU data compression program
 Name: gzip
 Version: 1.6
-Release: 6
+Release: 7
 License: GPLv3+ and GFDL
-Group: Core/Runtime/Utility
 Source: http://ftp.gnu.org/gnu/gzip/gzip-%{version}.tar.xz
 URL: http://www.gzip.org/
 Conflicts: filesystem < 3
@@ -46,3 +45,6 @@ make check
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6-7
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Summary: Library providing the Gnome XSLT engine
 Name: libxslt
 Version: 1.1.28
-Release: 1
+Release: 2
 License: MIT
-Group:  Core/Runtime/Library 
 Source: ftp://xmlsoft.org/XSLT/libxslt-%{version}.tar.gz
 URL: http://xmlsoft.org/XSLT/
 BuildRequires: libxml2-devel
@@ -17,7 +16,6 @@ mechanism.
 
 %package devel
 Summary: Development files for %{name}
-Group:   Core/Development/Library
 Requires: libxslt = %{version}-%{release}
 
 %description devel
@@ -26,7 +24,6 @@ developing applications that use %{name}.
 
 %package -n python-libxslt
 Summary: Python bindings for the libxslt library
-Group:   Core/Development/Library/Python
 Requires: libxslt = %{version}-%{release}
 Requires: python-libxml2
 
@@ -52,7 +49,6 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
-rpmclean
 %check 
 #make tests
 
@@ -90,3 +86,6 @@ rpmclean
 %doc python/tests/*.xsl
 %{_docdir}/libxslt-python-%{version}
 %changelog
+* Fri Oct 23 2015 cjacker - 1.1.28-2
+- Rebuild for new 4.0 release
+

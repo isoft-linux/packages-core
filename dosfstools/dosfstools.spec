@@ -1,9 +1,8 @@
 Name: dosfstools
 Summary: Utilities for making and checking MS-DOS FAT filesystems on Linux
 Version: 3.0.26
-Release: 5
+Release: 6
 License: GPLv3+
-Group:  Core/Runtime/Utility 
 Source0: http://www.daniel-baumann.ch/software/dosfstools/%{name}-%{version}.tar.xz
 
 URL: http://www.daniel-baumann.ch/software/dosfstools/
@@ -32,3 +31,6 @@ rm -rf %{buildroot}
 %{_mandir}/man8/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.0.26-6
+- Rebuild for new 4.0 release
+

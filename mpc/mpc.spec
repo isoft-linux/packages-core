@@ -1,8 +1,7 @@
 Name:           mpc
 Version:        1.0.3
-Release:        1
+Release:        2
 Summary:        Library for the arithmetic of complex numbers with arbitrarily high precision
-Group:  Core/Runtime/Library	
 License:        LGPL
 URL:            http://www.multiprecision.org
 Source0:        http://www.multiprecision.org/mpc/download/mpc-%{version}.tar.gz
@@ -15,7 +14,6 @@ Library for the arithmetic of complex numbers with arbitrarily high precision
 
 %package        devel
 Summary:        Development files for %{name}
-Group:	    Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 
 %description    devel
@@ -36,7 +34,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT%{_infodir}
-rpmclean
 
 %check
 make check
@@ -56,3 +53,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.3-2
+- Rebuild for new 4.0 release
+

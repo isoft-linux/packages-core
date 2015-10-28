@@ -1,11 +1,23 @@
+# Some of the files below /usr/lib/pythonMAJOR.MINOR/test  (e.g. bad_coding.py)
+# are deliberately invalid, leading to SyntaxError exceptions if they get
+# byte-compiled.
+#
+# These errors are ignored by the normal python build, and aren't normally a
+# problem in the buildroots since /usr/bin/python isn't present.
+#
+# However, for the case where we're rebuilding the python srpm on a machine
+# that does have python installed we need to set this to avoid
+# brp-python-bytecompile treating these as fatal errors:
+#
+%global _python_bytecompile_errors_terminate_build 0
+
 %define main_ver 3.4
 %define realname Python
 Summary: An interpreted, interactive, object-oriented programming language 
 Name:    python3
 Version: 3.4.3
-Release: 1 
+Release: 2 
 License: BSD
-Group:   Development/Languages
 Source0:  %{realname}-%{version}.tar.xz
 
 # Supply various useful macros for building python 3 modules:
@@ -61,7 +73,6 @@ Mac and MFC).
 
 %package devel
 Summary: Libraries and header files required for %{name}.
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -69,7 +80,6 @@ Libraries and header files required for %{name}.
 
 %package tools
 Summary: A collection of development tools included with Python
-Group: Development/Tools
 Requires: %{name} = %{version}-%{release}
 Requires: tkinter3 = %{version}-%{release}
 
@@ -80,7 +90,6 @@ color editor (pynche), and a python gettext program (pygettext.py).
 
 %package -n tkinter3
 Summary: A graphical user interface for the Python scripting language
-Group: Development/Languages
 Requires: %{name} = %{version}-%{release}
 
 %description -n tkinter3
@@ -110,6 +119,9 @@ mkdir -p %{buildroot}/%{_rpmconfigdir}/macros.d/
 install -m 644 %{SOURCE2} %{buildroot}/%{_rpmconfigdir}/macros.d/
 install -m 644 %{SOURCE3} %{buildroot}/%{_rpmconfigdir}/macros.d/
 
+#fix permission, it will affect debuginfo package generation.
+chmod 0755 %{buildroot}%{_libdir}/libpython3.so
+chmod 0755 %{buildroot}%{_libdir}/libpython3*.so.*
 
 %check
 #EXTRATESTOPTS="-x test_gdb"
@@ -163,7 +175,7 @@ install -m 644 %{SOURCE3} %{buildroot}/%{_rpmconfigdir}/macros.d/
 %{_libdir}/python*/lib-dynload/_tkinter*.so
 
 
-
-
-
 %changelog
+* Fri Oct 23 2015 cjacker - 3.4.3-2
+- Rebuild for new 4.0 release
+

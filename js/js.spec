@@ -6,9 +6,8 @@ Summary:	JavaScript interpreter and libraries
 Name:		js
 Epoch:		1
 Version:	1.8.5
-Release:	14
+Release:	15
 License:	GPLv2+ or LGPLv2+ or MPLv1.1
-Group:		Core/Runtime/Language
 URL:		http://www.mozilla.org/js/
 Source0:	http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz
 Patch0:		js-1.8.5-64bit-big-endian.patch
@@ -48,7 +47,6 @@ with only mild differences from the published standard.
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}
-Group:  Core/Development/Library
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: pkgconfig
 Requires: ncurses-devel readline-devel
@@ -172,6 +170,9 @@ rm -rf %{buildroot}
 %{_includedir}/js
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:1.8.5-15
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

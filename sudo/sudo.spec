@@ -1,9 +1,8 @@
 Summary: Allows restricted root access for specified users
 Name: sudo
 Version: 1.8.10
-Release: 1
+Release: 2
 License: ISC
-Group: Core/Runtime/Utility
 URL: http://www.courtesan.com/sudo/
 Source0: http://www.courtesan.com/sudo/dist/sudo-%{version}p2.tar.gz
 Source1: sudo-1.7.4p4-sudoers
@@ -34,7 +33,6 @@ on many different machines.
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 
 %description    devel
@@ -152,5 +150,8 @@ rm -rf $RPM_BUILD_ROOT
 #%{_mandir}/man8/sudo_plugin.8*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.8.10-2
+- Rebuild for new 4.0 release
+
 * Sat Dec 21 2013 Cjacker <cjacker@gmail.com>
 - update to 1.8.8

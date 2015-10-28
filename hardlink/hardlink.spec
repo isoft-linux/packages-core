@@ -1,9 +1,8 @@
 Summary:	Create a tree of hardlinks
 Name:		hardlink
 Version:	1.0
-Release:	1
+Release:	2
 Epoch:		1
-Group:	    Core/Runtime/Utility	
 URL:		http://pkgs.fedoraproject.org/gitweb/?p=hardlink.git
 License:	GPL+
 Source0:	hardlink.c
@@ -36,6 +35,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/hardlink.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:1.0-2
+- Rebuild for new 4.0 release
+
 * Wed Dec 04 2013 Cjacker <cjacker@gmail.com>
 - first build for new OS
 

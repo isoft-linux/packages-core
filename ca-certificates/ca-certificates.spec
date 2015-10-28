@@ -37,10 +37,9 @@ Name: ca-certificates
 # because all future versions will start with 2013 or larger.)
 
 Version: 2015.2.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: Public Domain
 
-Group: System Environment/Base
 URL: https://fedoraproject.org/wiki/CA-Certificates
 
 #Please always update both certdata.txt and nssckbi.h
@@ -374,3 +373,6 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2015.2.4-4
+- Rebuild for new 4.0 release
+

@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 # INFO: When doing a bootstrap build on a new architecture, set this to 1 to
 # avoid build loops.
 %define build_bootstrap 0
@@ -5,9 +6,8 @@
 Summary: X.Org X11 Protocol headers
 Name: xorg-x11-proto-devel
 Version: 7.7
-Release: 28
+Release: 29
 License: The Open Group License
-Group: Development/System
 URL: http://www.x.org
 
 Source0:  http://xorg.freedesktop.org/archive/individual/proto//bigreqsproto-1.1.2.tar.bz2
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.7-29
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

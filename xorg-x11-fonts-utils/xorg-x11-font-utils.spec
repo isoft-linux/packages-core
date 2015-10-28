@@ -14,9 +14,8 @@ Name: xorg-x11-%{pkgname}
 # IMPORTANT: If package ever gets renamed to something else, remove the Epoch line!
 Epoch: 1
 Version: 1.1.1
-Release: 3
+Release: 4
 License: MIT/X11
-Group: User Interface/X
 URL: http://www.x.org
 
 Source0: http://xorg.freedesktop.org/releases/X11R7.0/src/everything/bdftopcf-1.0.5.tar.bz2
@@ -113,7 +112,6 @@ rm -rf $RPM_BUILD_ROOT
    done
 }
 %endif
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -142,6 +140,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:1.1.1-4
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

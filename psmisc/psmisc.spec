@@ -2,9 +2,8 @@
 Summary: Utilities for managing processes on your system
 Name: psmisc
 Version: 22.21
-Release: 7
+Release: 8
 License: GPLv2+
-Group: Applications/System
 URL: http://sourceforge.net/projects/psmisc
 
 Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
@@ -55,3 +54,6 @@ mv $RPM_BUILD_ROOT%{_bindir}/fuser $RPM_BUILD_ROOT%{_sbindir}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 22.21-8
+- Rebuild for new 4.0 release
+

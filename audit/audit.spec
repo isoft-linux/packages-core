@@ -7,9 +7,8 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.4.2
-Release: 2
+Release: 3
 License: GPLv2+
-Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
@@ -38,7 +37,6 @@ the audit subsystem in the Linux 2.6 kernel.
 %package libs
 Summary: Dynamic library for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 
 %description libs
 The audit-libs package contains the dynamic libraries needed for 
@@ -47,7 +45,6 @@ applications to use the audit framework.
 %package libs-devel
 Summary: Header files for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 Requires: %{name}-libs = %{version}
 Requires: kernel-headers >= 2.6.29
 
@@ -58,7 +55,6 @@ developing applications that need to use the audit framework libraries.
 %package libs-static
 Summary: Static version of libaudit library
 License: LGPLv2+
-Group: Development/Libraries
 Requires: kernel-headers >= 2.6.29
 
 %description libs-static
@@ -69,7 +65,6 @@ framework libraries
 %package libs-python
 Summary: Python bindings for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
 
 %description libs-python
@@ -79,7 +74,6 @@ and libauparse can be used by python.
 %package -n audispd-plugins
 Summary: Plugins for the audit event dispatcher
 License: GPLv2+
-Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs = %{version}-%{release}
 
@@ -290,3 +284,6 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.4.2-3
+- Rebuild for new 4.0 release
+

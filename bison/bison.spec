@@ -1,9 +1,8 @@
 Summary: A GNU general-purpose parser generator
 Name: bison
 Version: 3.0.2 
-Release: 4
+Release: 5
 License: GPLv2+
-Group:  CoreDev/Development/Utility 
 Source: ftp://ftp.gnu.org/pub/gnu/bison/bison-%{version}.tar.xz
 URL: http://www.gnu.org/software/bison/
 BuildRequires: m4 >= 1.4 
@@ -27,7 +26,6 @@ Bison.
 
 %package devel
 Summary: -ly library for development using Bison-generated parsers
-Group: CoreDev/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -71,4 +69,7 @@ make check
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+%changelog
+* Fri Oct 23 2015 cjacker - 3.0.2-5
+- Rebuild for new 4.0 release
 

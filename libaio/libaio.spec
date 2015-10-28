@@ -1,9 +1,8 @@
 Name: libaio
 Version: 0.3.110
-Release: 5 
+Release: 6 
 Summary: Linux-native asynchronous I/O access library
 License: LGPLv2+
-Group:   Core/Runtime/Library
 URL:    http://lse.sourceforge.net/io/aio.html
 Source: http://ftp.de.debian.org/debian/pool/main/liba/libaio/libaio_%{version}.orig.tar.gz
 Patch1: libaio-install-to-slash.patch
@@ -21,7 +20,6 @@ require the Linux-native async I/O API.
 
 %package devel
 Summary: Development files for Linux-native asynchronous I/O access
-Group:  Core/Development/Library 
 Requires: libaio
 
 %description devel
@@ -40,7 +38,6 @@ make CC=gcc
 make destdir=$RPM_BUILD_ROOT prefix=/ libdir=%{usrlibdir} usrlibdir=%{usrlibdir} \
 	includedir=%{_includedir} install
 
-rpmclean
 
 %check
 #make check CC=gcc
@@ -64,3 +61,6 @@ rpmclean
 %attr(0644,root,root) %{usrlibdir}/libaio.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.3.110-6
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Name:           perl-YAML-Tiny
 Version:        1.67
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Read/Write YAML files with as little code as possible
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/YAML-Tiny/
 Source0:        http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/YAML-Tiny-%{version}.tar.gz
 BuildArch:      noarch
@@ -51,3 +50,6 @@ make test
 %{_mandir}/man3/YAML::Tiny.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.67-4
+- Rebuild for new 4.0 release
+

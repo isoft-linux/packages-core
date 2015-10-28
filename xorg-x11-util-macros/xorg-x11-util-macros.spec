@@ -1,13 +1,14 @@
 Summary: X.Org X11 Autotools macros
 Name: xorg-x11-util-macros
 Version: 1.19.0
-Release: 1
+Release: 2
 License: The Open Group License
-Group: Development/System
 URL: http://www.x.org
 Source0: http://xorg.freedesktop.org/archive/individual/util/util-macros-%{version}.tar.bz2 
 BuildRequires: xorg-x11-filesystem
 Requires: xorg-x11-filesystem
+
+BuildArch: noarch
 
 %description
 X.Org X11 autotools macros required for building the various packages that
@@ -23,7 +24,6 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pkgconfig/xorg-macros.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.19.0-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

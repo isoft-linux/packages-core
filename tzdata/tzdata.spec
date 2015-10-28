@@ -1,9 +1,8 @@
 Name:	    tzdata	
 Version:	2015e
-Release:	1
+Release:	2
 Summary:	Time Zone Database
 
-Group:		Core/Runtime/Data
 License:	Public Domain
 URL:		http://www.iana.org/time-zones
 Source0:	tzdata%{version}.tar.gz
@@ -48,3 +47,8 @@ rm -rf $RPM_BUILD_ROOT%{_bindir}/tzselect
 %{_mandir}/man8/zic.8.gz
 %dir %{_datadir}/zoneinfo
 %{_datadir}/zoneinfo/*
+
+%changelog
+* Fri Oct 23 2015 cjacker - 2015e-2
+- Rebuild for new 4.0 release
+

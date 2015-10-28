@@ -1,10 +1,9 @@
 Summary: The GNU versions of find utilities (find and xargs)
 Name: findutils
 Version: 4.5.14
-Release: 1
+Release: 2
 Epoch: 1
 License: GPLv3+
-Group:  Core/Runtime/Utility 
 URL: http://www.gnu.org/software/findutils/
 Source0: ftp://alpha.gnu.org/gnu/findutils/%{name}-%{version}.tar.gz
 
@@ -68,7 +67,6 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 %find_lang %{name}
 
-rpmclean
 %files -f %{name}.lang
 %{_bindir}/find
 %{_bindir}/oldfind
@@ -78,3 +76,6 @@ rpmclean
 %{_mandir}/man1/xargs.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:4.5.14-2
+- Rebuild for new 4.0 release
+

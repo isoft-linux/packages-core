@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-fbdev
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
@@ -7,11 +8,10 @@
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.4
-Release:   3 
+Release:   4 
 URL:       http://www.x.org
 Source0:   xf86-video-fbdev-%{version}.tar.bz2 
 License:   MIT/X11
-Group:     User Interface/X Hardware Support
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 ExclusiveArch: %{ix86} x86_64 ia64 ppc alpha sparc sparc64
@@ -19,7 +19,9 @@ ExclusiveArch: %{ix86} x86_64 ia64 ppc alpha sparc sparc64
 BuildRequires: pkgconfig
 BuildRequires: xorg-x11-server-sdk
 
-Requires:  xorg-x11-server-Xorg
+Requires: xorg-x11-server-Xorg
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 fbdev video driver.
@@ -39,7 +41,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 # should be fixed in upstream Makefile.am or whatever.
 find $RPM_BUILD_ROOT -regex ".*\.la$" | xargs rm -f --
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -52,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/fbdev.4*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.4.4-4
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

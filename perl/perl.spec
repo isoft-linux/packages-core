@@ -7,11 +7,10 @@
 
 Name:	 	perl	
 Version:	5.20.2
-Release:	1
+Release:	2
 Epoch:      %{perl_epoch}
 Summary:    Practical Extraction and Report Language	
 
-Group:		Core/Runtime/Language
 License:	(GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
 URL:		 http://www.perl.org
 Source0:	%{name}-%{version}.tar.bz2
@@ -54,7 +53,6 @@ scripts.
 
 %package devel
 Summary:        Header files for use in perl development
-Group:          Core/Development/Library
 License:        GPL+ or Artistic
 Requires:       perl = %{perl_epoch}:%{version}-%{release}
 
@@ -135,4 +133,9 @@ rm -rf $RPM_BUILD_ROOT/*.0
 %{_bindir}/perlivp
 %{_libdir}/perl5/core_perl/CORE/*.h
 %{_mandir}/man3/*
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 4:5.20.2-2
+- Rebuild for new 4.0 release
 

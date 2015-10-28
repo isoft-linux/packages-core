@@ -1,9 +1,8 @@
 Name:           perl-URI
 Version:        1.58
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A Perl module implementing URI parsing and manipulation
 
-Group:          Core/Runtime/Library/Perl
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/URI/
 Source0:        http://www.cpan.org/authors/id/G/GA/GAAS/URI-%{version}.tar.gz
@@ -55,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.58-3
+- Rebuild for new 4.0 release
+
 * Wed Dec 04 2013 Cjacker <cjacker@gmail.com>
 - first build for new OS
 

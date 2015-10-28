@@ -1,6 +1,6 @@
 Name: tmux	
 Version: 2.0 
-Release: 1
+Release: 2
 Summary: Tool to control multiple terminals from a single terminal 
 
 License: BSD
@@ -48,5 +48,8 @@ install -m0644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/tmux.conf
 %{_mandir}/man1/tmux.*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.0-2
+- Rebuild for new 4.0 release
+
 * Wed Aug 19 2015 Cjacker <cjacker@foxmail.com>
 - update to 2.0

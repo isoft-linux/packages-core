@@ -1,6 +1,6 @@
 Name:          	xcb-proto 
 Version:        1.11
-Release:        4.git 
+Release:        5.git 
 Summary:        A C binding to the X11 protocol
 
 License:        MIT
@@ -16,6 +16,7 @@ BuildRequires:  xorg-x11-util-macros
 BuildRequires:  xorg-x11-filesystem
 Requires:       xorg-x11-filesystem
 
+BuildArch: noarch
 %description
 xcb-proto provides the XML-XCB protocol descriptions that libxcb uses to
 generate the majority of its code and API. We provide them separately
@@ -58,5 +59,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.11-5.git
+- Rebuild for new 4.0 release
+
 * Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
 - rebuild

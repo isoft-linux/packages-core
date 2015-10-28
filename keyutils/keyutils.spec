@@ -9,9 +9,8 @@
 Summary: Linux Key Management Utilities
 Name: keyutils
 Version: %{version}
-Release: 6%{?buildid}%{?dist}
+Release: 7%{?buildid}%{?dist}
 License: GPLv2+ and LGPLv2+
-Group: System Environment/Base
 ExclusiveOS: Linux
 Url: http://people.redhat.com/~dhowells/keyutils/
 
@@ -27,7 +26,6 @@ instantiated.
 
 %package libs
 Summary: Key utilities library
-Group: System Environment/Base
 
 %description libs
 This package provides a wrapper library for the key management facility system
@@ -35,7 +33,6 @@ calls.
 
 %package libs-devel
 Summary: Development package for building Linux key management utilities
-Group: System Environment/Base
 Requires: keyutils-libs == %{version}-%{release}
 
 %description libs-devel
@@ -110,3 +107,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.5.9-7
+- Rebuild for new 4.0 release
+

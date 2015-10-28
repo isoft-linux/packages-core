@@ -1,5 +1,7 @@
+%define debug_package %{nil}
+
 %define kversion 4.3.0
-%define release 112
+%define release 113
 
 %define extraversion -%{release}
 
@@ -474,6 +476,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.3.0-113
+- Rebuild for new 4.0 release
+
 * Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
 - update to 4.3.0rc6.
 

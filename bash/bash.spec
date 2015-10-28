@@ -3,8 +3,7 @@
 Name: bash
 Version: %{baseversion}
 Summary: The GNU Bourne Again shell
-Release: 30 
-Group:   Core/Runtime/Utility 
+Release: 31 
 License: GPLv3+
 Url: http://www.gnu.org/software/bash
 
@@ -155,3 +154,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.3-31
+- Rebuild for new 4.0 release
+

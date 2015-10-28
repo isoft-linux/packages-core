@@ -1,9 +1,8 @@
 Summary: Simple interface for editing the font path for the X font server.
 Name: chkfontpath
 Version: 1.10.0
-Release: 4
+Release: 5
 License: GPL
-Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 
 %description 
@@ -30,6 +29,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.10.0-5
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

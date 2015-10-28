@@ -3,9 +3,8 @@
 
 Name:		b43-tools
 Version:	017
-Release:	5%{?dist}
+Release:	6%{?dist}
 Summary:	Tools for the Broadcom 43xx series WLAN chip
-Group:		System Environment/Base
 # assembler — GPLv2
 # debug — GPLv3
 # disassembler — GPLv2
@@ -70,3 +69,6 @@ cd debug && python install.py install --skip-build --root %{buildroot}
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 017-6
+- Rebuild for new 4.0 release
+

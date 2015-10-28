@@ -1,13 +1,16 @@
 Name: intltool
 Summary: Utility for internationalizing various kinds of data files.
 Version: 0.51.0
-Release: 1
+Release: 2
 License: GPL
-Group:  Core/Development/Utility 
 Source: %{name}-%{version}.tar.gz
 URL:    http://freedesktop.org/wiki/Software/intltool/ 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
+
 Requires: patch
+
+BuildArch: noarch
+
 Obsoletes: xml-i18n-tools
 Provides: xml-i18n-tools = 0.11
 
@@ -28,7 +31,6 @@ make
 [ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
-rpmclean
 
 %check
 make check
@@ -44,5 +46,8 @@ make check
 %{_mandir}/man*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.51.0-2
+- Rebuild for new 4.0 release
+
 * Mon Jul 30 2007 Cjacker <cjacker@gmail.com>
 - prepare for 0.5

@@ -1,8 +1,7 @@
 Name:		xcb-util-image
 Version:	0.4.0
-Release: 2 
+Release: 3 
 Summary:	Port of Xlib's XImage and XShmImage functions on top of libxcb
-Group:		System Environment/Libraries
 License:	MIT
 URL:		http://xcb.freedesktop.org
 Source0:	http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
@@ -17,7 +16,6 @@ XCB util-image module provides the following library:
 
 %package 	devel
 Summary:	Development and header files for xcb-util-image
-Group:		System Environment/Libraries
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description	devel
@@ -56,3 +54,6 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.4.0-3
+- Rebuild for new 4.0 release
+

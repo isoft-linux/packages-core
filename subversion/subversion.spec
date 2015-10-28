@@ -1,7 +1,7 @@
 Summary: Modern Version Control System designed to replace CVS
 Name: subversion
 Version: 1.9.0
-Release: 1   
+Release: 2   
 License: BSD
 URL: http://subversion.tigris.org/
 Source0: http://subversion.tigris.org/tarballs/subversion-%{version}.tar.bz2
@@ -24,7 +24,6 @@ compelling replacement for CVS.
 
 %package devel
 Summary: Libraries and headers for adding subverion support to applications 
-Group: CoreDev/Development/Library
 Requires:	subversion
 
 %description devel
@@ -78,6 +77,9 @@ rm -rf ${RPM_BUILD_ROOT}
 #/etc/httpd/conf.d/subversion.conf
 #/usr/lib/httpd/modules
 %changelog
+* Fri Oct 23 2015 cjacker - 1.9.0-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

@@ -1,12 +1,10 @@
-%define debug_package %{nil}
 %define _localedir %{_datadir}/locale
 
 Summary: A free and portable TrueType font rendering engine.
 Name: freetype
 Version: 2.6
-Release: 6 
+Release: 7 
 License: GPL
-Group: Core/Runtime/Library
 URL: http://www.freetype.org
 Source0:  freetype-%{version}.tar.bz2
 Source1:  infinality-settings.sh
@@ -28,7 +26,6 @@ text-rendering library.
 
 %package devel
 Summary: FreeType development libraries and header files
-Group:  Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -63,7 +60,6 @@ cp -r include/internal $RPM_BUILD_ROOT/usr/include/freetype2/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/profile.d
 install -m 0755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/profile.d/
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -85,4 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libfreetype.a
 %{_libdir}/pkgconfig/freetype2.pc
 %{_bindir}/freetype-config
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 2.6-7
+- Rebuild for new 4.0 release
 

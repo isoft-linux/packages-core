@@ -3,7 +3,7 @@ Name:       xorg-x11-twm
 # NOTE: Remove Epoch line if package gets renamed to something like "twm"
 Epoch:      1
 Version:    1.0.9
-Release:    2%{?dist}
+Release:    3%{?dist}
 License:    MIT
 URL:        http://www.x.org
 
@@ -53,5 +53,8 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 %config %{_sysconfdir}/X11/twm/system.twmrc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:1.0.9-3
+- Rebuild for new 4.0 release
+
 * Thu Jul 16 2015 Cjacker <cjacker@foxmail.com>
 - build, as the fallback wm to deal with emergency statuation.

@@ -2,10 +2,9 @@
 
 Name: dracut
 Version: 043
-Release: 2 
+Release: 3 
 
 Summary: Initramfs generator using udev
-Group:  Core/Runtime/Utility 
 License: GPLv2+ and LGPLv2.1+
 URL: https://dracut.wiki.kernel.org/
 Source0: http://www.kernel.org/pub/linux/utils/boot/dracut/dracut-%{version}.tar.xz
@@ -256,4 +255,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir /boot/dracut
 %dir /var/lib/dracut
 %dir /var/lib/dracut/overlay
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 043-3
+- Rebuild for new 4.0 release
 

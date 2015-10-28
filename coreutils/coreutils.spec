@@ -1,9 +1,8 @@
 Summary: A set of basic GNU tools commonly used in shell scripts
 Name:    coreutils
 Version: 8.24
-Release: 1
+Release: 2
 License: GPLv3+
-Group:   Core/Runtime/Utility
 Url:     http://www.gnu.org/software/coreutils/
 Source0: ftp://ftp.gnu.org/gnu/%{name}/%{name}-%{version}.tar.xz
 Source101:  coreutils-DIR_COLORS
@@ -158,5 +157,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/locale/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 8.24-2
+- Rebuild for new 4.0 release
+
 * Sun Aug 02 2015 Cjacker <cjacker@foxmail.com>
 - update to 8.24

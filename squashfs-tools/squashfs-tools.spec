@@ -1,9 +1,8 @@
 Summary: Utility for the creation of squashfs filesystems
 Name: squashfs-tools
 Version: 4.3
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2+
-Group: System Environment/Base
 URL: http://squashfs.sourceforge.net/
 Source0: http://downloads.sourceforge.net/squashfs/squashfs%{version}.tar.gz
 # manpages from http://ftp.debian.org/debian/pool/main/s/squashfs-tools/squashfs-tools_4.2+20121212-1.debian.tar.xz
@@ -69,3 +68,6 @@ rm -rf %{buildroot}
 %{_sbindir}/unsquashfs
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.3-12
+- Rebuild for new 4.0 release
+

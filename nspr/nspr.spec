@@ -1,10 +1,9 @@
 Summary:        Netscape Portable Runtime
 Name:           nspr
 Version:        4.10.8
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        MPLv2.0
 URL:            http://www.mozilla.org/projects/nspr/
-Group:          System Environment/Libraries
 BuildRoot:      %{_tmppath}/%{name}-%{version}-root
 Conflicts:      filesystem < 3
 
@@ -24,7 +23,6 @@ memory management (malloc and free) and shared library linking.
 
 %package devel
 Summary:        Development libraries for the Netscape Portable Runtime
-Group:          Development/Libraries
 Requires:       nspr = %{version}-%{release}
 Requires:       pkgconfig
 BuildRequires:  xmlto
@@ -142,3 +140,6 @@ done
 %{_mandir}/man*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.10.8-3
+- Rebuild for new 4.0 release
+

@@ -4,9 +4,8 @@
 Summary: The GNU disk partition manipulation program
 Name:    parted
 Version: 3.2
-Release: 1
+Release: 2
 License: GPLv3+
-Group:   Core/Runtime/Utility
 URL:     http://www.gnu.org/software/parted
 
 Source0: ftp://ftp.gnu.org/gnu/%{name}/%{name}-%{version}.tar.xz
@@ -34,7 +33,6 @@ to new hard disks.
 
 %package devel
 Summary:  Files for developing apps which will manipulate disk partitions
-Group:    Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 Requires: pkgconfig
 
@@ -102,3 +100,6 @@ make check ||:
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.2-2
+- Rebuild for new 4.0 release
+

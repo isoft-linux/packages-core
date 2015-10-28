@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXxf86misc runtime library
 Name: libXxf86misc
 Version: 1.0.3
-Release: 7
+Release: 8
 License: MIT
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: ftp://ftp.x.org/pub/individual/lib/%{name}-%{version}.tar.bz2
 
@@ -16,7 +15,6 @@ X.Org X11 libXxf86misc runtime library
 
 %package devel
 Summary: X.Org X11 libXxf86misc development package
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -33,7 +31,6 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 
-rpmclean
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -49,3 +46,6 @@ rpmclean
 %{_mandir}/man3/*.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.3-8
+- Rebuild for new 4.0 release
+

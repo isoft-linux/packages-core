@@ -1,9 +1,8 @@
 Summary: Utilities for managing filesystem extended attributes.
 Name: attr
 Version: 2.4.47
-Release: 10 
+Release: 11 
 License: GPL
-Group:  Core/Runtime/Utility 
 Source: http://ftp.twaren.net/Unix/NonGNU//attr/%{name}-%{version}.src.tar.gz
 Patch1: 0001-attr-2.4.47-warnings.patch
 Patch2: 0002-attr-2.4.47-xattr-conf.patch
@@ -19,7 +18,6 @@ with the SGI IRIX tool of the same name.
 
 %package -n libattr
 Summary: Dynamic library for extended attribute support.
-Group:  Core/Runtime/Library 
 License: LGPL
 Requires(pre): /sbin/ldconfig
 
@@ -29,7 +27,6 @@ the extended attribute system calls and library functions.
 
 %package -n libattr-devel
 Summary: Extended attribute static libraries and headers.
-Group:  Core/Development/Library 
 License: LGPL
 Requires: libattr
 
@@ -65,12 +62,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 make install-dev DESTDIR=$RPM_BUILD_ROOT
 make install-lib DESTDIR=$RPM_BUILD_ROOT
 
+chmod 0755 %{buildroot}%{_libdir}/libattr.so.*
+
 # remove useless doc
 rm -rf $RPM_BUILD_ROOT/%{_docdir}
 
 %find_lang attr
 
-rpmclean
 
 %check
 #different filesystem may not support attr/acl completely.
@@ -98,12 +96,16 @@ rm -rf $RPM_BUILD_ROOT
 %files -n libattr-devel
 %defattr(-,root,root)
 %{_libdir}/libattr.so
+%{_libdir}/libattr.a
 %{_includedir}/attr
-%{_libdir}/libattr.*
 %{_mandir}/man2/*attr.2*
 %{_mandir}/man3/attr_*.3.*
 
 %files -n libattr
 %{_libdir}/libattr.so.*
 %config(noreplace) %{_sysconfdir}/xattr.conf
+
+%changelog
+* Fri Oct 23 2015 cjacker - 2.4.47-11
+- Rebuild for new 4.0 release
 

@@ -1,6 +1,6 @@
 Name: os-update
 Version: 4.0
-Release: 1
+Release: 2
 Summary: An indicator file of os updates status.
 
 License: BSD 
@@ -23,6 +23,9 @@ install -m0755 %{SOURCE0} %{buildroot}%{_sysconfdir}/update/
 %{_sysconfdir}/update/updates.xml
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.0-2
+- Rebuild for new 4.0 release
+
 * Fri Oct 16 2015 Cjacker <cjacker@foxmail.com>
 - initial build.
 

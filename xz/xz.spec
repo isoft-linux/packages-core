@@ -1,9 +1,8 @@
 Summary:	LZMA compression utilities
 Name:		xz
 Version:	5.2.1
-Release:	1
+Release:	2
 License:	LGPLv2+
-Group:	    Core/Runtime/Utility	
 Source0:	http://tukaani.org/%{name}/%{name}-%{version}.tar.xz
 URL:		http://tukaani.org/%{name}/
 Requires:	%{name}-libs = %{version}-%{release}
@@ -25,7 +24,6 @@ decompression speed fast.
 
 %package 	libs
 Summary:	Libraries for decoding LZMA compression
-Group:      Core/Runtime/Library	
 License:	LGPLv2+
 
 %description 	libs
@@ -33,7 +31,6 @@ Libraries for decoding files compressed with LZMA or XZ utils.
 
 %package 	devel
 Summary:	Devel libraries & headers for liblzma
-Group:		Core/Development/Library
 License:	LGPLv2+
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	pkgconfig
@@ -43,7 +40,6 @@ Devel libraries and headers for liblzma.
 
 %package 	lzma-compat
 Summary:	Older LZMA format compatibility binaries
-Group:		Core/Runtime/Utility
 License:	GPLv2+ and LGPLv2+
 Requires:	%{name} = %{version}-%{release}
 Obsoletes:	lzma < %{version}
@@ -104,3 +100,6 @@ rm -rf %{buildroot}
 %{_mandir}/man1/*lz*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.2.1-2
+- Rebuild for new 4.0 release
+

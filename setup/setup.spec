@@ -1,9 +1,8 @@
 Summary: A set of system configuration and setup files
 Name: setup
 Version: 2.9.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: Public Domain
-Group: System Environment/Base
 URL: https://fedorahosted.org/setup/
 Source0: https://fedorahosted.org/releases/s/e/%{name}/%{name}-%{version}.tar.bz2
 Patch0: setup-add-default-user-group.patch
@@ -92,3 +91,6 @@ end
 %ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/fstab
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.9.8-3
+- Rebuild for new 4.0 release
+

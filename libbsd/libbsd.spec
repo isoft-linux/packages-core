@@ -1,10 +1,9 @@
 Name:		libbsd
 Version:	0.7.0
-Release:	3
+Release:	4
 Summary:	Library providing BSD-compatible functions for portability
 URL:		http://libbsd.freedesktop.org/
 License:	BSD and ISC and Copyright only and Public Domain
-Group:		System Environment/Libraries
 Source0:	http://libbsd.freedesktop.org/releases/libbsd-%{version}.tar.xz
 
 %description
@@ -15,7 +14,6 @@ code over and over again on each project.
 
 %package devel
 Summary:	Development files for libbsd
-Group:		Development/Libraries
 Requires:	libbsd = %{version}-%{release}
 Requires:	pkgconfig
 
@@ -24,7 +22,6 @@ Development files for the libbsd library.
 
 %package ctor-static
 Summary:	Development files for libbsd
-Group:		Development/Libraries
 Requires:	libbsd = %{version}-%{release}
 Requires:	pkgconfig
 
@@ -56,7 +53,6 @@ make libdir=%{_libdir} \
 rm %{buildroot}%{_libdir}/%{name}.a
 rm %{buildroot}%{_libdir}/%{name}.la
 
-rpmclean
 
 %check
 make check
@@ -81,3 +77,6 @@ make check
 %{_libdir}/pkgconfig/%{name}-ctor.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.7.0-4
+- Rebuild for new 4.0 release
+

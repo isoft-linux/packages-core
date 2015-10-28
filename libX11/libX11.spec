@@ -1,9 +1,8 @@
 Summary: X.Org X11 libX11 runtime library
 Name:    libX11
 Version: 1.6.3
-Release: 7 
+Release: 8 
 License: MIT/X11
-Group:   CoreGUI/Runtime/Library
 URL:     http://www.x.org
 Source0: ftp://ftp.x.org/pub/individual/lib/%{name}-%{version}.tar.bz2
 
@@ -28,7 +27,6 @@ X.Org X11 libX11 runtime library
 
 %package devel
 Summary: X.Org X11 libX11 development package
-Group:   CoreGUI/Development/Library
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 Requires: %{name} = %{version}-%{release}
 
@@ -84,5 +82,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/doc/libX11
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6.3-8
+- Rebuild for new 4.0 release
+
 * Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>
 - rebuild.

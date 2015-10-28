@@ -1,9 +1,8 @@
 Summary: Access control list utilities.
 Name: acl
 Version: 2.2.52
-Release: 1
+Release: 2
 License: GPL
-Group:   Core/Runtime/Utility 
 URL: http://oss.sgi.com/projects/xfs/
 Source0: http://download.savannah.gnu.org/releases/acl/%{name}-%{version}.src.tar.gz
 Patch1: 0001-acl-2.2.49-bz675451.patch
@@ -20,7 +19,6 @@ manipulating access control lists.
 %package -n libacl
 Summary: Dynamic library for access control list support.
 License: LGPL
-Group:   Core/Runtime/Library 
 Requires(pre): /sbin/ldconfig
 
 %description -n libacl
@@ -31,7 +29,6 @@ control lists.
 %package -n libacl-devel
 Summary: Access control list static libraries and headers.
 License: LGPL
-Group:  Core/Development/Library 
 Requires: libacl, libattr-devel
 
 %description -n libacl-devel
@@ -57,11 +54,11 @@ make install DESTDIR=$RPM_BUILD_ROOT
 make install-dev DESTDIR=$RPM_BUILD_ROOT
 make install-lib DESTDIR=$RPM_BUILD_ROOT
 
+chmod 0755 ${RPM_BUILD_ROOT}%{_libdir}/libacl.so.*
 # remove useless docs
 rm -rf $RPM_BUILD_ROOT/usr/share/doc
 
 %find_lang acl
-rpmclean
 
 %check
 #some filesystem may not support acl/attr completely
@@ -97,9 +94,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libacl.a
 %{_includedir}/acl
 %{_includedir}/sys/acl.h
-%{_libdir}/libacl.*
 %{_mandir}/man3/acl_*
 
 %files -n libacl
 %defattr(-,root,root)
 %{_libdir}/libacl.so.*
+
+%changelog
+* Fri Oct 23 2015 cjacker - 2.2.52-2
+- Rebuild for new 4.0 release
+

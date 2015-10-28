@@ -3,9 +3,8 @@
 Summary: A GNU archiving program
 Name: cpio
 Version: 2.10
-Release: 1 
+Release: 2 
 License: GPLv3+
-Group: Core/Runtime/Utility
 URL: http://www.gnu.org/software/cpio/
 Source: ftp://ftp.gnu.org/gnu/cpio/cpio-%{version}.tar.bz2
 Source1: cpio.1
@@ -62,7 +61,6 @@ install -c -p -m 0644 %{SOURCE1} ${RPM_BUILD_ROOT}%{_mandir}/man1
 
 %find_lang %{name}
 
-rpmclean
 
 %check
 make check
@@ -76,3 +74,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man*/*
 %{_libexecdir}/rmt
 %changelog
+* Fri Oct 23 2015 cjacker - 2.10-2
+- Rebuild for new 4.0 release
+

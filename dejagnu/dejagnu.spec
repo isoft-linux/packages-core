@@ -1,11 +1,10 @@
 Summary: A front end for testing other programs
 Name: dejagnu
 Version: 1.5.1
-Release: 3
+Release: 4
 Epoch: 1
 License: GPLv3+
 Source: ftp://ftp.gnu.org/gnu/dejagnu/dejagnu-%{version}.tar.gz
-Group: CoreDev/Development/Utility
 URL: http://www.gnu.org/software/dejagnu/
 Requires: expect
 BuildArch: noarch
@@ -52,3 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/runtest
 %{_datadir}/dejagnu
 %{_includedir}/dejagnu.h
+
+%changelog
+* Fri Oct 23 2015 cjacker - 1:1.5.1-4
+- Rebuild for new 4.0 release
+

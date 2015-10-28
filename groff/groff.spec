@@ -3,9 +3,8 @@
 Summary: A document formatting system
 Name: groff
 Version: 1.22.2
-Release: 3
+Release: 4
 License: GPLv3+ and GFDL and BSD and MIT
-Group:  CoreDev/Development/Utility/Documentation 
 URL: http://groff.ffii.org
 
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%{version}.tar.gz
@@ -26,7 +25,6 @@ groff-x11 package.
 
 %package perl
 Summary: Parts of the groff formatting system that require Perl
-Group:  CoreDev/Development/Utility/Documentation 
 Requires: groff = %{version}-%{release}
 
 %description perl
@@ -41,7 +39,6 @@ roff2html roff2pdf roff2ps roff2text roff2x (roff code converters).
 %if %{with_x}
 %package x11
 Summary: Parts of the groff formatting system that require X Windows System
-Group: CoreDev/Development/Utility/Documentation
 BuildRequires: libXaw-devel libXmu-devel
 Requires: groff = %{version}-%{release}
 Provides: groff-gxditview = %{version}-%{release}
@@ -115,7 +112,6 @@ rm -rf %{buildroot}%{_docdir}/%{name}-%{version}
 chmod 755 %{buildroot}%{_datadir}/groff/%{version}/groffer/version.sh
 chmod 755 %{buildroot}%{_datadir}/groff/%{version}/font/devlj4/generate/special.awk
 
-rpmclean
 
 %clean
 rm -rf %{buildroot}
@@ -152,3 +148,6 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.22.2-4
+- Rebuild for new 4.0 release
+

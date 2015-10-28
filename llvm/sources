@@ -1,8 +1,7 @@
-ff862793682f714bb7862325b9c06e20  cfe-3.6.2.src.tar.xz
-3ebc1dc41659fcec3db1b47d81575e06  clang-tools-extra-3.6.2.src.tar.xz
-e3bc4eb7ba8c39a6fe90d6c988927f3c  compiler-rt-3.6.2.src.tar.xz
-7143cc4fa88851a9f9b9a03621fbb387  lld-3.6.2.src.tar.xz
-51e5eb552f777b950bb0ff326e60d5f0  lldb-3.6.2.src.tar.xz
-0c1ee3597d75280dee603bae9cbf5cc2  llvm-3.6.2.src.tar.xz
-09dd91d06cc0832095379d00206bc3a1  polly-3.6.2.src.tar.xz
-2f013c09e833e3612688231e052baa73  test-suite-3.6.2.src.tar.xz
+6ec93d7e4cf6e0a5f730ad9d47cb5e16  cfe-3.7.1.src.tar.xz
+da91ad9bcd5559217032fd9672b6d3bd  clang-tools-extra-3.7.1.src.tar.xz
+8b08128f5d4298dab5bff11decefd584  compiler-rt-3.7.1.src.tar.xz
+4af914cce21b70ba3ab331cc8845d48b  lld-3.7.1.src.tar.xz
+901a254542c39dcb9f5f79d71974b4c6  lldb-3.7.1.src.tar.xz
+684823dd104361be2320b5686083a343  llvm-3.7.1.src.tar.xz
+c83492c196413e070c470d2680dcc650  polly-3.7.1.src.tar.xz

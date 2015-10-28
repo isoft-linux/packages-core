@@ -1,10 +1,9 @@
-%define debug_package %{nil}
 %define freetype2 freetype
 
 Summary: Font configuration and customization library
 Name: fontconfig
 Version: 2.11.94
-Release: 5 
+Release: 6 
 License: MIT
 URL: http://fontconfig.org
 Source0: http://fontconfig.org/release/fontconfig-%{version}.tar.bz2
@@ -35,7 +34,6 @@ applications.
 
 %package devel
 Summary:	Font configuration and customization library
-Group:		Core/Development/Library
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{freetype2}-devel >= 2.1.4
 
@@ -62,7 +60,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT install-strip
+make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" 
 
 
 install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
@@ -82,7 +80,6 @@ ln -sf %{_datadir}/fontconfig/conf.avail/99-force-monospace-serif.conf ./99-forc
 ln -sf %{_datadir}/fontconfig/conf.avail/25-no-bitmap.conf ./25-no-bitmap.conf
 popd
 
-rpmclean
 
 
 %check
@@ -98,6 +95,7 @@ rm -rf $RPM_BUILD_ROOT
   %{_bindir}/fc-cache -f 2>/dev/null
 }
 mkdir -p /usr/lib/X11/fonts/TrueType
+
 %postun -p /sbin/ldconfig
 
 %files
@@ -118,5 +116,8 @@ mkdir -p /usr/lib/X11/fonts/TrueType
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.11.94-6
+- Rebuild for new 4.0 release
+
 * Wed Mar 18 2009 Cjacker <cjacker@gmail.com>
 - drop non-aa support

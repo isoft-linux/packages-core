@@ -1,9 +1,8 @@
 Summary: Displays where a particular program in your path is located.
 Name: which
 Version: 2.16
-Release: 6.2.1
+Release: 7.2.1
 License: GPL
-Group:  Core/Runtime/Utility 
 Source0: http://www.xs4all.nl/~carlo17/which/%{name}-%{version}.tar.gz
 Source1: which-2.sh
 Url: http://www.xs4all.nl/~carlo17/which/
@@ -33,7 +32,6 @@ mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -45,3 +43,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.16-7.2.1
+- Rebuild for new 4.0 release
+

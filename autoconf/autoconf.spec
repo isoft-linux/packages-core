@@ -1,9 +1,8 @@
 Summary:    A GNU tool for automatically configuring source code
 Name:       autoconf
 Version:    2.69
-Release:    4 
+Release:    5 
 License:    GPLv2+ and GFDL
-Group:      CoreDev/Development/Utility 
 Source:     http://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.xz
 Source1:    filter-provides-autoconf.sh
 Source2:    filter-requires-autoconf.sh
@@ -63,3 +62,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %doc AUTHORS COPYING ChangeLog NEWS README THANKS TODO
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.69-5
+- Rebuild for new 4.0 release
+

@@ -13,10 +13,9 @@
 
 Name:           ccache
 Version:        3.2.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        C/C++ compiler cache
 
-Group:          Development/Tools
 License:        GPLv3+
 URL:            http://ccache.samba.org/
 Source0:        http://samba.org/ftp/ccache/%{name}-%{version}.tar.xz
@@ -27,7 +26,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  perl(File::Spec)
 BuildRequires:  zlib-devel >= 1.2.3
 # coreutils for triggerin, triggerpostun
-Requires:       coreutils
+Requires: coreutils
+Requires: gcc
+Requires: clang
 
 %description
 ccache is a compiler cache.  It speeds up recompilation of C/C++ code
@@ -211,5 +212,8 @@ getent group ccache >/dev/null || groupadd -r ccache || :
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.2.3-3
+- Rebuild for new 4.0 release
+
 * Fri Sep 18 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.2.3

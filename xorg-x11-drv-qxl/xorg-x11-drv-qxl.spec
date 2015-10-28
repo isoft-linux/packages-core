@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %global tarball xf86-video-qxl
 %global moduledir %(pkg-config xorg-server --variable=moduledir )
 %global driverdir %{moduledir}/drivers
@@ -22,7 +23,7 @@ Name:      xorg-x11-drv-qxl
 
 Version:   0.1.4
 
-Release:   5%{?gver}%{?dist}
+Release:   6%{?gver}%{?dist}
 URL:       http://www.x.org
 Source0:   http://xorg.freedesktop.org/releases/individual/driver/%{tarball}-%{version}.tar.bz2
 
@@ -39,7 +40,6 @@ Patch7: 0007-Fix-compilation-with-newer-Xorg-versions.patch
 
 
 License:   MIT
-Group:     User Interface/X Hardware Support
 
 ExcludeArch: s390 s390x
 
@@ -129,3 +129,6 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/spiceqxl.xorg.conf
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.1.4-6
+- Rebuild for new 4.0 release
+

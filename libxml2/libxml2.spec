@@ -1,9 +1,8 @@
 Summary: Library providing XML and HTML support
 Name: libxml2
 Version: 2.9.2
-Release: 1 
+Release: 2 
 License: MIT
-Group:  Core/Runtime/Library 
 Source: ftp://xmlsoft.org/libxml2/libxml2-%{version}.tar.gz
 Patch0: libxml2-upstream-fix.patch
 
@@ -22,7 +21,6 @@ URI library.
 
 %package devel
 Summary: Libraries, includes, etc. to develop XML and HTML applications
-Group: Core/Development/Library
 Requires: libxml2 = %{version}-%{release}
 Requires: zlib-devel
 Requires: pkgconfig
@@ -41,7 +39,6 @@ URI library.
 
 %package static
 Summary: Static library for libxml2
-Group: Core/Development/Library
 Requires: libxml2 = %{version}-%{release}
 
 %description static
@@ -50,7 +47,6 @@ microseconds when parsing, do not link to them for generic purpose packages.
 
 %package -n python-libxml2
 Summary: Python bindings for the libxml2 library
-Group: Core/Development/Library/Python
 Requires: libxml2 = %{version}-%{release}
 
 %description -n python-libxml2
@@ -76,7 +72,6 @@ rm -fr %{buildroot}
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rpmclean
 %clean
 rm -fr %{buildroot}
 
@@ -116,3 +111,6 @@ rm -fr %{buildroot}
 %{_libdir}/python*/site-packages/libxml2mod*
 %{_docdir}/libxml2-python-%{version}
 %changelog
+* Fri Oct 23 2015 cjacker - 2.9.2-2
+- Rebuild for new 4.0 release
+

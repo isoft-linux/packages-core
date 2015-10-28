@@ -5,10 +5,9 @@ Name:             nss-util
 Version:          3.19.2
 # for Rawhide, please always use release >= 2
 # for Fedora release branches, please use release < 2 (1.0, 1.1, ...)
-Release:          2%{?dist}
+Release:          3%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
-Group:            System Environment/Libraries
 Requires:         nspr >= %{nspr_version}
 BuildRoot:        %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:    nspr-devel >= %{nspr_version}
@@ -45,7 +44,6 @@ Utilities for Network Security Services and the Softoken module
 # 
 %package devel
 Summary:          Development libraries for Network Security Services Utilities
-Group:            Development/Libraries
 Requires:         nss-util = %{version}-%{release}
 Requires:         nspr-devel >= %{nspr_version}
 Requires:         pkgconfig
@@ -230,3 +228,6 @@ done
 %{_includedir}/nss3/templates/templates.c
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.19.2-3
+- Rebuild for new 4.0 release
+

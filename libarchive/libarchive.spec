@@ -1,9 +1,8 @@
 Name:           libarchive
 Version:        3.1.2 
-Release:        2
+Release:        3
 Summary:        A library for handling streaming archive formats 
 
-Group:          Core/Runtime/Library
 License:        BSD
 URL:            http://www.libarchive.org/ 
 Source0:        http://www.libarchive.org/downloads/libarchive-%{version}.tar.gz
@@ -29,7 +28,6 @@ formats, and both BSD and GNU ar variants.
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Core/Development/Library
 Requires:       %{name} = %{version}-%{release}
 
 %description    devel
@@ -60,7 +58,6 @@ find $RPM_BUILD_ROOT -name cpio.5 -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -name mtree.5 -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -name tar.5 -exec rm -f {} ';'
 
-rpmclean
 
 %check
 make check
@@ -88,3 +85,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1.2-3
+- Rebuild for new 4.0 release
+

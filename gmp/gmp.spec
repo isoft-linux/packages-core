@@ -1,11 +1,10 @@
 Summary: A GNU arbitrary precision library
 Name: gmp
 Version: 6.0.0 
-Release: 3
+Release: 4
 URL: http://gmplib.org/
 Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%{version}a.tar.xz
 License: LGPL 
-Group:  Core/Runtime/Library 
 
 BuildRequires: m4
 Requires(post): /sbin/ldconfig
@@ -25,7 +24,6 @@ library.
 
 %package devel
 Summary: Development tools for the GNU MP arbitrary precision library
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -93,3 +91,6 @@ cd ..
 %{_includedir}/*.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 6.0.0-4
+- Rebuild for new 4.0 release
+

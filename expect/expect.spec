@@ -5,9 +5,8 @@
 Summary: A program-script interaction and testing utility
 Name: expect
 Version: %{majorver}
-Release: 10
+Release: 11
 License: Public Domain
-Group: CoreDev/Runtime/Utility
 URL: http://expect.nist.gov/
 Source: http://downloads.sourceforge.net/%{name}/%{name}%{version}.tar.gz
 Buildrequires: tcl-devel autoconf automake
@@ -30,7 +29,6 @@ This package contains expect and some scripts that use it.
 
 %package devel
 Summary: A program-script interaction and testing utility
-Group:  CoreDev/Development/Library 
 Requires: expect = %{version}-%{release}
 
 %description devel
@@ -121,4 +119,9 @@ rm -rf "$RPM_BUILD_ROOT"
 %defattr(-,root,root,-)
 %{_mandir}/man3/libexpect.3*
 %{_includedir}/*
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 5.45-11
+- Rebuild for new 4.0 release
 

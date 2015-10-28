@@ -1,9 +1,8 @@
 Summary: Utilities for managing ext2, ext3, and ext4 filesystems
 Name: e2fsprogs
 Version: 1.42.14
-Release: 7.git
+Release: 8.git
 License: GPLv2
-Group:  Core/Runtime/Utility
 Url: http://e2fsprogs.sourceforge.net/
 #Source0: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 #git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
@@ -34,7 +33,6 @@ performance of an ext2, ext3, or ext4 filesystem.
 
 %package libs
 Summary: Ext2/3/4 filesystem-specific shared libraries
-Group:  Core/Runtime/Library
 License: GPLv2 and LGPLv2
 
 %description libs
@@ -46,7 +44,6 @@ from userspace.
 
 %package devel
 Summary: Ext2/3/4 filesystem-specific libraries and headers
-Group:  Core/Development/Library
 License: GPLv2 and LGPLv2
 Requires: e2fsprogs-libs = %{version}-%{release}
 Requires: gawk
@@ -64,7 +61,6 @@ also want to install e2fsprogs.
 
 %package -n libcom_err
 Summary: Common error description library
-Group:  Core/Runtime/Library 
 License: MIT
 
 %description -n libcom_err
@@ -74,7 +70,6 @@ libcom_err is an attempt to present a common error-handling mechanism.
 
 %package -n libcom_err-devel
 Summary: Common error description library
-Group:  Core/Development/Library
 License: MIT
 Requires: libcom_err = %{version}-%{release}
 Requires: pkgconfig
@@ -89,7 +84,6 @@ libcom_err is an attempt to present a common error-handling mechanism.
 
 %package -n libss
 Summary: Command line interface parsing library
-Group:  Core/Runtime/Library 
 License: MIT
 
 %description -n libss
@@ -103,7 +97,6 @@ It was originally inspired by the Multics SubSystem library.
 
 %package -n libss-devel
 Summary: Command line interface parsing library
-Group:  Core/Development/Library
 License: MIT
 Requires: libss = %{version}-%{release}
 Requires: pkgconfig
@@ -268,3 +261,6 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/ss.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.42.14-8.git
+- Rebuild for new 4.0 release
+

@@ -6,9 +6,8 @@
 Summary: Enumerate OpenCL platforms and devices
 Name:    clinfo
 Version: 0.1
-Release: 0.7%{?gitversion}%{?dist}
+Release: 0.8%{?gitversion}%{?dist}
 License: Public Domain
-Group:   System Environment/Libraries
 URL:     https://github.com/Oblomov/clinfo
 
 %global tarball %{name}-%{gitversion}.tar.gz
@@ -50,3 +49,6 @@ mkdir -p %{buildroot}/%{_mandir}/man1
 %{_mandir}/man1/clinfo.1.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.1-0.8.git20150215.94fdb47
+- Rebuild for new 4.0 release
+

@@ -3,9 +3,8 @@
 Summary:    A GNU tool for automatically creating Makefiles
 Name:       automake
 Version:    %{api_version}
-Release:    3
+Release:    4
 License:    GPLv2+ and GFDL and MIT 
-Group:      CoreDev/Development/Utility 
 Source:     http://ftp.gnu.org/gnu/automake/automake-%{version}.tar.xz
 Source1:    filter-provides-automake.sh
 Source2:    filter-requires-automake.sh
@@ -69,3 +68,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %dir %{_datadir}/aclocal
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.14.1-4
+- Rebuild for new 4.0 release
+

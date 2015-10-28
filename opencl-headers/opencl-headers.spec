@@ -1,7 +1,7 @@
 Summary:  Khronos OpenCL development headers
 Name:     opencl-headers
 Version:  1.2
-Release:  7%{?dist}
+Release:  8%{?dist}
 License:  MIT
 URL:      http://www.khronos.org/registry/cl/
 BuildArch: noarch
@@ -65,3 +65,6 @@ cp \
 %{_includedir}/CL/cl.hpp
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.2-8
+- Rebuild for new 4.0 release
+

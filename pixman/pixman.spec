@@ -1,7 +1,7 @@
 Summary:   a pixel manipulation library 
 Name:      pixman 
 Version:   0.32.8
-Release:   1
+Release:   2
 URL:       http://cairographics.org
 Source0:   http://www.cairographics.org/releases/%{name}-%{version}.tar.gz
 License:   LGPL/MPL
@@ -40,7 +40,6 @@ rm -rf $RPM_BUILD_ROOT
 %makeinstall 
 rm $RPM_BUILD_ROOT%{_libdir}/*.a
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -61,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.32.8-2
+- Rebuild for new 4.0 release
+
 * Sun Oct 18 2015 Cjacker <cjacker@foxmail.com>
 - update to 0.32.8
 

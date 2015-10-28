@@ -8,7 +8,7 @@
 Summary: The Kerberos network authentication system
 Name: krb5
 Version: 1.13.2
-Release: 1
+Release: 2
 Source0: krb5-1.13.2.tar.gz
  
 Source2: krb5.conf
@@ -16,7 +16,6 @@ Source29:ksu.pamd
 
 License: MIT
 URL: http://web.mit.edu/kerberos/www/
-Group: System Environment/Libraries
 BuildRequires: autoconf, bison, flex, gawk, gettext
 BuildRequires: libcom_err-devel, libss-devel
 BuildRequires: gzip, ncurses-devel, tar
@@ -34,7 +33,6 @@ practice of sending passwords over the network in unencrypted form.
 
 %package devel
 Summary: Development files needed to compile Kerberos 5 programs
-Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
 Requires: libcom_err-devel
 
@@ -46,7 +44,6 @@ to install this package.
 
 %package libs
 Summary: The shared libraries used by Kerberos 5
-Group: System Environment/Libraries
 
 %description libs
 Kerberos is a network authentication system. The krb5-libs package
@@ -55,7 +52,6 @@ Kerberos, you need to install this package.
 
 %package workstation
 Summary: Kerberos 5 programs for use on workstations
-Group: System Environment/Base
 Requires: %{name}-libs = %{version}-%{release}
 # mktemp is used by krb5-send-pr
 Requires: coreutils
@@ -68,7 +64,6 @@ installed on every workstation.
 
 %package pkinit
 Summary: The PKINIT module for Kerberos 5
-Group: System Environment/Libraries
 Requires: %{name}-libs = %{version}-%{release}
 
 %description pkinit
@@ -281,3 +276,6 @@ rm -rf %{buildroot}%{_mandir}/man8/krb5kdc.8*
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.13.2-2
+- Rebuild for new 4.0 release
+

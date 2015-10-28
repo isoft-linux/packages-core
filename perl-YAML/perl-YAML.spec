@@ -1,9 +1,8 @@
 Name:           perl-YAML
 Version:        1.15
-Release:        4
+Release:        5
 Summary:        YAML Ain't Markup Language (tm)
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/YAML/
 Source0:        http://search.cpan.org/CPAN/authors/id/I/IN/INGY/YAML-%{version}.tar.gz
 BuildArch:      noarch
@@ -92,3 +91,6 @@ make install DESTDIR=%{buildroot}
 %{_mandir}/man3/YAML::Types.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.15-5
+- Rebuild for new 4.0 release
+

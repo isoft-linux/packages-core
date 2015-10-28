@@ -6,7 +6,7 @@
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name:    openssl
 Version: 1.0.2d
-Release: 2
+Release: 3
 Epoch:   1
 Source:  http://openssl.org/source/openssl-%{version}.tar.gz
 Source2: Makefile.certificate
@@ -35,7 +35,6 @@ Patch33: openssl-1.0.0-beta4-ca-dir.patch
 Patch34: openssl-1.0.2a-x509.patch
 
 License: OpenSSL
-Group: System Environment/Libraries
 URL: http://www.openssl.org/
 BuildRequires: coreutils, perl, sed, zlib-devel, /usr/bin/cmp
 BuildRequires: /usr/bin/rename
@@ -50,7 +49,6 @@ protocols.
 
 %package libs
 Summary: A general purpose cryptography library with TLS implementation
-Group: System Environment/Libraries
 Requires: ca-certificates >= 2008-5
 # Needed obsoletes due to the base/lib subpackage split
 Obsoletes: openssl < 1:1.0.1-0.3.beta3
@@ -62,7 +60,6 @@ support cryptographic algorithms and protocols.
 
 %package devel
 Summary: Files for development of applications which will use OpenSSL
-Group: Development/Libraries
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: zlib-devel%{?_isa}
 Requires: pkgconfig
@@ -74,7 +71,6 @@ support various cryptographic algorithms and protocols.
 
 %package static
 Summary:  Libraries for static linking of applications which will use OpenSSL
-Group: Development/Libraries
 Requires: %{name}-devel%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description static
@@ -85,7 +81,6 @@ protocols.
 
 %package perl
 Summary: Perl scripts provided with OpenSSL
-Group: Applications/Internet
 Requires: perl
 Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -274,5 +269,8 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:1.0.2d-3
+- Rebuild for new 4.0 release
+
 * Tue Jul 14 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.0.2d, fix security issue CVE-2015-1793.

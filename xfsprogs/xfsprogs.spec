@@ -1,13 +1,12 @@
 Summary:	Utilities for managing the XFS filesystem
 Name:		xfsprogs
 Version:	3.2.3
-Release:	2%{?dist}
+Release:	3%{?dist}
 # Licensing based on generic "GNU GENERAL PUBLIC LICENSE"
 # in source, with no mention of version.
 # doc/COPYING file specifies what is GPL and what is LGPL
 # but no mention of versions in the source.
 License:	GPL+ and LGPLv2+
-Group:		System Environment/Base
 URL:		http://oss.sgi.com/projects/xfs/
 Source0:	ftp://oss.sgi.com/projects/xfs/cmd_tars/%{name}-%{version}.tar.gz
 Source1:	xfsprogs-wrapper.h
@@ -34,7 +33,6 @@ with the IRIX version of XFS.
 
 %package devel
 Summary: XFS filesystem-specific headers
-Group: Development/Libraries
 Requires: xfsprogs = %{version}-%{release}, libuuid-devel
 
 %description devel
@@ -47,7 +45,6 @@ also want to install xfsprogs.
 
 %package qa-devel
 Summary: XFS QA filesystem-specific headers
-Group: Development/Libraries
 Requires: xfsprogs = %{version}-%{release}
 Requires: xfsprogs-devel = %{version}-%{release}
 
@@ -175,3 +172,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/xfs/xfs_trans_space.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.2.3-3
+- Rebuild for new 4.0 release
+

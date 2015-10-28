@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXcursor runtime library
 Name: libXcursor
 Version: 1.1.14
-Release: 1
+Release: 2
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: libXcursor-%{version}.tar.bz2 
 Source1: index.theme
@@ -21,7 +20,6 @@ X.Org X11 libXcursor runtime library
 
 %package devel
 Summary: X.Org X11 libXcursor development package
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
@@ -44,7 +42,6 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/share/icons/default
 install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/usr/share/icons/default/index.theme
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -68,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.1.14-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

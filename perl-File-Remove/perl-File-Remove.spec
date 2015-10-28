@@ -1,9 +1,8 @@
 Name:		perl-File-Remove
 Version:	1.52
-Release:	11%{?dist}
+Release:	12%{?dist}
 Summary:	Convenience module for removing files and directories
 License:	GPL+ or Artistic
-Group:		Development/Libraries
 URL:		http://search.cpan.org/dist/File-Remove/
 Source0:	http://search.cpan.org/CPAN/authors/id/A/AD/ADAMK/File-Remove-%{version}.tar.gz
 Requires:	perl(:MODULE_COMPAT_%(eval "`perl -V:version`"; echo $version))
@@ -44,3 +43,6 @@ make test
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.52-12
+- Rebuild for new 4.0 release
+

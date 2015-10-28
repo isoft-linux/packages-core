@@ -1,12 +1,11 @@
 Name: pcre
 Version: 8.37
-Release: 2
+Release: 3
 Summary: Perl-compatible regular expression library
 URL: http://www.pcre.org/
 Source: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/%{name}-%{version}.tar.bz2
 Patch0: pcre-01-seven-security-patches.patch
 License: BSD
-Group:  Core/Runtime/Library 
 Prefix: %{_prefix}
 Requires(pre): /sbin/ldconfig
 BuildRequires: sed , libtool
@@ -21,7 +20,6 @@ for the POSIX-style functions is called pcreposix.h.
 
 %package devel
 Summary: Development files for %{name}
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -59,7 +57,6 @@ make install DESTDIR=%{buildroot}
 # get rid of unneeded *.la files
 rm -f %{buildroot}%{_libdir}/*.la
 
-rpmclean
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -84,3 +81,6 @@ rm -rf %{buildroot}
 %{_bindir}/pcre-config
 %{_datadir}/doc
 %changelog
+* Fri Oct 23 2015 cjacker - 8.37-3
+- Rebuild for new 4.0 release
+

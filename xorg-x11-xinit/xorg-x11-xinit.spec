@@ -7,7 +7,7 @@
 Summary:    X.Org X11 X Window System xinit startup scripts
 Name:       xorg-x11-%{pkgname}
 Version:    1.3.4
-Release:    10%{?dist}
+Release:    11%{?dist}
 License:    MIT
 URL:        http://www.x.org
 
@@ -119,3 +119,6 @@ install -p -m644 -D %{SOURCE18} $RPM_BUILD_ROOT%{_datadir}/xsessions/xinit-compa
 %{_datadir}/xsessions/xinit-compat.desktop
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3.4-11
+- Rebuild for new 4.0 release
+

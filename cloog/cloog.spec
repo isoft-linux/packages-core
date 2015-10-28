@@ -1,11 +1,10 @@
 Name:           cloog
 %global         tarball_name %{name}
 Version:        0.18.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:		1
 Summary:        The Chunky Loop Generator
 
-Group:          System Environment/Libraries
 License:        GPLv2+
 URL:            http://www.cloog.org
 
@@ -33,7 +32,6 @@ designed to avoid control overhead and to produce a very efficient code.
 
 %package devel
 Summary:        Development tools for the Chunky Loop Generator
-Group:          Development/Libraries
 Requires:       %{name} = %{epoch}:%{version}-%{release}
 Requires:       isl-devel >= 0.12, gmp-devel >= 4.1.3
 
@@ -77,5 +75,8 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/libcloog-isl.la
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:0.18.3-3
+- Rebuild for new 4.0 release
+
 * Sun Oct 18 2015 Cjacker <cjacker@foxmail.com>
 - initial build.

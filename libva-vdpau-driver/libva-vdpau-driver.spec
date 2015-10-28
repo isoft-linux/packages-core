@@ -1,6 +1,6 @@
 Name:           libva-vdpau-driver
 Version:        0.7.4
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        HW video decode support for VDPAU platforms
 License:        GPLv2+
 URL:            http://cgit.freedesktop.org/vaapi/vdpau-driver
@@ -40,6 +40,9 @@ find %{buildroot} -name '*.la' -delete
 %{_libdir}/dri/*.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.7.4-13
+- Rebuild for new 4.0 release
+
 * Sat Sep 26 2015 Cjacker <cjacker@foxmail.com>
 - rebuild with libva-1.6.1
 

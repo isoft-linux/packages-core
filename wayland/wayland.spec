@@ -2,10 +2,9 @@
  
 Name:           wayland
 Version:        1.9.0
-Release:        3%{?gitdate:.git%{gitdate}}
+Release:        4%{?gitdate:.git%{gitdate}}
 Summary:        Wayland Compositor Infrastructure
 
-Group:          Core/Runtime/Library 
 License:        MIT
 URL:            http://%{name}.freedesktop.org/
 Source0:        http://wayland.freedesktop.org/releases/%{name}-%{?gitdate:}%{!?gitdate:%{version}}.tar.xz
@@ -30,35 +29,30 @@ applications, X servers (rootless or fullscreen) or other display servers.
 %package devel
 Summary: Common headers for wayland
 License: MIT
-Group:   Core/Development/Library 
 %description devel
 Common headers for wayland
 
 %package -n libwayland-client
 Summary: Wayland client library
 License: MIT
-Group:   Core/Runtime/Library 
 %description -n libwayland-client
 Wayland client library
 
 %package -n libwayland-cursor
 Summary: Wayland cursor library
 License: MIT
-Group:   Core/Runtime/Library 
 %description -n libwayland-cursor
 Wayland cursor library
 
 %package -n libwayland-server
 Summary: Wayland server library
 License: MIT
-Group:   Core/Runtime/Library 
 %description -n libwayland-server
 Wayland server library
 
 %package -n libwayland-client-devel
 Summary: Headers and symlinks for developing wayland client applications
 License: MIT
-Group:   Core/Development/Library 
 Requires: libwayland-client%{?_isa} = %{version}-%{release}
 Requires: wayland-devel%{?_isa} = %{version}-%{release}
 %description -n libwayland-client-devel
@@ -67,7 +61,6 @@ Headers and symlinks for developing wayland client applications.
 %package -n libwayland-cursor-devel
 Summary: Headers and symlinks for developing wayland cursor applications
 License: MIT
-Group:   Core/Development/Library 
 Requires: libwayland-cursor%{?_isa} = %{version}-%{release}
 Requires: wayland-devel%{?_isa} = %{version}-%{release}
 %description -n libwayland-cursor-devel
@@ -76,7 +69,6 @@ Headers and symlinks for developing wayland cursor applications.
 %package -n libwayland-server-devel
 Summary: Headers and symlinks for developing wayland server applications
 License: MIT
-Group:   Core/Development/Library 
 Requires: libwayland-server%{?_isa} = %{version}-%{release}
 Requires: wayland-devel%{?_isa} = %{version}-%{release}
 %description -n libwayland-server-devel
@@ -156,5 +148,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/wayland-server.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.9.0-4
+- Rebuild for new 4.0 release
+
 * Thu Sep 03 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.8.92

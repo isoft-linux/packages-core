@@ -1,9 +1,8 @@
 Summary: Complete rewrite of the NASM assembler
 Name: yasm
 Version: 1.3.0
-Release: 1
+Release: 2
 License: BSD
-Group:  CoreDev/Development/Language
 URL: http://www.tortall.net/projects/yasm/
 Source: http://www.tortall.net/projects/yasm/releases/yasm-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
@@ -20,7 +19,6 @@ overall design is an optimizer module.
 
 %package devel
 Summary: Header files and static libraries for yasm
-Group: CoreDev/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -33,7 +31,7 @@ overall design is an optimizer module.
 Install this package if you need to rebuild applications that use yasm.
 
 %prep
-%setup
+%setup -q
 
 %build
 %configure
@@ -72,6 +70,9 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3.0-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

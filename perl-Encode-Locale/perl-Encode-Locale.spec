@@ -1,8 +1,7 @@
 Name:           perl-Encode-Locale
 Version:        1.02
-Release:        3
+Release:        4
 Summary:        Determine the locale encoding
-Group:          Core/Runtime/Library/Perl
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/Encode-Locale/
 Source0:        http://www.cpan.org/authors/id/G/GA/GAAS/Encode-Locale-%{version}.tar.gz
@@ -48,3 +47,6 @@ make test
 %{_mandir}/man3/Encode::Locale.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.02-4
+- Rebuild for new 4.0 release
+

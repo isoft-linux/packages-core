@@ -4,13 +4,13 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 1
+Release: 4
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
 Source1: http://download.oracle.com/berkeley-db/db-%{bdbver}.tar.gz
 
-#A script for strip debug infos
+#A script for strip debug infos, SHOULD NOT be used, just keep it here.
 Source20: rpmclean
 
 #isoft rpmrc and macros
@@ -51,15 +51,16 @@ Patch309: rpm-4.12.0.x-CVE-2014-8118.patch
 
 Patch1300: rpm-default-patch-fuzz-tune.patch
 Patch1305: rpm-enable-unpackaged-file.patch
+#It's already in macros.isoft
 Patch1308: rpm-enable-xz-payload.patch
 Patch1309: rpm-never-lib64.patch
 Patch1310: rpm-remove-la.patch
+#unused, if build debug info, it will called after debuginfo extracted. 
+Patch1311: rpm-enable-brp-strip-shared.patch
 Patch1500: rpm-macro-add-python3.patch
 
 #iSOFT App isolation support
 Patch2000: 0001-isoftapp-skeleton.patch
-
-
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -67,6 +68,7 @@ Requires: coreutils
 Requires: sed
 Requires: librpm = %{version}-%{release}
 
+BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: zlib-devel
 BuildRequires: nss-devel
 BuildRequires: libcap-devel
@@ -76,7 +78,6 @@ BuildRequires: binutils-devel
 BuildRequires: popt-devel >= 1.10.2
 BuildRequires: file-devel
 BuildRequires: ncurses-devel
-BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: xz-devel >= 4.999.8
 #for elfdeps
 BuildRequires: libelfutils-devel >= 0.159
@@ -88,6 +89,8 @@ BuildRequires: libarchive-devel
 #for rpm python module
 BuildRequires: python-devel
 BuildRequires: python3-devel
+
+BuildRequires: dbus-devel
 
 %description
 The RPM Package Manager (RPM) is a powerful command line driven
@@ -179,6 +182,7 @@ programs that will manipulate RPM packages and databases.
 %patch1308 -p1
 %patch1309 -p1
 %patch1310 -p1
+#%patch1311 -p1
 %patch1500 -p1
 
 %patch2000 -p1
@@ -256,7 +260,6 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %find_lang %{name}
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -356,6 +359,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.13.0-4
+- Rebuild for new 4.0 release
+
+* Fri Oct 23 2015 Cjacker <cjacker@foxmail.com> - 4.13.0-3
+- Add debuginfo support in macros.isoft
+
+* Fri Oct 23 2015 Cjacker <cjacker@foxmail.com> - 4.13.0-2
+- Add P1311, fix not involk brp-strip-shared issue.
+
 * Thu Sep 24 2015 LeslieZhai <xiang.zhai@i-soft.com.cn>
 - add patch2000, support isoft-app seperately app db.
 

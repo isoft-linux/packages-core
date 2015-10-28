@@ -1,8 +1,7 @@
 Summary: A garbage collector for C and C++ 
 Name:    gc	
 Version: 7.4.2
-Release: 1
-Group:   CoreDev/Runtime/Library
+Release: 2
 License: BSD
 Url:     http://www.hpl.hp.com/personal/Hans_Boehm/gc/	
 Source0: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-%{version}.tar.gz
@@ -21,7 +20,6 @@ used as a garbage collecting replacement for C malloc or C++ new.
 
 %package devel
 Summary: Libraries and header files for %{name} development 
-Group:   CoreDev/Development/Library
 Requires: %{name} = %{version}-%{release}
 Obsoletes: libgc-devel < %{version}-%{release}
 Provides:  libgc-devel = %{version}-%{release}
@@ -30,7 +28,6 @@ Provides:  libgc-devel = %{version}-%{release}
 
 %package -n libatomic_ops-devel
 Summary:   Atomic memory update operations
-Group:     CoreDev/Development/Library
 Provides:  libatomic_ops-static = %{version}-%{release}
 %description -n libatomic_ops-devel 
 Provides implementations for atomic memory update operations on a
@@ -67,7 +64,6 @@ make install DESTDIR=%{buildroot} -C libatomic_ops
 
 install -p -D -m644 doc/gc.man	%{buildroot}%{_mandir}/man3/gc.3
 
-rpmclean
 
 %check
 make check
@@ -113,6 +109,9 @@ rm -rf %{buildroot}
 %{_datadir}/libatomic_ops/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.4.2-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

@@ -4,9 +4,8 @@
 Summary: Apache Portable Runtime Utility library
 Name: apr-util
 Version: 1.5.4
-Release: 4
+Release: 5
 License: ASL 2.0
-Group: CoreDev/Runtime/Library
 URL: http://apr.apache.org/
 Source0: http://www.apache.org/dist/apr/%{name}-%{version}.tar.bz2
 BuildRequires: autoconf, apr-devel >= 1.3.0
@@ -19,7 +18,6 @@ contains additional utility interfaces for APR; including support
 for XML, LDAP, database interfaces, URI parsing and more.
 
 %package devel
-Group: CoreDev/Development/Library
 Summary: APR utility library development kit
 Requires: apr-util = %{version}-%{release}, apr-devel, pkgconfig
 Requires: libdb-devel, expat-devel
@@ -31,7 +29,6 @@ of the Apache Portable Runtime (APR) is to provide a free
 library of C data structures and routines.
 
 %package ldap
-Group: Development/Libraries
 Summary: APR utility library LDAP support
 BuildRequires: openldap-devel
 Requires: apr-util%{?_isa} = %{version}-%{release}
@@ -82,7 +79,6 @@ sed -ri '/^dependency_libs/{s,-l(pq|sqlite[0-9]|rt|dl|uuid) ,,g}' \
 
 # Trim libtool DSO cruft
 rm -f $RPM_BUILD_ROOT%{_libdir}/apr-util-%{apuver}/*.*a
-rpmclean
 
 %check
 # Run the less verbose test suites
@@ -122,6 +118,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/apr-util-%{apuver}/apr_ldap*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.5.4-5
+- Rebuild for new 4.0 release
+
 * Mon Sep 21 2015 sulit <sulitsrc@gmail.com>
 - update to 1.5.4-4
 

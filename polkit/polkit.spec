@@ -6,12 +6,11 @@
 Summary: An authorization framework
 Name: polkit
 Version: 0.113
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPLv2+
 URL: http://www.freedesktop.org/wiki/Software/polkit
 Source0: http://www.freedesktop.org/software/polkit/releases/%{name}-%{version}.tar.gz
 Source1: http://www.freedesktop.org/software/polkit/releases/%{name}-%{version}.tar.gz.sign
-Group: System Environment/Libraries
 BuildRequires: glib2-devel >= 2.30.0
 BuildRequires: expat-devel
 BuildRequires: pam-devel
@@ -54,7 +53,6 @@ processes.
 
 %package devel
 Summary: Development files for polkit
-Group: Development/Libraries
 Requires: %name = %{version}-%{release}
 Requires: %name-docs = %{version}-%{release}
 Requires: glib2-devel
@@ -66,7 +64,6 @@ Development files for polkit.
 
 %package docs
 Summary: Development documentation for polkit
-Group: Development/Libraries
 Requires: %name-devel = %{version}-%{release}
 Obsoletes: PolicyKit-docs <= 0.10
 Provides: PolicyKit-docs = 0.11
@@ -77,7 +74,6 @@ Development documentation for polkit.
 
 %package libs
 Summary: Libraries for polkit
-Group: Development/Libraries
 
 %description libs
 Libraries files for polkit.
@@ -170,3 +166,6 @@ exit 0
 %{_libdir}/girepository-1.0/*.typelib
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.113-2
+- Rebuild for new 4.0 release
+

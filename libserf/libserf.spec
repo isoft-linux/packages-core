@@ -3,9 +3,8 @@
 Summary: HTTP client library written in C using apr
 Name: libserf
 Version: 1.3.5 
-Release: 1
+Release: 2
 License: Apache License 2.0
-Group: CoreDev/Runtime/Library
 URL: http://code.google.com/p/serf/
 
 Source: http://serf.googlecode.com/files/serf-%{version}.tar.bz2
@@ -23,7 +22,6 @@ HTTP client library written in C using apr.
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}.
-Group: CoreDev/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -42,7 +40,6 @@ python scons.py PREFIX=/usr
 python scons.py install --install-sandbox=%{buildroot}
 
 rm -rf %{buildroot}/%{_libdir}/*.a
-rpmclean
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -61,3 +58,6 @@ rpmclean
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3.5-2
+- Rebuild for new 4.0 release
+

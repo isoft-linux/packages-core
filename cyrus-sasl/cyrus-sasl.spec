@@ -8,9 +8,8 @@
 Summary: The Cyrus SASL library
 Name: cyrus-sasl
 Version: 2.1.26
-Release: 24
+Release: 25
 License: BSD with advertising
-Group: System Environment/Libraries
 # Source0 originally comes from ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/;
 # make-no-dlcompatorsrp-tarball.sh removes the "dlcompat" subdirectory and builds a
 # new tarball.
@@ -82,7 +81,6 @@ SASL is the Simple Authentication and Security Layer, a method for
 adding authentication support to connection-based protocols.
 
 %package lib
-Group: System Environment/Libraries
 Summary: Shared libraries needed by applications which use Cyrus SASL
 
 %description lib
@@ -93,7 +91,6 @@ applications which use the Cyrus SASL library.
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: pkgconfig
-Group: Development/Libraries
 Summary: Files needed for developing applications with Cyrus SASL
 
 %description devel
@@ -102,7 +99,6 @@ compiling applications which use the Cyrus SASL library.
 
 %package gssapi
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: GSSAPI authentication support for Cyrus SASL
 
 %description gssapi
@@ -112,7 +108,6 @@ authentication.
 
 %package plain
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: PLAIN and LOGIN authentication support for Cyrus SASL
 
 %description plain
@@ -121,7 +116,6 @@ PLAIN and LOGIN authentication schemes.
 
 %package md5
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: CRAM-MD5 and DIGEST-MD5 authentication support for Cyrus SASL
 
 %description md5
@@ -130,7 +124,6 @@ CRAM-MD5 and DIGEST-MD5 authentication schemes.
 
 %package ntlm
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: NTLM authentication support for Cyrus SASL
 
 %description ntlm
@@ -140,7 +133,6 @@ the NTLM authentication scheme.
 # This would more appropriately be named cyrus-sasl-auxprop-sql.
 %package sql
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: SQL auxprop support for Cyrus SASL
 
 %description sql
@@ -151,7 +143,6 @@ using a RDBMS for storing shared secrets.
 # This was *almost* named cyrus-sasl-auxprop-ldapdb, but that's a lot of typing.
 %package ldap
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: LDAP auxprop support for Cyrus SASL
 
 %description ldap
@@ -161,7 +152,6 @@ a directory server, accessed using LDAP, for storing shared secrets.
 
 %package scram
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: SCRAM auxprop support for Cyrus SASL
 
 %description scram
@@ -170,7 +160,6 @@ the SCRAM authentication scheme.
 
 %package gs2
 Requires: %{name}-lib%{?_isa} = %{version}-%{release}
-Group: System Environment/Libraries
 Summary: GS2 support for Cyrus SASL
 
 %description gs2
@@ -418,3 +407,6 @@ getent passwd %{username} >/dev/null || useradd -r -g %{username} -d %{homedir} 
 %{_sbindir}/sasl2-shared-mechlist
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.1.26-25
+- Rebuild for new 4.0 release
+

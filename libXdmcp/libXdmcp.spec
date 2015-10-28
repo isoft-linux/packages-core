@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXdmcp runtime library
 Name: libXdmcp
 Version: 1.1.2
-Release: 1
+Release: 2
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0: libXdmcp-%{version}.tar.bz2 
 
@@ -17,7 +16,6 @@ X.Org X11 libXdmcp runtime library
 
 %package devel
 Summary: X.Org X11 libXdmcp development package
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 
@@ -38,7 +36,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -57,4 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libXdmcp.so
 %{_libdir}/pkgconfig/xdmcp.pc
 %{_docdir}/libXdmcp/*.xml
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 1.1.2-2
+- Rebuild for new 4.0 release
 

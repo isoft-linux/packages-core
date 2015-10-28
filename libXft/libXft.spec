@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXft runtime library
 Name: libXft
 Version: 2.3.2
-Release: 2
+Release: 3
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 
 Source0: ftp://ftp.x.org/pub/individual/lib/%{name}-%{version}.tar.bz2
@@ -24,7 +23,6 @@ X.Org X11 libXft runtime library
 
 %package devel
 Summary: X.Org X11 libXft development package
-Group: Development/Libraries
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 Requires: %{name} = %{version}-%{release}
 
@@ -56,7 +54,6 @@ rm -f $RPM_BUILD_ROOT%{_bindir}/xft-config
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/xft-config*
 rm -rf $RPM_BUILD_ROOT/%{_libdir}/*.la
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -78,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/Xft.3*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.3.2-3
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

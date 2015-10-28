@@ -3,7 +3,7 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 39.git 
+Release: 42.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
 #Source0: mesa-%{version}.tar.xz
@@ -32,6 +32,7 @@ BuildRequires: libvdpau-devel
 BuildRequires: libva-devel
 BuildRequires: libxshmfence-devel
 BuildRequires: libXvMC-devel
+BuildRequires: python-mako
 
 %if 0%{?with_opencl}
 BuildRequires: libclang-devel >= 3.0
@@ -432,6 +433,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 26 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-42.git
+- Update to 3359ad6 git.
+
+* Fri Oct 23 2015 cjacker - 11.1.0-40.git
+- Rebuild for new 4.0 release
+
 * Mon Aug 24 2015 Cjacker <cjacker@foxmail.com>
 - update to laste git codes.
 - revert radeon IB buffer size for better performance and other regular commits.

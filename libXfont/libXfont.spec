@@ -1,9 +1,8 @@
 Summary: X.Org X11 libXfont runtime library
 Name: libXfont
 Version: 1.5.1
-Release: 1
+Release: 2
 License: MIT/X11
-Group: System Environment/Libraries
 URL: http://www.x.org
 Source0:  %{name}-%{version}.tar.bz2
 Patch:	libXfont-1.1.0-FreeType-2.2.patch
@@ -22,7 +21,6 @@ X.Org X11 libXfont runtime library
 
 %package devel
 Summary: X.Org X11 libXfont development package
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires(pre): xorg-x11-filesystem >= 0.99.2-3
 # NOTE: libXfont headers include proto headers, so this is needed.
@@ -45,7 +43,6 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -81,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/xfont.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.5.1-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

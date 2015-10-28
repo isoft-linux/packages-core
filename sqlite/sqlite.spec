@@ -6,7 +6,7 @@
 Summary: Library that implements an embeddable SQL database engine
 Name: sqlite
 Version: 3.9.0
-Release: 2 
+Release: 3 
 License: Public Domain
 URL: http://www.sqlite.org/
 
@@ -79,7 +79,6 @@ make DESTDIR=${RPM_BUILD_ROOT} install
 
 %{__install} -D -m0644 sqlite3.1 %{buildroot}%{_mandir}/man1/sqlite3.1
 
-rpmclean
 
 %check
 %if %build_with_check 
@@ -107,6 +106,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.9.0-3
+- Rebuild for new 4.0 release
+
 * Thu Oct 15 2015 Cjacker <cjacker@foxmail.com>
 - update to 3.9.0
 - enable SQLITE_ENABLE_JSON1 and SQLITE_ENABLE_FTS5

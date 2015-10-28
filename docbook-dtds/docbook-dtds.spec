@@ -5,8 +5,7 @@
 
 Name: docbook-dtds
 Version: 1.0
-Release: 64%{?dist}
-Group: Applications/Text
+Release: 65%{?dist}
 
 Summary: SGML and XML document type definitions for DocBook
 
@@ -478,3 +477,6 @@ do
 done
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0-65
+- Rebuild for new 4.0 release
+

@@ -1,9 +1,8 @@
 Summary: Firmware for Intel® PRO/Wireless 2200 network adaptors
 Name: ipw2200-firmware
 Version: 3.1
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: Redistributable, no modification permitted
-Group: System Environment/Kernel
 URL: http://ipw2200.sourceforge.net/firmware.php
 # License agreement must be displayed before download (referer protection)
 Source0: ipw2200-fw-%{version}.tgz
@@ -44,3 +43,6 @@ in /lib/firmware/LICENSE.ipw2200. Please read it carefully.
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1-12
+- Rebuild for new 4.0 release
+

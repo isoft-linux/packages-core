@@ -5,8 +5,7 @@
 Summary: A password-checking library
 Name: cracklib
 Version: 2.9.1
-Release: 6%{?dist}
-Group: System Environment/Libraries
+Release: 7%{?dist}
 Source0: http://prdownloads.sourceforge.net/cracklib/cracklib-%{version}.tar.gz
 
 # Retrieved at 20091201191719Z.
@@ -87,7 +86,6 @@ CrackLib, you will also want to install the cracklib-dicts package.
 
 %package devel
 Summary: Development files needed for building applications which use cracklib
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -96,7 +94,6 @@ for compiling applications which use cracklib.
 
 %package python
 Summary: Python bindings for applications which use cracklib
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description python
@@ -105,7 +102,6 @@ written in the Python programming language to use cracklib.
 
 %package dicts
 Summary: The standard CrackLib dictionaries
-Group: System Environment/Libraries
 BuildRequires: words >= 2-13
 Requires: cracklib = %{version}-%{release}
 
@@ -257,5 +253,8 @@ EOF
 %{_libdir}/python*/site-packages/*.py*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.9.1-7
+- Rebuild for new 4.0 release
+
 * Fri Jul 17 2015 Cjacker <cjacker@foxmail.com>
 - first build.

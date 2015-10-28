@@ -10,9 +10,8 @@ Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 8
+Release: 9
 License: GPL
-Group:   Core/Runtime/Utility
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
 #download all patches and tar them.
@@ -154,7 +153,6 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}/{fr.ISO8859-1, fr.UTF-8, fr, it.ISO8859-1}
 rm -rf $RPM_BUILD_ROOT%{_mandir}/{it.UTF-8, it, ja, pl.ISO8859-1, pl.UTF-8, pl}
 rm -rf $RPM_BUILD_ROOT%{_mandir}/{ru.KOI8-R, ru.UTF-8}
 
-rpmclean
 
 %postun
 if [ -x /usr/bin/busybox ]; then
@@ -171,3 +169,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 %dir %{_datadir}/vim
 %{_datadir}/vim/*
+
+%changelog
+* Fri Oct 23 2015 cjacker - 7.4.796-9
+- Rebuild for new 4.0 release
+

@@ -1,7 +1,7 @@
 Name: hwdata
 Summary: Hardware identification and configuration data
 Version: 0.282
-Release: 2
+Release: 3
 License: GPLv2+
 Source: https://fedorahosted.org/releases/h/w/%{name}/%{name}-%{version}.tar.bz2
 URL:    http://git.fedorahosted.org/git/hwdata.git
@@ -30,6 +30,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.282-3
+- Rebuild for new 4.0 release
+
 * Mon Oct 05 2015 Cjacker <cjacker@foxmail.com>
 - update to 282
 

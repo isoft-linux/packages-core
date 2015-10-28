@@ -1,9 +1,8 @@
 Summary: X.Org X11 filesystem layout
 Name: xorg-x11-filesystem
 Version: 7.6
-Release: 2 
+Release: 3 
 License: MIT/X11
-Group: System Environment/Base
 
 BuildArch: noarch
 
@@ -79,6 +78,9 @@ exit 0
 %{_bindir}/xorg-x11-filesystem-upgrade
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.6-3
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

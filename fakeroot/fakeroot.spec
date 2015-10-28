@@ -1,9 +1,8 @@
 Summary: Gives a fake root environment
 Name: fakeroot
 Version: 1.20.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL+
-Group: Development/Tools
 URL: http://fakeroot.alioth.debian.org/
 Source0: http://ftp.debian.org/debian/pool/main/f/fakeroot/%{name}_%{version}.orig.tar.bz2
 # Address some POSIX-types related problems.
@@ -28,7 +27,6 @@ had the user really been root.
 
 %package libs
 Summary: Gives a fake root environment (libraries)
-Group: Development/Tools
 
 %description libs
 This package contains the libraries required by %{name}.
@@ -172,6 +170,9 @@ fi
 %ghost %{_libdir}/libfakeroot/libfakeroot-0.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.20.2-2
+- Rebuild for new 4.0 release
+
 * Thu Jun 18 2015 Dominik Mierzejewski <rpm@greysector.net> - 1.20.2-1
 - update to 1.20.2
 - alternativize libfakeroot and faked as well (bug 817088)

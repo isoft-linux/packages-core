@@ -1,9 +1,8 @@
 Name:           perl-SGMLSpm
 Version:        1.03ii
-Release: 	    16.2
+Release: 	    17.2
 Summary:        Perl library for parsing the output of nsgmls
 
-Group:          CoreDev/Runtime/Library/Perl
 License:        GPL
 URL:            http://search.cpan.org/dist/SGMLSpm/
 Source0:    	http://www.cpan.org/authors/id/D/DM/DMEGG/SGMLSpm-%{version}.tar.gz
@@ -44,6 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.03ii-17.2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

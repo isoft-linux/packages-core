@@ -15,8 +15,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 19.%{snapver}%{?dist}
-Group: System Environment/Base
+Release: 20.%{snapver}%{?dist}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -100,7 +99,6 @@ features.
 
 %package devel
 Summary: Development files and documentation for APT's libapt-pkg
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: librpm-devel
 Requires: pkgconfig
@@ -111,7 +109,6 @@ libapt-pkg package manipulation library, modified for RPM.
 
 %package python
 Summary: Python bindings for libapt-pkg
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description python
@@ -120,7 +117,6 @@ to access the APT library interface.
 
 %package plugins-groupinstall
 Summary: Additional commands to install and remove package groups
-Group: System Environment/Base
 Requires: %{name} = %{version}-%{release}
 Requires: rhpl
 Requires: comps
@@ -139,7 +135,6 @@ RHL/RHEL/FC distributions.
 
 %package plugins-list
 Summary: Additional commands to list extra packages and leaves
-Group: System Environment/Base
 Requires: %{name} = %{version}-%{release}
 
 %description plugins-list
@@ -151,7 +146,6 @@ apt-cache list-nodeps
 
 %package plugins-log
 Summary: Log the changes being introduced by the transaction
-Group: System Environment/Base
 Requires: %{name} = %{version}-%{release}
 
 %description plugins-log
@@ -337,3 +331,6 @@ rm -f %{buildroot}%{_libdir}/*.la
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.5.15lorg3.95-20.git522
+- Rebuild for new 4.0 release
+

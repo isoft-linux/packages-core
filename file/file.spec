@@ -3,9 +3,8 @@
 Summary: A utility for determining file types
 Name: file
 Version: 5.23
-Release: 15
+Release: 16
 License: BSD
-Group:  Core/Runtime/Utility 
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
 URL: http://www.darwinsys.com/file/
 Requires: file-libs = %{version}-%{release}
@@ -19,7 +18,6 @@ different graphics formats.
 
 %package libs
 Summary: Libraries for applications using libmagic
-Group:   Core/Runtime/Library 
 License: BSD
 
 %description libs
@@ -28,7 +26,6 @@ Libraries for applications using libmagic.
 
 %package devel
 Summary:  Libraries and header files for file development
-Group:    Core/Deveopment/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -37,7 +34,6 @@ necessary for developing programs using libmagic.
 
 %package static
 Summary: Static library for file development
-Group:   Core/Development/Library 
 Requires: %{name} = %{version}-%{release}
 
 %description static
@@ -47,7 +43,6 @@ the libmagic library.
 
 %package -n python-magic
 Summary: Python 2 bindings for the libmagic API
-Group:   Development/Libraries
 BuildRequires: python2-devel
 BuildArch: noarch
 Requires: %{name} = %{version}-%{release}
@@ -60,7 +55,6 @@ file(1) command.
 %if %{with_python3}
 %package -n python3-magic
 Summary: Python 3 bindings for the libmagic API
-Group:   Development/Libraries
 BuildRequires: python3-devel
 BuildArch: noarch
 Requires: %{name} = %{version}-%{release}
@@ -106,7 +100,6 @@ cd %{py3dir}
 %endif
 
 
-rpmclean
 
 %check
 make check
@@ -158,3 +151,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.23-16
+- Rebuild for new 4.0 release
+

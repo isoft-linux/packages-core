@@ -1,7 +1,7 @@
 Summary: Utilities for managing accounts and shadow password files
 Name: shadow-utils
 Version: 4.2.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Epoch: 2
 URL: http://pkg-shadow.alioth.debian.org/
 Source0: http://pkg-shadow.alioth.debian.org/releases/shadow-%{version}.tar.xz
@@ -12,6 +12,7 @@ Source4: shadow-bsd.txt
 Source5: https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 
 Source10: passwd.pam 
+
 Patch0: shadow-4.1.5-customize.patch
 Patch1: shadow-4.1.5.1-goodname.patch
 Patch2: shadow-4.1.5.1-info-parent-dir.patch
@@ -34,10 +35,10 @@ Patch21: shadow-4.1.5.1-move-home.patch
 Patch22: shadow-4.2.1-audit-update.patch
 
 License: BSD and GPLv2+
-Group: System Environment/Base
 BuildRequires: libacl-devel libattr-devel
-BuildRequires: bison flex gnome-doc-utils
+BuildRequires: bison flex
 #BuildRequires: autoconf, automake, libtool, gettext-devel
+BuildRequires: gnome-doc-utils
 Requires: setup
 Requires(pre): coreutils
 Requires(post): coreutils
@@ -99,7 +100,6 @@ popd
 cp -r shadow-%{version} shadow-%{version}-withpam
 
 %build
-
 %ifarch sparc64
 #sparc64 need big PIE
 export CFLAGS="$RPM_OPT_FLAGS -fPIE"
@@ -231,9 +231,6 @@ rm -rf $RPM_BUILD_ROOT
 %files -f shadow.lang
 %defattr(-,root,root)
 
-%defattr(-,root,root)
-%doc NEWS doc/HOWTO README
-
 %config(noreplace) %{_sysconfdir}/pam.d/passwd
 
 %attr(0644,root,root)   %config(noreplace) %{_sysconfdir}/login.defs
@@ -284,5 +281,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/vigr.8*
 %{_mandir}/man8/chgpasswd.8*
 
-
+%changelog
+* Fri Oct 23 2015 cjacker - 2:4.2.1-3
+- Rebuild for new 4.0 release
 

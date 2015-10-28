@@ -1,7 +1,7 @@
 Summary:     The mdadm program controls Linux md devices (software RAID arrays)
 Name:        mdadm
 Version:     3.3.2
-Release:     1%{?dist}
+Release:     2%{?dist}
 Source:      http://www.kernel.org/pub/linux/utils/raid/mdadm/mdadm-%{version}.tar.xz
 Source1:     mdmonitor.init
 Source2:     raid-check
@@ -17,7 +17,6 @@ Patch97:     mdadm-3.3-udev.patch
 Patch98:     mdadm-2.5.2-static.patch
 URL:         http://www.kernel.org/pub/linux/utils/raid/mdadm/
 License:     GPLv2+
-Group:       System Environment/Base
 BuildRoot:   %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Obsoletes:   mdctl,raidtools
 Conflicts:   dracut < 034-1
@@ -95,3 +94,6 @@ rm -rf %{buildroot}
 #/etc/libreport/events.d/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.3.2-2
+- Rebuild for new 4.0 release
+

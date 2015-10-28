@@ -6,7 +6,7 @@
 
 Name:           bash-completion
 Version:        2.1
-Release:        10.git
+Release:        11.git
 Epoch:          1
 Summary:        Programmable completion for Bash
 
@@ -92,3 +92,6 @@ exit $result
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:2.1-11.git
+- Rebuild for new 4.0 release
+

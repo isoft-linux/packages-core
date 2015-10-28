@@ -1,7 +1,6 @@
 Name: docbook5-schemas
 Version: 5.0
-Release: 13%{?dist}
-Group: Applications/Text
+Release: 14%{?dist}
 
 Summary: Norman Walsh's schemas (DTD, Relax NG, W3C schema) for Docbook 5.X
 
@@ -300,3 +299,6 @@ fi
 %{_bindir}/db4-entities.pl
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.0-14
+- Rebuild for new 4.0 release
+

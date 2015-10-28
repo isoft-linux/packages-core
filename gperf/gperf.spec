@@ -1,10 +1,9 @@
 Summary: A perfect hash function generator.
 Name: gperf
 Version: 3.0.4
-Release: 1
+Release: 2
 License: GPL
 Source: ftp://ftp.gnu.org/pub/gnu/gperf/gperf-%{version}.tar.gz
-Group:  CoreDev/Development/Utility 
 URL: http://www.gnu.org/software/gperf/
 
 %description
@@ -28,7 +27,6 @@ rm -rf $RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT{%{_mandir}/{dvi,html},%{_datadir}/doc}
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-rpmclean
 
 %check
 make check
@@ -42,5 +40,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/gperf.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.0.4-2
+- Rebuild for new 4.0 release
+
 * Mon Jul 30 2007 Cjacker <cjacker@gmail.com>
 - prepare for 0.5

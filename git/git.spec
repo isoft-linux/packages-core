@@ -1,9 +1,8 @@
 Name: 		git
 Version:    	2.6.0
-Release: 	1
+Release: 	2
 Summary:  	Core git tools
 License: 	GPLv2
-Group: 		CoreDev/Development/Utility
 URL: 		http://kernel.org/pub/software/scm/git/
 Source0: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
 Source1: 	http://kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
@@ -31,7 +30,6 @@ and full access to internals.
 
 %package core
 Summary:        Core package of git with minimal funcionality
-Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
 Requires:       rsync
@@ -47,7 +45,6 @@ dependencies. Install git package for common set of tools.
 
 %package daemon
 Summary:        Git protocol dæmon
-Group:          Development/Tools
 Requires:       git = %{version}-%{release}
 Requires:   systemd
 Requires(post): systemd
@@ -60,7 +57,6 @@ The git dæmon for supporting git:// access to git repositories
 
 %package -n perl-Git
 Summary:        Perl interface to Git
-Group:          CoreDev/Runtime/Library/Perl
 Requires:       perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl(ExtUtils::MakeMaker)
@@ -221,5 +217,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.6.0-2
+- Rebuild for new 4.0 release
+
 * Tue Sep 29 2015 Cjacker <cjacker@foxmail.com>
 - update to 2.6.0

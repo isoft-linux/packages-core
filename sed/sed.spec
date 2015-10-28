@@ -5,9 +5,8 @@
 Summary: A GNU stream text editor.
 Name: sed
 Version: 4.2.2
-Release: 1.2
+Release: 2.2
 License: GPL
-Group: Core/Runtime/Utility
 Source0: ftp://ftp.gnu.org/pub/gnu/sed/sed-%{version}.tar.bz2
 
 Prefix: %{_prefix}
@@ -33,7 +32,6 @@ rm -rf ${RPM_BUILD_ROOT}
 rm -rf ${RPM_BUILD_ROOT}/%{_infodir}
 
 %find_lang sed
-rpmclean
 %check
 make check
 
@@ -46,3 +44,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_bindir}/sed
 %{_mandir}/man*/*
 %changelog
+* Fri Oct 23 2015 cjacker - 4.2.2-2.2
+- Rebuild for new 4.0 release
+

@@ -1,8 +1,7 @@
 Name:           libglew
 Version:        1.12.0
-Release:        1 
+Release:        2 
 Summary:        The OpenGL Extension Wrangler Library
-Group:          System Environment/Libraries
 License:        BSD and MIT
 URL:            http://glew.sourceforge.net
 Source0:        http://downloads.sourceforge.net/project/glew/glew/%{version}/glew-%{version}.tgz
@@ -23,7 +22,6 @@ are in libGLEW and libGLEWmx.
 
 %package devel
 Summary:        Development files for glew library
-Group:          Development/Libraries
 Requires:       libGLU-devel
 
 %description devel
@@ -47,7 +45,6 @@ find $RPM_BUILD_ROOT -type f -name "*.a" -delete
 # fix perms
 chmod 0755 $RPM_BUILD_ROOT%{_libdir}/*.so*
 
-rpmclean
 
 %post -p /sbin/ldconfig
 
@@ -66,3 +63,6 @@ rpmclean
 %{_includedir}/GL/*.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.12.0-2
+- Rebuild for new 4.0 release
+

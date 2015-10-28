@@ -3,7 +3,7 @@
 
 Name:           opencl-utils
 Version:        0
-Release:        15.svn%{svnversion}%{?dist}
+Release:        16.svn%{svnversion}%{?dist}
 Summary:        Useful OpenCL tools and utilities
 
 License:        MIT
@@ -87,3 +87,6 @@ ln -sf  $soname ${soname%%.*.*}
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0-16.svn16
+- Rebuild for new 4.0 release
+

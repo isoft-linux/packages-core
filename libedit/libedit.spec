@@ -3,9 +3,8 @@
 Summary:	The NetBSD Editline library
 Name:		libedit
 Version:	3.1
-Release:    4
+Release:    5
 License:	BSD
-Group:	    Core/Runtime/Library	
 URL:		http://www.thrysoee.dk/editline/
 Source0:	http://www.thrysoee.dk/editline/%{name}-%{snap}-%{version}.tar.gz
 
@@ -19,7 +18,6 @@ to those found in GNU Readline.
 
 %package devel
 Summary:	Development files for %{name}
-Group:		Core/Development/Library
 
 Requires:	%{name} = %{version}-%{release}
 Requires:	pkgconfig
@@ -41,7 +39,6 @@ rm -rf $RPM_BUILD_ROOT
 
 make install INSTALL="%{__install} -p" DESTDIR=$RPM_BUILD_ROOT
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -67,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man5/editrc.5*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.1-5
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

@@ -1,9 +1,8 @@
 Summary: A tool for converting XML files to various formats
 Name: xmlto
 Version: 0.0.26
-Release: 2
+Release: 3
 License: GPLv2
-Group:   CoreDev/Development/Utility/Documentation
 #Older versions up to xmlto-0.0.20
 #URL: http://cyberelk.net/tim/xmlto/
 #Source0: http://cyberelk.net/tim/data/xmlto/stable/%{name}-%{version}.tar.bz2
@@ -61,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 #%{_datadir}/xmlto/format/fo/pdf
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.0.26-3
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

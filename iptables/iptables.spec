@@ -7,7 +7,7 @@
 Name: iptables
 Summary: Tools for managing Linux kernel packet filtering capabilities
 Version: 1.4.21
-Release: 1
+Release: 2
 Source:  http://www.netfilter.org/projects/iptables/files/%{name}-%{version}.tar.bz2
 Source1: iptables.init
 Source2: iptables-config
@@ -19,7 +19,6 @@ Patch0: iptables-1.4.14-musl-fixes.patch
 Source10: libnfnetlink-%{libnfnetlink_ver}.tar.bz2
 Patch10: libnfnetlink-musl-fix.patch
 
-Group: System Environment/Base
 URL: http://www.netfilter.org/
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 License: GPLv2
@@ -35,7 +34,6 @@ you should install this package.
 
 %package devel
 Summary: Development package for iptables
-Group: System Environment/Base
 Requires: %{name} = %{version}-%{release}
 Requires: pkgconfig
 
@@ -47,7 +45,6 @@ stable and may change with every new version. It is therefore unsupported.
 
 %package services
 Summary: iptables and ip6tables services for iptables
-Group: System Environment/Base
 Requires: %{name} = %{version}-%{release}
 Requires(post): systemd-units
 Requires(preun): systemd-units
@@ -69,7 +66,6 @@ out of the base package since they are not active by default anymore.
 
 %package utils
 Summary: iptables and ip6tables services for iptables
-Group: System Environment/Base
 Requires: %{name} = %{version}-%{release}
 
 %description utils
@@ -240,3 +236,6 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4.21-2
+- Rebuild for new 4.0 release
+

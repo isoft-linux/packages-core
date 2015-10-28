@@ -1,16 +1,17 @@
 Name: asciidoc		
 Version: 8.6.9	
-Release: 1
+Release: 2
 Summary: Text document format for short documents, articles, books and UNIX man pages
 
-Group:	CoreDev/Development/Utility/Documentation	
 License: GPL
 URL:		http://www.methods.co.nz/asciidoc/
 Source0:    http://downloads.sourceforge.net/project/asciidoc/asciidoc/%{version}/%{name}-%{version}.tar.gz
 
 Requires:   python, libxslt	
+BuildArch: noarch
 
 %description
+%{summary}
 
 %prep
 %setup -q
@@ -34,4 +35,5 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
-
+* Fri Oct 23 2015 cjacker - 8.6.9-2
+- Rebuild for new 4.0 release

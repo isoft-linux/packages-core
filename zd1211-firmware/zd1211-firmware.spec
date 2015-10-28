@@ -1,9 +1,8 @@
 %define snap 2007-03-19
 Name:		zd1211-firmware
 Version:	1.4
-Release:	11%{?dist}
+Release:	12%{?dist}
 Summary:	Firmware for wireless devices based on zd1211 chipset
-Group:		System Environment/Kernel
 License:	GPLv2
 URL:		http://zd1211.wiki.sourceforge.net
 Source0:	http://downloads.sourceforge.net/zd1211/zd1211-firmware-%{version}.tar.bz2
@@ -40,3 +39,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4-12
+- Rebuild for new 4.0 release
+

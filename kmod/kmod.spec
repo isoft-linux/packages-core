@@ -1,6 +1,6 @@
 Name: kmod
 Version: 21	
-Release: 2 
+Release: 3 
 Summary: Linux kernel module management utilities
 
 License: GPLv2+
@@ -112,6 +112,9 @@ make check ||:
 %{_libdir}/libkmod.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 21-3
+- Rebuild for new 4.0 release
+
 * Sat Sep 12 2015 Cjacker <cjacker@foxmail.com>
 - clean spec file.
 

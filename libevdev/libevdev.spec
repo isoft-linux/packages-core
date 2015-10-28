@@ -1,9 +1,8 @@
 Summary: libevdev is a wrapper library for evdev devices. 
 Name: libevdev
 Version: 1.4.2
-Release: 1
+Release: 2
 License: GPL
-Group:  Core/Runtime/Library 
 Source0: http://www.freedesktop.org/software/libevdev/%{name}-%{version}.tar.xz
 
 %description
@@ -13,7 +12,6 @@ The eventual goal is that libevdev wraps all ioctls available to evdev devices, 
 
 %package devel
 Summary: Libraries and headers for %{name} 
-Group:   Core/Development/Library
 Requires: %name = %{version}
 
 %description devel
@@ -29,7 +27,6 @@ make %{?_smp_flags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-rpmclean
 
 %clean
 rm -rf %{buildroot}
@@ -54,6 +51,9 @@ rm -rf %{buildroot}
 %{_includedir}/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.4.2-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

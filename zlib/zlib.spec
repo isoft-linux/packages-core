@@ -1,10 +1,9 @@
 Summary: The compression and decompression library
 Name: zlib
 Version: 1.2.8
-Release: 9%{?dist}
+Release: 10%{?dist}
 # /contrib/dotzlib/ have Boost license
 License: zlib and Boost
-Group: System Environment/Libraries
 URL: http://www.zlib.net/
 Source: http://www.zlib.net/zlib-%{version}.tar.xz
 
@@ -25,7 +24,6 @@ library which is used by many different programs.
 
 %package devel
 Summary: Header files and libraries for Zlib development
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -35,7 +33,6 @@ library.
 
 %package static
 Summary: Static libraries for Zlib development
-Group: Development/Libraries
 Requires: %{name}-devel = %{version}-%{release}
 
 %description static
@@ -45,7 +42,6 @@ decompression library.
 
 %package -n minizip
 Summary: Library for manipulation with .zip archives
-Group: System Environment/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description -n minizip
@@ -53,7 +49,6 @@ Minizip is a library for manipulation with files from .zip archives.
 
 %package -n minizip-devel
 Summary: Development files for the minizip library
-Group: Development/Libraries
 Requires: minizip = %{version}-%{release}
 Requires: %{name}-devel = %{version}-%{release}
 Requires: pkgconfig
@@ -143,3 +138,6 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 %{_libdir}/pkgconfig/minizip.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.2.8-10
+- Rebuild for new 4.0 release
+

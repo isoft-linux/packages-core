@@ -1,6 +1,6 @@
 Name:		pciutils
 Version:	3.3.1
-Release:    1	
+Release:    2	
 Source:		https://www.kernel.org/pub/software/utils/pciutils/%{name}-%{version}.tar.xz
 
 #change pci.ids directory to hwdata
@@ -15,7 +15,6 @@ ExclusiveOS:	Linux
 Requires:	hwdata
 BuildRequires:	sed
 Summary: PCI bus related utilities
-Group:  Core/Runtime/Utility 
 
 %description
 The pciutils package contains various utilities for inspecting and
@@ -25,7 +24,6 @@ require kernel version 2.1.82 or newer (which support the
 
 %package devel
 Summary: Linux PCI development library
-Group: Core/Development/Library
 Requires: zlib-devel pkgconfig %{name} = %{version}-%{release}
 
 %description devel
@@ -34,7 +32,6 @@ devices connected to the PCI bus.
 
 %package libs
 Summary: Linux PCI library
-Group:  Core/Runtime/Library 
 
 %description libs
 This package contains a library for inspecting and setting
@@ -42,7 +39,6 @@ devices connected to the PCI bus.
 
 %package devel-static
 Summary: Linux PCI static library
-Group: Core/Development/Library
 Requires: %{name}-devel = %{version}-%{release}
 
 %description devel-static
@@ -119,5 +115,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.3.1-2
+- Rebuild for new 4.0 release
+
 * Wed Dec 04 2013 Cjacker <cjacker@gmail.com>
 - first build for new OS

@@ -2,7 +2,7 @@ Summary: Convenience library for kernel netlink sockets
 License: LGPLv2
 Name: libnl3
 Version: 3.2.25
-Release: 1
+Release: 2
 URL: http://www.infradead.org/~tgr/libnl/
 Source: http://www.infradead.org/~tgr/libnl/files/libnl-%{version}.tar.gz
 Source1: http://www.infradead.org/~tgr/libnl/files/libnl-doc-%{version}.tar.gz
@@ -50,7 +50,6 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rpmclean
 
 %check
 make check
@@ -91,3 +90,6 @@ make check
 %doc libnl-doc-%{version}/api/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.2.25-2
+- Rebuild for new 4.0 release
+

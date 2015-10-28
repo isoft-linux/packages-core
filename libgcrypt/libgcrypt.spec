@@ -1,17 +1,15 @@
 Name: libgcrypt
 Version: 1.6.3
-Release: 2 
+Release: 3 
 URL: http://www.gnupg.org/
 Source0: libgcrypt-%{version}.tar.bz2
 License: LGPLv2+
 Summary: A general-purpose cryptography library
 BuildRequires: gawk, libgpg-error-devel >= 1.4, pkgconfig
-Group:  Core/Runtime/Library 
 
 %package devel
 Summary: Development files for the %{name} package
 License: LGPLv2+ and GPLv2+
-Group: Core/Development/Library
 Requires: libgpg-error-devel
 Requires: %{name} = %{version}-%{release}
 
@@ -42,7 +40,6 @@ mkdir -p -m 755 $RPM_BUILD_ROOT/etc/gcrypt
 
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-rpmclean
 
 %check
 make check
@@ -70,3 +67,6 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6.3-3
+- Rebuild for new 4.0 release
+

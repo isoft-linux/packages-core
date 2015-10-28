@@ -1,10 +1,9 @@
 Name:           perl-Error
 Version:        0.17022
-Release:        1
+Release:        2
 Epoch:          1
 Summary:        Error/exception handling in an OO-ish way
 License:        GPL+ or Artistic
-Group:          CoreDev/Runtime/Library/Perl
 URL:            http://search.cpan.org/dist/Error/
 Source0:        http://www.cpan.org/authors/id/S/SH/SHLOMIF/Error-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -31,7 +30,6 @@ rm -rf $RPM_BUILD_ROOT
 ./Build install destdir=$RPM_BUILD_ROOT create_packlist=0
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
 
-rpmclean
 %check
 ./Build test
 
@@ -46,3 +44,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/Error::Simple.3pm.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:0.17022-2
+- Rebuild for new 4.0 release
+

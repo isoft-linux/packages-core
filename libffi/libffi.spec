@@ -1,8 +1,7 @@
 Name:		libffi
 Version:	3.2.1
-Release:	1	
+Release:	2	
 Summary:	A portable foreign function interface library
-Group:	    Core/Runtime/Library	
 License:    liberal license	
 URL:		http://sourceware.org/libffi
 Source0:	http://sourceware.org/libffi/libffi-%{version}.tar.gz
@@ -41,7 +40,6 @@ between the two languages.
 
 %package	devel
 Summary:	Development files for %{name}
-Group:		Core/Development/Library
 Requires:	%{name} = %{version}-%{release}
 Requires:       pkgconfig
 
@@ -66,7 +64,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-rpmclean
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -90,3 +87,6 @@ make check
 %{_mandir}/man3/*.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.2.1-2
+- Rebuild for new 4.0 release
+

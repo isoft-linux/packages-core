@@ -1,9 +1,8 @@
 Name:           perl-Module-ScanDeps
 Summary:        Recursively scan Perl code for dependencies
 Version:        1.19
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        GPL+ or Artistic
-Group:          Development/Libraries
 Source0:        http://search.cpan.org/CPAN/authors/id/R/RS/RSCHUPP/Module-ScanDeps-%{version}.tar.gz 
 URL:            http://search.cpan.org/dist/Module-ScanDeps/
 BuildArch:      noarch
@@ -71,3 +70,6 @@ make pure_install DESTDIR=%{buildroot}
 %{_mandir}/man3/Module::ScanDeps.3pm*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.19-5
+- Rebuild for new 4.0 release
+

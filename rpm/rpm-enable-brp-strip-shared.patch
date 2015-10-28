@@ -1,0 +1,11 @@
+diff -Nur rpm-4.13.0-rc1/platform.in rpm-4.13.0-rc1n/platform.in
+--- rpm-4.13.0-rc1/platform.in	2015-08-20 23:08:42.439319329 +0800
++++ rpm-4.13.0-rc1n/platform.in	2015-10-23 20:49:54.100758029 +0800
+@@ -68,6 +68,7 @@
+ %__os_install_post    \
+     %{_rpmconfigdir}/brp-compress \
+     %{_rpmconfigdir}/brp-strip %{__strip} \
++    %{_rpmconfigdir}/brp-strip-shared %{__strip} \
+     %{_rpmconfigdir}/brp-strip-static-archive %{__strip} \
+     %{_rpmconfigdir}/brp-strip-comment-note %{__strip} %{__objdump} \
+ %{nil}

@@ -3,10 +3,9 @@
 
 Name:           gobject-introspection
 Version:        1.46.0
-Release:        1
+Release:        2
 Summary:        Introspection system for GObject-based libraries
 
-Group:  Core/Runtime/Library 
 License:        GPLv2+, LGPLv2+, MIT
 URL:            http://live.gnome.org/GObjectIntrospection
 
@@ -31,7 +30,6 @@ things.
 
 %package devel
 Summary: Libraries and headers for gobject-introspection
-Group:  Core/Development/Library
 Requires: %name = %{version}-%{release}
 Requires: glib2-devel
 Requires: pkgconfig
@@ -94,5 +92,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.46.0-2
+- Rebuild for new 4.0 release
+
 * Fri Sep 25 2015 Cjacker <cjacker@foxmail.com>
 - update to gnome 3.18

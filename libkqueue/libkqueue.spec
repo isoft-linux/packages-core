@@ -1,9 +1,8 @@
 Name:       libkqueue
 Summary:    Emulates the kqueue and kevent system calls
 Version:    2.0.3
-Release:    1
+Release:    2
 License:    BSD
-Group:      System Environment/Libraries
 Url:        https://github.com/mheily/libkqueue
 #git clone https://github.com/mheily/libkqueue.git
 Source0:    %{name}.tar.gz
@@ -13,7 +12,6 @@ Emulates the kqueue and kevent system calls
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -58,5 +56,8 @@ make check
 %{_mandir}/man2/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.0.3-2
+- Rebuild for new 4.0 release
+
 * Sat Jul 11 2015 Cjacker <cjacker@foxmail.com>
 - update to git, pass "make check"

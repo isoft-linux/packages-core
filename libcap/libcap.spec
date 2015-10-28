@@ -1,12 +1,11 @@
 Name: libcap
 Version: 2.24
-Release: 1 
+Release: 2 
 Summary: Library for getting and setting POSIX.1e capabilities
 Source: https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-%{version}.tar.xz
 
 URL: http://ftp.kernel.org/pub/linux/libs/security/linux-privs/kernel-2.6/
 License: LGPLv2+
-Group:  Core/Runtime/Library
 BuildRequires: libattr-devel pam-devel
 
 %description
@@ -15,7 +14,6 @@ draft 15 capabilities.
 
 %package devel
 Summary: Development files for libcap
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -52,7 +50,6 @@ mv -f doc/*.3 ${RPM_BUILD_ROOT}/%{_mandir}/man3/
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/libcap.a
 
 chmod +x ${RPM_BUILD_ROOT}%{_libdir}/*.so.*
-rpmclean
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -77,3 +74,6 @@ rpmclean
 rm -rf ${RPM_BUILD_ROOT}
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.24-2
+- Rebuild for new 4.0 release
+

@@ -7,9 +7,8 @@
 Summary:	X.Org X11 basic fonts
 Name:		xorg-x11-fonts
 Version:	7.5
-Release:	3
+Release:	4
 License:	Various licenses
-Group:		User Interface/X
 URL:		http://www.x.org
 
 BuildArch:	noarch
@@ -38,7 +37,6 @@ X.Org X Window System fonts
 
 %package base
 Summary: Base fonts required by the X Window System.
-Group: User Interface/X
 Requires(post): mkfontdir, mkfontscale, fontconfig
 Requires(postun): mkfontdir, mkfontscale, fontconfig
 # Required so upgrades work, since base fonts moved here from main pkg
@@ -53,7 +51,6 @@ required by the X Window System.
 
 %package misc
 Summary: misc bitmap fonts for the X Window System
-Group: User Interface/X
 Requires(post): mkfontdir, fontconfig
 Requires(postun): mkfontdir, fontconfig
 
@@ -276,4 +273,9 @@ rm -rf $RPM_BUILD_ROOT
 # NOTE: Xorg supplies this fonts.alias, so it is not ghosted
 %verify(not md5 size mtime) %{_x11fontdir}/misc/fonts.alias
 %ghost %verify(not md5 size mtime) %{_x11fontdir}/misc/fonts.cache-*
+
+
+%changelog
+* Fri Oct 23 2015 cjacker - 7.5-4
+- Rebuild for new 4.0 release
 

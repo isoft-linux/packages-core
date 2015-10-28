@@ -1,9 +1,8 @@
 Summary: The shared library for the S-Lang extension language.
 Name: slang
 Version: 2.2.4
-Release: 1 
+Release: 2 
 License: GPL
-Group:  Core/Runtime/Library
 Source: ftp://ftp.fu-berlin.de/pub/unix/misc/slang/v2.0/slang-%{version}.tar.bz2
 Patch0: slang-2.2.3-slsh-libs.patch 
 Patch1: musl-fix-posix_close-clash.patch
@@ -19,7 +18,6 @@ to recode S-Lang procedures in C if you need to.
 
 %package devel
 Summary: The static library and header files for development using S-Lang.
-Group: Core/Development/Library
 Requires: slang = %{version}
 
 %description devel
@@ -71,3 +69,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_includedir}/slang
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.2.4-2
+- Rebuild for new 4.0 release
+

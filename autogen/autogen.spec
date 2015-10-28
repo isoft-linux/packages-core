@@ -1,9 +1,8 @@
 Summary:	Automated text file generator
 Name:		autogen
 Version:	5.18.4
-Release:    1
+Release:    2
 License:	GPLv3+
-Group:		CoreDev/Development/Utility
 URL:		http://www.gnu.org/software/autogen/
 Source0:	ftp://ftp.gnu.org/gnu/autogen/rel%{version}/%{name}-%{version}.tar.xz
 
@@ -24,7 +23,6 @@ Summary:	Automated option processing library based on %{name}
 # Although sources are dual licensed with BSD, some autogen generated files
 # are only under LGPLv3+. We drop BSD to avoid multiple licensing scenario.
 License:	LGPLv3+
-Group:	    CoreDev/Runtime/Library	
 
 %description libopts
 Libopts is very powerful command line option parser consisting of a set of
@@ -34,7 +32,6 @@ parsing and documenting command line options.
 %package libopts-devel
 Summary:	Development files for libopts
 License:	LGPLv3+
-Group:		CoreDev/Development/Library
 
 Requires:	autogen
 Requires:	automake
@@ -112,3 +109,6 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %{_includedir}/autoopts/usage-txt.h
 
 %changelog
+* Fri Oct 23 2015 cjacker - 5.18.4-2
+- Rebuild for new 4.0 release
+

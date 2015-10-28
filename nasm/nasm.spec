@@ -1,17 +1,14 @@
-%define debug_package %{nil}
 Summary: A portable x86 assembler which uses Intel-like syntax.
 Name:   nasm
 Version: 2.11.08
-Release: 1
+Release: 2
 License: LGPL
-Group:  CoreDev/Development/Language
 Source: http://www.nasm.us/pub/nasm/releasebuilds/2.11.05/nasm-%{version}.tar.xz
 URL: http://www.nasm.us
 BuildRequires: perl
 
 %package rdoff
 Summary: Tools for the RDOFF binary format, sometimes used with NASM.
-Group: CoreDev/Development/Utility
 
 %description
 NASM is the Netwide Assembler, a free portable assembler for the Intel
@@ -67,5 +64,8 @@ rm -rf "$RPM_BUILD_ROOT"
 %{_bindir}/rdx
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.11.08-2
+- Rebuild for new 4.0 release
+
 * Thu Jul 30 2015 Cjacker <cjacker@foxmail.com>
 - update to 2.11.08

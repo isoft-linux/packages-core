@@ -1,9 +1,8 @@
 Name:           iw
 Version:        4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A nl80211 based wireless configuration tool
 
-Group:          System Environment/Base
 License:        ISC
 URL:            http://www.linuxwireless.org/en/users/Documentation/iw
 Source0:        http://www.kernel.org/pub/software/network/iw/iw-%{version}.tar.xz
@@ -44,3 +43,6 @@ rm -rf $RPM_BUILD_ROOT
 %license COPYING
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.1-2
+- Rebuild for new 4.0 release
+

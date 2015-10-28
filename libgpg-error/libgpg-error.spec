@@ -1,10 +1,9 @@
 Summary: Library for error values used by GnuPG components
 Name: libgpg-error
 Version: 1.19
-Release: 2
+Release: 3
 URL: ftp://ftp.gnupg.org/gcrypt/libgpg-error/
 Source0: ftp://ftp.gnupg.org/gcrypt/libgpg-error/%{name}-%{version}.tar.bz2
-Group: Core/Runtime/Library
 License: LGPLv2+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gawk, gettext
@@ -18,7 +17,6 @@ pinentry, SmartCard Daemon and possibly more in the future.
 
 %package devel
 Summary: Development files for the %{name} package
-Group: Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -41,7 +39,6 @@ rm -rf $RPM_BUILD_ROOT/%{_datadir}/common-lisp
 
 %find_lang %{name}
 
-rpmclean
 %clean
 rm -fr $RPM_BUILD_ROOT
 
@@ -62,3 +59,6 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/aclocal/gpg-error.m4
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.19-3
+- Rebuild for new 4.0 release
+

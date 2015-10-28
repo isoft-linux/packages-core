@@ -1,6 +1,6 @@
 Name:		zd1201-firmware
 Version: 	0.14	
-Release:	11%{?dist}
+Release:	12%{?dist}
 Summary:	Firmware for wireless devices based on zd1201 chipset
 License:	GPLv2
 #wget -O zd1201-0.14-fw.tar.gz 'http://prdownloads.sourceforge.net/linux-lc100020/zd1201-0.14-fw.tar.gz?download'
@@ -29,3 +29,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.14-12
+- Rebuild for new 4.0 release
+

@@ -3,7 +3,7 @@
 
 Name: binutils	
 Version: 2.25.1
-Release: 4 
+Release: 5 
 Summary: A GNU collection of binary utilities	
 
 License: MIT
@@ -138,6 +138,9 @@ exit 0
 %{_libdir}/libopcodes.so
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.25.1-5
+- Rebuild for new 4.0 release
+
 * Fri Sep 18 2015 Cjacker <cjacker@foxmail.com>
 - refine build options.
 

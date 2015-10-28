@@ -1,7 +1,7 @@
 Summary: X.Org X11 X server utilities
 Name: xorg-x11-server-utils
 Version: 1.1.1
-Release: 7 
+Release: 8 
 License: MIT/X11
 URL: http://www.x.org
 
@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.1.1-8
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

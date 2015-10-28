@@ -1,3 +1,5 @@
+%define debug_package %{nil}
+
 %define tarball xf86-input-evdev
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/input
@@ -7,16 +9,17 @@
 Summary:   Xorg X11 evdev input driver
 Name:      xorg-x11-drv-evdev
 Version:   2.9.2
-Release:    3 
+Release:    4 
 URL:       http://www.x.org
 Source0:   xf86-input-evdev-%{version}.tar.bz2
 License:   MIT/X11
-Group:     User Interface/X Hardware Support
 
 BuildRequires: pkgconfig mtdev-devel
 BuildRequires: xorg-x11-server-sdk
 
-Requires:  xorg-x11-server-Xorg, mtdev
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires xinput)
+Requires: xorg-x11-server-Xorg, mtdev
 
 
 %description 
@@ -43,7 +46,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 find $RPM_BUILD_ROOT -regex ".*\.la$" | xargs rm -f --
 
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/xorg-evdev.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.9.2-4
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

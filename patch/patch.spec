@@ -1,10 +1,9 @@
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
 Version: 2.7.5
-Release: 1 
+Release: 2 
 License: GPL
 URL: http://www.gnu.org/software/patch/patch.html
-Group:  Core/Development/Utility 
 Source: ftp://ftp.gnu.org/gnu/patch/patch-%{version}.tar.xz
 
 #for make check with busybox cat
@@ -35,7 +34,6 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-rpmclean
 
 %check
 make check
@@ -49,3 +47,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.7.5-2
+- Rebuild for new 4.0 release
+

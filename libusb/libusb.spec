@@ -1,10 +1,9 @@
 Summary:        Library for accessing USB devices
 Name:           libusb
 Version:        1.0.19
-Release:        1
+Release:        2
 Source0:        http://downloads.sourceforge.net/libusb/libusb-%{version}.tar.bz2
 License:        LGPLv2+
-Group:          Core/Runtime/Library
 URL:            http://sourceforge.net/apps/mediawiki/libusb/
 Provides:       libusb1 = %{version}-%{release}
 Provides:       libusbx = %{version}-%{release}
@@ -15,7 +14,6 @@ This package provides a way for applications to access USB devices.
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Core/Development/Library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Provides:       libusb1-devel = %{version}-%{release}
 Provides:       libusbx-devel = %{version}-%{release}
@@ -37,7 +35,6 @@ make %{?_smp_mflags}
 make install DESTDIR=$RPM_BUILD_ROOT
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
-rpmclean
 
 %check
 #no check at all
@@ -58,6 +55,9 @@ make check
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.19-2
+- Rebuild for new 4.0 release
+
 * Wed Dec 04 2013 Cjacker <cjacker@gmail.com>
 - first build for new OS
 

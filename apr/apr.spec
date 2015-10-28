@@ -3,9 +3,8 @@
 Summary: Apache Portable Runtime library
 Name: apr
 Version: 1.5.2
-Release: 1
+Release: 2
 License: ASL 2.0
-Group:  CoreDev/Runtime/Library
 URL: http://apr.apache.org/
 Source0: http://www.apache.org/dist/apr/%{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -18,7 +17,6 @@ portability layer to as many operating systems as possible,
 including Unices, MS Win32, BeOS and OS/2.
 
 %package devel
-Group: CoreDev/Development/Library
 Summary: APR library development kit
 Conflicts: subversion-devel < 0.20.1-2
 Requires: apr = %{version}-%{release}, pkgconfig
@@ -60,7 +58,6 @@ sed -ri '/^Libs/{s,-l(uuid|crypt) ,,g}' \
 # Unpackaged files:
 rm -f $RPM_BUILD_ROOT%{_libdir}/apr.exp \
       $RPM_BUILD_ROOT%{_libdir}/libapr-*.a
-rpmclean
 
 %check
 make check
@@ -100,6 +97,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*.m4
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.5.2-2
+- Rebuild for new 4.0 release
+
 * Tue Jul 14 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.5.2.
 

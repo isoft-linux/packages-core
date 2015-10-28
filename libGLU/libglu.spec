@@ -1,8 +1,7 @@
 Name:           libGLU
 Version:        9.0.0
-Release:        1 
+Release:        2 
 Summary:        Mesa libGLU runtime library
-Group:          System Environment/Libraries
 License:        MIT
 Source0:        glu-%{version}.tar.bz2
 Patch1: 0001-glu-initialize-PriorityQ-order-field-to-NULL-in-pqNe.patch
@@ -17,7 +16,6 @@ Mesa libGLU runtime library
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 provides:       mesa-libGLU-devel
 
@@ -39,7 +37,6 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -58,5 +55,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 9.0.0-2
+- Rebuild for new 4.0 release
+
 * Fri Jul 10 2015 cjacker <cjacker@foxmail.com>
 - rebuild with mesa 10.7.0 git.

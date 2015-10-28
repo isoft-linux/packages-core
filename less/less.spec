@@ -1,9 +1,8 @@
 Summary: A text file browser similar to more, but better.
 Name: less
 Version: 458 
-Release: 5
+Release: 6
 License: GPL
-Group:  Core/Runtime/Utility 
 Source: http://www.greenwoodsoftware.com/less/%{name}-%{version}.tar.gz
 Source1: lesspipe.sh
 Source2: less.sh
@@ -48,3 +47,6 @@ install -c -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/profile.d
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Oct 23 2015 cjacker - 458-6
+- Rebuild for new 4.0 release
+

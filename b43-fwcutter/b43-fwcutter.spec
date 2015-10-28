@@ -1,9 +1,8 @@
 Name:           b43-fwcutter
 Version:        019
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Firmware extraction tool for Broadcom wireless driver
 
-Group:          System Environment/Base
 License:        BSD
 URL:            http://bues.ch/b43/fwcutter/
 Source0:        http://bues.ch/b43/fwcutter/%{name}-%{version}.tar.bz2
@@ -43,3 +42,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README README.too
 
 %changelog
+* Fri Oct 23 2015 cjacker - 019-6
+- Rebuild for new 4.0 release
+

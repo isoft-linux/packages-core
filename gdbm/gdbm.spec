@@ -1,13 +1,12 @@
 Summary: A GNU set of database routines which use extensible hashing
 Name: gdbm
 Version: 1.11
-Release: 9
+Release: 10
 Source: http://ftp.gnu.org/gnu/gdbm/gdbm-%{version}.tar.gz
 Patch0: gdbm-1.10-zeroheaders.patch
 
 License: GPLv2+
 URL: http://www.gnu.org/software/gdbm/
-Group:  Core/Runtime/Library
 BuildRequires: libtool
 
 %description
@@ -23,7 +22,6 @@ install gdbm-devel.
 
 %package devel
 Summary: Development libraries and header files for the gdbm library
-Group:  Core/Development/Library
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -55,7 +53,6 @@ rm -rf ${RPM_BUILD_ROOT}
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 %find_lang gdbm
-rpmclean
 
 %check
 make check
@@ -82,3 +79,6 @@ make check
 %{_mandir}/man1/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.11-10
+- Rebuild for new 4.0 release
+

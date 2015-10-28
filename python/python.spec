@@ -1,9 +1,21 @@
+# Some of the files below /usr/lib/pythonMAJOR.MINOR/test  (e.g. bad_coding.py)
+# are deliberately invalid, leading to SyntaxError exceptions if they get
+# byte-compiled.
+#
+# These errors are ignored by the normal python build, and aren't normally a
+# problem in the buildroots since /usr/bin/python isn't present.
+#
+# However, for the case where we're rebuilding the python srpm on a machine
+# that does have python installed we need to set this to avoid
+# brp-python-bytecompile treating these as fatal errors:
+#
+%global _python_bytecompile_errors_terminate_build 0
+
 Name:		python
 Version:	2.7.10
-Release:	1
+Release:	2
 Summary:    An interpreted, interactive, object-oriented programming language	
 
-Group:		Core/Runtime/Language
 License:	Python
 URL:		http://www.python.org
 Source0:	Python-%{version}.tar.xz
@@ -69,7 +81,6 @@ a programmable interface.
 
 %package devel
 Summary: The libraries and header files needed for Python development
-Group: Core/Development/Library
 Provides:   python2-devel = %{version}-%{release}
 Requires: python = %{version}-%{release}
 Requires: pkgconfig
@@ -88,7 +99,6 @@ documentation.
 
 %package tools
 Summary: A collection of development tools included with Python
-Group: Development/Tools
 Requires: %{name} = %{version}-%{release}
 Requires: tkinter = %{version}-%{release}
 Provides: python2-tools = %{version}
@@ -100,7 +110,6 @@ color editor (pynche), and a python gettext program (pygettext.py).
 
 %package -n tkinter
 Summary: A graphical user interface for the Python scripting language
-Group: Development/Languages
 Requires: %{name} = %{version}-%{release}
 Provides: tkinter2 = %{version}
 
@@ -143,7 +152,6 @@ mkdir -p %{buildroot}/%{_rpmconfigdir}/macros.d/
 install -m 644 %{SOURCE10} %{buildroot}/%{_rpmconfigdir}/macros.d/
 
 
-rpmclean
 
 %check
 #skip test_gdb, we do not have debug build.
@@ -193,3 +201,6 @@ EXTRATESTOPTS="$EXTRATESTOPTS" make test
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.7.10-2
+- Rebuild for new 4.0 release
+

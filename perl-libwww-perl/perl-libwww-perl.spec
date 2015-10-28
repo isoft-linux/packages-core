@@ -1,8 +1,7 @@
 Name:           perl-libwww-perl
 Version:        6.08
-Release:        1
+Release:        2
 Summary:        A Perl interface to the World-Wide Web
-Group:          Core/Runtime/Library/Perl
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/libwww-perl/
 Source0:        libwww-perl-%{version}.tar.gz
@@ -83,5 +82,8 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 6.08-2
+- Rebuild for new 4.0 release
+
 * Wed Dec 04 2013 Cjacker <cjacker@gmail.com>
 - first build for new OS

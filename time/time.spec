@@ -1,9 +1,8 @@
 Summary: A GNU utility for monitoring a program's use of system resources
 Name: time
 Version: 1.7
-Release: 48
+Release: 49
 License: GPLv2+
-Group: Applications/System
 Url: http://www.gnu.org/software/time/
 Source: ftp://prep.ai.mit.edu/pub/gnu/%{name}/%{name}-%{version}.tar.gz
 Patch0: time-1.7-destdir.patch
@@ -38,3 +37,6 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %{_bindir}/time
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.7-49
+- Rebuild for new 4.0 release
+

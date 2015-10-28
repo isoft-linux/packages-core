@@ -1,8 +1,7 @@
 Name:		libva
 Version:	1.6.1
-Release:	1
+Release:	2
 Summary:	Video Acceleration (VA) API for Linux
-Group:		System Environment/Libraries
 License:	MIT
 URL:		http://freedesktop.org/wiki/Software/vaapi
 Source0:	http://www.freedesktop.org/software/vaapi/releases/libva/libva-%{version}.tar.bz2
@@ -20,7 +19,6 @@ Libva is a library providing the VA API video acceleration API.
 
 %package	devel
 Summary:	Development files for %{name}
-Group:		Development/Libraries
 Requires:	%{name}%{_isa} = %{version}-%{release}
 Requires:	pkgconfig
 
@@ -30,7 +28,6 @@ developing applications that use %{name}.
 
 %package	utils
 Summary:	Tools for %{name} (including vainfo)
-Group:		Development/Libraries
 Requires:	%{name}%{_isa} = %{version}-%{release}
 
 %description	utils
@@ -85,6 +82,9 @@ find %{buildroot} -regex ".*\.la$" | xargs rm -f --
 %{_bindir}/putsurface_wayland
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.6.1-2
+- Rebuild for new 4.0 release
+
 * Sat Sep 26 2015 Cjacker <cjacker@foxmail.com>
 - update to 1.6.1
 

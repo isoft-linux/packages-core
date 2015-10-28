@@ -5,10 +5,9 @@
 Summary: A 2D graphics library
 Name:  cairo
 Version: 1.14.2
-Release: 3 
+Release: 4 
 URL:  http://cairographics.org
 License: LGPLv2 or MPLv1.1
-Group:  System Environment/Libraries
 
 Source0: %{name}-%{version}.tar.xz
 #This patch is import to improve fonts rendering result.
@@ -25,7 +24,7 @@ BuildRequires: pixman-devel >= %{pixman_version}
 BuildRequires: freetype-devel >= %{freetype_version}
 BuildRequires: fontconfig-devel >= %{fontconfig_version}
 BuildRequires: glib2-devel
-BuildRequires: librsvg2-devel
+#BuildRequires: librsvg2-devel
 BuildRequires: mesa-libGL-devel
 BuildRequires: mesa-libEGL-devel
 
@@ -41,7 +40,6 @@ through the X Render Extension or OpenGL).
 
 %package devel
 Summary: Development files for cairo
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: libpng-devel
 Requires: pixman-devel >= %{pixman_version}
@@ -57,7 +55,6 @@ needed for developing software which uses the cairo graphics library.
 
 %package gobject
 Summary: GObject bindings for cairo
-Group: System Environment/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description gobject
@@ -69,7 +66,6 @@ integrate well with the GObject object system used by GNOME.
 
 %package gobject-devel
 Summary: Development files for cairo-gobject
-Group: Development/Libraries
 Requires: %{name}-devel = %{version}-%{release}
 Requires: %{name}-gobject = %{version}-%{release}
 
@@ -82,7 +78,6 @@ needed for developing software which uses the cairo Gobject library.
 
 %package tools
 Summary: Development tools for cairo
-Group: Development/Tools
 
 %description tools
 Cairo is a 2D graphics library designed to provide high-quality display
@@ -186,5 +181,8 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.la
 %{_libdir}/cairo/
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.14.2-4
+- Rebuild for new 4.0 release
+
 * Mon Oct 12 2015 Cjacker <cjacker@foxmail.com>
 - rebuild, change configure options.

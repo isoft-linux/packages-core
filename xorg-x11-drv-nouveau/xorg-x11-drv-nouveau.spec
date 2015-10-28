@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define tarball xf86-video-nouveau
 %define moduledir %(pkg-config xorg-server --variable=moduledir )
 %define driverdir	%{moduledir}/drivers
@@ -5,7 +6,7 @@
 Summary:   Xorg X11 nouveau video driver(s)
 Name:      xorg-x11-drv-nouveau
 Version:   1.0.11
-Release:   4.git 
+Release:   5.git 
 URL:       http://www.x.org
 License:   MIT
 
@@ -22,6 +23,8 @@ BuildRequires: mesa-libGL-devel >= 6.5-9
 BuildRequires: libdrm-devel >= 2.0-1
 BuildRequires: xcb-util
 Requires:  xorg-x11-server-Xorg >= 1.1.0-1
+Requires:  Xorg %(xserver-sdk-abi-requires ansic)
+Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 nouveau video driver.
@@ -51,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/nouveau.4*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.11-5.git
+- Rebuild for new 4.0 release
+
 * Fri Sep 04 2015 Cjacker <cjacker@foxmail.com>
 - add patch1, should fix build with xorg-server 1.8rc1, althouth we did not update yet.
 * Sat Aug 08 2015 Cjacker <cjacker@foxmail.com>

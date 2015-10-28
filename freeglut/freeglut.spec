@@ -1,11 +1,10 @@
 Summary:        A freely licensed alternative to the GLUT library
 Name:           freeglut
 Version:        3.0.0 
-Release:        12
+Release:        13
 URL:            http://freeglut.sourceforge.net
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 License:        MIT
-Group:          System Environment/Libraries
 BuildRequires:  pkgconfig libGL-devel libXext-devel libXxf86vm-devel libGLU-devel
 # The virtual Provides below is present so that this freeglut package is a
 # drop in binary replacement for "glut" which will satisfy rpm dependancies
@@ -29,7 +28,6 @@ joystick functions.
 
 %package devel
 Summary:        Freeglut developmental libraries and header files
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       libGL-devel libGL-devel
 Provides:       glut-devel = 3.7
@@ -61,7 +59,6 @@ popd
 
 #we do not ship static files.
 rm -rf $RPM_BUILD_ROOT/%{_libdir}/*.a
-rpmclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -82,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 3.0.0-13
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

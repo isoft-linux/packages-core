@@ -4,6 +4,11 @@
 #Until you realy know how llvm/clang works as a toolchain and WHAT I AM DOING!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#!!!!!!!!!!SVN!!!!!!!!!!
+#checkout trunk: svn co http://llvm.org/svn/llvm-project/<component>/trunk <component>
+#checkout branch: svn co http://llvm.org/svn/llvm-project/<component>/branches/release_XY <component>-XY.src 
+#!!!!!!!!!!!!!!!!!!!!!!!
+
 
 #link binaries and libraries to libcxx/libcxxabi
 %global rebuild_use_libcxx 0 
@@ -25,29 +30,32 @@
 
 #control components build.
 %global build_lldb 1
-#polly is good, but rarely used.
 %global build_polly 0 
 %global build_test_suite 0 
-#lld does not works well now.
-#also it need a static build LLVM
+#lld need a static build LLVM
 %global build_lld 1 
 
-%define llvm_ver 3.6.2
-%define cfe_ver 3.6.2
-%define compiler_rt_ver 3.6.2
-%define clang_tools_extra_ver 3.6.2
-%define lld_ver 3.6.2
-%define polly_ver 3.6.2
-%define lldb_ver 3.6.2
-%define test_suite_ver 3.6.2
+
+#all components version
+%define project_version 3.7.1
+
+%define llvm_ver %{project_version}
+%define cfe_ver %{project_version}
+%define compiler_rt_ver %{project_version}
+%define clang_tools_extra_ver %{project_version}
+%define lld_ver %{project_version}
+%define polly_ver %{project_version}
+%define lldb_ver %{project_version}
+%define test_suite_ver %{project_version}
 
 Name: llvm
-Version: 3.6.2
-Release: 8 
+Version: %{project_version}
+Release: 3.svn20151026
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of llinois/NCSA Open Source License 
 URL: http://llvm.org
 BuildRequires: clang
+BuildRequires: glibc-devel
 
 %if %{rebuild_use_libcxx}
 BuildRequires: libcxx-devel
@@ -77,7 +85,10 @@ Source3:     clang-tools-extra-%{clang_tools_extra_ver}.src.tar.xz
 Source10:    lldb-%{lldb_ver}.src.tar.xz
 Source11:    polly-%{polly_ver}.src.tar.xz
 Source12:    lld-%{lld_ver}.src.tar.xz
+
+%if %{build_test_suite}
 Source13:    test-suite-%{test_suite_ver}.src.tar.xz
+%endif
 
 Source20:    pollycc
 Source21:    polly++
@@ -101,6 +112,8 @@ Patch14:      clang-use-unwind-with-fnolibgcc.patch
 #pp-trace in clang-tools-extra did not install properly.
 Patch15:      clang-extra-install-pp-trace.patch
 
+#https://llvm.org/bugs/show_bug.cgi?id=25021
+Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
 %description
 Low Level Virtual Machine (LLVM) is:
    1.A compilation strategy designed to enable effective program optimization across the entire lifetime of a program. LLVM supports effective optimization at compile time, link-time (particularly interprocedural), run-time and offline (i.e., after software is installed), while remaining transparent to developers and maintaining compatibility with existing build scripts.
@@ -307,17 +320,18 @@ tar xf %{SOURCE13} -C projects/test-suite --strip-components=1
 %patch11 -p1
 
 %patch12 -p1
-#%patch13 -p1
+#############%patch13 -p1
 
-#%patch14 -p1
+########%patch14 -p1
 
 %patch15 -p1
+%patch20 -p1
 popd
 
 
-#pushd llvm-shared-%{version}
-#%patch0 -p1
-#popd
+pushd llvm-shared-%{version}
+%patch20 -p1
+popd
 
 %Build
 #we use clang/clang++ build llvm/clang
@@ -329,10 +343,10 @@ mkdir -p llvm-static-%{version}/build
 pushd llvm-static-%{version}/build 
 %cmake \
     -G Ninja \
-    -DCMAKE_BUILD_TYPE="Release" \
     -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_BUILD_TYPE="Release" \
+    -DCMAKE_C_FLAGS="-fPIC" \
     %if %{rebuild_use_libcxx}
     %if %{rebuild_drop_libgcc}
     -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++ -fnolibgcc -fPIC" \
@@ -361,9 +375,9 @@ popd
 pushd llvm-shared-%{version}/build
 %cmake \
     -G Ninja \
-    -DCMAKE_BUILD_TYPE="Release" \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_BUILD_TYPE="Release" \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
     %if %{enable_exception}
@@ -425,7 +439,6 @@ popd
 
 rm -rf $RPM_BUILD_ROOT/usr/docs
 
-rpmclean
 
 %check
 %if %{enable_check}
@@ -506,21 +519,22 @@ exit 0
 %{_bindir}/llvm-c-test
 %{_bindir}/llvm-lto
 %{_bindir}/llvm-dsymutil
-%{_bindir}/llvm-vtabledump
+%{_bindir}/llvm-cxxdump
+%{_bindir}/llvm-lib
+%{_bindir}/llvm-pdbdump
+#%{_bindir}/llvm-vtabledump
 %{_bindir}/obj2yaml
 %{_bindir}/verify-uselistorder
 %{_bindir}/yaml2obj
 
 #these two so is not library but plugins.
 %{_libdir}/BugpointPasses.so
-%{_libdir}/libLTO.so
+%{_libdir}/LLVMHello.so
 
 %files -n libllvm 
 %defattr(-,root,root)
-%{_libdir}/libLLVM*.so
-%{_libdir}/*LLVMHello.*
-%{_libdir}/libgtest*.so
-
+%{_libdir}/libLTO.so.*
+%{_libdir}/libLLVM*.so.*
 
 %files -n libllvm-devel
 %defattr(-,root,root)
@@ -531,11 +545,13 @@ exit 0
 %{_includedir}/%{name}-c/*
 %dir %{_datadir}/llvm/cmake
 %{_datadir}/llvm/cmake/*
+%{_libdir}/libLTO.so
+%{_libdir}/libLLVM*.so
 
 %files -n libllvm-static 
 %defattr(-,root,root)
 %{_libdir}/libLLVM*.a
-%{_libdir}/libgtest*.a
+#%{_libdir}/libgtest*.a
 
 %files -n clang
 %defattr(-,root,root)
@@ -595,9 +611,12 @@ exit 0
 %if %{build_lldb}
 %files -n lldb 
 %defattr(-,root,root)
+%{_bindir}/lldb*
+%{_bindir}/argdumper
 %{python_sitearch}/lldb
 %{python_sitearch}/readline.so
-%{_bindir}/lldb*
+#it's symbol link. to lib
+%{python_sitearch}/lib
 
 %files -n liblldb
 %defattr(-,root,root)
@@ -647,10 +666,10 @@ exit 0
 %{_libdir}/liblldELF.a
 %{_libdir}/liblldHexagonELFTarget.a
 %{_libdir}/liblldMachO.a
-%{_libdir}/liblldNative.a
+#%{_libdir}/liblldNative.a
 %{_libdir}/liblldPECOFF.a
-%{_libdir}/liblldPPCELFTarget.a
-%{_libdir}/liblldPasses.a
+#%{_libdir}/liblldPPCELFTarget.a
+#%{_libdir}/liblldPasses.a
 %{_libdir}/liblldReaderWriter.a
 %{_libdir}/liblldX86ELFTarget.a
 %{_libdir}/liblldX86_64ELFTarget.a
@@ -658,10 +677,29 @@ exit 0
 %{_libdir}/liblldYAML.a
 %{_libdir}/liblldAArch64ELFTarget.a
 %{_libdir}/liblldConfig.a
+%{_libdir}/liblldARMELFTarget.a
+%{_libdir}/liblldCOFF.a
+%{_libdir}/liblldExampleSubTarget.a
 %endif
-#start of build_lld
 
 %changelog
-* Fri Jul 10 2015 cjacker <cjacker@foxmail.com>
+* Mon Oct 26 2015 cjacker - 3.7.1-3.svn20151017
+- Update to 3.7.1 svn 251274
+- Add patch20 to fix cpu type detect issue. this issue will cause mesa not work on old core2 CPU.
+
+* Sat Oct 17 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.1svn
+
+* Wed Sep 02 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.0
+
+* Tue Aug 11 2015 Cjacker <cjacker@foxmail.com>
+- update to 3.7.0svn
+- bump version to 3.7.0, wait for release.
+
+* Sat Jul 25 2015 Cjacker <cjacker@foxmail.com>
+- first build of 3.7.0rc1
+
+* Fri Jul 10 2015 Cjacker <cjacker@foxmail.com>
 - rebuild llvm, link to libstdc++/libgcc.
 - add more comment in spec to explain why this spec is important! 

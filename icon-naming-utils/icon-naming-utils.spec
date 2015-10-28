@@ -1,10 +1,9 @@
 
 Name:           icon-naming-utils
 Version:        0.8.90
-Release:        1
+Release:        2
 Summary: 	    A script to handle icon names in desktop icon themes
 
-Group:          CoreDev/Development/Utility
 License:        GPL 
 BuildArch:	noarch
 URL:            http://tango-project.org/Standard_Icon_Naming_Specification
@@ -49,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pkgconfig/icon-naming-utils.pc
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.8.90-2
+- Rebuild for new 4.0 release
+
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
 

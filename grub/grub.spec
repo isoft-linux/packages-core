@@ -1,3 +1,5 @@
+%define debug_package %{nil}
+
 # Modules always contain just 32-bit code
 %define _libdir %{_exec_prefix}/lib
 
@@ -43,10 +45,9 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        32%{?dist}
+Release:        33%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
-Group:          System Environment/Base
 License:        GPLv3+
 URL:            http://www.gnu.org/software/grub/
 Obsoletes:	grub < 1:0.98
@@ -159,7 +160,6 @@ BuildRequires:  /usr/lib/crt1.o glibc-static
 BuildRequires:  autoconf automake autogen device-mapper-devel
 BuildRequires:	freetype-devel gettext-devel git
 BuildRequires:	texinfo
-BuildRequires:	dejavu-sans-fonts
 BuildRequires:	help2man
 
 Requires:	gettext which file
@@ -179,7 +179,6 @@ provides support for PC BIOS systems.
 %ifarch %{efiarchs}
 %package efi
 Summary:	GRUB for EFI systems.
-Group:		System Environment/Base
 Requires:	%{name}-tools = %{epoch}:%{version}-%{release}
 
 %description efi
@@ -190,7 +189,6 @@ provides support for EFI systems.
 
 %package efi-modules
 Summary:	Modules used to build custom grub.efi images
-Group:		System Environment/Base
 Requires:	%{name}-tools = %{epoch}:%{version}-%{release}
 
 %description efi-modules
@@ -202,7 +200,6 @@ provides support for rebuilding your own grub.efi on EFI systems.
 
 %package tools
 Summary:	Support tools for GRUB.
-Group:		System Environment/Base
 Requires:	gettext os-prober which file 
 #Requires: system-logos
 
@@ -214,7 +211,6 @@ provides tools for support of all platforms.
 
 %package starfield-theme
 Summary:	An example theme for GRUB.
-Group:		System Environment/Base
 #Requires:	system-logos
 
 %description starfield-theme
@@ -517,3 +513,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/starfield
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1:2.02-33
+- Rebuild for new 4.0 release
+

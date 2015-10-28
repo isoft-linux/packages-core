@@ -3,7 +3,7 @@
 
 Name:		radeon_ucode
 Version:	20150907
-Release:	1
+Release:	2
 Summary:	IRQ microcode for r6xx/r7xx/Evergreen/N.Islands/S.Islands and other new Radeon GPUs and APUs
 
 License:	Redistributable	
@@ -12,13 +12,14 @@ URL:		https://secure.freedesktop.org/~agd5f/radeon_ucode/
 Source0:	radeon_ucode.tar.gz	
 #firmware already in linux-firmware
 Source1: 	firmware-in-linux-firmware
+BuildArch: noarch
+
 %description
 %{summary}
 
 
 %package        devel
 Summary:        Development files for %{name}
-Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description    devel
@@ -57,6 +58,9 @@ popd
 #%{_libdir}/firmware/amdgpu/*.bin
 
 %changelog
+* Fri Oct 23 2015 cjacker - 20150907-2
+- Rebuild for new 4.0 release
+
 * Thu Aug 04 2015 Cjacker <cjacker@foxmail.com>
 - update, add fiji firmware
 * Sun Jul 26 2015 Cjacker <cjacker@foxmail.com>

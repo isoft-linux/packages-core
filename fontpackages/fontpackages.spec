@@ -9,10 +9,9 @@
 
 Name:    fontpackages
 Version: 1.44
-Release: 13%{?dist}
+Release: 14%{?dist}
 Summary: Common directory and macro definitions used by font packages
 
-Group:     Development/System
 # Mostly means the scriptlets inserted via this package do not change the
 # license of the packages they're inserted in
 License:   LGPLv3+
@@ -113,7 +112,7 @@ rm -rf %{buildroot}%{_bindir}/repo-font-audit
 rm -rf %{buildroot}%{_datadir}/%{name}
 rm -rf %{buildroot}%{_bindir}/*
 
-%changelog
+
 
 
 
@@ -142,3 +141,5 @@ rm -rf %{buildroot}%{_bindir}/*
 #%{_bindir}/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.44-14
+- Rebuild for new 4.0 release

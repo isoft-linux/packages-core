@@ -1,8 +1,7 @@
 Summary: EFI Boot Manager
 Name: efibootmgr
 Version: 0.5.4
-Release: 1
-Group: Core/Runtime/Utility
+Release: 2
 License: GPLv2+
 URL: http://linux.dell.com/%{name}/
 BuildRequires: pciutils-devel, zlib-devel
@@ -56,3 +55,6 @@ rm -rf %{buildroot}
 %doc README INSTALL COPYING
     
 %changelog
+* Fri Oct 23 2015 cjacker - 0.5.4-2
+- Rebuild for new 4.0 release
+

@@ -1,7 +1,7 @@
 Summary: A library of handy utility functions
 Name: glib2
 Version: 2.46.1
-Release: 2 
+Release: 3 
 License: LGPL
 URL: http://www.gtk.org
 Source: glib-%{version}.tar.xz
@@ -128,6 +128,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-gettextize.1.gz
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.46.1-3
+- Rebuild for new 4.0 release
+
 * Sat Oct 17 2015 Cjacker <cjacker@foxmail.com>
 - update to 2.46.1
 

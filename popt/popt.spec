@@ -1,9 +1,8 @@
 Summary:	C library for parsing command line parameters
 Name:		popt
 Version:	1.16
-Release:   	1	
+Release:   	2	
 License:	MIT
-Group:		Core/Runtime/Library
 URL:		http://www.rpm5.org/
 Source:		http://www.rpm5.org/files/%{name}/%{name}-%{version}.tar.gz
 BuildRequires:	gettext
@@ -20,7 +19,6 @@ shell-like rules.
 
 %package devel
 Summary:	Development files for the popt library
-Group:		Core/Development/Library
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
@@ -30,7 +28,6 @@ API documentation of the popt library, too.
 
 %package static
 Summary:	Static library for parsing command line parameters
-Group:		Core/Development/Library
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
@@ -52,7 +49,6 @@ make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/popt.d
 
 %find_lang popt
-rpmclean
 
 %check
 make check
@@ -81,3 +77,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libpopt.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.16-2
+- Rebuild for new 4.0 release
+

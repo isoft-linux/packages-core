@@ -2,10 +2,9 @@
 
 Name:           atmel-firmware
 Version:        1.3
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        Firmware for Atmel at76c50x wireless network chips
 
-Group:          System Environment/Kernel
 License:        Redistributable, no modification permitted
 URL:            http://at76c503a.berlios.de/
 Source0:        http://www.thekelleys.org.uk/atmel/atmel-firmware-%{version}.tar.gz
@@ -57,3 +56,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.3-15
+- Rebuild for new 4.0 release
+

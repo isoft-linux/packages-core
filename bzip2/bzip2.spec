@@ -1,9 +1,8 @@
 Summary: A file compression utility
 Name: bzip2
 Version: 1.0.6
-Release: 12
+Release: 13
 License: BSD
-Group:  Core/Runtime/Utility 
 URL: http://www.bzip.org/
 Source: http://www.bzip.org/%{version}/bzip2-%{version}.tar.gz
 Patch0: bzip2-1.0.6-saneso.patch
@@ -23,7 +22,6 @@ Install bzip2 if you need a compression utility.
 
 %package devel
 Summary: Header files developing apps which will use bzip2
-Group:  Core/Development/Library 
 Requires: bzip2-libs = %{version}-%{release}
 
 %description devel
@@ -33,7 +31,6 @@ which will use the library.
 
 %package libs
 Summary: Libraries for applications using bzip2
-Group:  Core/Runtime/Library 
 
 %description libs
 
@@ -108,3 +105,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/*.a
 
 %changelog
+* Fri Oct 23 2015 cjacker - 1.0.6-13
+- Rebuild for new 4.0 release
+

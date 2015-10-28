@@ -1,9 +1,8 @@
 Summary: A utility for unpacking zip files.
 Name: unzip
 Version: 5.52
-release: 8
+release: 9
 License: BSD
-Group:  Core/Runtime/Utility
 Source: ftp://ftp.info-zip.org/pub/infozip/src/unzip552.tgz
 Patch0: unzip542-rpmoptflags.patch
 Patch1: unzip-chinese.patch
@@ -50,3 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/*
 %{_mandir}/*/*
+
+%changelog
+* Fri Oct 23 2015 cjacker - 5.52-9
+- Rebuild for new 4.0 release
+

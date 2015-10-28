@@ -1,14 +1,13 @@
 Summary: A security tool which acts as a wrapper for TCP daemons.
 Name: tcp_wrappers
 Version: 7.6
-Release: 44
+Release: 45
 
 %define LIB_MAJOR 0
 %define LIB_MINOR 7
 %define LIB_REL 6
 
 License: Distributable
-Group: System Environment/Daemons
 Source: ftp://ftp.porcupine.org/pub/security/%{name}_%{version}.tar.gz
 URL: ftp://ftp.porcupine.org/pub/security/index.html
 Patch0: tcpw7.2-config.patch
@@ -48,7 +47,6 @@ This version also supports IPv6.
 
 %package libs
 Summary: tcp_wrappers libraries.
-Group: System Environment/Libraries
 Obsoletes: tcp_wrappers < 7.6-41
 
 %description libs
@@ -56,7 +54,6 @@ tcp_wrappers-libs contains the libraries of the tcp_wrappers package.
 
 %package devel
 Summary: tcp_wrappers development libraries and headers.
-Group: Development/Libraries
 Obsoletes: tcp_wrappers < 7.6-41
 Requires: tcp_wrappers-libs = %{version}-%{release}
 
@@ -114,7 +111,6 @@ install -m755 try-from ${RPM_BUILD_ROOT}%{_sbindir}
 #install -m755 tcpdmatch ${RPM_BUILD_ROOT}%{_sbindir}
 rm -f ${RPM_BUILD_ROOT}%{_mandir}/man8/tcpdmatch.*
 rm -f ${RPM_BUILD_ROOT}%{_mandir}/man8/tcpdchk.*
-rpmclean
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -141,3 +137,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man3/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 7.6-45
+- Rebuild for new 4.0 release
+

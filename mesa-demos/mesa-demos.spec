@@ -5,7 +5,7 @@
 Summary: Mesa demos
 Name: mesa-demos
 Version: 8.2.0
-Release: 7.git 
+Release: 8.git 
 License: MIT
 URL: http://www.mesa3d.org
 #git clone git://anongit.freedesktop.org/mesa/demos
@@ -75,6 +75,9 @@ install -m 0755 src/xdemos/glxinfo %{buildroot}%{_bindir}/glxinfo%{?__isa_bits}
 %{_datadir}/man/man1/xdriinfo.1*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 8.2.0-8.git
+- Rebuild for new 4.0 release
+
 * Thu Sep 15 2015 Cjacker <cjacker@foxmail.com>
 - add patch2, fix build with new mesa.
 

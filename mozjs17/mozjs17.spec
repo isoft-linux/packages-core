@@ -1,9 +1,8 @@
 Summary:	JavaScript interpreter and libraries
 Name:		mozjs17
 Version:	17.0.0
-Release:	12%{?dist}
+Release:	13%{?dist}
 License:	GPLv2+ or LGPLv2+ or MPLv1.1
-Group:		Development/Languages
 URL:		http://www.mozilla.org/js/
 Source0:	http://ftp.mozilla.org/pub/mozilla.org/js/mozjs%{version}.tar.gz
 BuildRequires:	pkgconfig(nspr)
@@ -29,7 +28,6 @@ with only mild differences from the published standard.
 
 %package devel
 Summary: Header files, libraries and development documentation for %{name}
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -90,3 +88,6 @@ rm -f %{buildroot}%{_bindir}/js17-config
 %{_includedir}/js-17.0
 
 %changelog
+* Fri Oct 23 2015 cjacker - 17.0.0-13
+- Rebuild for new 4.0 release
+

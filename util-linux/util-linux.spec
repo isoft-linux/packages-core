@@ -3,7 +3,7 @@
 Summary: A collection of basic system utilities
 Name: util-linux
 Version: 2.27
-Release: 6 
+Release: 7 
 License: GPLv2 and GPLv2+ and LGPLv2+ and BSD with advertising and Public Domain
 URL: http://en.wikipedia.org/wiki/Util-linux
 
@@ -739,6 +739,9 @@ fi
 
 
 %changelog
+* Fri Oct 23 2015 cjacker - 2.27-7
+- Rebuild for new 4.0 release
+
 * Thu Oct 08 2015 Cjacker <cjacker@foxmail.com>
 - update to 2.27
 

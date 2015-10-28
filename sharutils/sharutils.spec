@@ -1,7 +1,7 @@
 Summary:    The GNU shar utilities for packaging and unpackaging shell archives
 Name:       sharutils
 Version:    4.15.2
-Release:    2%{?dist}
+Release:    3%{?dist}
 # The main code:                GPLv3+
 # lib (gnulib):                 GPLv3+
 # lib/md5.c:                    Public Domain
@@ -10,7 +10,6 @@ Release:    2%{?dist}
 # libopts/m4/libopts.m4:        GPLv3+
 # doc/sharutils.texi:           GFDL
 License:    GPLv3+ and (LGPLv3+ or BSD) and LGPLv2+ and Public Domain and GFDL
-Group:      Applications/Archiving
 Source:     ftp://ftp.gnu.org/gnu/%{name}/%{name}-%{version}.tar.xz
 # Pass compilation with -Werror=format-security, bug #1037323
 Patch0:     %{name}-4.14.2-Pass-compilation-with-Werror-format-security.patch
@@ -75,3 +74,6 @@ make check
 %{_mandir}/man5/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 4.15.2-3
+- Rebuild for new 4.0 release
+

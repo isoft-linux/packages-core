@@ -1,9 +1,8 @@
 Summary: GNUstep Objective-C Runtime
 Name: libobjc2 
 Version: 1.8
-Release: 1
+Release: 2
 URL: https://github.com/gnustep/libobjc2
-Group:  System Environment/Libraries 
 License: see COPYING
 
 Source: libobjc2-%{version}.tar.gz
@@ -30,7 +29,6 @@ recompilation.  The modern ABI adds the following features:
 
 %package devel
 Summary: Development tools for libobjc2
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -85,7 +83,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %attr(-,root,root) 
-%doc COPYING README
+%doc COPYING
 %{_libdir}/*.so.*
 
 %files devel
@@ -94,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so
 %{_libdir}/*.a
 %changelog
+* Fri Oct 23 2015 cjacker - 1.8-2
+- Rebuild for new 4.0 release
+
 * Sat Jul 25 2015 Cjacker <cjacker@gmail.com>
 - update to 1.8
 - add patch3 to fix abi difference between c++/stdc++

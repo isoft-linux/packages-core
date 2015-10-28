@@ -3,10 +3,9 @@
 Name:      elinks
 Summary:   A text-mode Web browser
 Version:   0.12
-Release:   0.47.%{prerel}%{?dist}
+Release:   0.48.%{prerel}%{?dist}
 License:   GPLv2
 URL:       http://elinks.or.cz
-Group:     Applications/Internet
 Source:    http://elinks.or.cz/download/elinks-%{version}%{prerel}.tar.bz2
 Source2:   elinks.conf
 
@@ -174,3 +173,6 @@ exit 0
 %{_mandir}/man5/*
 
 %changelog
+* Fri Oct 23 2015 cjacker - 0.12-0.48.pre6
+- Rebuild for new 4.0 release
+
