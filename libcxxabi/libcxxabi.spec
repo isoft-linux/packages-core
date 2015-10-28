@@ -1,9 +1,10 @@
+#use internal libunwind instead install it to system to avoid conflicts with gnu libunwind.
 %global build_with_ninja 1
 
 Name:	    libcxxabi	
 Summary:    A new implementation of low level support for a standard C++ library.
 Version:    3.7.1
-Release:    4.svn20151018
+Release:    5.svn20151018
 License:  University of llinois/NCSA Open Source License 
 URL:        http://llvm.org
 
@@ -19,8 +20,6 @@ BuildRequires: ninja-build
 BuildRequires: make
 %endif
 
-BuildRequires: libunwind-devel
-
 %description
 %{summary}
 
@@ -35,6 +34,32 @@ Headers and libbraries for libcxxabi
 %setup -q -c -a1 -a2
 
 %build
+#build static libunwind
+pushd libunwind-%{version}.src
+mkdir build-static
+pushd build-static
+%cmake \
+    %if %{build_with_ninja}
+    -G Ninja \
+    %endif
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++  \
+    -DCMAKE_C_FLAGS="-fPIC" \
+    -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
+    -DCMAKE_CXX_FLAGS="-I`pwd`/../../libcxxabi-3.7.1.src/include" \
+    -DCMAKE_C_FLAGS="-I`pwd`/../../libcxxabi-3.7.1.src/include" \
+    -DLIBUNWIND_ENABLE_SHARED=OFF \
+    ..
+%if %{build_with_ninja}
+ninja
+%else
+make %{_smp_mflags}
+%endif
+popd
+popd
+
+#build libcxxabi
+
 pushd %{name}-%{version}.src
 #build shared library
 mkdir build-shared
@@ -47,6 +72,7 @@ pushd build-shared
     -DCMAKE_CXX_COMPILER=clang++  \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
+    -DCMAKE_SHARED_LINKER_FLAGS="-L`pwd`/../../libunwind-%{version}.src/build-static/lib -ldl" \
     -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
     -DLIBCXXABI_LIBUNWIND_PATH="`pwd`/../../libunwind-%{version}.src" \
     -DLIBCXXABI_LIBCXX_INCLUDES="`pwd`/../../libcxx-%{version}.src/include" \
@@ -126,6 +152,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 
 %changelog
+* Tue Oct 27 2015 cjacker - 3.7.1-5.svn20151018
+- Remove requirement to libunwind, use internal static libunwind instead
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-4.svn20151018
 - Rebuild
 

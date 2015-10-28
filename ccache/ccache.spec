@@ -13,7 +13,7 @@
 
 Name:           ccache
 Version:        3.2.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        C/C++ compiler cache
 
 License:        GPLv3+
@@ -29,6 +29,7 @@ BuildRequires:  zlib-devel >= 1.2.3
 Requires: coreutils
 Requires: gcc
 Requires: clang
+Requires: compiler-wrapper
 
 %description
 ccache is a compiler cache.  It speeds up recompilation of C/C++ code
@@ -123,13 +124,18 @@ done\
 %ccache_trigger -p arm-none-eabi-gcc-cs arm-none-eabi-gcc
 %ccache_trigger -p avr-gcc avr-cc avr-gcc
 %ccache_trigger -p avr-gcc-c++ avr-c++ avr-g++
-%ccache_trigger -p clang clang clang++
 %ccache_trigger -p compat-gcc-32 cc32 gcc32
 %ccache_trigger -p compat-gcc-32-c++ c++32 g++32
 %ccache_trigger -p compat-gcc-34 cc34 gcc34
 %ccache_trigger -p compat-gcc-34-c++ c++34 g++34
+
+#clang related
+%ccache_trigger -p clang clang clang++
 #we have only one gcc package 
-%ccache_trigger -p gcc cc gcc c++ g++
+%ccache_trigger -p gcc gcc g++
+#cc/c++ provided by compiler-wrapper package.
+%ccache_trigger -p compiler-wrapper cc c++
+
 %ccache_trigger -p gcc-c++ c++ g++
 %ccache_trigger -p gcc4 cc4 gcc4
 %ccache_trigger -p gcc4-c++ c++4 g++4
@@ -212,6 +218,9 @@ getent group ccache >/dev/null || groupadd -r ccache || :
 
 
 %changelog
+* Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 3.2.3-4
+- Rebuild, require compiler-wrapper
+
 * Fri Oct 23 2015 cjacker - 3.2.3-3
 - Rebuild for new 4.0 release
 

@@ -1,10 +1,10 @@
-%global firmware_release 56
+%global firmware_release 58
 
-%global _firmwarepath	/usr/lib/firmware
+%global _firmwarepath	/lib/firmware
 
 Name: linux-firmware
 Version: 20151013
-Release: %{firmware_release}.git%{?dist}.1
+Release: %{firmware_release}.git%{?dist}.2
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
 URL: http://www.kernel.org/
@@ -75,7 +75,7 @@ pushd $RPM_BUILD_ROOT/%{_firmwarepath}
 find . \! -type d > $FILEDIR/linux-firmware.files
 find . -type d | sed -e '/^.$/d' > $FILEDIR/linux-firmware.dirs
 popd
-sed -i -e 's!^!/usr/lib/firmware/!' linux-firmware.{files,dirs}
+sed -i -e 's!^!/lib/firmware/!' linux-firmware.{files,dirs}
 sed -e 's/^/%%dir /' linux-firmware.dirs >> linux-firmware.files
 
 %clean
@@ -88,11 +88,16 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 20151013-58.git.2
+- Update to latest git.
+- Change firmware path from /usr/lib to /lib.
+
 * Fri Oct 23 2015 cjacker - 20151013-56.git.1
 - Rebuild for new 4.0 release
 
-* Thu Oct 13 2015 Cjacker <cjacker@foxmail.com>
+* Tue Oct 13 2015 Cjacker <cjacker@foxmail.com>
 - update to latest git
+
 * Fri Sep 25 2015 Cjacker <cjacker@foxmail.com>
 - update to latest git for Intel Skylake & Broxton Linux Graphics
 

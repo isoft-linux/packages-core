@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 %define kversion 4.3.0
-%define release 113
+%define release 117
 
 %define extraversion -%{release}
 
@@ -79,7 +79,7 @@ Patch614: kernel43-kdbus.patch
 Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
 
 #fix *ERROR* crtc 21: Can't calculate constants, dotclock = 0!
-Patch2001: drm-i915-assign-hwmode-after-encoder-statereadout.patch
+#Patch2001: drm-i915-assign-hwmode-after-encoder-statereadout.patch
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -185,7 +185,7 @@ cd linux-%{kversion}.%{_target_cpu}
 %patch614 -p1
 
 %patch2000 -p1
-%patch2001 -p1
+#%patch2001 -p1
 # END OF PATCH APPLICATIONS
 
 
@@ -381,6 +381,8 @@ pushd $RPM_BUILD_ROOT/lib/modules
 find . -name "*.ko" |xargs strip -R .comment --strip-unneeded
 popd
 
+# Remove all firmwares.
+rm -rf %{buildroot}/lib/firmware/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -417,9 +419,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 /lib/modules/%{KVERREL}/extra
 /lib/modules/%{KVERREL}/updates
 /lib/modules/%{KVERREL}/weak-updates
+%dir /lib/firmware
+
 %exclude /lib/modules/%{KVERREL}/build
 %exclude /lib/modules/%{KVERREL}/source
-/lib/firmware
 
 %ghost /boot/initrd-%{KVERREL}.img
 %ghost /lib/modules/%{KVERREL}/modules.alias
@@ -476,7 +479,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
-* Fri Oct 23 2015 cjacker - 4.3.0-113
+* Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-117
+- Update to 4.3.0 rc7
+
+* Fri Oct 23 2015 cjacker <cjacker@foxmail.com> - 4.3.0-113
 - Rebuild for new 4.0 release
 
 * Mon Oct 19 2015 Cjacker <cjacker@foxmail.com>

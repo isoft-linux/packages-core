@@ -3,7 +3,7 @@
 Summary:    A standard conformant and high-performance implementation of the C++ Standard Library
 Name:	    libcxx	
 Version:    3.7.1
-Release:    4.svn20151018 
+Release:    5.svn20151018 
 URL:        http://llvm.org
 License: University of llinois/NCSA Open Source License 
 
@@ -130,6 +130,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/c++/v1
 
 %changelog
+* Tue Oct 27 2015 cjacker - 3.7.1-5.svn20151018
+- Rebuild
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-4.svn20151018
 - Rebuild
 

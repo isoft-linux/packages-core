@@ -1,6 +1,6 @@
 Name: tmux	
 Version: 2.0 
-Release: 2
+Release: 3
 Summary: Tool to control multiple terminals from a single terminal 
 
 License: BSD
@@ -48,6 +48,9 @@ install -m0644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/tmux.conf
 %{_mandir}/man1/tmux.*
 
 %changelog
+* Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 2.0-3
+- Enable mouse scroll by default
+
 * Fri Oct 23 2015 cjacker - 2.0-2
 - Rebuild for new 4.0 release
 
