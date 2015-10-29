@@ -1,10 +1,10 @@
 Summary:   a pixel manipulation library 
 Name:      pixman 
-Version:   0.32.8
-Release:   2
-URL:       http://cairographics.org
-Source0:   http://www.cairographics.org/releases/%{name}-%{version}.tar.gz
+Version:   0.33.4
+Release:   3 
 License:   LGPL/MPL
+URL:       http://cairographics.org
+Source0:   http://www.cairographics.org/releases/%{name}-%{version}.tar.bz2
 
 BuildRequires: pkgconfig
 BuildRequires: libpng-devel
@@ -31,7 +31,7 @@ compiling software which links to the pixman library
 %setup -q
 
 %build
-%configure --enable-warnings --disable-gtk-doc
+%configure
 make %{?_smp_mflags}
 
 %install
@@ -56,10 +56,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 %{_libdir}/libpixman*.so
 %{_libdir}/pkgconfig/*
-#%{_datadir}/gtk-doc/*
 
 
 %changelog
+* Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 0.33.4-3
+- Update
+
 * Fri Oct 23 2015 cjacker - 0.32.8-2
 - Rebuild for new 4.0 release
 

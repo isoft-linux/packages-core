@@ -14,7 +14,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.17.2
-Release:   17
+Release:   18
 URL:       http://www.x.org
 License:   MIT
 
@@ -22,8 +22,14 @@ Source0:   http://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.bz2
 
 Source4:   10-quirks.conf 
 
+
+Source10:   xserver.pamd
+
+# "useful" xvfb-run script
+Source20:  http://svn.exactcode.de/t2/trunk/package/xorg/xorg-server/xvfb-run.sh
+
 # for ABI requires generation in drivers
-Source10: xserver-sdk-abi-requires.release
+Source30: xserver-sdk-abi-requires.release
 
 Patch0:  autoconfig-sis.patch
 Patch1:  autoconfig-nvidia.patch
@@ -308,10 +314,15 @@ install -m 0444 hw/xfree86/common/{vesa,extra}modes $RPM_BUILD_ROOT%{_datadir}/x
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d
 install -m 644 %{SOURCE4} $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d
 
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
+install -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/xserver
+
 #own this dir.
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/X11/xorg.conf.d 
 
-install -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_bindir}/xserver-sdk-abi-requires
+install -m 0755 %{SOURCE20} $RPM_BUILD_ROOT%{_bindir}/xvfb-run
+
+install -m 755 %{SOURCE30} $RPM_BUILD_ROOT%{_bindir}/xserver-sdk-abi-requires
 
 # Remove unwanted files/dirs
 {
@@ -339,6 +350,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files Xorg
 %defattr(-,root,root,-)
+%config %attr(0644,root,root) %{_sysconfdir}/pam.d/xserver
 %{_bindir}/X
 %{_bindir}/Xorg
 %{_libexecdir}/Xorg
@@ -403,6 +415,7 @@ rm -rf $RPM_BUILD_ROOT
 %files Xvfb
 %defattr(-,root,root,-)
 %{_bindir}/Xvfb
+%{_bindir}/xvfb-run
 %{_mandir}/man1/Xvfb.1*
 
 %files Xephyr
@@ -420,6 +433,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 1.17.2-18
+- Add xvfb-run script
+
 * Fri Oct 23 2015 cjacker - 1.17.2-17
 - Rebuild for new 4.0 release
 
