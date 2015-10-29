@@ -1,6 +1,6 @@
 Name: xcb-proto 
 Version: 1.11
-Release: 6.git 
+Release: 7.git 
 Summary: A C binding to the X11 protocol
 
 License: MIT
@@ -60,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Oct 29 2015 Cjacker <cjacker@foxmail.com> - 1.11-7.git
+- Fix buildrequires
+
 * Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 1.11-6.git
 - Update to git e500bd8
 
