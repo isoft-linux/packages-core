@@ -14,6 +14,7 @@ BuildRequires: autoconf automake libtool pkgconfig
 BuildRequires: xorg-x11-proto-devel
 BuildRequires: xorg-x11-util-macros
 BuildRequires: xorg-x11-filesystem
+BuildRequires: python
 Requires: xorg-x11-filesystem
 
 BuildArch: noarch
