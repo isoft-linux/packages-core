@@ -27,6 +27,8 @@ Conflicts: systemd < 185-3
 
 BuildRequires: pkgconfig(libdrm)
 BuildRequires: kernel-headers
+BuildRequires: libpng-devel
+BuildRequires: systemd-devel
 #for post scripts
 Requires(pre): coreutils
 
