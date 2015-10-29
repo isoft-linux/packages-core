@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        33%{?dist}
+Release:        36%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -56,6 +56,7 @@ Source3: 	dejavu-fonts-ttf-2.35.tar.bz2
 Source4:	http://unifoundry.com/unifont-5.1.20080820.pcf.gz
 Source5:	theme.tar.bz2
 Source6:	gitignore
+Source7:	isoft-silence-theme.txz
 
 # generate with:
 # git diff grub-2.02-beta2..origin/master
@@ -218,6 +219,15 @@ The GRand Unified Bootloader (GRUB) is a highly configurable and customizable
 bootloader with modular architecture.  It support rich varietyof kernel formats,
 file systems, computer architectures and hardware devices.  This subpackage
 provides an example theme for the grub screen.
+
+%package isoft-silence-theme
+Summary:	isoft theme for GRUB.
+
+%description isoft-silence-theme
+The GRand Unified Bootloader (GRUB) is a highly configurable and customizable
+bootloader with modular architecture.  It support rich varietyof kernel formats,
+file systems, computer architectures and hardware devices.  This subpackage
+provides isoft theme for the grub screen.
 
 %prep
 %setup -T -c -n grub-%{tarversion}
@@ -400,6 +410,7 @@ cd ..
 # iSoft theme in /boot/grub/themes/system/
 cd $RPM_BUILD_ROOT
 tar xjf %{SOURCE5}
+tar xf %{SOURCE7}
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-10.pf2      -s 10 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 10"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-12.pf2      -s 12 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 12"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-Bold-14.pf2 -s 14 /usr/share/fonts/DejaVuSans-Bold.ttf # "DejaVu Sans Bold 14"
@@ -512,7 +523,17 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datarootdir}/grub/themes
 %{_datarootdir}/grub/themes/starfield
 
+%files isoft-silence-theme
+%dir %{_datarootdir}/grub/themes
+%{_datarootdir}/grub/themes/isoft-silence
+
 %changelog
+* Wed Oct 28 2015 sulit <sulitsrc@gmail.com> - 1:2.02-36
+- modify isoft-silence font for grub
+
+* Wed Oct 28 2015 sulit <sulitsrc@gmail.com> - 1:2.02-35
+- add isoft-silence theme for grub
+
 * Fri Oct 23 2015 cjacker - 1:2.02-33
 - Rebuild for new 4.0 release
 
