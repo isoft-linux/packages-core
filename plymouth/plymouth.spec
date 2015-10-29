@@ -6,7 +6,7 @@
 Summary: Graphical Boot Animation and Logger
 Name: plymouth
 Version: 0.8.9
-Release: 2
+Release: 4
 License: GPLv2+
 Source0: http://freedesktop.org/software/plymouth/releases/%{name}-%{version}.tar.bz2
 
@@ -15,6 +15,7 @@ Source1: plymouth_install
 Source2: plymouth-encrypt_install  
 Source3: plymouth_hook             
 Source4: plymouth-encrypt_hook     
+Source5: isoft-splash.txz
 
 Patch0: dont-timeout-waiting.patch
 Patch1: sysfs-tty-fix.patch
@@ -50,7 +51,8 @@ and headers needed to develop 3rd party splash plugins for Plymouth.
 %patch1 -p1 -b .sysfs-tty-fix
 
 # Change the default theme
-sed -i -e 's/fade-in/spinner/g' src/plymouthd.defaults
+#sed -i -e 's/fade-in/spinner/g' src/plymouthd.defaults
+sed -i -e 's/fade-in/isoft-splash/g' src/plymouthd.defaults
 
 %build
 %configure --enable-tracing --disable-tests \
@@ -91,11 +93,16 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/plymouth/themes/glow
 find $RPM_BUILD_ROOT -name '*.a' -exec rm -f {} \;
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} \;
 
+cd $RPM_BUILD_ROOT
+tar xf %{SOURCE5}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-plymouth-set-default-theme spinner ||:
+#plymouth-set-default-theme spinner ||:
+plymouth-set-default-theme isoft-splash ||:
+
 %postun
 if [ $1 -eq 0 ]; then
     rm -f %{_libdir}/plymouth/default.so
@@ -153,6 +160,18 @@ fi
 %{_datadir}/plymouth/themes/fade-in/star.png
 %{_datadir}/plymouth/themes/fade-in/fade-in.plymouth
 
+%dir %{_datadir}/plymouth/themes/isoft-splash
+%{_datadir}/plymouth/themes/isoft-splash/background.png
+%{_datadir}/plymouth/themes/isoft-splash/logo.png
+%{_datadir}/plymouth/themes/isoft-splash/spec0.png
+%{_datadir}/plymouth/themes/isoft-splash/spec1.png
+%{_datadir}/plymouth/themes/isoft-splash/password_field.png
+%{_datadir}/plymouth/themes/isoft-splash/progress_bar.png
+%{_datadir}/plymouth/themes/isoft-splash/progress_dot_off.png
+%{_datadir}/plymouth/themes/isoft-splash/progress_dot_on.png
+%{_datadir}/plymouth/themes/isoft-splash/isoft-splash.plymouth
+%{_datadir}/plymouth/themes/isoft-splash/isoft-splash.script
+
 %dir %{_datadir}/plymouth/themes/spinner
 %{_datadir}/plymouth/themes/spinner/*.png
 %{_datadir}/plymouth/themes/spinner/spinner.plymouth
@@ -200,6 +219,9 @@ fi
 
 
 %changelog
+* Wed Oct 28 2015 sulit <sulitsrc@gmail.com> - 0.8.9-4
+- add isoft-splash
+
 * Fri Oct 23 2015 cjacker - 0.8.9-2
 - Rebuild for new 4.0 release
 
