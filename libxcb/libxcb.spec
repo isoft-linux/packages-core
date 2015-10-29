@@ -2,20 +2,21 @@
 
 Name:       libxcb
 Version:    1.11.1
-Release:    7.git%{?dist}
+Release:    8.git%{?dist}
 Summary:    A C binding to the X11 protocol
 License:    MIT
 URL:        http://xcb.freedesktop.org/
 
 #Source0:    http://xcb.freedesktop.org/dist/%{name}-%{version}.tar.bz2
 Source0: libxcb.tar.gz
-Patch0: libxcb-not-close-fd.patch
+#Patch0: libxcb-not-close-fd.patch
 BuildRequires:  libtool
 BuildRequires:  libxslt
 BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(xau) >= 0.99.2
 BuildRequires:  pkgconfig(xcb-proto) >= 1.11
 BuildRequires:  pkgconfig(xorg-macros) >= 1.18
+BuildRequires:  pkgconfig(xdmcp) 
 BuildRequires: libpthread-stubs-devel
 
 %description
@@ -43,7 +44,8 @@ if [ ! -f configure ]; then ./autogen.sh; fi
     --enable-xinput \
     --enable-xevie \
     --disable-xprint \
-    --disable-silent-rules
+    --disable-silent-rules \
+    --with-queue-size=65536
 
 # Remove rpath from libtool (extra insurance if autoreconf is ever dropped)
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -96,6 +98,9 @@ find $RPM_BUILD_ROOT -name '*.la' -delete
 
 
 %changelog
+* Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 1.11.1-8.git
+- Rebuild
+
 * Fri Oct 23 2015 cjacker - 1.11.1-7.git
 - Rebuild for new 4.0 release
 
