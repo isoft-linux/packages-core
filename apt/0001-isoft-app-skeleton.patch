@@ -1,0 +1,1386 @@
+diff --git a/apt-pkg/cachefile.cc b/apt-pkg/cachefile.cc
+index 6b13d81..c58bb44 100644
+--- a/apt-pkg/cachefile.cc
++++ b/apt-pkg/cachefile.cc
+@@ -22,12 +22,16 @@
+     
+ #include <apti18n.h>
+ 									/*}}}*/
++bool g_useIsoftApp = false;
+ 
+ // CacheFile::CacheFile - Constructor					/*{{{*/
+ // ---------------------------------------------------------------------
+ /* */
+-pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), DCache(0), Policy(0)
++//pkgCacheFile::pkgCacheFile() : Map(0), Cache(0), DCache(0), Policy(0)
++pkgCacheFile::pkgCacheFile(bool useIsoft) : Map(0), Cache(0), DCache(0), Policy(0)
+ {
++   m_useIsoft = useIsoft;
++   g_useIsoftApp = useIsoft;
+ }
+ 									/*}}}*/
+ // CacheFile::~CacheFile - Destructor					/*{{{*/
+@@ -48,7 +52,7 @@ pkgCacheFile::~pkgCacheFile()
+ bool pkgCacheFile::BuildCaches(OpProgress &Progress,bool WithLock)
+ {
+    if (WithLock == true)
+-      if (_system->Lock() == false)
++      if (_system->Lock(m_useIsoft) == false)
+ 	 return false;
+ 
+    // CNC:2002-07-06
+diff --git a/apt-pkg/cachefile.h b/apt-pkg/cachefile.h
+index 036df2e..4131739 100644
+--- a/apt-pkg/cachefile.h
++++ b/apt-pkg/cachefile.h
+@@ -45,9 +45,11 @@ class pkgCacheFile
+    bool BuildCaches(OpProgress &Progress,bool WithLock = true);
+    bool Open(OpProgress &Progress,bool WithLock = true);
+    void Close();
+-   
+-   pkgCacheFile();
++
++   pkgCacheFile(bool useIsoft = false);   
+    ~pkgCacheFile();
++   private:
++   bool m_useIsoft;
+ };
+ 
+ #endif
+diff --git a/apt-pkg/depcache.cc b/apt-pkg/depcache.cc
+index 95415ca..2970aa7 100644
+--- a/apt-pkg/depcache.cc
++++ b/apt-pkg/depcache.cc
+@@ -230,7 +230,8 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
+ 	    break;
+ 
+ 	 case InstallVersion:
+-	    if (PkgState[Pkg->ID].InstallVer != 0)
++	    // TODO: check dependes
++        if (PkgState[Pkg->ID].InstallVer != 0)
+ 	       if (VS.CheckDep(PkgState[Pkg->ID].InstVerIter(*this).VerStr(),
+ 				       Dep) == true)
+ 		  return true;
+diff --git a/apt-pkg/luaiface.cc b/apt-pkg/luaiface.cc
+index 4e6ceee..91d7520 100644
+--- a/apt-pkg/luaiface.cc
++++ b/apt-pkg/luaiface.cc
+@@ -41,6 +41,18 @@ extern "C" {
+ 
+ using namespace std;
+ 
++#ifndef lua_pushglobaltable
++#define lua_pushglobaltable(L) lua_pushvalue(L, LUA_GLOBALSINDEX)
++#endif
++
++#ifndef lua_open
++#define lua_open()     luaL_newstate()
++#endif
++
++#ifndef lua_strlen
++#define lua_strlen(L,i)        lua_rawlen(L, (i))
++#endif
++
+ #define pushudata(ctype, value) \
+    do { \
+       ctype *_tmp = (ctype *) lua_newuserdata(L, sizeof(ctype)); \
+@@ -107,14 +119,14 @@ Lua::Lua()
+       lua_settop(L, 0);  /* discard any results */
+    }
+ #else
+-   const luaL_reg lualibs[] = {
++   const luaL_Reg lualibs[] = {
+       {"posix", luaopen_posix},
+       {"rex", luaopen_rex},
+       {"apt", luaopen_apt},
+       {NULL, NULL}
+    };
+    luaL_openlibs(L);
+-   const luaL_reg *lib = lualibs;
++   const luaL_Reg *lib = lualibs;
+    for (; lib->name; lib++) {
+       lua_pushcfunction(L, lib->func);
+       lua_pushstring(L, lib->name);
+@@ -174,14 +186,14 @@ bool Lua::RunScripts(const char *ConfListKey, bool CacheChunks)
+ 	    continue;
+ 	 if (Value == "interactive") {
+ 	    lua_pushstring(L, "script_slot");
+-	    lua_pushstring(L, ConfListKey);
+-	    lua_rawset(L, LUA_GLOBALSINDEX);
++	    lua_setglobal(L, ConfListKey);
+ 
+ 	    RunInteractive(ConfListKey);
+ 
+ 	    lua_pushstring(L, "script_slot");
+ 	    lua_pushnil(L);
+-	    lua_rawset(L, LUA_GLOBALSINDEX);
++	    lua_setglobal(L, "script_slot");
++
+ 	    continue;
+ 	 }
+ 	 if (Value[0] == '.' || Value[0] == '/') {
+@@ -213,15 +225,13 @@ bool Lua::RunScripts(const char *ConfListKey, bool CacheChunks)
+    }
+ 
+    lua_pushstring(L, "script_slot");
+-   lua_pushstring(L, ConfListKey);
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, ConfListKey);
+ 
+    InternalRunScript();
+ 
+    lua_pushstring(L, "script_slot");
+    lua_pushnil(L);
+-   lua_rawset(L, LUA_GLOBALSINDEX);
+-
++   lua_setglobal(L, "script_slot");
+    lua_pop(L, 1);
+ 
+    return true;
+@@ -359,7 +369,7 @@ void Lua::SetGlobal(const char *Name)
+ {
+    lua_pushstring(L, Name);
+    lua_pushnil(L);
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -368,7 +378,7 @@ void Lua::SetGlobal(const char *Name, const char *Value)
+    if (Value != NULL) {
+       lua_pushstring(L, Name);
+       lua_pushstring(L, Value);
+-      lua_rawset(L, LUA_GLOBALSINDEX);
++      lua_setglobal(L, Name);
+    }
+    Globals.push_back(Name);
+ }
+@@ -378,7 +388,7 @@ void Lua::SetGlobal(const char *Name, pkgCache::Package *Value)
+    if (Value != NULL) {
+       lua_pushstring(L, Name);
+       pushudata(pkgCache::Package*, Value);
+-      lua_rawset(L, LUA_GLOBALSINDEX);
++      lua_setglobal(L, Name);
+    }
+    Globals.push_back(Name);
+ }
+@@ -393,7 +403,7 @@ void Lua::SetGlobal(const char *Name, const char **Value, int Total)
+       lua_pushstring(L, Value[i]);
+       lua_rawseti(L, -2, i+1);
+    }
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -408,7 +418,7 @@ void Lua::SetGlobal(const char *Name, vector<const char *> &Value,
+       lua_pushstring(L, Value[i]);
+       lua_rawseti(L, -2, i+1);
+    }
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -423,7 +433,7 @@ void Lua::SetGlobal(const char *Name, vector<string> &Value,
+       lua_pushstring(L, Value[i].c_str());
+       lua_rawseti(L, -2, i+1);
+    }
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -438,7 +448,7 @@ void Lua::SetGlobal(const char *Name, vector<pkgCache::Package*> &Value,
+       pushudata(pkgCache::Package*, Value[i]);
+       lua_rawseti(L, -2, i+1);
+    }
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -446,7 +456,7 @@ void Lua::SetGlobal(const char *Name, bool Value)
+ {
+    lua_pushstring(L, Name);
+    lua_pushboolean(L, Value);
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -454,7 +464,7 @@ void Lua::SetGlobal(const char *Name, double Value)
+ {
+    lua_pushstring(L, Name);
+    lua_pushnumber(L, Value);
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -463,7 +473,7 @@ void Lua::SetGlobal(const char *Name, void *Value)
+    if (Value != NULL) {
+       lua_pushstring(L, Name);
+       lua_pushlightuserdata(L, Value);
+-      lua_rawset(L, LUA_GLOBALSINDEX);
++      lua_setglobal(L, Name);
+    }
+    Globals.push_back(Name);
+ }
+@@ -472,7 +482,7 @@ void Lua::SetGlobal(const char *Name, lua_CFunction Value)
+ {
+    lua_pushstring(L, Name);
+    lua_pushcfunction(L, Value);
+-   lua_rawset(L, LUA_GLOBALSINDEX);
++   lua_setglobal(L, Name);
+    Globals.push_back(Name);
+ }
+ 
+@@ -483,7 +493,7 @@ void Lua::ResetGlobals()
+ 	   I != Globals.end(); I++) {
+ 	 lua_pushstring(L, I->c_str());
+ 	 lua_pushnil(L);
+-	 lua_rawset(L, LUA_GLOBALSINDEX);
++         lua_setglobal(L, I->c_str());
+       }
+       Globals.clear();
+    }
+@@ -492,7 +502,7 @@ void Lua::ResetGlobals()
+ const char *Lua::GetGlobalStr(const char *Name)
+ {
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    const char *Ret = NULL;
+    if (lua_isstring(L, -1))
+       Ret = lua_tostring(L, -1);
+@@ -504,7 +514,7 @@ vector<string> Lua::GetGlobalStrList(const char *Name)
+ {
+    vector<string> Ret;
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    int t = lua_gettop(L);
+    if (lua_istable(L, t)) {
+       lua_pushnil(L);
+@@ -520,8 +530,9 @@ vector<string> Lua::GetGlobalStrList(const char *Name)
+ 
+ double Lua::GetGlobalNum(const char *Name)
+ {
++
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    double Ret = 0;
+    if (lua_isnumber(L, -1))
+       Ret = lua_tonumber(L, -1);
+@@ -532,7 +543,7 @@ double Lua::GetGlobalNum(const char *Name)
+ bool Lua::GetGlobalBool(const char *Name)
+ {
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    bool Ret = lua_toboolean(L, -1);
+    lua_remove(L, -1);
+    return Ret;
+@@ -541,7 +552,7 @@ bool Lua::GetGlobalBool(const char *Name)
+ void *Lua::GetGlobalPtr(const char *Name)
+ {
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    void *Ret = NULL;
+    if (lua_isuserdata(L, -1))
+       Ret = lua_touserdata(L, -1);
+@@ -552,7 +563,7 @@ void *Lua::GetGlobalPtr(const char *Name)
+ pkgCache::Package *Lua::GetGlobalPkg(const char *Name)
+ {
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    pkgCache::Package *Ret;
+    checkudata(pkgCache::Package*, Ret, -1);
+    lua_remove(L, -1);
+@@ -563,7 +574,7 @@ vector<pkgCache::Package*> Lua::GetGlobalPkgList(const char *Name)
+ {
+    vector<pkgCache::Package*> Ret;
+    lua_pushstring(L, Name);
+-   lua_rawget(L, LUA_GLOBALSINDEX);
++   lua_getglobal(L, Name);
+    int t = lua_gettop(L);
+    if (lua_istable(L, t)) {
+       lua_pushnil(L);
+@@ -826,7 +837,7 @@ static int AptLua_confset(lua_State *L)
+    if (lua_gettop(L) >= 3 && lua_isboolean(L, 3))
+       cnd = lua_toboolean(L, 3);
+    else
+-      cnd = luaL_optint(L, 3, 0);
++      cnd = luaL_optinteger(L, 3, 0);
+    if (key != NULL && val != NULL) {
+       if (cnd != 0)
+ 	 _config->CndSet(key, val);
+@@ -1467,7 +1478,7 @@ static int AptLua_gettext(lua_State *L)
+    const char *str = luaL_checkstring(L, 1);
+    if (str != NULL) {
+       lua_pushliteral(L, "TEXTDOMAIN");
+-      lua_rawget(L, LUA_GLOBALSINDEX);
++      lua_getglobal(L, "TEXTDOMAIN");
+       if (lua_isstring(L, -1))
+ 	 lua_pushstring(L, dgettext(lua_tostring(L, -1), str));
+       else
+@@ -1478,7 +1489,7 @@ static int AptLua_gettext(lua_State *L)
+    return 0;
+ }
+ 
+-static const luaL_reg aptlib[] = {
++static const luaL_Reg aptlib[] = {
+    {"confget",		AptLua_confget},
+    {"confgetlist",	AptLua_confgetlist},
+    {"confset",		AptLua_confset},
+@@ -1552,7 +1563,7 @@ static int AptLua_pkgcomp(lua_State *L)
+ 
+ static int luaopen_apt(lua_State *L)
+ {
+-   lua_pushvalue(L, LUA_GLOBALSINDEX);
++   lua_pushglobaltable(L);
+    luaL_openlib(L, NULL, aptlib, 0);
+    return 0;
+ }
+diff --git a/apt-pkg/packagemanager.cc b/apt-pkg/packagemanager.cc
+index e0e4f8a..ca40485 100644
+--- a/apt-pkg/packagemanager.cc
++++ b/apt-pkg/packagemanager.cc
+@@ -672,6 +672,9 @@ pkgPackageManager::OrderResult pkgPackageManager::DoInstall(InstProgress *Prog)
+ 									/*}}}*/
+ pkgPackageManager::OrderResult pkgPackageManager::DoInstall()
+ {
++#ifdef APT_RPM_DEBUG
++   std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
++#endif
+    InstProgress *Prog;
+    pkgPackageManager::OrderResult res;
+    if (_config->FindB("RPM::Interactive",true)) {
+diff --git a/apt-pkg/pkgsystem.h b/apt-pkg/pkgsystem.h
+index 2ac0893..b4b2e80 100644
+--- a/apt-pkg/pkgsystem.h
++++ b/apt-pkg/pkgsystem.h
+@@ -62,7 +62,8 @@ class pkgSystem
+    
+    /* Prevent other programs from touching shared data not covered by
+       other locks (cache or state locks) */
+-   virtual bool Lock() = 0;
++   //virtual bool Lock() = 0;
++   virtual bool Lock(bool useIsoft = false) = 0;
+    virtual bool UnLock(bool NoErrors = false) = 0;
+ 
+    // CNC:2002-07-06
+diff --git a/apt-pkg/rpm/rpmhandler.cc b/apt-pkg/rpm/rpmhandler.cc
+index 0b600d3..0287e0a 100644
+--- a/apt-pkg/rpm/rpmhandler.cc
++++ b/apt-pkg/rpm/rpmhandler.cc
+@@ -62,6 +62,10 @@ bool HideZeroEpoch;
+ 
+ static rpmds rpmlibProv = NULL;
+ 
++#define ISOFTAPP_DIR "/var/lib/isoft-app"
++#define SYSAPP_DIR "/var/lib/rpm"
++extern bool g_useIsoftApp;
++
+ string RPMHandler::EVR() const
+ {
+    string e = Epoch();
+@@ -206,7 +210,7 @@ bool RPMHdrHandler::PRCO(unsigned int Type, vector<Dependency*> &Deps) const
+ 	 deptype = RPMTAG_PROVIDENAME;
+ 	 break;
+       case pkgCache::Dep::Suggests:
+-	 deptype = RPMTAG_SUGGESTSNAME;
++	 deptype = RPMTAG_SUGGESTNAME;
+ 	 break;
+ #if 0 // Enhances dep type is not even known to apt, sigh..
+       case pkgCache::Dep::Enhances:
+@@ -545,9 +549,18 @@ string RPMDirHandler::HashType() const
+    return "MD5-Hash";
+ }
+ 
+-RPMDBHandler::RPMDBHandler(bool WriteLock)
++//RPMDBHandler::RPMDBHandler(bool WriteLock)
++RPMDBHandler::RPMDBHandler(bool WriteLock,bool useIsoftApp)
+    : Handler(0), WriteLock(WriteLock)
+ {
++   g_useIsoftApp = useIsoftApp;
++
++   if (useIsoftApp) {
++       rpmtsSetMacro(ISOFTAPP_DIR);
++   } else {
++       rpmtsSetMacro(SYSAPP_DIR);
++   }
++
+    RpmIter = NULL;
+    string Dir = _config->Find("RPM::RootDir", "/");
+    
+@@ -566,7 +579,14 @@ RPMDBHandler::RPMDBHandler(bool WriteLock)
+ 
+    Handler = rpmtsCreate();
+    rpmtsSetVSFlags(Handler, (rpmVSFlags_e)-1);
+-   rpmtsSetRootDir(Handler, Dir.c_str());
++   if (useIsoftApp) {
++      rpmtsSetRootDir(Handler, Dir.c_str());
++      rpmtsSetMacro(ISOFTAPP_DIR);
++   }
++   else {
++      rpmtsSetRootDir(Handler, Dir.c_str());
++      rpmtsSetMacro(SYSAPP_DIR);
++   }
+ 
+    RpmIter = raptInitIterator(Handler, RPMDBI_PACKAGES, NULL, 0);
+    if (RpmIter == NULL) {
+@@ -630,6 +650,8 @@ string RPMDBHandler::DataPath(bool DirectoryOnly)
+    string File = "Packages";
+    char *tmp = (char *) rpmExpand("%{_dbpath}", NULL);
+    string DBPath(_config->Find("RPM::RootDir")+tmp);
++   // TODO: here need to modify if not ok.
++
+    free(tmp);
+ 
+    if (DirectoryOnly == true)
+@@ -943,6 +965,9 @@ string RPMRepomdHandler::SourceRpm() const
+ 
+ bool RPMRepomdHandler::PRCO(unsigned int Type, vector<Dependency*> &Deps) const
+ {
++#ifdef APT_RPM_DEBUG
++   std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
++#endif
+    xmlNode *format = XmlFindNode(NodeP, "format");
+    xmlNode *prco = NULL;
+ 
+@@ -1401,6 +1426,9 @@ string RPMSqliteHandler::HashType() const
+ 
+ bool RPMSqliteHandler::PRCO(unsigned int Type, vector<Dependency*> &Deps) const
+ {
++#ifdef APT_RPM_DEBUG
++   std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
++#endif
+    SqliteQuery *prco = NULL;
+    switch (Type) {
+       case pkgCache::Dep::Depends:
+diff --git a/apt-pkg/rpm/rpmhandler.h b/apt-pkg/rpm/rpmhandler.h
+index 6014a1c..264864b 100644
+--- a/apt-pkg/rpm/rpmhandler.h
++++ b/apt-pkg/rpm/rpmhandler.h
+@@ -225,7 +225,8 @@ class RPMDBHandler : public RPMHdrHandler
+    // used by rpmSystem::DistroVer()
+    bool JumpByName(string PkgName, bool Provides=false);
+ 
+-   RPMDBHandler(bool WriteLock=false);
++   //RPMDBHandler(bool WriteLock=false);
++   RPMDBHandler(bool WriteLock=false,bool useIsoftApp=false);
+    virtual ~RPMDBHandler();
+ };
+ 
+diff --git a/apt-pkg/rpm/rpmlistparser.cc b/apt-pkg/rpm/rpmlistparser.cc
+index 749c91e..ed327a3 100644
+--- a/apt-pkg/rpm/rpmlistparser.cc
++++ b/apt-pkg/rpm/rpmlistparser.cc
+@@ -283,6 +283,7 @@ unsigned short rpmListParser::VersionHash()
+ bool rpmListParser::ParseStatus(pkgCache::PkgIterator Pkg,
+ 				pkgCache::VerIterator Ver)
+ {   
++   // TODO: CurrentVer
+    if (!Handler->IsDatabase())  // this means we're parsing an hdlist, so it's not installed
+       return true;
+    
+@@ -448,6 +449,7 @@ off_t rpmListParser::Size()
+ // Allow-Duplicated rules.
+ void rpmListParser::VirtualizePackage(string Name)
+ {
++   // TODO: CurrentVer
+    pkgCache::PkgIterator FromPkgI = Owner->GetCache().FindPkg(Name);
+ 
+    // Should always be false
+diff --git a/apt-pkg/rpm/rpmpm.cc b/apt-pkg/rpm/rpmpm.cc
+index 1271ea4..1814fba 100644
+--- a/apt-pkg/rpm/rpmpm.cc
++++ b/apt-pkg/rpm/rpmpm.cc
+@@ -398,7 +398,7 @@ bool pkgRPMExtPM::ExecRPM(Item::RPMOps op, vector<const char*> &files)
+    switch (op)
+    {
+       case Item::RPMInstall:
+-	 if (Interactive)
++     if (Interactive)
+ 	    operation = "-ivh";
+ 	 else
+ 	    operation = "-iv";
+@@ -637,6 +637,9 @@ bool pkgRPMExtPM::Process(vector<const char*> &install,
+ 			  vector<const char*> &upgrade,
+ 			  vector<const char*> &uninstall)
+ {
++#ifdef APT_RPM_DEBUG
++   std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
++#endif
+    if (uninstall.empty() == false)
+        ExecRPM(Item::RPMErase, uninstall);
+    if (install.empty() == false)
+@@ -676,13 +679,16 @@ bool pkgRPMLibPM::AddToTransaction(Item::RPMOps op, vector<const char*> &files)
+ 	 case Item::RPMUpgrade:
+ 	    upgrade = 1;
+ 	 case Item::RPMInstall:
++#ifdef APT_RPM_DEBUG
++        std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << " " << std::string(*I) << std::endl;
++#endif
+ 	    fd = Fopen(*I, "r.ufdio");
+ 	    if (fd == NULL)
+ 	       _error->Error(_("Failed opening %s"), *I);
+             rc = rpmReadPackageFile(TS, fd, *I, &hdr);
+ 	    if (rc != RPMRC_OK && rc != RPMRC_NOTTRUSTED && rc != RPMRC_NOKEY)
+ 	       _error->Error(_("Failed reading file %s"), *I);
+-	    rc = rpmtsAddInstallElement(TS, hdr, *I, upgrade, 0);
++        rc = rpmtsAddInstallElement(TS, hdr, *I, upgrade, 0);
+ 	    if (rc)
+ 	       _error->Error(_("Failed adding %s to transaction %s"),
+ 			     *I, "(install)");
+@@ -714,6 +720,9 @@ bool pkgRPMLibPM::Process(vector<const char*> &install,
+ 			  vector<const char*> &upgrade,
+ 			  vector<const char*> &uninstall)
+ {
++#ifdef APT_RPM_DEBUG
++   std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
++#endif
+    int rc = 0;
+    bool Success = false;
+    bool Interactive = _config->FindB("RPM::Interactive",true);
+@@ -760,7 +769,7 @@ bool pkgRPMLibPM::Process(vector<const char*> &install,
+        AddToTransaction(Item::RPMUpgrade, upgrade);
+ 
+    if (_config->FindB("RPM::NoDeps", false) == false) {
+-      rc = rpmtsCheck(TS);
++      rc = rpmtsCheckISoftApp(TS);
+       probs = rpmtsProblems(TS);
+       if (rc || rpmpsNumProblems(probs) > 0) {
+ 	 rpmpsPrint(NULL, probs);
+@@ -785,7 +794,7 @@ bool pkgRPMLibPM::Process(vector<const char*> &install,
+    rpmtsSetFlags(TS, (rpmtransFlags)(rpmtsFlags(TS) | tsFlags));
+    rpmtsClean(TS);
+    rc = rpmtsSetNotifyCallback(TS, rpmCallback, Progress);
+-   rc = rpmtsRun(TS, NULL, (rpmprobFilterFlags)probFilter);
++   rc = rpmtsRunISoftApp(TS, NULL, (rpmprobFilterFlags)probFilter);
+    probs = rpmtsProblems(TS);
+ 
+    if (rc > 0) {
+diff --git a/apt-pkg/rpm/rpmsystem.cc b/apt-pkg/rpm/rpmsystem.cc
+index 86d0f17..0397103 100644
+--- a/apt-pkg/rpm/rpmsystem.cc
++++ b/apt-pkg/rpm/rpmsystem.cc
+@@ -64,8 +64,10 @@ rpmSystem::~rpmSystem()
+ 
+ RPMDBHandler *rpmSystem::GetDBHandler()
+ {
+-   if (RpmDB == NULL)
+-      RpmDB = new RPMDBHandler();
++   if (RpmDB == NULL) {
++      RpmDB = new RPMDBHandler(false,m_IsoftApp);
++      //RpmDB = new RPMDBHandler();
++   }
+    return RpmDB;
+ }
+ 
+@@ -82,15 +84,20 @@ bool rpmSystem::LockRead()
+ // System::Lock - Get the lock						/*{{{*/
+ // ---------------------------------------------------------------------
+ /* this will open the rpm database through rpmlib, which will lock the db */
+-bool rpmSystem::Lock()
++//bool rpmSystem::Lock()
++bool rpmSystem::Lock(bool useIsoft)
+ {
++   m_IsoftApp = useIsoft;
++
+    if (RpmDB != NULL && RpmDB->HasWriteLock() == false)
+    {
+       delete RpmDB;
+       RpmDB = NULL;
+    }
+-   if (RpmDB == NULL)
+-      RpmDB = new RPMDBHandler(true);
++   if (RpmDB == NULL) {
++      RpmDB = new RPMDBHandler(true,m_IsoftApp);
++      //RpmDB = new RPMDBHandler(true);
++   }
+    if (_error->PendingError() == true)
+       return false;
+    LockCount++;
+diff --git a/apt-pkg/rpm/rpmsystem.h b/apt-pkg/rpm/rpmsystem.h
+index 53629be..66f62fb 100644
+--- a/apt-pkg/rpm/rpmsystem.h
++++ b/apt-pkg/rpm/rpmsystem.h
+@@ -26,6 +26,7 @@ class rpmSystem : public pkgSystem
+    int LockCount;
+    RPMDBHandler *RpmDB;
+    rpmDatabaseIndex *StatusFile;
++   bool m_IsoftApp;
+    
+    bool processIndexFile(rpmIndexFile *Handler,OpProgress &Progress);
+    
+@@ -34,7 +35,8 @@ class rpmSystem : public pkgSystem
+    RPMDBHandler *GetDBHandler();
+    
+    virtual bool LockRead();
+-   virtual bool Lock();
++   //virtual bool Lock();
++   virtual bool Lock(bool useIsoft = false);
+    virtual bool UnLock(bool NoErrors = false);
+    virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const;
+    virtual bool Initialize(Configuration &Cnf);
+diff --git a/cmdline/apt-get.cc b/cmdline/apt-get.cc
+index b755f49..5647966 100644
+--- a/cmdline/apt-get.cc
++++ b/cmdline/apt-get.cc
+@@ -68,6 +68,9 @@
+     
+ 									/*}}}*/
+ 
++/********** use isoftapp or not ************/
++#define USEISOFTAPP
++
+ using namespace std;
+ 
+ ostream c0out(0);
+@@ -83,6 +86,7 @@ unsigned int ScreenWidth = 80;
+ class CacheFile : public cmdCacheFile
+ {
+    public:
++   bool m_useIsoft = false;
+    bool CheckDeps(bool AllowBroken = false);
+    bool BuildCaches(bool WithLock = true)
+    {
+@@ -109,7 +113,8 @@ class CacheFile : public cmdCacheFile
+       else
+ 	 return Open(true);
+    }
+-   CacheFile() : cmdCacheFile() {}
++   //CacheFile() : cmdCacheFile() {}
++   CacheFile(bool useIsoft = false) : cmdCacheFile(useIsoft) {m_useIsoft = useIsoft;}
+ };
+ 									/*}}}*/
+ 
+@@ -724,6 +729,9 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+    
+    // Check if there is something at all to install
+    pkgDepCache::StateCache &State = Cache[Pkg];
++#ifdef APT_RPM_DEBUG
++   std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << " " << Pkg->CurrentVer << std::endl;
++#endif
+    if (Remove == true && Pkg->CurrentVer == 0)
+    {
+       Fix.Clear(Pkg);
+@@ -1074,12 +1082,459 @@ bool DoUpgrade(CommandLine &CmdL)
+    return InstallPackages(Cache,true);
+ }
+ 									/*}}}*/
++/*
++* 1.create new cache by /var/lib/isoft-app
++* 2.do the same thing like DoInstall()
++*/
++bool tryNewCache(const char *pkgName,CommandLine &CmdL)
++{
++    CacheFile Cache(true);
++
++    if (Cache.OpenForInstall() == false ||
++        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
++       return false;
++
++   // #############################begin xxxxxx#######################################
++
++   // Enter the special broken fixing mode if the user specified arguments
++   bool BrokenFix = false;
++   if (Cache->BrokenCount() != 0)
++      BrokenFix = true;
++   
++   unsigned int ExpectedInst = 0;
++   unsigned int Packages = 0;
++   pkgProblemResolver Fix(Cache);
++   
++   bool DefRemove = false;
++   if (strcasecmp(CmdL.FileList[0],"remove") == 0)
++      DefRemove = true;
++   // CNC:2004-03-22
++   else if (strcasecmp(CmdL.FileList[0],"reinstall") == 0)
++      _config->Set("APT::Get::ReInstall", true);
++
++   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
++   {
++      // Duplicate the string
++      size_t Length = strlen(*I);
++      char S[300];
++      if (Length >= sizeof(S))
++	 continue;
++      strcpy(S,*I);
++
++      // CNC:2003-03-15
++      char OrigS[300];
++      strcpy(OrigS,S);
++
++      // See if we are removing and special indicators..
++      bool Remove = DefRemove;
++      char *VerTag = 0;
++      bool VerIsRel = false;
++      // CNC:2003-11-05
++      int VerOp = 0;
++      while (Cache->FindPkg(S).end() == true)
++      {
++	 // Handle an optional end tag indicating what to do
++	 if (Length >= 1 && S[Length - 1] == '-')
++	 {
++	    Remove = true;
++	    S[--Length] = 0;
++	    continue;
++	 }
++	 
++	 if (Length >= 1 && S[Length - 1] == '+')
++	 {
++	    Remove = false;
++	    S[--Length] = 0;
++	    continue;
++	 }
++	 
++	 // CNC:2003-11-05
++	 char *sep = strpbrk(S,"=><");
++	 if (sep)
++	 {
++	    char *p;
++	    int eq = 0, gt = 0, lt = 0;
++
++	    VerIsRel = false;
++	    for (p = sep; *p && strchr("=><",*p); ++p)
++	       switch (*p)
++	       {
++		  case '=': eq = 1; break;
++		  case '>': gt = 1; break;
++		  case '<': lt = 1; break;
++	       }
++	    if (eq)
++	    {
++	       if (lt && gt)
++		  return _error->Error(_("Couldn't parse name '%s'"),S);
++	       else if (lt)
++		  VerOp = pkgCache::Dep::LessEq;
++	       else if (gt)
++		  VerOp = pkgCache::Dep::GreaterEq;
++	       else
++		  VerOp = pkgCache::Dep::Equals;
++	    }
++	    else
++	    {
++	       if (lt && gt)
++		  VerOp = pkgCache::Dep::NotEquals;
++	       else if (lt)
++		  VerOp = pkgCache::Dep::Less;
++	       else if (gt)
++		  VerOp = pkgCache::Dep::Greater;
++	       else
++		  return _error->Error(_("Couldn't parse name '%s'"),S);
++	    }
++	    *sep = '\0';
++	    /* S may be overwritten later, for example, if it contains
++	     * a file name that will be resolved to a package.
++	     * So we point VerTag to the same offset in OrigS. */
++	    VerTag = (p - S) + OrigS;
++	 }
++	 
++	 // CNC:2003-11-21 - Try to handle unknown file items.
++	 if (S[0] == '/')
++	 {
++	    pkgRecords Recs(Cache);
++	    if (_error->PendingError() == true)
++	       return false;
++	    pkgCache::PkgIterator Pkg = (*Cache).PkgBegin();
++	    for (; Pkg.end() == false; Pkg++)
++	    {
++	       // Should we try on all versions?
++	       pkgCache::VerIterator Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
++	       if (Ver.end() == false)
++	       {
++		  pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
++		  if (Parse.HasFile(S)) {
++		     strcpy(S, Pkg.Name());
++		     ioprintf(c1out,_("Selecting %s for '%s'\n"),
++			      Pkg.Name(),OrigS);
++		     // Confirm the translation.
++		     ExpectedInst += 1000;
++		     break;
++		  }
++	       }
++	    }
++	 }
++
++	 char *Slash = strchr(S,'/');
++	 if (Slash != 0)
++	 {
++	    VerIsRel = true;
++	    *Slash = 0;
++	    VerTag = Slash + 1;
++	 }
++	 
++	 break;
++      }
++      
++      // Locate the package
++      pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
++      Packages++;
++      if (Pkg.end() == true)
++      {
++	 // Check if the name is a regex
++	 const char *I;
++	 for (I = S; *I != 0; I++)
++	    if (*I == '?' || *I == '*' || *I == '|' ||
++	        *I == '[' || *I == '^' || *I == '$')
++	       break;
++
++	 // CNC:2003-05-15
++	 if (*I == 0) {
++#ifdef APT_WITH_LUA
++	    vector<string> VS;
++	    _lua->SetDepCache(Cache);
++	    _lua->SetDontFix();
++	    _lua->SetGlobal("argument", OrigS);
++	    _lua->SetGlobal("translated", VS);
++	    _lua->RunScripts("Scripts::AptGet::Install::TranslateArg");
++	    const char *name = _lua->GetGlobalStr("translated");
++	    if (name != NULL) {
++	       VS.push_back(name);
++	    } else {
++	       VS = _lua->GetGlobalStrList("translated");
++	    }
++	    _lua->ResetGlobals();
++	    _lua->ResetCaches();
++
++	    // Translations must always be confirmed
++	    ExpectedInst += 1000;
++
++	    // Run over the matches
++	    bool Hit = false;
++	    for (vector<string>::const_iterator I = VS.begin();
++	         I != VS.end(); I++) {
++
++	       Pkg = Cache->FindPkg(*I);
++	       if (Pkg.end() == true)
++		  continue;
++
++	       ioprintf(c1out,_("Selecting %s for '%s'\n"),
++			Pkg.Name(),OrigS);
++	    
++	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
++				   ExpectedInst,true);
++	    }
++	 
++	    if (Hit == true)
++	       continue;
++#endif
++	    return _error->Error(_("Couldn't find package %s"),S);
++	 }
++
++	 // Regexs must always be confirmed
++	 ExpectedInst += 1000;
++	 
++	 // Compile the regex pattern
++	 regex_t Pattern;
++	 int Res;
++	 if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
++		     REG_NOSUB)) != 0)
++	 {
++	    char Error[300];	    
++	    regerror(Res,&Pattern,Error,sizeof(Error));
++	    return _error->Error(_("Regex compilation error - %s"),Error);
++	 }
++	 
++	 // Run over the matches
++	 bool Hit = false;
++	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
++	 {
++	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
++	       continue;
++	    
++	    // CNC:2003-11-23
++	    ioprintf(c1out,_("Selecting %s for '%s'\n"),
++		     Pkg.Name(),S);
++	    
++	    if (VerTag != 0)
++	       // CNC:2003-11-05
++	       if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
++		  return false;
++	    
++	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
++				ExpectedInst,false);
++	 }
++	 regfree(&Pattern);
++	 
++	 if (Hit == false)
++	    return _error->Error(_("Couldn't find package %s"),S);
++      }
++      else
++      {
++#ifdef APT_RPM_DEBUG
++         std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << " " << Pkg.Name() << " " << Pkg->CurrentVer << std::endl;
++#endif
++         // FIXME: why CurrentVer is zero?! TryToInstall will consider it 
++         // (CurrentVer == 0) is not installed package! so just use rpm command 
++         // dirtly...
++         if (Remove) {
++            std::string cmd = std::string("rpm --isoftapp -e ") + Pkg.Name();
++            system(cmd.c_str());
++            return true;
++         }
++	 if (VerTag != 0)
++	    // CNC:2003-11-05
++	    if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
++	       return false;
++	 if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
++	    return false;
++      }      
++   }
++
++// CNC:2003-03-19
++#ifdef APT_WITH_LUA
++   _lua->SetDepCache(Cache);
++   _lua->SetDontFix();
++   _lua->RunScripts("Scripts::AptGet::Install::PreResolve");
++   _lua->ResetCaches();
++#endif
++
++   // CNC:2002-08-01
++   if (_config->FindB("APT::Remove-Depends",false) == true)
++      Fix.RemoveDepends();
++
++   /* If we are in the Broken fixing mode we do not attempt to fix the
++      problems. This is if the user invoked install without -f and gave
++      packages */
++   if (BrokenFix == true && Cache->BrokenCount() != 0)
++   {
++      c1out << _("You might want to run `apt-get --fix-broken install' to correct these:") << endl;
++      ShowBroken(c1out,Cache,false);
++
++      return _error->Error(_("Unmet dependencies. Try 'apt-get --fix-broken install' with no packages (or specify a solution)."));
++   }
++   
++   // Call the scored problem resolver
++   Fix.InstallProtect();
++   if (Fix.Resolve(true) == false)
++      _error->Discard();
++
++// CNC:2003-03-19
++#ifdef APT_WITH_LUA
++   if (Cache->BrokenCount() == 0) {
++      _lua->SetDepCache(Cache);
++      _lua->SetProblemResolver(&Fix);
++      _lua->RunScripts("Scripts::AptGet::Install::PostResolve");
++      _lua->ResetCaches();
++   }
++#endif
++
++   // Now we check the state of the packages,
++   if (Cache->BrokenCount() != 0)
++   {
++      c1out << 
++       _("Some packages could not be installed. This may mean that you have\n" 
++	 "requested an impossible situation or that some of the repositories\n"
++	 "in use are in an inconsistent state at the moment.") << endl;
++      if (Packages == 1)
++      {
++	 c1out << endl;
++	 c1out << 
++	  _("Since you only requested a single operation it is extremely likely that\n"
++	    "the package is simply not installable and a bug report against\n" 
++	    "that package should be filed.") << endl;
++      }
++
++      c1out << _("The following information may help to resolve the situation:") << endl;
++      c1out << endl;
++      ShowBroken(c1out,Cache,false);
++
++      return _error->Error(_("Broken packages"));
++
++   }   
++   
++   /* Print out a list of packages that are going to be installed extra
++      to what the user asked */
++   if (Cache->InstCount() != ExpectedInst)
++   {
++      string List;
++      string VersionsList;
++      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++      {
++	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
++	 if ((*Cache)[I].Install() == false)
++	    continue;
++
++	 // CNC:2004-06-15
++	 const char **K;
++	 for (K = CmdL.FileList + 1; *K != 0; K++)
++	    if (strcmp(*K,I.Name()) == 0)
++		break;
++	 
++	 if (*K == 0) {
++	    List += string(I.Name()) + " ";
++        VersionsList += string(Cache[I].CandVersion) + "\n";
++     }
++      }
++      
++      ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
++   }
++
++   /* Print out a list of suggested and recommended packages */
++   {
++      string SuggestsList, RecommendsList, List;
++      string SuggestsVersions, RecommendsVersions;
++      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++      {
++	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
++
++	 /* Just look at the ones we want to install */
++	 if ((*Cache)[I].Install() == false)
++	   continue;
++
++	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
++	   {
++	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
++	       {
++		 pkgCache::DepIterator Start;
++		 pkgCache::DepIterator End;
++		 D.GlobOr(Start,End);
++
++		 /* 
++		  * If this is a virtual package, we need to check the list of
++		  * packages that provide it and see if any of those are
++		  * installed
++		  */
++		 pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
++		 bool providedBySomething = false;
++		 for (; Prv.end() != true; Prv++)
++		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false) {
++		       providedBySomething = true;
++		       break;
++		    }
++
++		 if (providedBySomething) continue;
++            
++		 do
++		   {
++		     if (Start->Type == pkgCache::Dep::Suggests) {
++
++		       /* A suggests relations, let's see if we have it 
++			  installed already */
++
++		       string target = string(Start.TargetPkg().Name()) + " ";
++		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
++			 break;
++		       /* Does another package suggest it as well?  If so,
++			  don't print it twice */
++		       if (int(SuggestsList.find(target)) > -1)
++			 break; 
++		       SuggestsList += target;
++		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
++		     }
++		     
++		     if (Start->Type == pkgCache::Dep::Recommends) {
++
++		       /* A recommends relation, let's see if we have it
++			  installed already */
++
++		       string target = string(Start.TargetPkg().Name()) + " ";
++		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
++			 break;
++		       
++		       /* Does another package recommend it as well?  If so,
++			  don't print it twice */
++
++		       if (int(RecommendsList.find(target)) > -1)
++			 break;
++		       RecommendsList += target;
++		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
++		     }
++	      if (Start == End)
++		break;
++	      Start++;
++	    } while (1);
++	       }
++	   }
++      }
++      ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
++      ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
++
++   }
++
++   // CNC:2003-03-06
++   if (CheckOnly(Cache) == true)
++      return true;
++
++   // See if we need to prompt
++   if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
++      return InstallPackages(Cache,false,false);
++   
++   return InstallPackages(Cache,false);   
++}
++   // #############################end xxxxxx#######################################
++
++
+ // DoInstall - Install packages from the command line			/*{{{*/
+ // ---------------------------------------------------------------------
+ /* Install named packages */
+ bool DoInstall(CommandLine &CmdL)
+ {
+    CacheFile Cache;
++   char pkgName[512]="";
+    if (Cache.OpenForInstall() == false || 
+        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
+       return false;
+@@ -1112,6 +1567,8 @@ bool DoInstall(CommandLine &CmdL)
+       // CNC:2003-03-15
+       char OrigS[300];
+       strcpy(OrigS,S);
++
++      snprintf(pkgName,sizeof(pkgName), "%s",S);
+       
+       // See if we are removing and special indicators..
+       bool Remove = DefRemove;
+@@ -1312,6 +1769,17 @@ bool DoInstall(CommandLine &CmdL)
+       }
+       else
+       {
++#ifdef APT_RPM_DEBUG
++         std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << " " << Pkg.Name() << " " << Pkg->CurrentVer << std::endl;
++#endif
++         // FIXME: why CurrentVer is zero?! TryToInstall will consider it 
++         // (CurrentVer == 0) is not installed package! so just use rpm command 
++         // dirtly...
++         if (Remove) {
++            std::string cmd = std::string("rpm --isoftapp -e ") + Pkg.Name();
++            system(cmd.c_str());
++            return true;
++         }
+ 	 if (VerTag != 0)
+ 	    // CNC:2003-11-05
+ 	    if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
+@@ -1378,7 +1846,17 @@ bool DoInstall(CommandLine &CmdL)
+       c1out << _("The following information may help to resolve the situation:") << endl;
+       c1out << endl;
+       ShowBroken(c1out,Cache,false);
++
++      // TODO: try to check isoftapp
++      #ifdef USEISOFTAPP 
++      Cache.Close();
++      c1out << endl;
++      c1out << _("Try to check isoft app db:") << endl;
++      c1out << endl;
++      return tryNewCache(pkgName,CmdL);
++      #else
+       return _error->Error(_("Broken packages"));
++      #endif
+    }   
+    
+    /* Print out a list of packages that are going to be installed extra
+diff --git a/cmdline/cmdline.cc b/cmdline/cmdline.cc
+index 59bf011..fc60ed7 100644
+--- a/cmdline/cmdline.cc
++++ b/cmdline/cmdline.cc
+@@ -189,7 +189,7 @@ int cmdCacheFile::NameComp(const void *a,const void *b)
+ /* */
+ void cmdCacheFile::Sort()
+ {
+-   delete [] List;
++   //delete [] List;
+    List = new pkgCache::Package *[Cache->Head().PackageCount];
+    memset(List,0,sizeof(*List)*Cache->Head().PackageCount);
+    pkgCache::PkgIterator I = Cache->PkgBegin();
+@@ -204,6 +204,7 @@ cmdCacheFile::~cmdCacheFile()
+ {
+    if (List) {
+       delete [] List;
++      List = NULL;
+    }
+ }
+ 
+diff --git a/cmdline/cmdline.h b/cmdline/cmdline.h
+index 4bacf8c..5c662ee 100644
+--- a/cmdline/cmdline.h
++++ b/cmdline/cmdline.h
+@@ -36,7 +36,8 @@ class cmdCacheFile : public pkgCacheFile
+    pkgCache::Package **List;
+    void Sort();
+ 
+-   cmdCacheFile() : List(0) {}
++   //cmdCacheFile() : List(0) {}
++   cmdCacheFile(bool useIsoft = false) : pkgCacheFile(useIsoft) {}
+    virtual ~cmdCacheFile();
+ };
+ 
+diff --git a/configure.ac b/configure.ac
+index ec699b6..9464f56 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -23,6 +23,15 @@ AC_PROG_CPP
+ 
+ AC_PROG_LIBTOOL
+ 
++AC_ARG_ENABLE(debug,
++              [AS_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
++                              [turn on debugging [default=no]])],,
++              [enable_debug=no])
++
++if test "x$enable_debug" = "xyes"; then
++  test "$cppflags_set" = set || CPPFLAGS="$CPPFLAGS -g -DAPT_RPM_DEBUG"
++fi
++
+ dnl Checks for sockets
+ SAVE_LIBS="$LIBS"
+ LIBS=""
+@@ -253,7 +262,6 @@ AC_CONFIG_FILES([
+ 	  tools/Makefile
+ 	  doc/Makefile
+ 	  test/Makefile
+-	  po/Makefile.in
+ 	  ])
+ AC_CONFIG_LINKS([include/apti18n.h:buildlib/gettext.h])
+ 
+diff --git a/luaext/lposix.c b/luaext/lposix.c
+index 453defb..82f22d4 100644
+--- a/luaext/lposix.c
++++ b/luaext/lposix.c
+@@ -49,6 +49,15 @@ static const char *filetype(mode_t m)
+ 
+ typedef int (*Selector)(lua_State *L, int i, const void *data);
+ 
++/* implemented as luaL_typerror until lua 5.1, dropped in 5.2
++ * (C) 1994-2012 Lua.org, PUC-Rio. MIT license
++ */
++static int typerror (lua_State *L, int narg, const char *tname) {
++	const char *msg = lua_pushfstring(L, "%s expected, got %s",
++                                         tname, luaL_typename(L, narg));
++	return luaL_argerror(L, narg, msg);
++}
++
+ static int doselection(lua_State *L, int i, const char *const S[], Selector F, const void *data)
+ {
+ 	if (lua_isnone(L, i))
+@@ -135,7 +144,7 @@ static uid_t mygetuid(lua_State *L, int i)
+ 		return (p==NULL) ? -1 : p->pw_uid;
+ 	}
+ 	else
+-		return luaL_typerror(L, i, "string or number");
++		return typerror(L, i, "string or number");
+ }
+ 
+ static gid_t mygetgid(lua_State *L, int i)
+@@ -150,7 +159,7 @@ static gid_t mygetgid(lua_State *L, int i)
+ 		return (g==NULL) ? -1 : g->gr_gid;
+ 	}
+ 	else
+-		return luaL_typerror(L, i, "string or number");
++		return typerror(L, i, "string or number");
+ }
+ 
+ 
+@@ -339,22 +348,22 @@ static int Pfork(lua_State *L)			/** fork() */
+ 
+ static int Pwait(lua_State *L)			/** wait([pid]) */
+ {
+-	pid_t pid = luaL_optint(L, 1, -1);
++	pid_t pid = luaL_optinteger(L, 1, -1);
+ 	return pushresult(L, waitpid(pid, NULL, 0), NULL);
+ }
+ 
+ 
+ static int Pkill(lua_State *L)			/** kill(pid,[sig]) */
+ {
+-	pid_t pid = luaL_checkint(L, 1);
+-	int sig = luaL_optint(L, 2, SIGTERM);
++	pid_t pid = luaL_checkinteger(L, 1);
++	int sig = luaL_optinteger(L, 2, SIGTERM);
+ 	return pushresult(L, kill(pid, sig), NULL);
+ }
+ 
+ 
+ static int Psleep(lua_State *L)			/** sleep(seconds) */
+ {
+-	unsigned int seconds = luaL_checkint(L, 1);
++	unsigned int seconds = luaL_checkinteger(L, 1);
+ 	lua_pushnumber(L, sleep(seconds));
+ 	return 1;
+ }
+@@ -501,7 +510,7 @@ static int Pgetprocessid(lua_State *L)		/** getprocessid([selector]) */
+ 
+ static int Pttyname(lua_State *L)		/** ttyname(fd) */
+ {
+-	int fd=luaL_optint(L, 1, 0);
++	int fd=luaL_optinteger(L, 1, 0);
+ 	lua_pushstring(L, ttyname(fd));
+ 	return 1;
+ }
+@@ -554,7 +563,7 @@ static int Pgetpasswd(lua_State *L)		/** getpasswd(name or id) */
+ 	else if (lua_isstring(L, 1))
+ 		p = getpwnam(lua_tostring(L, 1));
+ 	else
+-		luaL_typerror(L, 1, "string or number");
++		typerror(L, 1, "string or number");
+ 	if (p==NULL)
+ 		lua_pushnil(L);
+ 	else
+@@ -571,7 +580,7 @@ static int Pgetgroup(lua_State *L)		/** getgroup(name or id) */
+ 	else if (lua_isstring(L, 1))
+ 		g = getgrnam(lua_tostring(L, 1));
+ 	else
+-		luaL_typerror(L, 1, "string or number");
++		typerror(L, 1, "string or number");
+ 	if (g==NULL)
+ 		lua_pushnil(L);
+ 	else
+@@ -690,10 +699,10 @@ static int Puname(lua_State *L)			/** uname([string]) */
+ 	luaL_buffinit(L, &b);
+ 	for (s=luaL_optstring(L, 1, "%s %n %r %v %m"); *s; s++)
+ 		if (*s!='%')
+-			luaL_putchar(&b, *s);
++			luaL_addchar(&b, *s);
+ 		else switch (*++s)
+ 		{
+-			case '%': luaL_putchar(&b, *s); break;
++			case '%': luaL_addchar(&b, *s); break;
+ 			case 'm': luaL_addstring(&b,u.machine); break;
+ 			case 'n': luaL_addstring(&b,u.nodename); break;
+ 			case 'r': luaL_addstring(&b,u.release); break;
+@@ -792,7 +801,7 @@ static int Pmkstemp(lua_State *L)
+ }
+ 
+ 
+-static const luaL_reg R[] =
++static const luaL_Reg R[] =
+ {
+ 	{"access",		Paccess},
+ 	{"chdir",		Pchdir},
+diff --git a/luaext/lrexlib.c b/luaext/lrexlib.c
+index 7ebb910..81adc6c 100644
+--- a/luaext/lrexlib.c
++++ b/luaext/lrexlib.c
+@@ -161,7 +161,7 @@ static int posix_gc (lua_State *L) {
+   return 0;
+ }
+ 
+-static const luaL_reg posixmeta[] = {
++static const luaL_Reg posixmeta[] = {
+   {"match",   posix_match},
+   {"gmatch",  posix_gmatch},
+   {"__gc",    posix_gc},
+@@ -285,7 +285,7 @@ static int pcre_gc (lua_State *L)
+   return 0;
+ }
+ 
+-static const luaL_reg pcremeta[] = {
++static const luaL_Reg pcremeta[] = {
+   {"match",  pcre_match},
+   {"gmatch", pcre_gmatch},
+   {"__gc",   pcre_gc},
+@@ -297,7 +297,7 @@ static const luaL_reg pcremeta[] = {
+ 
+ /* Open the library */
+ 
+-static const luaL_reg rexlib[] = {
++static const luaL_Reg rexlib[] = {
+ #ifdef WITH_POSIX
+   {"newPOSIX", posix_comp},
+ #endif
