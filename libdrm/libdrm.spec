@@ -1,14 +1,10 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.64
-Release: 6 
+Version: 2.4.65
+Release: 2 
 License: MIT
 URL: http://dri.sourceforge.net
 Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
-
-#git://anongit.freedesktop.org/mesa/drm
-#git repos, we just keep it here to "git pull"
-Source1: drm.tar.gz
 
 Source2: 91-drm-modeset.rules
 
@@ -24,6 +20,12 @@ BuildRequires: pkgconfig automake autoconf libtool
 
 BuildRequires: kernel-headers libpthread-stubs-devel
 BuildRequires: libpciaccess-devel
+BuildRequires: libxcb-devel
+BuildRequires: systemd-devel
+Requires: systemd
+BuildRequires: libatomic_ops-devel
+BuildRequires: libxslt docbook-style-xsl
+BuildRequires: xorg-x11-util-macros
 
 
 %description
@@ -33,6 +35,7 @@ Direct Rendering Manager runtime library
 Summary: Direct Rendering Manager development package
 Requires: %{name} = %{version}-%{release}
 Requires: kernel-headers 
+Requires: pkgconfig
 
 %description devel
 Direct Rendering Manager development package
@@ -76,7 +79,11 @@ make install DESTDIR=$RPM_BUILD_ROOT
 pushd tests
 mkdir -p %{buildroot}%{_bindir}
 for foo in $(make check-programs) ; do
- install -m 0755 .libs/$foo %{buildroot}%{_bindir}
+ if [ x$foo = x"dristat" ]; then 
+    install -m 0755 $foo %{buildroot}%{_bindir}
+ else
+    install -m 0755 .libs/$foo %{buildroot}%{_bindir}
+ fi
 done
 popd
 
@@ -140,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Thu Oct 29 2015 Cjacker <cjacker@foxmail.com> - 2.4.65-2
+- Update to 2.4.65
+
 * Fri Oct 23 2015 cjacker - 2.4.64-6
 - Rebuild for new 4.0 release
 
