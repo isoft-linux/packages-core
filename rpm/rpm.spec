@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 6
+Release: 7
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -364,6 +364,7 @@ rm -rf $RPM_BUILD_ROOT
 - Add rpmtsSetMacro by fujiang.
 - Add isoftapp macro support.
 - Fix verify, install, update issue.
+- Fix already installed for both osdb and isoft-appdb issue.
 
 * Fri Oct 23 2015 cjacker - 4.13.0-4
 - Rebuild for new 4.0 release

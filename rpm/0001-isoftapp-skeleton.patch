@@ -697,7 +697,7 @@ index 4adb3d1..bb719b6 100644
  }
  #endif
 diff --git a/lib/rpmdb.c b/lib/rpmdb.c
-index 6499efc..209a00d 100644
+index 6499efc..190fc5b 100644
 --- a/lib/rpmdb.c
 +++ b/lib/rpmdb.c
 @@ -549,7 +549,7 @@ static rpmdb newRpmdb(const char * root, const char * home,
@@ -721,7 +721,7 @@ index 6499efc..209a00d 100644
  int rpmdbInit (const char * prefix, int perms)
  {
      rpmdb db = NULL;
-@@ -1619,6 +1624,107 @@ top:
+@@ -1619,6 +1624,111 @@ top:
      return mi->mi_h;
  }
  
@@ -734,8 +734,12 @@ index 6499efc..209a00d 100644
 +    headerImportFlags importFlags = HEADERIMPORT_FAST;
 +    rpmdb osdb = NULL;  /* db for default /var/lib/rpm */
 +
-+    if (mi == NULL)
++    if (mi == NULL) {
++#ifdef RPM_DEBUG
++        printf("DEBUG: %s, %s, line %d: mi is NULL\n", __FILE__, __func__, __LINE__);
++#endif
 +	    goto exit;
++    }
 +
 +    openDatabase("/", "/var/lib/rpm", &osdb, O_RDONLY, 0644, 0);
 +    /* TODO: open osdb instead of mi->mi_db */
@@ -1494,10 +1498,52 @@ index 5231c80..12b5158 100644
   * @param txn		transaction handle
   * @param h		header
 diff --git a/lib/transaction.c b/lib/transaction.c
-index 8f440b7..9fe94e4 100644
+index 8f440b7..9aa8e5c 100644
 --- a/lib/transaction.c
 +++ b/lib/transaction.c
-@@ -1457,7 +1457,103 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
+@@ -1128,13 +1128,14 @@ void checkInstalledFiles(rpmts ts, uint64_t fileCount, fingerPrintCache fpc)
+  * - verify package arch/os.
+  * - verify package epoch:version-release is newer.
+  */
+-static rpmps checkProblems(rpmts ts)
++static rpmps checkProblems(rpmts ts, int isoftApp)
+ {
+     rpm_color_t tscolor = rpmtsColor(ts);
+     rpmprobFilterFlags probFilter = rpmtsFilterFlags(ts);
+     rpmstrPool tspool = rpmtsPool(ts);
+     rpmtsi pi = rpmtsiInit(ts);
+     rpmte p;
++    rpmdb db = NULL;
+ 
+     /* The ordering doesn't matter here */
+     /* XXX Only added packages need be checked. */
+@@ -1168,10 +1169,21 @@ static rpmps checkProblems(rpmts ts)
+ 		rpmdbSetIteratorRE(mi, RPMTAG_OS, RPMMIRE_STRCMP, rpmteO(p));
+ 	    }
+ 
+-	    if ((h = rpmdbNextIterator(mi)) != NULL) {
+-		rpmteAddProblem(p, RPMPROB_PKG_INSTALLED, NULL, NULL,
+-				headerGetInstance(h));
+-	    }
++	    if ((h = rpmdbNextIterator(mi)) == NULL) {
++            openDatabase("/", isoftApp ? "/var/lib/rpm" : "/var/lib/isoft-app", 
++                    &db, O_RDONLY, 0644, 0);
++            if (db) {
++                if (rpmdbCountPackages(db, rpmteN(p))) {
++                    rpmteAddProblem(p, RPMPROB_PKG_INSTALLED, NULL, NULL, 
++                            headerGetInstance(h));
++                }
++                rpmdbClose(db);
++                db = NULL;
++            }
++        } else {
++            rpmteAddProblem(p, RPMPROB_PKG_INSTALLED, NULL, NULL, 
++                    headerGetInstance(h));
++        }
+ 	    rpmdbFreeIterator(mi);
+ 	}
+ 
+@@ -1457,7 +1469,103 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
      rpmtxn txn = NULL;
      rpmps tsprobs = NULL;
      int TsmPreDone = 0; /* TsmPre hook hasn't been called */
@@ -1525,7 +1571,7 @@ index 8f440b7..9fe94e4 100644
 +    }
 +
 +    /* Check package set for problems */
-+    tsprobs = checkProblems(ts);
++    tsprobs = checkProblems(ts, 0);
 +
 +    /* Run pre transaction hook for all plugins */
 +    TsmPreDone = 1;
@@ -1602,6 +1648,15 @@ index 8f440b7..9fe94e4 100644
      /* Force default 022 umask during transaction for consistent results */
      mode_t oldmask = umask(022);
  
+@@ -1480,7 +1588,7 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
+     }
+ 
+     /* Check package set for problems */
+-    tsprobs = checkProblems(ts);
++    tsprobs = checkProblems(ts, 1);
+ 
+     /* Run pre transaction hook for all plugins */
+     TsmPreDone = 1;
 diff --git a/lib/verify.c b/lib/verify.c
 index 84e9843..2f904b1 100644
 --- a/lib/verify.c
