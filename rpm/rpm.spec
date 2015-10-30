@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 4
+Release: 5
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -68,6 +68,7 @@ Requires: coreutils
 Requires: sed
 Requires: librpm = %{version}-%{release}
 
+BuildRequires: automake
 BuildRequires: bzip2-devel >= 0.9.0c-2
 BuildRequires: zlib-devel
 BuildRequires: nss-devel
@@ -359,6 +360,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 30 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Add rpmtsSetMacro by fujiang.
+- Add isoftapp macro support.
+
 * Fri Oct 23 2015 cjacker - 4.13.0-4
 - Rebuild for new 4.0 release
 
