@@ -3,34 +3,52 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 43.llvm37.git 
+Release: 44.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
-#Source0: mesa-%{version}.tar.xz
-#20150710
+
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0:    mesa.tar.gz
+Source0: mesa-85f1f044.tar.gz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
 #By Cjacker.
 Patch0: mesa-fix-build-with-llvm-libc++.patch
 
-BuildRequires: pkgconfig autoconf automake
-BuildRequires: libdrm-devel >= 2.4.18-0.1
-BuildRequires: expat-devel >= 2.0
-BuildRequires: python
-BuildRequires: wayland-devel
-BuildRequires: libllvm-devel
-#it need libLLVM shared library
-BuildRequires: libllvm
-BuildRequires: xorg-x11-proto-devel >= 7.4-35
+Patch1: Mesa-dev-1-6-virgl-fix-drm.h-include-path.patch
+
+BuildRequires: pkgconfig autoconf automake libtool
+BuildRequires: kernel-headers
+BuildRequires: xorg-x11-server-devel
+
+BuildRequires: libdrm-devel >= 2.4.42
+BuildRequires: libXxf86vm-devel
+BuildRequires: expat-devel
+BuildRequires: xorg-x11-proto-devel
 BuildRequires: libXext-devel
 BuildRequires: libXfixes-devel
 BuildRequires: libXdamage-devel
-BuildRequires: libvdpau-devel
-BuildRequires: libva-devel
+BuildRequires: libXi-devel
+BuildRequires: libXmu-devel
 BuildRequires: libxshmfence-devel
+BuildRequires: elfutils
+BuildRequires: python
+BuildRequires: gettext
+BuildRequires: libelfutils-devel
+BuildRequires: python-libxml2
+#for libudev
+BuildRequires: systemd-devel 
+BuildRequires: bison flex
+BuildRequires: pkgconfig(wayland-client)
+BuildRequires: pkgconfig(wayland-server)
+BuildRequires: libvdpau-devel
+BuildRequires: zlib-devel
+BuildRequires: wayland-devel
+BuildRequires: libllvm-devel
+BuildRequires: libclang-devel
+#it need libLLVM shared library
+BuildRequires: libllvm
+BuildRequires: libva-devel
 BuildRequires: libXvMC-devel
 BuildRequires: python-mako
 
@@ -48,6 +66,8 @@ Summary: Mesa libGL runtime libraries
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 Provides: libGL
+Provides: libglapi
+Provides: mesa-libglapi
 Requires: mesa-dri-drivers = %{version}-%{release}
 Requires: libdrm >= 2.4.18-0.1
 
@@ -124,20 +144,20 @@ Provides: libwayland-egl-devel
 Mesa libwayland-egl development package
 
 
-%package libGLESv2
-Summary: Mesa libGLESv2 runtime libraries
-Provides: mesa-libGLES = %{version}-%{release}
+%package libGLES
+Summary: Mesa libGLES runtime libraries
+Provides: mesa-libGLESv2 = %{version}-%{release}
 
-%description libGLESv2
+%description libGLES
 Mesa GLESv2 runtime libraries
 
-%package libGLESv2-devel
-Summary: Mesa libGLESv2 development package
-Requires: mesa-libGLESv2 = %{version}-%{release}
-Provides: mesa-libGLES-devel = %{version}-%{release}
+%package libGLES-devel
+Summary: Mesa libGLES development package
+Requires: mesa-libGLES = %{version}-%{release}
+Provides: mesa-libGLESv2-devel = %{version}-%{release}
 
-%description libGLESv2-devel
-Mesa libGLESv2 development package
+%description libGLES-devel
+Mesa libGLES development package
 
 
 %package libxatracker
@@ -195,6 +215,7 @@ Requires: mesa-libOSMesa = %{version}-%{release}
 %description libOSMesa-devel
 Mesa offscreen rendering development package
 
+
 %if 0%{?with_opencl}
 %package libOpenCL
 Summary: Mesa OpenCL runtime library
@@ -216,6 +237,7 @@ Mesa OpenCL development package.
 
 %prep
 %setup -q -n %{name} 
+%patch1 -p1
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -236,7 +258,7 @@ export CXXFLAGS="$RPM_OPT_FLAGS -frtti -fexceptions"
   --enable-dri \
   --enable-osmesa \
   --enable-glx \
-  --with-egl-platforms=x11,wayland,drm \
+  --with-egl-platforms=x11,wayland,drm,surfaceless \
   --enable-shared-glapi \
   --enable-xvmc \
   --enable-vdpau \
@@ -245,7 +267,7 @@ export CXXFLAGS="$RPM_OPT_FLAGS -frtti -fexceptions"
   --enable-gallium-llvm \
   --enable-llvm-shared-libs \
   --enable-gallium-egl \
-  --with-gallium-drivers="i915,ilo,nouveau,svga,r300,r600,radeonsi,swrast" \
+  --with-gallium-drivers="i915,ilo,nouveau,svga,r300,r600,radeonsi,swrast,virgl" \
   --with-dri-drivers="swrast,nouveau,radeon,r200,i915,i965" \
   --enable-egl \
   --enable-gles2 \
@@ -293,6 +315,21 @@ rm -rf $RPM_BUILD_ROOT
 %post libd3d -p /sbin/ldconfig
 %postun libd3d -p /sbin/ldconfig
 
+%post libOSMesa -p /sbin/ldconfig
+%postun libOSMesa -p /sbin/ldconfig
+
+%post libGLES -p /sbin/ldconfig
+%postun libGLES -p /sbin/ldconfig
+
+%post libgbm -p /sbin/ldconfig
+%postun libgbm -p /sbin/ldconfig
+
+%post libwayland-egl -p /sbin/ldconfig
+%postun libwayland-egl -p /sbin/ldconfig
+
+%post libxatracker -p /sbin/ldconfig
+%postun libxatracker -p /sbin/ldconfig
+
 %if 0%{?with_opencl}
 %post libOpenCL -p /sbin/ldconfig
 %postun libOpenCL -p /sbin/ldconfig
@@ -301,10 +338,22 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libGL
 %{_libdir}/libGL.so.*
+%{_libdir}/libglapi*.so.*
 
 %files libGL-devel
 %{_libdir}/libGL.so
-%{_includedir}/GL/glx*.h
+%{_libdir}/libglapi*.so
+%{_includedir}/GL/gl.h
+%{_includedir}/GL/gl_mangle.h
+%{_includedir}/GL/glext.h
+%{_includedir}/GL/glx.h
+%{_includedir}/GL/glx_mangle.h
+%{_includedir}/GL/glxext.h
+%{_includedir}/GL/glcorearb.h
+%dir %{_includedir}/GL/internal
+%{_includedir}/GL/internal/dri_interface.h
+%{_libdir}/pkgconfig/dri.pc
+%{_libdir}/pkgconfig/gl.pc
 
 %files libXvmc
 %defattr(-,root,root,-)
@@ -319,27 +368,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libEGL
 %defattr(-,root,root,-)
-%{_libdir}/libglapi*.so.*
 %{_libdir}/libEGL*.so.*
 
 
 %files libEGL-devel
 %defattr(-,root,root,-)
-%{_includedir}/GL/gl.h
-%{_includedir}/GL/gl_mangle.h
-%{_includedir}/GL/glext.h
-%{_includedir}/GL/glcorearb.h
-%dir %{_includedir}/GL/internal
-%{_includedir}/GL/internal/dri_interface.h
-%{_includedir}/GL/osmesa.h
-
-%{_includedir}/EGL
-%{_includedir}/KHR
-%{_libdir}/pkgconfig/dri.pc
+%dir %{_includedir}/EGL
+%{_includedir}/EGL/eglext.h
+%{_includedir}/EGL/egl.h
+%{_includedir}/EGL/eglmesaext.h
+%{_includedir}/EGL/eglplatform.h
+%{_includedir}/EGL/eglextchromium.h
+%dir %{_includedir}/KHR
+%{_includedir}/KHR/khrplatform.h
 %{_libdir}/pkgconfig/egl.pc
-%{_libdir}/pkgconfig/gl.pc
-%{_libdir}/libglapi*.so
-%{_libdir}/libEGL*.so
+%{_libdir}/libEGL.so
 
 %files dri-drivers
 %defattr(-,root,root,-)
@@ -347,8 +390,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/dri
 %{_libdir}/dri/*_dri.so
 %{_libdir}/dri/gallium_drv_video.so
-#%{_libdir}/egl/egl_gallium.so
-#%{_libdir}/gbm/gbm_gallium_drm.so
 %{_libdir}/gallium-pipe/pipe_*.so
 
 %files libwayland-egl
@@ -362,21 +403,25 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/wayland-egl.pc
 
 
-%files libGLESv2
+%files libGLES
 %defattr(-,root,root,-)
 %{_libdir}/libGLESv2.so.2
 %{_libdir}/libGLESv2.so.2.*
 
 
-%files libGLESv2-devel
+%files libGLES-devel
 %defattr(-,root,root,-)
 %dir %{_includedir}/GLES2
 %{_includedir}/GLES2/gl2platform.h
 %{_includedir}/GLES2/gl2.h
 %{_includedir}/GLES2/gl2ext.h
+%dir %{_includedir}/GLES3
+%{_includedir}/GLES3/gl3platform.h
+%{_includedir}/GLES3/gl3.h
+%{_includedir}/GLES3/gl3ext.h
+%{_includedir}/GLES3/gl31.h
 %{_libdir}/pkgconfig/glesv2.pc
 %{_libdir}/libGLESv2.so
-%{_includedir}/GLES3
 
 %files libxatracker
 %defattr(-,root,root,-)
@@ -403,7 +448,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libOSMesa
 %defattr(-,root,root,-)
-%doc docs/COPYING
 %{_libdir}/libOSMesa.so.8*
 
 %files libOSMesa-devel
@@ -433,8 +477,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-43.llvm37.git
-- Update to git f04f136
+* Thu Oct 29 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-44.llvm37.git
+- Update, enable virgl
+
+* Thu Oct 29 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-43.llvm37.git
+- Update to git 85f1f044
 
 * Mon Oct 26 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-42.git
 - Update to 3359ad6 git.

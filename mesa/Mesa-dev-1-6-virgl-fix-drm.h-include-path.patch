@@ -1,0 +1,13 @@
+diff --git a/src/gallium/winsys/virgl/drm/virtgpu_drm.h b/src/gallium/winsys/virgl/drm/virtgpu_drm.h
+index fcc789e..30bc3af 100644
+--- a/src/gallium/winsys/virgl/drm/virtgpu_drm.h
++++ b/src/gallium/winsys/virgl/drm/virtgpu_drm.h
+@@ -25,7 +25,7 @@
+ #define VIRTGPU_DRM_H
+ 
+ #include <stddef.h>
+-#include "drm/drm.h"
++#include "drm.h"
+ 
+ /* Please note that modifications to all structs defined here are
+  * subject to backwards-compatibility constraints.
