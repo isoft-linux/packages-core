@@ -1,3 +1,15 @@
+diff --git a/builds/freetype.mk b/builds/freetype.mk
+index 1cc7e29..c73ae68 100644
+--- a/builds/freetype.mk
++++ b/builds/freetype.mk
+@@ -161,6 +161,7 @@ FT_CFLAGS  = $(CPPFLAGS) \
+              $(CFLAGS) \
+              $DFT2_BUILD_LIBRARY \
+              $DFT_CONFIG_MODULES_H="<ftmodule.h>" \
++			 $D_GNU_SOURCE \
+              $(FTOPTION_FLAG)
+ 
+ 
 diff --git a/configure b/configure
 index fd52581..bb81fb8 100755
 --- a/configure
@@ -12,7 +24,7 @@ index fd52581..bb81fb8 100755
  
  # respect GNUMAKE environment variable for backwards compatibility
 diff --git a/devel/ftoption.h b/devel/ftoption.h
-index d08a467..bc8e098 100644
+index eda772e..d408a5d 100644
 --- a/devel/ftoption.h
 +++ b/devel/ftoption.h
 @@ -607,6 +607,17 @@ FT_BEGIN_HEADER
@@ -33,10 +45,10 @@ index d08a467..bc8e098 100644
    /* If you define TT_CONFIG_OPTION_UNPATENTED_HINTING, a special version  */
    /* of the TrueType bytecode interpreter is used that doesn't implement   */
    /* any of the patented opcodes and algorithms.  The patents related to   */
-diff --git a/include/config/ftoption.h b/include/config/ftoption.h
-index 34b71b2..187f87b 100644
---- a/include/config/ftoption.h
-+++ b/include/config/ftoption.h
+diff --git a/include/freetype/config/ftoption.h b/include/freetype/config/ftoption.h
+index 4970945..3df05be 100644
+--- a/include/freetype/config/ftoption.h
++++ b/include/freetype/config/ftoption.h
 @@ -92,7 +92,7 @@ FT_BEGIN_HEADER
    /* This is done to allow FreeType clients to run unmodified, forcing     */
    /* them to display normal gray-level anti-aliased glyphs.                */
@@ -70,10 +82,8 @@ index 34b71b2..187f87b 100644
    /* If you define TT_CONFIG_OPTION_UNPATENTED_HINTING, a special version  */
    /* of the TrueType bytecode interpreter is used that doesn't implement   */
    /* any of the patented opcodes and algorithms.  The patents related to   */
-diff --git a/src/autofit/aflatin.c b/src/autofit/aflatin.c
-index e228548..c0e44a5 100644
---- a/src/autofit/aflatin.c
-+++ b/src/autofit/aflatin.c
+--- a/src/autofit/aflatin.c	2015-09-30 08:34:31.862814496 +0200
++++ b/src/autofit/aflatin.c	2015-09-30 08:35:00.876292462 +0200
 @@ -24,6 +24,7 @@
  #include "afpic.h"
  #include "aflatin.h"
@@ -91,9 +101,9 @@ index e228548..c0e44a5 100644
 +#endif
 +
  
-   /*************************************************************************/
-   /*************************************************************************/
-@@ -893,8 +898,33 @@
+   /* needed for computation of round vs. flat segments */
+ #define FLAT_THRESHOLD( x )  ( x / 14 )
+@@ -899,8 +904,33 @@
      FT_Pos        delta;
      AF_LatinAxis  axis;
      FT_UInt       nn;
@@ -127,7 +137,7 @@ index e228548..c0e44a5 100644
      if ( dim == AF_DIMENSION_HORZ )
      {
        scale = scaler->x_scale;
-@@ -921,7 +951,7 @@
+@@ -927,7 +957,7 @@
      {
        AF_LatinAxis  Axis = &metrics->axis[AF_DIMENSION_VERT];
        AF_LatinBlue  blue = NULL;
@@ -136,7 +146,7 @@ index e228548..c0e44a5 100644
  
        for ( nn = 0; nn < Axis->blue_count; nn++ )
        {
-@@ -931,7 +961,12 @@
+@@ -937,7 +967,12 @@
            break;
          }
        }
@@ -150,7 +160,7 @@ index e228548..c0e44a5 100644
        if ( blue )
        {
          FT_Pos   scaled;
-@@ -1050,7 +1085,13 @@
+@@ -1059,7 +1094,13 @@
  
          /* a blue zone is only active if it is less than 3/4 pixels tall */
          dist = FT_MulFix( blue->ref.org - blue->shoot.org, scale );
@@ -164,7 +174,7 @@ index e228548..c0e44a5 100644
          {
  #if 0
            FT_Pos  delta1;
-@@ -1101,7 +1142,12 @@
+@@ -1110,7 +1151,12 @@
              delta2 = -delta2;
  
            blue->ref.fit   = FT_PIX_ROUND( blue->ref.cur );
@@ -177,7 +187,7 @@ index e228548..c0e44a5 100644
  
  #endif
  
-@@ -1914,7 +1960,10 @@
+@@ -1948,7 +1994,10 @@
                dist = edge->fpos - blue->shoot.org;
                if ( dist < 0 )
                  dist = -dist;
@@ -189,7 +199,7 @@ index e228548..c0e44a5 100644
                dist = FT_MulFix( dist, scale );
                if ( dist < best_dist )
                {
-@@ -2089,8 +2138,31 @@
+@@ -2123,8 +2172,31 @@
      FT_Pos           dist     = width;
      FT_Int           sign     = 0;
      FT_Int           vertical = ( dim == AF_DIMENSION_VERT );
@@ -197,8 +207,8 @@ index e228548..c0e44a5 100644
 +    FT_Int           infinality_dist = 0;
 +    FT_UInt          autohint_snap_stem_height = 0;
 +    FT_UInt          checked_autohint_snap_stem_height = 0;
- 
- 
++
++
 +    if ( checked_autohint_snap_stem_height == 0 )
 +    {
 +      char *autohint_snap_stem_height_env = 
@@ -207,7 +217,7 @@ index e228548..c0e44a5 100644
 +      {
 +        sscanf ( autohint_snap_stem_height_env, "%u",
 +                 &autohint_snap_stem_height );
-+
+ 
 +        if ( autohint_snap_stem_height > 100 )
 +          autohint_snap_stem_height = 100;
 +        else if ( autohint_snap_stem_height < 0 )
@@ -215,13 +225,13 @@ index e228548..c0e44a5 100644
 +      }
 +      checked_autohint_snap_stem_height = 1;
 +    }
-+
+ 
 +    if ( autohint_snap_stem_height == 0 )
 +#endif /* FT_CONFIG_OPTION_INFINALITY_PATCHSET */
      if ( !AF_LATIN_HINTS_DO_STEM_ADJUST( hints ) ||
           axis->extra_light                       )
        return width;
-@@ -2100,9 +2172,73 @@
+@@ -2134,9 +2206,73 @@
        dist = -width;
        sign = 1;
      }
@@ -233,8 +243,7 @@ index e228548..c0e44a5 100644
 +    {
 +      infinality_dist = af_latin_snap_width( axis->widths, 
 +                                             axis->width_count, dist );
- 
--    if ( (  vertical && !AF_LATIN_HINTS_DO_VERT_SNAP( hints ) ) ||
++
 +      if ( metrics->root.scaler.face->size->metrics.x_ppem > 9 &&
 +           axis->width_count > 0                               &&
 +           abs( axis->widths[0].cur - infinality_dist ) < 32   &&
@@ -289,14 +298,15 @@ index e228548..c0e44a5 100644
 +              ( ( vertical && !AF_LATIN_HINTS_DO_VERT_SNAP( hints ) )  ||
 +                ( !vertical && !AF_LATIN_HINTS_DO_HORZ_SNAP( hints ) ) ) )
 +#else
-+
+ 
+-    if ( (  vertical && !AF_LATIN_HINTS_DO_VERT_SNAP( hints ) ) ||
 +    if ( ( vertical && !AF_LATIN_HINTS_DO_VERT_SNAP( hints ) ) ||
           ( !vertical && !AF_LATIN_HINTS_DO_HORZ_SNAP( hints ) ) )
 +#endif /* FT_CONFIG_OPTION_INFINALITY_PATCHSET */
      {
        /* smooth hinting process: very lightly quantize the stem width */
  
-@@ -2162,6 +2298,9 @@
+@@ -2196,6 +2332,9 @@
        }
      }
      else
@@ -306,7 +316,7 @@ index e228548..c0e44a5 100644
      {
        /* strong hinting process: snap the stem width to integer pixels */
  
-@@ -2169,7 +2308,10 @@
+@@ -2203,7 +2342,10 @@
  
  
        dist = af_latin_snap_width( axis->widths, axis->width_count, dist );
@@ -318,7 +328,7 @@ index e228548..c0e44a5 100644
        if ( vertical )
        {
          /* in the case of vertical hinting, always round */
-@@ -2232,6 +2374,32 @@
+@@ -2266,6 +2408,32 @@
      }
  
    Done_Width:
@@ -351,7 +361,7 @@ index e228548..c0e44a5 100644
      if ( sign )
        dist = -dist;
  
-@@ -2253,6 +2421,8 @@
+@@ -2287,6 +2455,8 @@
                                                          base_edge->flags,
                                                          stem_edge->flags );
  
@@ -360,7 +370,7 @@ index e228548..c0e44a5 100644
  
      stem_edge->pos = base_edge->pos + fitted_width;
  
-@@ -2813,8 +2983,32 @@
+@@ -2848,8 +3018,32 @@
      int       dim;
  
      AF_LatinAxis  axis;
@@ -394,7 +404,7 @@ index e228548..c0e44a5 100644
      error = af_glyph_hints_reload( hints, outline );
      if ( error )
        goto Exit;
-@@ -2882,7 +3076,11 @@
+@@ -2919,7 +3113,11 @@
      }
  
      af_glyph_hints_save( hints, outline );
@@ -491,7 +501,7 @@ index ff6f7e9..7b91443 100644
        return FT_THROW( Invalid_Library_Handle );
  
 diff --git a/src/base/ftobjs.c b/src/base/ftobjs.c
-index 33d23bf..be96f58 100644
+index 926ac0a..8a166a5 100644
 --- a/src/base/ftobjs.c
 +++ b/src/base/ftobjs.c
 @@ -67,6 +67,11 @@
@@ -612,12 +622,12 @@ index 33d23bf..be96f58 100644
        {
          /* check that the loaded outline is correct */
 diff --git a/src/base/ftoutln.c b/src/base/ftoutln.c
-index 3762d36..c52f67b 100644
+index ef66b3c..c3e4c71 100644
 --- a/src/base/ftoutln.c
 +++ b/src/base/ftoutln.c
 @@ -910,7 +910,34 @@
-     FT_Vector   v_prev, v_first, v_next, v_cur;
-     FT_Int      c, n, first;
+     FT_Vector*  points;
+     FT_Int      c, first, last;
      FT_Int      orientation;
 +#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET 
 +    int checked_use_various_tweaks_env = 0;
@@ -716,34 +726,32 @@ index cd68533..62352e1 100644
      slot->metrics.vertAdvance  += ystr;
      slot->metrics.horiBearingY += ystr;
 diff --git a/src/smooth/ftsmooth.c b/src/smooth/ftsmooth.c
-index 3620550..1da090f 100644
+index 3620550..a92e003 100644
 --- a/src/smooth/ftsmooth.c
 +++ b/src/smooth/ftsmooth.c
-@@ -26,6 +26,17 @@
+@@ -26,102 +26,3575 @@
  
  #include "ftsmerrs.h"
  
 +#ifdef FT_CONFIG_OPTION_INFINALITY_PATCHSET
 +#include <math.h>
-+#include "../../include/ftbitmap.h"
++#include FT_BITMAP_H
 +#include <strings.h>
 +#include "../autofit/aflatin.h"
-+#include "../../include/ftoutln.h"
++#include FT_OUTLINE_H
 +
 +#define verbose FALSE
 +#define STVALUES if (verbose) \
 +  printf ( "scale:%f translate:%ld ", *scale_value, *translate_value );
 +#endif /* FT_CONFIG_OPTION_INFINALITY_PATCHSET */
- 
-   /* initialize renderer -- init its raster */
-   static FT_Error
-@@ -34,94 +45,3556 @@
-     FT_Library  library = FT_MODULE_LIBRARY( render );
- 
- 
--    render->clazz->raster_class->raster_reset( render->raster,
--                                               library->raster_pool,
--                                               library->raster_pool_size );
++
++  /* initialize renderer -- init its raster */
++  static FT_Error
++  ft_smooth_init( FT_Renderer  render )
++  {
++    FT_Library  library = FT_MODULE_LIBRARY( render );
++
++
 +    render->clazz->raster_class->raster_reset( render->raster,
 +                                               library->raster_pool,
 +                                               library->raster_pool_size );
@@ -4093,19 +4101,25 @@ index 3620550..1da090f 100644
 +      }
 +      checked_contrast_value = 1;
 +    }
-+
+ 
+-  /* initialize renderer -- init its raster */
+-  static FT_Error
+-  ft_smooth_init( FT_Renderer  render )
+-  {
+-    FT_Library  library = FT_MODULE_LIBRARY( render );
 +    if ( checked_windows_style_sharpening_strength == 0)
 +    {
 +      char *windows_style_sharpening_strength_env =
 +        getenv( "INFINALITY_FT_WINDOWS_STYLE_SHARPENING_STRENGTH" );
-+
+ 
 +      if ( windows_style_sharpening_strength_env != NULL )
 +      {
 +        sscanf ( windows_style_sharpening_strength_env, "%d",
 +                 &windows_style_sharpening_strength );
  
--    return 0;
--  }
+-    render->clazz->raster_class->raster_reset( render->raster,
+-                                               library->raster_pool,
+-                                               library->raster_pool_size );
 +        if ( windows_style_sharpening_strength > 100 )
 +          windows_style_sharpening_strength = 100;
 +        else if ( windows_style_sharpening_strength < 0 )
@@ -4119,10 +4133,16 @@ index 3620550..1da090f 100644
 +      checked_windows_style_sharpening_strength = 1;
 +    }
  
+-    return 0;
+-  }
 +    if ( checked_gamma_correction_value == 0 )
 +    {
 +      char *gamma_correction_value_env =
 +        getenv( "INFINALITY_FT_GAMMA_CORRECTION" );
+ 
++        if ( gamma_correction_value_env != NULL )
++      {
++        float f1, f2;
  
 -  /* sets render-specific mode */
 -  static FT_Error
@@ -4135,18 +4155,6 @@ index 3620550..1da090f 100644
 -                                                         mode_tag,
 -                                                         data );
 -  }
-+        if ( gamma_correction_value_env != NULL )
-+      {
-+        float f1, f2;
- 
--  /* transform a given glyph image */
--  static FT_Error
--  ft_smooth_transform( FT_Renderer       render,
--                       FT_GlyphSlot      slot,
--                       const FT_Matrix*  matrix,
--                       const FT_Vector*  delta )
--  {
--    FT_Error  error = FT_Err_Ok;
 +        if ( strcasecmp( gamma_correction_value_env, "default" ) != 0 )
 +        {
 +          sscanf ( gamma_correction_value_env, "%f %f", &f1, &f2 );
@@ -4157,7 +4165,15 @@ index 3620550..1da090f 100644
 +      }
 +      checked_gamma_correction_value = 1;
 +    }
-+
+ 
+-  /* transform a given glyph image */
+-  static FT_Error
+-  ft_smooth_transform( FT_Renderer       render,
+-                       FT_GlyphSlot      slot,
+-                       const FT_Matrix*  matrix,
+-                       const FT_Vector*  delta )
+-  {
+-    FT_Error  error = FT_Err_Ok;
 +    /* set gamma value to 1 if out of range */
 +    if ( slot->face                       &&
 +         slot->face->size                 &&
@@ -4808,10 +4824,10 @@ index 3620550..1da090f 100644
      {
        FT_FREE( bitmap->buffer );
 diff --git a/src/truetype/ttinterp.c b/src/truetype/ttinterp.c
-index 31c7bfa..0275043 100644
+index d00a0f8..da05b5a 100644
 --- a/src/truetype/ttinterp.c
 +++ b/src/truetype/ttinterp.c
-@@ -5811,6 +5811,7 @@
+@@ -5801,6 +5801,7 @@
  
        if ( exc->ignore_x_mode                                 &&
             exc->GS.freeVector.x != 0                          &&
