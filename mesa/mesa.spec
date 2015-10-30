@@ -48,6 +48,8 @@ BuildRequires: libllvm-devel
 BuildRequires: libclang-devel
 #it need libLLVM shared library
 BuildRequires: libllvm
+#it need clang internal header
+BuildRequires: clang
 BuildRequires: libva-devel
 BuildRequires: libXvMC-devel
 BuildRequires: python-mako
