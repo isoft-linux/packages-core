@@ -1,6 +1,6 @@
 Name: libgcrypt
-Version: 1.6.3
-Release: 3 
+Version: 1.6.4
+Release: 4 
 URL: http://www.gnupg.org/
 Source0: libgcrypt-%{version}.tar.bz2
 License: LGPLv2+
@@ -54,19 +54,23 @@ rm -fr $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %dir %{_sysconfdir}/gcrypt
+%{_bindir}/dumpsexp
+%{_bindir}/hmac256
+%{_bindir}/mpicalc
 %{_libdir}/libgcrypt.so.*
+%{_mandir}/man1/hmac256.1*
 
 %files devel
 %defattr(-,root,root,-)
 %{_bindir}/%{name}-config
-%{_bindir}/dumpsexp
-%{_bindir}/hmac256
-%{_bindir}/mpicalc
 %{_includedir}/*
 %{_libdir}/*.so
 %{_datadir}/aclocal/*
 
 %changelog
+* Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 1.6.4-4
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.6.3-3
 - Rebuild for new 4.0 release
 
