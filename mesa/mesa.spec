@@ -3,7 +3,7 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 44.llvm37.git 
+Release: 45.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -31,6 +31,11 @@ BuildRequires: libXdamage-devel
 BuildRequires: libXi-devel
 BuildRequires: libXmu-devel
 BuildRequires: libxshmfence-devel
+BuildRequires: libX11-devel
+BuildRequires: libXv-devel
+BuildRequires: libXvMC-devel
+BuildRequires: libXxf86vm-devel
+
 BuildRequires: elfutils
 BuildRequires: python
 BuildRequires: gettext
@@ -54,9 +59,13 @@ BuildRequires: libva-devel
 BuildRequires: libXvMC-devel
 BuildRequires: python-mako
 
+BuildRequires: libxcb-devel
+
+BuildRequires: nettle-devel
+
 %if 0%{?with_opencl}
 BuildRequires: libclang-devel >= 3.0
-BuildRequires: libclc-devel libllvm-static
+BuildRequires: libclc-devel libllvm-static libclang-static
 %endif
 
 
@@ -479,6 +488,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-45.llvm37.git
+- Add more build requires
+
 * Thu Oct 29 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-44.llvm37.git
 - Update, enable virgl
 
