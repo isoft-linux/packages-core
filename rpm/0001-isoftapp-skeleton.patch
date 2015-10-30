@@ -62,6 +62,10 @@ index d3d6551..3ac7f48 100644
  dnl permit overriding build_vendor for "canonical rpm vendor"
  RPMCANONVENDOR="$build_vendor"
  AC_ARG_WITH([vendor], 
+diff --git a/doc/rpm-design.doc b/doc/rpm-design.doc
+new file mode 100644
+index 0000000..7887648
+Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
 index fc413a9..7cd0021 100644
 --- a/lib/depends.c
@@ -335,7 +339,7 @@ index fc413a9..7cd0021 100644
 +    return rc;
 +}
 diff --git a/lib/query.c b/lib/query.c
-index d0274d0..02d753a 100644
+index d0274d0..92ca59e 100644
 --- a/lib/query.c
 +++ b/lib/query.c
 @@ -298,6 +298,23 @@ static int rpmcliShowMatches(QVA_t qva, rpmts ts, rpmdbMatchIterator mi)
@@ -362,7 +366,43 @@ index d0274d0..02d753a 100644
  static rpmdbMatchIterator initQueryIterator(QVA_t qva, rpmts ts, const char * arg)
  {
      const char * s;
-@@ -565,6 +582,42 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
+@@ -529,6 +546,35 @@ static rpmdbMatchIterator initFilterIterator(rpmts ts, ARGV_const_t argv)
+     return mi;
+ }
+ 
++static rpmdbMatchIterator initFilterIteratorISoftApp(rpmts ts, ARGV_const_t argv)
++{
++    rpmdbMatchIterator mi = rpmtsInitIteratorISoftApp(ts, RPMDBI_PACKAGES, NULL, 0);
++
++    for (ARGV_const_t arg = argv; arg && *arg != NULL; arg++) {
++	rpmTagVal tag = RPMTAG_NAME;
++	char a[strlen(*arg)+1], *ae;
++	const char *pat = a;
++
++	strcpy(a, *arg);
++
++	/* Parse for "tag=pattern" args. */
++	if ((ae = strchr(a, '=')) != NULL) {
++	    *ae++ = '\0';
++	    tag = rpmTagGetValue(a);
++	    if (tag == RPMTAG_NOT_FOUND) {
++		rpmlog(RPMLOG_ERR, _("unknown tag: \"%s\"\n"), a);
++		mi = rpmdbFreeIterator(mi);
++		break;
++	    }
++	    pat = ae;
++	}
++
++	rpmdbSetIteratorRE(mi, tag, RPMMIRE_DEFAULT, pat);
++    }
++
++    return mi;
++}
++
+ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
+ {
+     int ec = 0;
+@@ -565,6 +611,42 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
      return ec;
  }
  
@@ -372,7 +412,7 @@ index d0274d0..02d753a 100644
 +
 +    switch (qva->qva_source) {
 +    case RPMQV_ALL: {
-+        rpmdbMatchIterator mi = initFilterIterator(ts, argv);
++        rpmdbMatchIterator mi = initFilterIteratorISoftApp(ts, argv);
 +	    ec = rpmcliShowMatchesISoftApp(qva, ts, mi);
 +	    rpmdbFreeIterator(mi);
 +	    break;
@@ -405,7 +445,7 @@ index d0274d0..02d753a 100644
  int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
  {
      rpmVSFlags vsflags, ovsflags;
-@@ -607,3 +660,48 @@ int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
+@@ -607,3 +689,48 @@ int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
  
      return ec;
  }
@@ -657,7 +697,7 @@ index 4adb3d1..bb719b6 100644
  }
  #endif
 diff --git a/lib/rpmdb.c b/lib/rpmdb.c
-index 6499efc..e9bd4ad 100644
+index 6499efc..209a00d 100644
 --- a/lib/rpmdb.c
 +++ b/lib/rpmdb.c
 @@ -549,7 +549,7 @@ static rpmdb newRpmdb(const char * root, const char * home,
@@ -669,7 +709,19 @@ index 6499efc..e9bd4ad 100644
  		const char * dbpath, rpmdb *dbp,
  		int mode, int perms, int flags)
  {
-@@ -1619,6 +1619,107 @@ top:
+@@ -611,6 +611,11 @@ int rpmdbOpen (const char * prefix, rpmdb *dbp, int mode, int perms)
+     return openDatabase(prefix, NULL, dbp, mode, perms, 0);
+ }
+ 
++int rpmdbOpenISoftApp(const char * prefix, rpmdb *dbp, int mode, int perms) 
++{
++    return openDatabase(prefix, "/var/lib/isoft-app", dbp, mode, perms, 0);
++}
++
+ int rpmdbInit (const char * prefix, int perms)
+ {
+     rpmdb db = NULL;
+@@ -1619,6 +1624,107 @@ top:
      return mi->mi_h;
  }
  
@@ -796,10 +848,28 @@ index 4bbd465..9c17706 100644
   */
  int rpmdbCheckSignals(void);
 diff --git a/lib/rpmdb_internal.h b/lib/rpmdb_internal.h
-index 92848ab..1ae8aad 100644
+index 92848ab..27dccad 100644
 --- a/lib/rpmdb_internal.h
 +++ b/lib/rpmdb_internal.h
-@@ -211,6 +211,19 @@ unsigned int rpmdbGetIteratorOffsetFor(rpmdbMatchIterator mi, unsigned int ix);
+@@ -42,6 +42,17 @@ RPM_GNUC_INTERNAL
+ int rpmdbOpen (const char * prefix, rpmdb * dbp, int mode, int perms);
+ 
+ /** \ingroup rpmdb
++ * Open isoft-app database.
++ * @param prefix	path to top of install tree
++ * @retval dbp		address of rpm database
++ * @param mode		open(2) flags:  O_RDWR or O_RDONLY (O_CREAT also)
++ * @param perms		database permissions
++ * @return		0 on success
++ */
++RPM_GNUC_INTERNAL
++int rpmdbOpenISoftApp(const char * prefix, rpmdb * dbp, int mode, int perms);
++
++/** \ingroup rpmdb
+  * Initialize database.
+  * @param prefix	path to top of install tree
+  * @param perms		database permissions
+@@ -211,6 +222,19 @@ unsigned int rpmdbGetIteratorOffsetFor(rpmdbMatchIterator mi, unsigned int ix);
  RPM_GNUC_INTERNAL
  Header rpmdbGetHeaderAt(rpmdb db, unsigned int offset);
  
@@ -820,7 +890,7 @@ index 92848ab..1ae8aad 100644
  }
  #endif
 diff --git a/lib/rpminstall.c b/lib/rpminstall.c
-index 03d9ea1..b74824e 100644
+index 03d9ea1..dc0f6ef 100644
 --- a/lib/rpminstall.c
 +++ b/lib/rpminstall.c
 @@ -249,7 +249,7 @@ struct rpmEIU {
@@ -832,21 +902,33 @@ index 03d9ea1..b74824e 100644
  {
      rpmps ps;
  
-@@ -266,6 +266,13 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
- 	}
+@@ -260,12 +260,20 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
  
- 	ps = rpmtsProblems(ts);
-+    if (isoftApp && ps) {
+     if (!(ia->installInterfaceFlags & INSTALL_NODEPS)) {
+ 
+-	if (rpmtsCheck(ts)) {
+-	    rc = numPackages;
+-	    stop = 1;
+-	}
++    if (isoftApp) {
 +        if (rpmtsCheckISoftApp(ts)) {
 +            rc = numPackages;
 +            stop = 1;
 +        }
 +        ps = rpmtsProblems(ts);
++    } else {
++        if (rpmtsCheck(ts)) {
++            rc = numPackages;
++            stop = 1;
++        }
++        ps = rpmtsProblems(ts);
 +    }
+ 
+-	ps = rpmtsProblems(ts);
  	if (!stop && rpmpsNumProblems(ps) > 0) {
  	    rpmlog(RPMLOG_ERR, _("Failed dependencies:\n"));
  	    rpmpsPrint(NULL, ps);
-@@ -286,7 +293,10 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
+@@ -286,7 +294,10 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
  	rpmlog(RPMLOG_DEBUG, eflags ? "erasing packages\n" :
  				      "installing binary packages\n");
  	rpmtsClean(ts);
@@ -858,7 +940,7 @@ index 03d9ea1..b74824e 100644
  
  	ps = rpmtsProblems(ts);
  
-@@ -609,7 +619,263 @@ restart:
+@@ -609,7 +620,263 @@ restart:
      if (eiu->numFailed) goto exit;
  
      if (eiu->numRPMS) {
@@ -1123,7 +1205,7 @@ index 03d9ea1..b74824e 100644
          if (rc < 0)
              eiu->numFailed += eiu->numRPMS;
  	else if (rc > 0)
-@@ -706,7 +972,72 @@ int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv)
+@@ -706,7 +973,72 @@ int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv)
      free(qfmt);
  
      if (numFailed) goto exit;
@@ -1198,7 +1280,7 @@ index 03d9ea1..b74824e 100644
      rpmtsEmpty(ts);
      rpmtsSetVSFlags(ts, ovsflags);
 diff --git a/lib/rpmts.c b/lib/rpmts.c
-index 3f8f880..268e59a 100644
+index 3f8f880..fd593b3 100644
 --- a/lib/rpmts.c
 +++ b/lib/rpmts.c
 @@ -80,6 +80,10 @@ int rpmtsCloseDB(rpmts ts)
@@ -1212,8 +1294,122 @@ index 3f8f880..268e59a 100644
  
  int rpmtsOpenDB(rpmts ts, int dbmode)
  {
+@@ -102,6 +106,27 @@ int rpmtsOpenDB(rpmts ts, int dbmode)
+     return rc;
+ }
+ 
++int rpmtsOpenDBISoftApp(rpmts ts, int dbmode)
++{
++    int rc = 0;
++
++    if (ts->rdb != NULL && ts->dbmode == dbmode)
++	return 0;
++
++    (void) rpmtsCloseDB(ts);
++
++    /* XXX there's a potential db lock race here. */
++
++    ts->dbmode = dbmode;
++    rc = rpmdbOpenISoftApp(ts->rootDir, &ts->rdb, ts->dbmode, 0644);
++    if (rc) {
++	char * dn = rpmGetPath(ts->rootDir, "%{_dbpath}", NULL);
++	rpmlog(RPMLOG_ERR, _("cannot open Packages database in %s\n"), dn);
++	free(dn);
++    }
++    return rc;
++}
++
+ int rpmtsInitDB(rpmts ts, int dbmode)
+ {
+     rpmtxn txn = rpmtxnBegin(ts, RPMTXN_WRITE);
+@@ -239,6 +264,85 @@ exit:
+     return mi;
+ }
+ 
++/* keyp might no be defined. */
++rpmdbMatchIterator rpmtsInitIteratorISoftApp(const rpmts ts, rpmDbiTagVal rpmtag,
++			const void * keyp, size_t keylen)
++{
++    rpmdbMatchIterator mi = NULL;
++    char *tmp = NULL;
++
++    if (ts == NULL)
++	return NULL;
++
++    if (ts && ts->keyring == NULL)
++	loadKeyring(ts);
++
++    if (ts->rdb == NULL && rpmtsOpenDBISoftApp(ts, ts->dbmode))
++	return NULL;
++
++    /* Parse out "N(EVR)" tokens from a label key if present */
++    if (rpmtag == RPMDBI_LABEL && keyp != NULL && strchr(keyp, '(')) {
++	const char *se, *s = keyp;
++	char *t;
++	size_t slen = strlen(s);
++	int level = 0;
++	int c;
++
++	tmp = xmalloc(slen+1);
++	keyp = t = tmp;
++	while ((c = *s++) != '\0') {
++	    switch (c) {
++	    default:
++		*t++ = c;
++		break;
++	    case '(':
++		/* XXX Fail if nested parens. */
++		if (level++ != 0) {
++		    rpmlog(RPMLOG_ERR, _("extra '(' in package label: %s\n"), (const char*)keyp);
++		    goto exit;
++		}
++		/* Parse explicit epoch. */
++		for (se = s; *se && risdigit(*se); se++)
++		    {};
++		if (*se == ':') {
++		    /* XXX skip explicit epoch's (for now) */
++		    *t++ = '-';
++		    s = se + 1;
++		} else {
++		    /* No Epoch: found. Convert '(' to '-' and chug. */
++		    *t++ = '-';
++		}
++		break;
++	    case ')':
++		/* XXX Fail if nested parens. */
++		if (--level != 0) {
++		    rpmlog(RPMLOG_ERR, _("missing '(' in package label: %s\n"), (const char*)keyp);
++		    goto exit;
++		}
++		/* Don't copy trailing ')' */
++		break;
++	    }
++	}
++	if (level) {
++	    rpmlog(RPMLOG_ERR, _("missing ')' in package label: %s\n"), (const char*)keyp);
++	    goto exit;
++	}
++	*t = '\0';
++    }
++
++    return NULL;
++    mi = rpmdbInitIterator(ts->rdb, rpmtag, keyp, keylen);
++
++    /* Verify header signature/digest during retrieve (if not disabled). */
++    if (mi && !(ts->vsflags & RPMVSF_NOHDRCHK))
++	(void) rpmdbSetHdrChk(mi, ts, headerCheck);
++
++exit:
++    free(tmp);
++
++    return mi;
++}
++
+ rpmKeyring rpmtsGetKeyring(rpmts ts, int autoload)
+ {
+     rpmKeyring keyring = NULL;
 diff --git a/lib/rpmts.h b/lib/rpmts.h
-index 5231c80..b4bc684 100644
+index 5231c80..12b5158 100644
 --- a/lib/rpmts.h
 +++ b/lib/rpmts.h
 @@ -175,6 +175,19 @@ typedef rpmFlags rpmtxnFlags;
@@ -1262,39 +1458,41 @@ index 5231c80..b4bc684 100644
   * Reference a transaction set instance.
   * @param ts		transaction set
   * @return		new transaction set reference
-@@ -283,6 +315,8 @@ int rpmtsVerifyDB(rpmts ts);
- rpmdbMatchIterator rpmtsInitIterator(const rpmts ts, rpmDbiTagVal rpmtag,
- 			const void * keyp, size_t keylen);
- 
-+int rpmtsSetMacro(const char *path);
-+
- /** \ingroup rpmts
-  * Import a header into the rpmdb
-  * @param txn		transaction handle
-@@ -562,6 +596,23 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
- 		rpmRelocation * relocs);
+@@ -234,6 +266,14 @@ int rpmtsCloseDB(rpmts ts);
+ int rpmtsOpenDB(rpmts ts, int dbmode);
  
  /** \ingroup rpmts
-+ * Add APP to be installed to transaction set.
-+ *
-+ * The transaction set is checked for duplicate package names.
-+ * If found, the package with the "newest" EVR will be replaced.
-+ *
++ * Open the database used by the transaction for iSOFT App.
 + * @param ts		transaction set
-+ * @param h		header
-+ * @param key		package retrieval key (e.g. file name)
-+ * @param upgrade	is package being upgraded?
-+ * @param relocs	package file relocations
-+ * @return		0 on success, 1 on I/O error, 2 needs capabilities
++ * @param dbmode	O_RDONLY or O_RDWR
++ * @return		0 on success
 + */
-+int rpmtsAddInstallElementISoftApp(rpmts ts, Header h,
-+		const fnpyKey key, int upgrade,
-+		rpmRelocation * relocs);
++int rpmtsOpenDBISoftApp(rpmts ts, int dbmode);
 +
 +/** \ingroup rpmts
-  * Add package to be reinstalled to transaction set.
-  *
+  * Initialize the database used by the transaction.
+  * @deprecated An explicit rpmdbInit() is almost never needed.
   * @param ts		transaction set
+@@ -284,6 +324,19 @@ rpmdbMatchIterator rpmtsInitIterator(const rpmts ts, rpmDbiTagVal rpmtag,
+ 			const void * keyp, size_t keylen);
+ 
+ /** \ingroup rpmts
++ * Return transaction database iterator for iSOFT App.
++ * @param ts		transaction set
++ * @param rpmtag	database index tag
++ * @param keyp		key data (NULL for sequential access)
++ * @param keylen	key data length (0 will use strlen(keyp))
++ * @return		NULL on failure
++ */
++rpmdbMatchIterator rpmtsInitIteratorISoftApp(const rpmts ts, rpmDbiTagVal rpmtag,
++			const void * keyp, size_t keylen);
++
++int rpmtsSetMacro(const char *path);
++
++/** \ingroup rpmts
+  * Import a header into the rpmdb
+  * @param txn		transaction handle
+  * @param h		header
 diff --git a/lib/transaction.c b/lib/transaction.c
 index 8f440b7..9fe94e4 100644
 --- a/lib/transaction.c
@@ -1622,3 +1820,4 @@ index 3081ce3..920e96c 100644
 +         rpmcliVerify(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
      }	break;
  #endif	/* IAM_RPMQV */
+ 
