@@ -3,14 +3,15 @@
 Name: boost
 Summary: The Boost C++ Libraries
 Version: 1.%{ver}.0 
-Release: 3 
+Release: 4 
 License: Boost
 URL: http://www.boost.org/
 Source: boost_1_%{ver}_0.tar.bz2
 
 Provides: boost-doc = %{version}-%{release}
 
-BuildRequires: libcxx-devel
+BuildRequires: m4
+BuildRequires: libstdc++-devel
 BuildRequires: bzip2-libs
 BuildRequires: bzip2-devel
 BuildRequires: zlib-devel
@@ -19,9 +20,48 @@ BuildRequires: libicu-devel
 BuildRequires: chrpath
 
 
-Patch1: boost-graph-compile.patch
-Patch2: boost-1.41.0-mapnik.patch
-Patch3: boost-1.41.0-shared_ptr_serialization.patch
+# https://svn.boost.org/trac/boost/ticket/6150
+Patch4: boost-1.50.0-fix-non-utf8-files.patch
+
+# Add a manual page for bjam, based on the on-line documentation:
+# http://www.boost.org/boost-build2/doc/html/bbv2/overview.html
+Patch5: boost-1.48.0-add-bjam-man-page.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=828856
+# https://bugzilla.redhat.com/show_bug.cgi?id=828857
+# https://svn.boost.org/trac/boost/ticket/6701
+Patch15: boost-1.58.0-pool.patch
+
+# https://svn.boost.org/trac/boost/ticket/5637
+Patch25: boost-1.57.0-mpl-print.patch
+
+# https://svn.boost.org/trac/boost/ticket/8870
+Patch36: boost-1.57.0-spirit-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/8878
+Patch45: boost-1.54.0-locale-unused_typedef.patch
+
+# https://svn.boost.org/trac/boost/ticket/9038
+Patch51: boost-1.58.0-pool-test_linking.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1102667
+Patch61: boost-1.57.0-python-libpython_dep.patch
+Patch62: boost-1.57.0-python-abi_letters.patch
+Patch63: boost-1.55.0-python-test-PyImport_AppendInittab.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1190039
+Patch65: boost-1.57.0-build-optflags.patch
+
+# Prevent gcc.jam from setting -m32 or -m64.
+Patch68: boost-1.58.0-address-model.patch
+
+# https://svn.boost.org/trac/boost/ticket/11549
+Patch70: boost-1.59.0-log.patch
+
+# https://github.com/boostorg/python/pull/40
+Patch80: boost-1.59-python-make_setter.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1262444
+Patch81: boost-1.59-test-fenv.patch
 
 %bcond_with tests
 %bcond_with docs_generated
@@ -38,6 +78,7 @@ Standards Committee's upcoming C++ Standard Library Technical Report.)
 %package devel
 Summary: The Boost C++ headers and shared development libraries
 Requires: boost = %{version}-%{release}
+Requires: libicu-devel
 Provides: boost-python-devel = %{version}-%{release}
 
 %description devel
@@ -61,6 +102,23 @@ HTML documentation files for Boost C++ libraries.
 
 %prep
 %setup -q -n %{name}_1_%{ver}_0
+%patch4 -p1
+%patch5 -p1
+%patch15 -p0
+%patch25 -p1
+%patch36 -p1
+%patch45 -p1
+%patch51 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch65 -p1
+%patch68 -p1
+%patch70 -p2
+%patch80 -p2
+%patch81 -p2
+
+
 %build
 #export CC=clang
 #export CXX=clang++
@@ -289,6 +347,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 
 %changelog
+* Sun Nov 01 2015 Cjacker <cjacker@foxmail.com> - 1.59.0-4
+- Rebuild with icu 56.1
+
 * Sat Oct 24 2015 cjacker - 1.59.0-3
 - Rebuild for new 4.0 release
 

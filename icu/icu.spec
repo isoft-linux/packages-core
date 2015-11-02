@@ -1,13 +1,19 @@
 Name:      icu
-Version:   55.1 
-Release:   4
+Version:   56.1 
+Release:   6
 Summary:   International Components for Unicode
 License:   MIT and UCD and Public Domain
 URL:       http://www.icu-project.org/
-Source0:   http://download.icu-project.org/files/icu4c/55.1/icu4c-55_1-src.tgz
-#fix TestTwoDigitYear fail.
-Patch1:     icu-testtwodigityear.patch
-BuildRequires: autoconf
+
+%global version_major %(echo %{version} | cut -d. -f1)
+%global version_minor %(echo %{version} | cut -d. -f2)
+
+Source0:   http://download.icu-project.org/files/icu4c/%{version}/icu4c-%{version_major}_%{version_minor}-src.tgz
+Patch1: icu.8198.revert.icu5431.patch
+Patch2: icu.8800.freeserif.crash.patch
+Patch3: icu.7601.Indic-ccmp.patch
+
+BuildRequires: doxygen, autoconf, python
 Requires: lib%{name} = %{version}-%{release}
 
 %description
@@ -44,7 +50,16 @@ Summary: Documentation for International Components for Unicode
 
 %prep
 %setup -q -n %{name}
+%patch1 -p2 -R -b .icu8198.revert.icu5431.patch
+%patch2 -p1 -b .icu8800.freeserif.crash.patch
+%patch3 -p1 -b .icu7601.Indic-ccmp.patch
+
 %build
+#if clang found, icu will use clang by default.
+
+export CC=cc
+export CXX=c++
+
 cd source
 %configure --with-data-packaging=library --disable-samples
 make %{?_smp_mflags} 
@@ -54,17 +69,15 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT source/__docs
 make -C source install DESTDIR=$RPM_BUILD_ROOT
 #make -C source install-doc docdir=__docs
-sed -i s/\\\$\(THREADSCXXFLAGS\)// $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/icu*.pc
-sed -i s/\\\$\(THREADSCPPFLAGS\)/-D_REENTRANT/ $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/icu*.pc
 
 %check
-make check -C source
+#without LANG/LC_ALL settings, a little test may failed.
+LANG=C LC_ALL=C make check -C source
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post -n lib%{name} -p /sbin/ldconfig
-
 %postun -n lib%{name} -p /sbin/ldconfig
 
 %files
@@ -118,6 +131,12 @@ rm -rf $RPM_BUILD_ROOT
 #%doc source/__docs/%{name}/html/*
 
 %changelog
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 56.1-6
+- Update
+
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 56.1-5
+- Update to 56.1
+
 * Sat Oct 24 2015 cjacker - 55.1-4
 - Rebuild for new 4.0 release
 

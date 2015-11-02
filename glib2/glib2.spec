@@ -1,17 +1,33 @@
 Summary: A library of handy utility functions
 Name: glib2
 Version: 2.46.1
-Release: 3 
+Release: 4 
 License: LGPL
 URL: http://www.gtk.org
-Source: glib-%{version}.tar.xz
+%global versiondir %(echo %{version} | cut -d. -f1-2)
+
+Source: http://ftp.gnome.org/pub/GNOME/sources/glib/%{versiondir}/glib-%{version}.tar.xz
+
 Source2: glib2.sh
 Source3: glib2.csh
 
-BuildRequires: pkgconfig >= 0.8
+BuildRequires: pkgconfig
 BuildRequires: gettext
 BuildRequires: libffi-devel
 BuildRequires: python
+BuildRequires: libattr-devel
+# for sys/inotify.h
+BuildRequires: glibc-devel
+BuildRequires: zlib-devel
+# Bootstrap build requirements
+BuildRequires: automake autoconf libtool
+BuildRequires: gtk-doc
+BuildRequires: python-devel
+BuildRequires: libelfutils-devel
+BuildRequires: chrpath
+
+# required for GIO content-type support
+Requires: shared-mime-info
 
 %description 
 GLib is the low-level core library that forms the basis
@@ -24,7 +40,6 @@ This package provides version 2 of GLib.
 
 %package devel
 Summary: The GIMP ToolKit (GTK+) and GIMP Drawing Kit (GDK) support library
-Requires: pkgconfig >= 1:0.8
 Requires: %{name} = %{version}-%{release}
 
 %description devel
@@ -36,6 +51,7 @@ version 2 of the GLib library.
 
 %build
 %configure \
+    --disable-systemtap \
     --enable-static \
     --disable-fam \
     --enable-man
@@ -128,6 +144,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-gettextize.1.gz
 
 %changelog
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 2.46.1-4
+- Rebuild, fix pkgconfig requires, fix build requires
+
 * Fri Oct 23 2015 cjacker - 2.46.1-3
 - Rebuild for new 4.0 release
 
