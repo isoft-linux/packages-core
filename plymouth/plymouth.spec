@@ -6,7 +6,7 @@
 Summary: Graphical Boot Animation and Logger
 Name: plymouth
 Version: 0.8.9
-Release: 4
+Release: 5
 License: GPLv2+
 Source0: http://freedesktop.org/software/plymouth/releases/%{name}-%{version}.tar.bz2
 
@@ -96,7 +96,7 @@ find $RPM_BUILD_ROOT -name '*.a' -exec rm -f {} \;
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} \;
 
 cd $RPM_BUILD_ROOT
-tar xf %{SOURCE5}
+tar xf %{SOURCE5} -C usr/share/plymouth/themes/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -221,6 +221,9 @@ fi
 
 
 %changelog
+* Mon Nov 02 2015 sulit <sulitsrc@gmail.com> - 0.8.9-5
+- redo isoft-splash.txz
+
 * Wed Oct 28 2015 sulit <sulitsrc@gmail.com> - 0.8.9-4
 - add isoft-splash
 

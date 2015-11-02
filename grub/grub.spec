@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        36%{?dist}
+Release:        37%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -410,7 +410,8 @@ cd ..
 # iSoft theme in /boot/grub/themes/system/
 cd $RPM_BUILD_ROOT
 tar xjf %{SOURCE5}
-tar xf %{SOURCE7}
+tar xf %{SOURCE7} -C usr/share/grub/themes/
+mv usr/share/grub/themes/isoft-silence-theme usr/share/grub/themes/isoft-silence
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-10.pf2      -s 10 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 10"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-12.pf2      -s 12 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 12"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-Bold-14.pf2 -s 14 /usr/share/fonts/DejaVuSans-Bold.ttf # "DejaVu Sans Bold 14"
@@ -528,6 +529,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Mon Nov 02 2015 sulit <sulitsrc@gmail.com> - 1:2.02-37
+- redo isoft-silence-theme.txz
+
 * Wed Oct 28 2015 sulit <sulitsrc@gmail.com> - 1:2.02-36
 - modify isoft-silence font for grub
 
