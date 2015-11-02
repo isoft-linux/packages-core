@@ -1,7 +1,10 @@
-%define debug_package %{nil}
+#control wheather build debuginfo package or not.
+%global with_debuginfo 1
+
+%define debuginfodir /usr/lib/debug
 
 %define kversion 4.3.0
-%define release 117
+%define release 120
 
 %define extraversion -%{release}
 
@@ -36,10 +39,18 @@ AutoProv: yes
 #
 # List the packages used during the kernel build
 #
-BuildRequires: kmod, patch >= 2.5.4, bash >= 2.03
-BuildRequires: bzip2, busybox, m4, perl, make >= 3.78
-BuildRequires: gcc >= 3.4.2, binutils >= 2.12
-BuildRequires: bc
+BuildRequires: kmod, patch, bash, sh-utils, tar, git
+BuildRequires: bzip2, xz, findutils, gzip, m4, perl, make, diffutils, gawk
+BuildRequires: gcc, binutils busybox
+BuildRequires: net-tools, hostname, bc
+
+BuildRequires: libelfutils-devel zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) bison flex xz-devel
+BuildRequires: audit-libs-devel
+
+%if %{with_debuginfo}
+BuildRequires: rpm-build, elfutils
+%define debuginfo_args --strict-build-id -r
+%endif
 
 #for kernel tools
 BuildRequires: pciutils-devel gettext ncurses-devel
@@ -52,6 +63,9 @@ Source20: kernel-%{kversion}-x86_64.config
 Source2000: cpupower.service
 Source2001: cpupower.config
 
+# build tweak for build ID magic, even for -vanilla
+Source3000: kbuild-AFTER_LINK.patch
+ 
 Patch0: linux-tune-cdrom-default.patch
 
 Patch450: input-kill-stupid-messages.patch
@@ -75,8 +89,12 @@ Patch613: ideapad-laptop-Add-Lenovo-Yoga-3-14-to-no_hw_rfkill-.patch
 
 Patch614: kernel43-kdbus.patch
 
+Patch615: 0001-iwlwifi-Add-new-PCI-IDs-for-the-8260-series.patch
+Patch616: RDS-fix-race-condition-when-sending-a-message-on-unb.patch
+ 
 #http://patchwork.ozlabs.org/patch/522709/
 Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
+
 
 #fix *ERROR* crtc 21: Can't calculate constants, dotclock = 0!
 #Patch2001: drm-i915-assign-hwmode-after-encoder-statereadout.patch
@@ -146,6 +164,67 @@ This package contains the development files for the tools/ directory from
 the kernel source.
 
 
+%package -n kernel-tools-debuginfo
+Summary: Debug information for package kernel-tools
+Requires: %{name}-debuginfo = %{version}-%{release}
+AutoReqProv: no
+%description -n kernel-tools-debuginfo
+This package provides debug information for package kernel-tools.
+
+# Note that this pattern only works right to match the .build-id
+# symlinks because of the trailing nonmatching alternation and
+# the leading .*, because of find-debuginfo.sh's buggy handling
+# of matching the pattern against the symlinks file.
+%{expand:%%global debuginfo_args %{?debuginfo_args} -p '.*%%{_bindir}/centrino-decode(\.debug)?|.*%%{_bindir}/powernow-k8-decode(\.debug)?|.*%%{_bindir}/cpupower(\.debug)?|.*%%{_libdir}/libcpupower.*|.*%%{_bindir}/turbostat(\.debug)?|.*%%{_bindir}/x86_energy_perf_policy(\.debug)?|.*%%{_bindir}/tmon(\.debug)?|XXX' -o kernel-tools-debuginfo.list}
+
+
+%package debuginfo
+Summary: Kernel debuginfo package
+
+%description debuginfo
+This package kernel debug files.
+
+
+%package -n perf
+Summary: Performance monitoring for the Linux kernel
+License: GPLv2
+%description -n perf
+This package contains the perf tool, which enables performance monitoring
+of the Linux kernel.
+
+%package -n perf-debuginfo
+Summary: Debug information for package perf
+Requires: %{name}-debuginfo = %{version}-%{release}
+AutoReqProv: no
+%description -n perf-debuginfo
+This package provides debug information for the perf package.
+
+# Note that this pattern only works right to match the .build-id
+# symlinks because of the trailing nonmatching alternation and
+# the leading .*, because of find-debuginfo.sh's buggy handling
+# of matching the pattern against the symlinks file.
+%{expand:%%global debuginfo_args %{?debuginfo_args} -p '.*%%{_bindir}/perf(\.debug)?|.*%%{_libexecdir}/perf-core/.*|.*%%{_libdir}/traceevent/plugins/.*|XXX' -o perf-debuginfo.list}
+
+%package -n python-perf
+Summary: Python bindings for apps which will manipulate perf events
+%description -n python-perf
+The python-perf package contains a module that permits applications
+written in the Python programming language to use the interface
+to manipulate perf events.
+
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+
+%package -n python-perf-debuginfo
+Summary: Debug information for package perf python bindings
+Requires: %{name}-debuginfo = %{version}-%{release}
+AutoReqProv: no
+%description -n python-perf-debuginfo
+This package provides debug information for the perf python bindings.
+
+# the python_sitearch macro should already be defined from above
+%{expand:%%global debuginfo_args %{?debuginfo_args} -p '.*%%{python_sitearch}/perf.so(\.debug)?|XXX' -o python-perf-debuginfo.list}
+
+
 %prep
 if [ ! -d kernel-%{kversion}/vanilla ]; then
 %setup -q -n %{name}-%{version} -c
@@ -162,6 +241,9 @@ fi
 cp -rl vanilla linux-%{kversion}.%{_target_cpu}
 
 cd linux-%{kversion}.%{_target_cpu}
+
+# The kbuild-AFTER_LINK patch is needed regardless
+cat %{SOURCE3000} |patch -p1
 
 %patch0 -p1
 
@@ -182,7 +264,9 @@ cd linux-%{kversion}.%{_target_cpu}
 %patch612 -p1
 %patch613 -p1
 
-%patch614 -p1
+##############################%patch614 -p1
+%patch615 -p1
+%patch616 -p1
 
 %patch2000 -p1
 #%patch2001 -p1
@@ -194,8 +278,49 @@ find . \( -name "*.orig" -o -name "*~" \) -exec rm -f {} \; >/dev/null
 
 cd ..
 
+#======================================================
+#perf_make macro
+%global perf_make \
+  make -s EXTRA_CFLAGS="${RPM_OPT_FLAGS}" %{?_smp_mflags} -C tools/perf V=1 NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 WERROR=0 NO_LIBUNWIND=1 HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_STRLCPY=1 NO_BIONIC=1 prefix=%{_prefix}
+
+###
+### Special hacks for debuginfo subpackages.
+###
+
+# This macro is used by %%install, so we must redefine it before that.
+%define debug_package %{nil}
+
+%if %{with_debuginfo}
+
+%define __debug_install_post \
+  /usr/lib/rpm/find-debuginfo.sh %{debuginfo_args} %{_builddir}/%{?buildsubdir}\
+%{nil}
+
+%ifnarch noarch
+%global __debug_package 1
+%files -f debugfiles.list debuginfo
+%defattr(-,root,root)
+%endif
+
+%endif
+#======================================================
 
 %build
+
+#work with SOURCE2000, it's patch but should always be applied.
+%if %{with_debuginfo}
+# This override tweaks the kernel makefiles so that we run debugedit on an
+# object before embedding it.  When we later run find-debuginfo.sh, it will
+# run debugedit again.  The edits it does change the build ID bits embedded
+# in the stripped object, but repeating debugedit is a no-op.  We do it
+# beforehand to get the proper final build ID bits into the embedded image.
+# This affects the vDSO images in vmlinux, and the vmlinux image in bzImage.
+export AFTER_LINK=\
+'sh -xc "/usr/lib/rpm/debugedit -b $$RPM_BUILD_DIR -d /usr/src/debug \
+                                -i $@ > $@.id"'
+%endif
+
+
 pushd linux-%{kversion}.%{_target_cpu}
 
 #build kernel
@@ -211,6 +336,9 @@ sed -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = %{extraversion}/" Makefile
 make -s ARCH=%_target_cpu oldnoconfig > /dev/null
 make -s ARCH=%_target_cpu %{?_smp_mflags} bzImage 
 make -s ARCH=%_target_cpu %{?_smp_mflags} modules || exit 1
+
+# perf
+%{perf_make} DESTDIR=$RPM_BUILD_ROOT all
 
 #build kernel tools
 %ifarch %{cpupowerarchs}
@@ -245,6 +373,7 @@ popd
 popd #linux-%{kversion}.%{_target_cpu}
 
 
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -253,6 +382,11 @@ pushd linux-%{kversion}.%{_target_cpu}
 
 #kernel Image and related files.
 mkdir -p $RPM_BUILD_ROOT/boot
+
+%if %{with_debuginfo}
+    mkdir -p $RPM_BUILD_ROOT%{debuginfodir}/boot
+%endif
+
 install -m 644 .config $RPM_BUILD_ROOT/boot/config-%{KVERREL}
 install -m 644 System.map $RPM_BUILD_ROOT/boot/System.map-%{KVERREL}
 touch $RPM_BUILD_ROOT/boot/initrd-%{KVERREL}.img
@@ -272,6 +406,23 @@ rm -f $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 rm -f $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/source
 mkdir -p $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
 (cd $RPM_BUILD_ROOT/lib/modules/%{KVERREL} ; ln -s build source)
+
+#--------------------------------------------------------------------
+%if %{with_debuginfo}
+    if test -s vmlinux.id; then
+      cp vmlinux.id $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build/vmlinux.id
+    else
+      echo >&2 "*** ERROR *** no vmlinux build ID! ***"
+      exit 1
+    fi
+    #
+    # save the vmlinux file for kernel debugging into the kernel-debuginfo rpm
+    #
+    mkdir -p $RPM_BUILD_ROOT%{debuginfodir}/lib/modules/%{KVERREL}
+    cp vmlinux $RPM_BUILD_ROOT%{debuginfodir}/lib/modules/%{KVERREL}
+%endif
+#--------------------------------------------------------------------
+
 
 # first copy everything
 cp --parents `find  -type f -name "Makefile*" -o -name "Kconfig*"` $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/build
@@ -327,6 +478,10 @@ make ARCH=%{hdrarch} INSTALL_HDR_PATH=$RPM_BUILD_ROOT/usr headers_install
 # remove drm headers, libdrm-2.4.1 is OK.
 rm -rf $RPM_BUILD_ROOT/usr/include/drm
 
+find $RPM_BUILD_ROOT/usr/include \
+     \( -name .install -o -name .check -o \
+        -name ..install.cmd -o -name ..check.cmd \) | xargs rm -f
+
 # dirs for additional modules per module-init-tools, kbuild/modules.txt
 mkdir -p $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/extra
 mkdir -p $RPM_BUILD_ROOT/lib/modules/%{KVERREL}/updates
@@ -337,6 +492,17 @@ find $RPM_BUILD_ROOT/lib/modules/%{KVERREL} -name "*.ko" -type f >modnames
 
 # mark modules executable so that strip-to-file can strip them
 cat modnames | xargs chmod u+x
+
+
+
+# perf tool binary and supporting scripts/binaries
+%{perf_make} DESTDIR=$RPM_BUILD_ROOT lib=%{_lib} install-bin install-traceevent-plugins
+# remove the 'trace' symlink.
+rm -f %{buildroot}%{_bindir}/trace
+
+# python-perf extension
+%{perf_make} DESTDIR=$RPM_BUILD_ROOT install-python_ext
+
 
 #install kernel tools
 %ifarch %{cpupowerarchs}
@@ -376,12 +542,15 @@ popd
 #end install kernel tools
 popd
 
-# Strip modules...
-pushd $RPM_BUILD_ROOT/lib/modules
-find . -name "*.ko" |xargs strip -R .comment --strip-unneeded
-popd
 
-# Remove all firmwares.
+#if with_debuginfo, we should not strip modules.
+# Strip modules...
+#pushd $RPM_BUILD_ROOT/lib/modules
+#find . -name "*.ko" |xargs strip -R .comment --strip-unneeded
+#popd
+
+# Remove all firmwares provided by kernel.
+# They are all in linux-firmware and other firmware packages.
 rm -rf %{buildroot}/lib/firmware/*
 
 %clean
@@ -447,6 +616,29 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 %defattr(-,root,root)
 /usr/include/*
 
+
+%files -n perf
+%defattr(-,root,root)
+%{_bindir}/perf
+%dir %{_libdir}/traceevent/plugins
+%{_libdir}/traceevent/plugins/*
+%dir %{_libexecdir}/perf-core
+%{_libexecdir}/perf-core/*
+%{_datadir}/perf-core/*
+%{_sysconfdir}/bash_completion.d/perf
+
+%files -n python-perf
+%defattr(-,root,root)
+%{python_sitearch}
+
+%if %{with_debuginfo}
+%files -f perf-debuginfo.list -n perf-debuginfo
+%defattr(-,root,root)
+
+%files -f python-perf-debuginfo.list -n python-perf-debuginfo
+%defattr(-,root,root)
+%endif
+
 %files -n kernel-tools -f cpupower.lang
 %defattr(-,root,root)
 %ifarch %{cpupowerarchs}
@@ -467,6 +659,11 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 %{_bindir}/tmon
 %endif
 
+%if %{with_debuginfo}
+%files -f kernel-tools-debuginfo.list -n kernel-tools-debuginfo
+%defattr(-,root,root)
+%endif
+
 %ifarch %{cpupowerarchs}
 %files -n kernel-tools-libs
 %{_libdir}/libcpupower.so.0
@@ -479,6 +676,15 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-120
+- Update to kernel-4.3.0 official release
+
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-119
+- Rebuild, rename debuginfo package name
+
+* Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-118
+- Enable kernel debuginfo package and perf tools
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-117
 - Update to 4.3.0 rc7
 
