@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 8
+Release: 9
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -397,6 +397,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Nov 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Fix update package without erase old one issue.
+
 * Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.13.0-8
 - Add macro check of environment and build results
 

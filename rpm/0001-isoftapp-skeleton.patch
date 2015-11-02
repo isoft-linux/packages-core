@@ -18,7 +18,7 @@ index 4777f58..b921d5e 100644
   * @param spec		parsed spec control structure
   * @param tag		dependency tag
 diff --git a/build/spec.c b/build/spec.c
-index 7cb264a..80e6eb1 100644
+index 7cb264a..d6dc509 100644
 --- a/build/spec.c
 +++ b/build/spec.c
 @@ -331,6 +331,20 @@ rpmps rpmSpecCheckDeps(rpmts ts, rpmSpec spec)
@@ -32,7 +32,7 @@ index 7cb264a..80e6eb1 100644
 +    rpmtsEmpty(ts);
 +
 +    rpmtsAddInstallElement(ts, rpmSpecSourceHeader(spec), NULL, 0, NULL);
-+    rpmtsCheckISoftApp(ts);
++    rpmtsCheckISoftApp(ts, NULL);
 +    probs = rpmtsProblems(ts);
 +
 +    rpmtsEmpty(ts);
@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..7cd0021 100644
+index fc413a9..8a9f346 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -85,7 +85,67 @@ index fc413a9..7cd0021 100644
  
  #include "debug.h"
  
-@@ -540,7 +542,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -170,10 +172,12 @@ static int skipColor(rpm_color_t tscolor, rpm_color_t color, rpm_color_t ocolor)
+ 
+ /* Add erase elements for older packages of same color (if any). */
+ static int addSelfErasures(rpmts ts, rpm_color_t tscolor, int op,
+-				rpmte p, rpm_color_t hcolor, Header h)
++				rpmte p, rpm_color_t hcolor, Header h, int isoftApp)
+ {
+     Header oh;
+-    rpmdbMatchIterator mi = rpmtsInitIterator(ts, RPMDBI_NAME, rpmteN(p), 0);
++    rpmdbMatchIterator mi = isoftApp ? 
++        rpmtsInitIteratorISoftApp(ts, RPMDBI_NAME, rpmteN(p), 0) : 
++        rpmtsInitIterator(ts, RPMDBI_NAME, rpmteN(p), 0);
+     int rc = 0;
+     int cmp;
+ 
+@@ -410,7 +414,7 @@ rpmal rpmtsCreateAl(rpmts ts, rpmElementTypes types)
+ }
+ 
+ static int addPackage(rpmts ts, Header h,
+-		    fnpyKey key, int op, rpmRelocation * relocs)
++		    fnpyKey key, int op, rpmRelocation * relocs, int isoftApp)
+ {
+     tsMembers tsmem = rpmtsMembers(ts);
+     rpm_color_t tscolor = rpmtsColor(ts);
+@@ -476,7 +480,7 @@ static int addPackage(rpmts ts, Header h,
+     /* Add erasure elements for old versions and obsoletions on upgrades */
+     /* XXX TODO: If either of these fails, we'd need to undo all additions */
+     if (op != RPMTE_INSTALL)
+-	addSelfErasures(ts, tscolor, op, p, rpmteColor(p), h);
++	addSelfErasures(ts, tscolor, op, p, rpmteColor(p), h, isoftApp);
+     if (op == RPMTE_UPGRADE)
+ 	addObsoleteErasures(ts, tscolor, p);
+ 
+@@ -490,7 +494,16 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
+     int op = (upgrade == 0) ? RPMTE_INSTALL : RPMTE_UPGRADE;
+     if (rpmtsSetupTransactionPlugins(ts) == RPMRC_FAIL)
+ 	return 1;
+-    return addPackage(ts, h, key, op, relocs);
++    return addPackage(ts, h, key, op, relocs, 0);
++}
++
++int rpmtsAddInstallElementISoftApp(rpmts ts, Header h,
++			fnpyKey key, int upgrade, rpmRelocation * relocs)
++{
++    int op = (upgrade == 0) ? RPMTE_INSTALL : RPMTE_UPGRADE;
++    if (rpmtsSetupTransactionPlugins(ts) == RPMRC_FAIL)
++	return 1;
++    return addPackage(ts, h, key, op, relocs, 1);
+ }
+ 
+ int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
+@@ -499,7 +512,7 @@ int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
+ 	return 1;
+     /* TODO: pull relocations from installed package */
+     /* TODO: should reinstall of non-installed package fail? */
+-    return addPackage(ts, h, key, RPMTE_REINSTALL, NULL);
++    return addPackage(ts, h, key, RPMTE_REINSTALL, NULL, 0);
+ }
+ 
+ int rpmtsAddEraseElement(rpmts ts, Header h, int dboffset)
+@@ -540,7 +553,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
       */
      if (deptag != RPMTAG_OBSOLETENAME && Name[0] == '/') {
  	mi = rpmtsPrunedIterator(ts, RPMDBI_INSTFILENAMES, Name, prune);
@@ -94,11 +154,11 @@ index fc413a9..7cd0021 100644
  	    /* Ignore self-conflicts */
  	    if (deptag == RPMTAG_CONFLICTNAME) {
  		unsigned int instance = headerGetInstance(h);
-@@ -592,6 +594,37 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -592,6 +605,43 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
      return rc;
  }
  
-+static int rpmdbProvidesISoftApp(rpmts ts, depCache dcache, rpmds dep) 
++static int rpmdbProvidesISoftApp(rpmts ts, depCache dcache, rpmds dep, const char *dbpath) 
 +{
 +    const char * Name = rpmdsN(dep);
 +    const char * DNEVR = rpmdsDNEVR(dep);
@@ -106,8 +166,14 @@ index fc413a9..7cd0021 100644
 +    int rc = 0;
 +    rpmdb appdb = NULL;
 +    int count = 0;
++    char *nosup[] = {".so", "sh", "rtld", NULL};
 +
-+    openDatabase("/", "/var/lib/isoft-app", &appdb, O_RDONLY, 0644, 0);
++    for (int i = 0; nosup[i]; i++) {
++        if (strstr(Name, nosup[i]))
++            return 0;
++    }
++
++    openDatabase("/", dbpath ? dbpath : "/var/lib/isoft-app", &appdb, O_RDONLY, 0644, 0);
 +    if (appdb == NULL) {
 +        rc = 1;
 +        goto cleanup;
@@ -132,14 +198,22 @@ index fc413a9..7cd0021 100644
  /**
   * Check dep for an unsatisfied dependency.
   * @param ts		transaction set
-@@ -732,6 +765,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
+@@ -601,6 +651,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+  */
+ static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
+ {
++    openDatabase("/", "/var/lib/rpm", &ts->rdb, O_RDONLY, 0644, 0);
+     tsMembers tsmem = rpmtsMembers(ts);
+     int rc;
+     int retrying = 0;
+@@ -732,6 +783,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
      }
  }
  
 +/* Check a dependency set for iSOFT App problems */
 +static void checkDSISoftApp(rpmts ts, depCache dcache, rpmte te,
 +		const char * pkgNEVRA, rpmds ds,
-+		rpm_color_t tscolor)
++		rpm_color_t tscolor, const char *dbpath)
 +{
 +    rpm_color_t dscolor;
 +    /* require-problems are unsatisfied, others appear "satisfied" */
@@ -153,7 +227,7 @@ index fc413a9..7cd0021 100644
 +	        continue;
 +
 +	    if (unsatisfiedDepend(ts, dcache, ds) == is_problem) {
-+            if (rpmdbProvidesISoftApp(ts, dcache, ds) != 0)
++            if (rpmdbProvidesISoftApp(ts, dcache, ds, dbpath) != 0)
 +                rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
 +        }
 +    }
@@ -162,12 +236,12 @@ index fc413a9..7cd0021 100644
  /* Check a given dependency against installed packages */
  static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
  			  rpmTag depTag, const char *dep)
-@@ -1047,3 +1103,175 @@ exit:
+@@ -1047,3 +1121,175 @@ exit:
  	(void) rpmtsCloseDB(ts);
      return rc;
  }
 +
-+int rpmtsCheckISoftApp(rpmts ts)
++int rpmtsCheckISoftApp(rpmts ts, const char *dbpath)
 +{
 +    rpm_color_t tscolor = rpmtsColor(ts);
 +    rpmtsi pi = NULL; rpmte p;
@@ -247,11 +321,11 @@ index fc413a9..7cd0021 100644
 +		rpmteNEVR(p), rpmteA(p), rpmteO(p), rpmteColor(p));
 +
 +	checkDSISoftApp(ts, dcache, p, rpmteNEVRA(p), rpmteDS(p, RPMTAG_REQUIRENAME),
-+		tscolor);
++		tscolor, dbpath);
 +	checkDSISoftApp(ts, dcache, p, rpmteNEVRA(p), rpmteDS(p, RPMTAG_CONFLICTNAME),
-+		tscolor);
++		tscolor, dbpath);
 +	checkDSISoftApp(ts, dcache, p, rpmteNEVRA(p), rpmteDS(p, RPMTAG_OBSOLETENAME),
-+		tscolor);
++		tscolor, dbpath);
 +
 +	/* Check provides against conflicts in installed packages. */
 +	while (rpmdsNext(provides) >= 0) {
@@ -339,7 +413,7 @@ index fc413a9..7cd0021 100644
 +    return rc;
 +}
 diff --git a/lib/query.c b/lib/query.c
-index d0274d0..92ca59e 100644
+index d0274d0..489c930 100644
 --- a/lib/query.c
 +++ b/lib/query.c
 @@ -298,6 +298,23 @@ static int rpmcliShowMatches(QVA_t qva, rpmts ts, rpmdbMatchIterator mi)
@@ -354,7 +428,7 @@ index d0274d0..92ca59e 100644
 +    if (mi == NULL)
 +        return 1;
 +
-+    while ((h = rpmdbNextIteratorISoftApp(mi)) != NULL) {
++    while ((h = rpmdbNextIteratorISoftApp(mi, "/var/lib/isoft-app")) != NULL) {
 +	    int rc;
 +	    rpmdbCheckSignals();
 +	    if ((rc = qva->qva_showPackage(qva, ts, h)) != 0)
@@ -697,7 +771,7 @@ index 4adb3d1..bb719b6 100644
  }
  #endif
 diff --git a/lib/rpmdb.c b/lib/rpmdb.c
-index 6499efc..190fc5b 100644
+index 6499efc..443e174 100644
 --- a/lib/rpmdb.c
 +++ b/lib/rpmdb.c
 @@ -549,7 +549,7 @@ static rpmdb newRpmdb(const char * root, const char * home,
@@ -725,7 +799,7 @@ index 6499efc..190fc5b 100644
      return mi->mi_h;
  }
  
-+Header rpmdbNextIteratorISoftApp(rpmdbMatchIterator mi)
++Header rpmdbNextIteratorISoftApp(rpmdbMatchIterator mi, const char *dbpath)
 +{
 +    dbiIndex dbi = NULL;
 +    unsigned char * uh;
@@ -741,7 +815,7 @@ index 6499efc..190fc5b 100644
 +	    goto exit;
 +    }
 +
-+    openDatabase("/", "/var/lib/rpm", &osdb, O_RDONLY, 0644, 0);
++    openDatabase("/", dbpath ? dbpath : "/var/lib/rpm", &osdb, O_RDONLY, 0644, 0);
 +    /* TODO: open osdb instead of mi->mi_db */
 +    if (pkgdbOpen(osdb, 0, &dbi)) {
 +	    printf("ERROR: %s, line %d, %s: fail to open pkgdb\n", 
@@ -834,18 +908,19 @@ index 6499efc..190fc5b 100644
   * sort the iterator by (recnum, filenum)
   * Return database iterator.
 diff --git a/lib/rpmdb.h b/lib/rpmdb.h
-index 4bbd465..9c17706 100644
+index 4bbd465..5c0648c 100644
 --- a/lib/rpmdb.h
 +++ b/lib/rpmdb.h
-@@ -146,6 +146,13 @@ rpmdbMatchIterator rpmdbInitIterator(rpmdb db, rpmDbiTagVal rpmtag,
+@@ -146,6 +146,14 @@ rpmdbMatchIterator rpmdbInitIterator(rpmdb db, rpmDbiTagVal rpmtag,
  Header rpmdbNextIterator(rpmdbMatchIterator mi);
  
  /** \ingroup rpmdb
 + * Return next package header from iteration for iSOFT App.
 + * @param mi		rpm database iterator
++ * @param dbpath    database path
 + * @return		NULL on end of iteration.
 + */
-+Header rpmdbNextIteratorISoftApp(rpmdbMatchIterator mi);
++Header rpmdbNextIteratorISoftApp(rpmdbMatchIterator mi, const char *dbpath);
 +
 +/** \ingroup rpmdb
   * Check for and exit on termination signals.
@@ -894,7 +969,7 @@ index 92848ab..27dccad 100644
  }
  #endif
 diff --git a/lib/rpminstall.c b/lib/rpminstall.c
-index 03d9ea1..dc0f6ef 100644
+index 03d9ea1..8d89fb7 100644
 --- a/lib/rpminstall.c
 +++ b/lib/rpminstall.c
 @@ -249,7 +249,7 @@ struct rpmEIU {
@@ -915,7 +990,7 @@ index 03d9ea1..dc0f6ef 100644
 -	    stop = 1;
 -	}
 +    if (isoftApp) {
-+        if (rpmtsCheckISoftApp(ts)) {
++        if (rpmtsCheckISoftApp(ts, NULL)) {
 +            rc = numPackages;
 +            stop = 1;
 +        }
@@ -1284,7 +1359,7 @@ index 03d9ea1..dc0f6ef 100644
      rpmtsEmpty(ts);
      rpmtsSetVSFlags(ts, ovsflags);
 diff --git a/lib/rpmts.c b/lib/rpmts.c
-index 3f8f880..fd593b3 100644
+index 3f8f880..64ebb7d 100644
 --- a/lib/rpmts.c
 +++ b/lib/rpmts.c
 @@ -80,6 +80,10 @@ int rpmtsCloseDB(rpmts ts)
@@ -1326,7 +1401,7 @@ index 3f8f880..fd593b3 100644
  int rpmtsInitDB(rpmts ts, int dbmode)
  {
      rpmtxn txn = rpmtxnBegin(ts, RPMTXN_WRITE);
-@@ -239,6 +264,85 @@ exit:
+@@ -239,6 +264,83 @@ exit:
      return mi;
  }
  
@@ -1343,8 +1418,7 @@ index 3f8f880..fd593b3 100644
 +    if (ts && ts->keyring == NULL)
 +	loadKeyring(ts);
 +
-+    if (ts->rdb == NULL && rpmtsOpenDBISoftApp(ts, ts->dbmode))
-+	return NULL;
++    openDatabase("/", "/var/lib/isoft-app", &ts->rdb, O_RDONLY, 0644, 0);
 +
 +    /* Parse out "N(EVR)" tokens from a label key if present */
 +    if (rpmtag == RPMDBI_LABEL && keyp != NULL && strchr(keyp, '(')) {
@@ -1396,7 +1470,6 @@ index 3f8f880..fd593b3 100644
 +	*t = '\0';
 +    }
 +
-+    return NULL;
 +    mi = rpmdbInitIterator(ts->rdb, rpmtag, keyp, keylen);
 +
 +    /* Verify header signature/digest during retrieve (if not disabled). */
@@ -1413,7 +1486,7 @@ index 3f8f880..fd593b3 100644
  {
      rpmKeyring keyring = NULL;
 diff --git a/lib/rpmts.h b/lib/rpmts.h
-index 5231c80..12b5158 100644
+index 5231c80..1dff76d 100644
 --- a/lib/rpmts.h
 +++ b/lib/rpmts.h
 @@ -175,6 +175,19 @@ typedef rpmFlags rpmtxnFlags;
@@ -1430,7 +1503,7 @@ index 5231c80..12b5158 100644
 + * @param ts        transaction set
 + * @return      0 on success
 + */
-+int rpmtsCheckISoftApp(rpmts ts);
++int rpmtsCheckISoftApp(rpmts ts, const char *dbpath);
 +
 +/** \ingroup rpmts
   * Determine package order in a transaction set according to dependencies.
@@ -1497,10 +1570,43 @@ index 5231c80..12b5158 100644
   * Import a header into the rpmdb
   * @param txn		transaction handle
   * @param h		header
+@@ -562,6 +615,23 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
+ 		rpmRelocation * relocs);
+ 
+ /** \ingroup rpmts
++ * Add package to be installed to transaction set for iSOFT App.
++ *
++ * The transaction set is checked for duplicate package names.
++ * If found, the package with the "newest" EVR will be replaced.
++ *
++ * @param ts		transaction set
++ * @param h		header
++ * @param key		package retrieval key (e.g. file name)
++ * @param upgrade	is package being upgraded?
++ * @param relocs	package file relocations
++ * @return		0 on success, 1 on I/O error, 2 needs capabilities
++ */
++int rpmtsAddInstallElementISoftApp(rpmts ts, Header h,
++		const fnpyKey key, int upgrade,
++		rpmRelocation * relocs);
++
++/** \ingroup rpmts
+  * Add package to be reinstalled to transaction set.
+  *
+  * @param ts		transaction set
 diff --git a/lib/transaction.c b/lib/transaction.c
-index 8f440b7..9aa8e5c 100644
+index 8f440b7..a2f9829 100644
 --- a/lib/transaction.c
 +++ b/lib/transaction.c
+@@ -430,7 +430,7 @@ static void handleInstInstalledFile(const rpmts ts, rpmte p, rpmfiles fi, int fx
+ 	if (rpmtsFilterFlags(ts) & RPMPROB_FILTER_REPLACEOLDFILES)
+ 	    rConflicts = 0;
+ 
+-	if (rConflicts) {
++	if (0) {
+ 	    char *altNEVR = headerGetAsString(otherHeader, RPMTAG_NEVRA);
+ 	    char *fn = rpmfilesFN(fi, fx);
+ 	    rpmteAddProblem(p, RPMPROB_FILE_CONFLICT, altNEVR, fn,
 @@ -1128,13 +1128,14 @@ void checkInstalledFiles(rpmts ts, uint64_t fileCount, fingerPrintCache fpc)
   * - verify package arch/os.
   * - verify package epoch:version-release is newer.
@@ -1658,10 +1764,80 @@ index 8f440b7..9aa8e5c 100644
      /* Run pre transaction hook for all plugins */
      TsmPreDone = 1;
 diff --git a/lib/verify.c b/lib/verify.c
-index 84e9843..2f904b1 100644
+index 84e9843..0e71d66 100644
 --- a/lib/verify.c
 +++ b/lib/verify.c
-@@ -568,3 +568,54 @@ exit:
+@@ -497,6 +497,39 @@ static int verifyDependencies(rpmts ts, Header h)
+     return rc;
+ }
+ 
++static int verifyDependenciesISoftApp(rpmts ts, Header h)
++{
++    rpmps ps;
++    rpmte te;
++    int rc;
++
++    rpmtsEmpty(ts);
++    (void) rpmtsAddInstallElement(ts, h, NULL, 0, NULL);
++
++    (void) rpmtsCheckISoftApp(ts, "/var/lib/rpm");
++    te = rpmtsElement(ts, 0);
++    ps = rpmteProblems(te);
++    rc = rpmpsNumProblems(ps);
++
++    if (rc > 0) {
++	rpmlog(RPMLOG_NOTICE, _("Unsatisfied dependencies for %s:\n"),
++	       rpmteNEVRA(te));
++	rpmpsi psi = rpmpsInitIterator(ps);
++	rpmProblem p;
++
++	while ((p = rpmpsiNext(psi)) != NULL) {
++	    char * ps = rpmProblemString(p);
++	    rpmlog(RPMLOG_NOTICE, "\t%s\n", ps);
++	    free(ps);
++	}
++	rpmpsFreeIterator(psi);
++    }
++    rpmpsFree(ps);
++    rpmtsEmpty(ts);
++
++    return rc;
++}
++
+ int showVerifyPackage(QVA_t qva, rpmts ts, Header h)
+ {
+     rpmVerifyAttrs omitMask = ((qva->qva_flags & VERIFY_ATTRS) ^ VERIFY_ATTRS);
+@@ -520,6 +553,29 @@ int showVerifyPackage(QVA_t qva, rpmts ts, Header h)
+     return ec;
+ }
+ 
++int showVerifyPackageISoftApp(QVA_t qva, rpmts ts, Header h)
++{
++    rpmVerifyAttrs omitMask = ((qva->qva_flags & VERIFY_ATTRS) ^ VERIFY_ATTRS);
++    int ghosts = (qva->qva_fflags & RPMFILE_GHOST);
++    int ec = 0;
++    int rc;
++
++    if (qva->qva_flags & VERIFY_DEPS) {
++	if ((rc = verifyDependenciesISoftApp(ts, h)) != 0)
++	    ec = rc;
++    }
++    if (qva->qva_flags & VERIFY_FILES) {
++	if ((rc = verifyHeader(ts, h, omitMask, ghosts)) != 0)
++	    ec = rc;
++    }
++    if (qva->qva_flags & VERIFY_SCRIPT) {
++	if ((rc = rpmVerifyScript(ts, h)) != 0)
++	    ec = rc;
++    }
++
++    return ec;
++}
++
+ int rpmcliVerify(rpmts ts, QVA_t qva, char * const * argv)
+ {
+     rpmVSFlags vsflags, ovsflags;
+@@ -568,3 +624,54 @@ exit:
  
      return ec;
  }
@@ -1686,7 +1862,7 @@ index 84e9843..2f904b1 100644
 +    }
 +
 +    if (qva->qva_showPackage == NULL)
-+        qva->qva_showPackage = showVerifyPackage;
++        qva->qva_showPackage = showVerifyPackageISoftApp;
 +
 +    vsflags = rpmExpandNumeric("%{?_vsflags_verify}");
 +    if (rpmcliQueryFlags & VERIFY_DIGEST)
@@ -1703,7 +1879,7 @@ index 84e9843..2f904b1 100644
 +    rpmtsSetVSFlags(ts, ovsflags);
 +    rpmtsSetScriptFd(ts, NULL);
 +
-+    if (qva->qva_showPackage == showVerifyPackage)
++    if (qva->qva_showPackage == showVerifyPackageISoftApp)
 +        qva->qva_showPackage = NULL;
 +
 +    rpmtsEmpty(ts);
