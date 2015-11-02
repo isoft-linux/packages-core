@@ -258,7 +258,7 @@ index 1271ea4..1814fba 100644
  
     if (_config->FindB("RPM::NoDeps", false) == false) {
 -      rc = rpmtsCheck(TS);
-+      rc = rpmtsCheckISoftApp(TS);
++      rc = rpmtsCheckISoftApp(TS, NULL);
        probs = rpmtsProblems(TS);
        if (rc || rpmpsNumProblems(probs) > 0) {
  	 rpmpsPrint(NULL, probs);
