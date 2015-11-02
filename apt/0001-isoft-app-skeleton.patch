@@ -90,7 +90,7 @@ index 2ac0893..b4b2e80 100644
  
     // CNC:2002-07-06
 diff --git a/apt-pkg/rpm/rpmhandler.cc b/apt-pkg/rpm/rpmhandler.cc
-index 0b600d3..0287e0a 100644
+index 0b600d3..9adbfe2 100644
 --- a/apt-pkg/rpm/rpmhandler.cc
 +++ b/apt-pkg/rpm/rpmhandler.cc
 @@ -62,6 +62,10 @@ bool HideZeroEpoch;
@@ -107,7 +107,7 @@ index 0b600d3..0287e0a 100644
 @@ -545,9 +549,17 @@ string RPMDirHandler::HashType() const
     return "MD5-Hash";
  }
-  
+ 
 -RPMDBHandler::RPMDBHandler(bool WriteLock)
 +RPMDBHandler::RPMDBHandler(bool WriteLock,bool useIsoftApp)
     : Handler(0), WriteLock(WriteLock)
