@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..8a9f346 100644
+index fc413a9..28a9a3e 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -198,15 +198,51 @@ index fc413a9..8a9f346 100644
  /**
   * Check dep for an unsatisfied dependency.
   * @param ts		transaction set
-@@ -601,6 +651,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -599,8 +649,11 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+  * @param dep		dependency
+  * @return		0 if satisfied, 1 if not satisfied
   */
- static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
+-static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
++static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep, int dbOpened)
  {
-+    openDatabase("/", "/var/lib/rpm", &ts->rdb, O_RDONLY, 0644, 0);
++    if (dbOpened == 0) {
++        openDatabase("/", "/var/lib/rpm", &ts->rdb, O_RDONLY, 0644, 0);
++    }
      tsMembers tsmem = rpmtsMembers(ts);
      int rc;
      int retrying = 0;
-@@ -732,6 +783,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
+@@ -649,7 +702,7 @@ retry:
+ 		rpmds ds21 = NULL, ds22 = NULL;
+ 		rpmrichOp op2;
+ 		if (rpmdsParseRichDep(ds2, &ds21, &ds22, &op2, NULL) == RPMRC_OK && op2 == RPMRICHOP_ELSE) {
+-		    rc = unsatisfiedDepend(ts, dcache, ds21);
++		    rc = unsatisfiedDepend(ts, dcache, ds21, 1);
+ 		    if (rc) {
+ 			rpmdsFree(ds1);
+ 			ds1 = ds22;
+@@ -661,12 +714,12 @@ retry:
+ 		rpmdsFree(ds22);
+ 	    }
+ 	    if (!rc)
+-		rc = !unsatisfiedDepend(ts, dcache, ds2);
++		rc = !unsatisfiedDepend(ts, dcache, ds2, 1);
+ 	}
+ 	if (op != RPMRICHOP_IF || rc)
+-	    rc = unsatisfiedDepend(ts, dcache, ds1);
++	    rc = unsatisfiedDepend(ts, dcache, ds1, 1);
+ 	if ((rc && op == RPMRICHOP_OR) || (!rc && op == RPMRICHOP_AND))
+-	    rc = unsatisfiedDepend(ts, dcache, ds2);
++	    rc = unsatisfiedDepend(ts, dcache, ds2, 1);
+ 	ds1 = rpmdsFree(ds1);
+ 	ds2 = rpmdsFree(ds2);
+ 	rpmdsNotify(dep, "(rich)", rc);
+@@ -727,11 +780,34 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
+ 	if (tscolor && dscolor && !(tscolor & dscolor))
+ 	    continue;
+ 
+-	if (unsatisfiedDepend(ts, dcache, ds) == is_problem)
++	if (unsatisfiedDepend(ts, dcache, ds, 0) == is_problem)
+ 	    rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
      }
  }
  
@@ -226,7 +262,7 @@ index fc413a9..8a9f346 100644
 +	    if (tscolor && dscolor && !(tscolor & dscolor))
 +	        continue;
 +
-+	    if (unsatisfiedDepend(ts, dcache, ds) == is_problem) {
++	    if (unsatisfiedDepend(ts, dcache, ds, 0) == is_problem) {
 +            if (rpmdbProvidesISoftApp(ts, dcache, ds, dbpath) != 0)
 +                rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
 +        }
@@ -236,7 +272,16 @@ index fc413a9..8a9f346 100644
  /* Check a given dependency against installed packages */
  static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
  			  rpmTag depTag, const char *dep)
-@@ -1047,3 +1121,175 @@ exit:
+@@ -757,7 +833,7 @@ static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
+ 	ds = rpmdsNewPool(pool, h, depTag, 0);
+ 	rpmdsSetIx(ds, rpmdbGetIteratorFileNum(mi));
+ 
+-	if (unsatisfiedDepend(ts, dcache, ds) == is_problem)
++	if (unsatisfiedDepend(ts, dcache, ds, 0) == is_problem)
+ 	    rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
+ 
+ 	rpmdsFree(ds);
+@@ -1047,3 +1123,175 @@ exit:
  	(void) rpmtsCloseDB(ts);
      return rc;
  }
