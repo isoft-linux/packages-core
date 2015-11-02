@@ -151,6 +151,16 @@ about it in /var/log/apt.log, or in the configured file.
 %patch2 -p1 -b .gcc47
 %patch7 -p1 -b .isoftapp
 
+#======================
+#It not allowed to combine all seperate patches into ONE.
+#Please fix it, restore original seperate patches of lua and others.
+#And apply isoftapp based on them. and remove this 'exit 1'.
+#-By Cjacker.
+exit 1
+#=====================
+
+
+
 install -pm 644 %{SOURCE19} comps2prio.xsl
 
 # don't require python, lua etc because of stuff in doc/contrib
