@@ -1,0 +1,14 @@
+--- a/db-6.1.23/src/lock/lock_failchk.c	2015-02-18 01:13:26.000000000 +0800
++++ b/db-6.1.23/src/lock/lock_failchk.c	2015-11-02 17:24:10.509541827 +0800
+@@ -80,11 +80,6 @@
+ 			 * Discard the locker and its read locks.
+ 			 */
+ 			if (!SH_LIST_EMPTY(&lip->heldby)) {
+-				__db_msg(env, DB_STR_A("2053",
+-				    "Freeing read locks for locker %#lx: %s",
+-				    "%#lx %s"), (u_long)lip->id,
+-				    dbenv->thread_id_string(
+-				    dbenv, lip->pid, lip->tid, buf));
+ 				UNLOCK_LOCKERS(env, lrp);
+ 				memset(&request, 0, sizeof(request));
+ 				request.op = DB_LOCK_PUT_READ;

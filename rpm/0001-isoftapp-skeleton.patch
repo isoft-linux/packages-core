@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..b6f6a03 100644
+index fc413a9..600898a 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -181,8 +181,8 @@ index fc413a9..b6f6a03 100644
 +
 +    count = rpmdbCountPackages(appdb, Name);
 +#ifdef RPM_DEBUG
-+    printf("DEBUG: %s, %s, line %d: %s %s %d\n", 
-+           __FILE__, __func__, __LINE__, Name, DNEVR, count);
++    printf("DEBUG: %s, %s, line %d: %s %s %s %d\n", 
++           __FILE__, __func__, __LINE__, dbpath, Name, DNEVR, count);
 +#endif
 +    if (count == 0)
 +        rc = 1;
@@ -1768,7 +1768,7 @@ index 8f440b7..a2f9829 100644
      /* Run pre transaction hook for all plugins */
      TsmPreDone = 1;
 diff --git a/lib/verify.c b/lib/verify.c
-index 84e9843..0e71d66 100644
+index 84e9843..3aa3d9e 100644
 --- a/lib/verify.c
 +++ b/lib/verify.c
 @@ -497,6 +497,39 @@ static int verifyDependencies(rpmts ts, Header h)
@@ -1784,7 +1784,7 @@ index 84e9843..0e71d66 100644
 +    rpmtsEmpty(ts);
 +    (void) rpmtsAddInstallElement(ts, h, NULL, 0, NULL);
 +
-+    (void) rpmtsCheckISoftApp(ts, "/var/lib/rpm");
++    (void) rpmtsCheckISoftApp(ts, NULL);
 +    te = rpmtsElement(ts, 0);
 +    ps = rpmteProblems(te);
 +    rc = rpmpsNumProblems(ps);

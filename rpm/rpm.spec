@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 15
+Release: 16
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -61,6 +61,8 @@ Patch1500: rpm-macro-add-python3.patch
 
 #iSOFT App isolation support
 Patch2000: 0001-isoftapp-skeleton.patch
+# Keep silent DB
+Patch2001: 0002-db-quite.patch
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -187,6 +189,7 @@ programs that will manipulate RPM packages and databases.
 %patch1500 -p1
 
 %patch2000 -p1
+%patch2001 -p1
 
 ln -s db-%{bdbver} db
 
@@ -410,6 +413,8 @@ rm -rf $RPM_BUILD_ROOT
 
 * Mon Nov 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix update package without erase old one issue.
+- Fix verify isoftapp issue.
+- Keep silent DB.
 
 * Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.13.0-8
 - Add macro check of environment and build results
