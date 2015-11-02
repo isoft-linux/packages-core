@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 10
+Release: 15
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -405,7 +405,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.13.0-10
+* Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.13.0-15
 - Add test of _target_platform macro
 
 * Mon Nov 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
