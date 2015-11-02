@@ -15,7 +15,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 21.%{snapver}
+Release: 22.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -40,9 +40,21 @@ Source52: gpg-check.lua
 # "factory defaults"
 Source150: default.conf
 
+# Fix ppc mapping
+Patch0: apt-0.5.15lorg3.2-ppc.patch
+# band aid for mmap issues (#211254)
+Patch1: apt-0.5.15lorg3.x-cache-corruption.patch
 # fix build with gcc 4.7
 Patch2: apt-0.5.15lorg3.95-gcc47.patch
-# iSOFT App skeleton implemented by fujiang
+# fix build with lua 5.2
+Patch3: apt-0.5.15lorg3.95-lua-5.2d.patch
+# fix format-security issue
+Patch4: apt-0.5.15lorg3.95-format-security.patch
+# Fix to build against modern rpm
+Patch5: apt-0.5.15lorg3.95-rpm-suggest-fix.patch
+# Fix for lua 5.3
+Patch6: apt-0.5.15lorg3.95-lua-5.3.patch
+# iSOFT App skeleton implemented by fujiang and Leslie Zhai
 Patch7: 0001-isoft-app-skeleton.patch
 
 # TODO: verify the required minimum Python version
@@ -148,18 +160,14 @@ about it in /var/log/apt.log, or in the configured file.
 
 %prep
 %setup -q -n %{name}-%{srcver}
+%patch0 -p1 -b .ppc
+%patch1 -p0 -b .mmap
 %patch2 -p1 -b .gcc47
+%patch3 -p1 -b .lua-52
+%patch4 -p1 -b .format-security
+%patch5 -p1 -b .rpm-suggest-fix
+%patch6 -p1 -b .lua-53
 %patch7 -p1 -b .isoftapp
-
-#======================
-#It not allowed to combine all seperate patches into ONE.
-#Please fix it, restore original seperate patches of lua and others.
-#And apply isoftapp based on them. and remove this 'exit 1'.
-#-By Cjacker.
-exit 1
-#=====================
-
-
 
 install -pm 644 %{SOURCE19} comps2prio.xsl
 
@@ -325,6 +333,10 @@ rm -f %{buildroot}%{_libdir}/*.la
 
 
 %changelog
+* Mon Nov 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Restore original seperate patches of lua and others.
+- Apply isoftapp based on them.
+
 * Fri Oct 30 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Add iSOFT App skeleton implemented by fujiang and Leslie Zhai.
 
