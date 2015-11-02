@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..2611f18 100644
+index fc413a9..b6f6a03 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -85,7 +85,7 @@ index fc413a9..2611f18 100644
  
  #include "debug.h"
  
-@@ -170,14 +172,18 @@ static int skipColor(rpm_color_t tscolor, rpm_color_t color, rpm_color_t ocolor)
+@@ -170,10 +172,12 @@ static int skipColor(rpm_color_t tscolor, rpm_color_t color, rpm_color_t ocolor)
  
  /* Add erase elements for older packages of same color (if any). */
  static int addSelfErasures(rpmts ts, rpm_color_t tscolor, int op,
@@ -100,14 +100,7 @@ index fc413a9..2611f18 100644
      int rc = 0;
      int cmp;
  
--    while((oh = rpmdbNextIterator(mi)) != NULL) {
-+    while((oh = isoftApp ? 
-+                rpmdbNextIteratorISoftApp(mi, "/var/lib/isoft-app") : 
-+                rpmdbNextIterator(mi)) != NULL) {
- 	/* Ignore colored packages not in our rainbow. */
- 	if (skipColor(tscolor, hcolor, headerGetNumber(oh, RPMTAG_HEADERCOLOR)))
- 	    continue;
-@@ -410,7 +416,7 @@ rpmal rpmtsCreateAl(rpmts ts, rpmElementTypes types)
+@@ -410,7 +414,7 @@ rpmal rpmtsCreateAl(rpmts ts, rpmElementTypes types)
  }
  
  static int addPackage(rpmts ts, Header h,
@@ -116,7 +109,7 @@ index fc413a9..2611f18 100644
  {
      tsMembers tsmem = rpmtsMembers(ts);
      rpm_color_t tscolor = rpmtsColor(ts);
-@@ -476,7 +482,7 @@ static int addPackage(rpmts ts, Header h,
+@@ -476,7 +480,7 @@ static int addPackage(rpmts ts, Header h,
      /* Add erasure elements for old versions and obsoletions on upgrades */
      /* XXX TODO: If either of these fails, we'd need to undo all additions */
      if (op != RPMTE_INSTALL)
@@ -125,7 +118,7 @@ index fc413a9..2611f18 100644
      if (op == RPMTE_UPGRADE)
  	addObsoleteErasures(ts, tscolor, p);
  
-@@ -490,7 +496,16 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
+@@ -490,7 +494,16 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
      int op = (upgrade == 0) ? RPMTE_INSTALL : RPMTE_UPGRADE;
      if (rpmtsSetupTransactionPlugins(ts) == RPMRC_FAIL)
  	return 1;
@@ -143,7 +136,7 @@ index fc413a9..2611f18 100644
  }
  
  int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
-@@ -499,7 +514,7 @@ int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
+@@ -499,7 +512,7 @@ int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
  	return 1;
      /* TODO: pull relocations from installed package */
      /* TODO: should reinstall of non-installed package fail? */
@@ -152,7 +145,7 @@ index fc413a9..2611f18 100644
  }
  
  int rpmtsAddEraseElement(rpmts ts, Header h, int dboffset)
-@@ -540,7 +555,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -540,7 +553,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
       */
      if (deptag != RPMTAG_OBSOLETENAME && Name[0] == '/') {
  	mi = rpmtsPrunedIterator(ts, RPMDBI_INSTFILENAMES, Name, prune);
@@ -161,7 +154,7 @@ index fc413a9..2611f18 100644
  	    /* Ignore self-conflicts */
  	    if (deptag == RPMTAG_CONFLICTNAME) {
  		unsigned int instance = headerGetInstance(h);
-@@ -592,6 +607,43 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -592,6 +605,44 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
      return rc;
  }
  
@@ -202,54 +195,22 @@ index fc413a9..2611f18 100644
 +    return rc;
 +}
 +
++static int m_dbOpened = 0;
  /**
   * Check dep for an unsatisfied dependency.
   * @param ts		transaction set
-@@ -599,8 +651,11 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
-  * @param dep		dependency
-  * @return		0 if satisfied, 1 if not satisfied
+@@ -601,6 +652,10 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
   */
--static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
-+static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep, int dbOpened)
+ static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
  {
-+    if (dbOpened == 0) {
++    if (m_dbOpened == 0) {
 +        openDatabase("/", "/var/lib/rpm", &ts->rdb, O_RDONLY, 0644, 0);
++        m_dbOpened = 1;
 +    }
      tsMembers tsmem = rpmtsMembers(ts);
      int rc;
      int retrying = 0;
-@@ -649,7 +704,7 @@ retry:
- 		rpmds ds21 = NULL, ds22 = NULL;
- 		rpmrichOp op2;
- 		if (rpmdsParseRichDep(ds2, &ds21, &ds22, &op2, NULL) == RPMRC_OK && op2 == RPMRICHOP_ELSE) {
--		    rc = unsatisfiedDepend(ts, dcache, ds21);
-+		    rc = unsatisfiedDepend(ts, dcache, ds21, 1);
- 		    if (rc) {
- 			rpmdsFree(ds1);
- 			ds1 = ds22;
-@@ -661,12 +716,12 @@ retry:
- 		rpmdsFree(ds22);
- 	    }
- 	    if (!rc)
--		rc = !unsatisfiedDepend(ts, dcache, ds2);
-+		rc = !unsatisfiedDepend(ts, dcache, ds2, 1);
- 	}
- 	if (op != RPMRICHOP_IF || rc)
--	    rc = unsatisfiedDepend(ts, dcache, ds1);
-+	    rc = unsatisfiedDepend(ts, dcache, ds1, 1);
- 	if ((rc && op == RPMRICHOP_OR) || (!rc && op == RPMRICHOP_AND))
--	    rc = unsatisfiedDepend(ts, dcache, ds2);
-+	    rc = unsatisfiedDepend(ts, dcache, ds2, 1);
- 	ds1 = rpmdsFree(ds1);
- 	ds2 = rpmdsFree(ds2);
- 	rpmdsNotify(dep, "(rich)", rc);
-@@ -727,11 +782,34 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
- 	if (tscolor && dscolor && !(tscolor & dscolor))
- 	    continue;
- 
--	if (unsatisfiedDepend(ts, dcache, ds) == is_problem)
-+	if (unsatisfiedDepend(ts, dcache, ds, 0) == is_problem)
- 	    rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
+@@ -732,6 +787,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
      }
  }
  
@@ -269,7 +230,7 @@ index fc413a9..2611f18 100644
 +	    if (tscolor && dscolor && !(tscolor & dscolor))
 +	        continue;
 +
-+	    if (unsatisfiedDepend(ts, dcache, ds, 0) == is_problem) {
++	    if (unsatisfiedDepend(ts, dcache, ds) == is_problem) {
 +            if (rpmdbProvidesISoftApp(ts, dcache, ds, dbpath) != 0)
 +                rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
 +        }
@@ -279,15 +240,6 @@ index fc413a9..2611f18 100644
  /* Check a given dependency against installed packages */
  static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
  			  rpmTag depTag, const char *dep)
-@@ -757,7 +835,7 @@ static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
- 	ds = rpmdsNewPool(pool, h, depTag, 0);
- 	rpmdsSetIx(ds, rpmdbGetIteratorFileNum(mi));
- 
--	if (unsatisfiedDepend(ts, dcache, ds) == is_problem)
-+	if (unsatisfiedDepend(ts, dcache, ds, 0) == is_problem)
- 	    rpmteAddDepProblem(te, pkgNEVRA, ds, NULL);
- 
- 	rpmdsFree(ds);
 @@ -1047,3 +1125,175 @@ exit:
  	(void) rpmtsCloseDB(ts);
      return rc;
