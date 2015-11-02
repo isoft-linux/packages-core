@@ -1,11 +1,13 @@
 Summary: A tool for determining compilation options
 Name: pkgconfig
-Version: 0.28
-Release: 2
-Epoch: 1
+Version: 0.29
+Release: 4
 License: GPL
 URL: http://pkgconfig.freedesktop.org
-Source:  http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
+Source0: http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
+
+BuildRequires: autoconf, automake, libtool
+
 %description
 The pkgconfig tool determines compilation options. For each required
 library, it reads the configuration file and outputs the necessary
@@ -44,6 +46,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*
 
 %changelog
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 0.29-4
+- Update
+
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 1:0.28-3
+- Rebuild
+
 * Fri Oct 23 2015 cjacker - 1:0.28-2
 - Rebuild for new 4.0 release
 
