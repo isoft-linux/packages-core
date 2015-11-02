@@ -3,19 +3,17 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 46.llvm37.git 
+Release: 48.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
 
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: mesa-7b8cc37.tar.gz 
+Source0: mesa-39bb59a.tar.gz 
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
 #By Cjacker.
 Patch0: mesa-fix-build-with-llvm-libc++.patch
-
-Patch1: Mesa-dev-1-6-virgl-fix-drm.h-include-path.patch
 
 BuildRequires: pkgconfig autoconf automake libtool
 BuildRequires: kernel-headers
@@ -248,7 +246,6 @@ Mesa OpenCL development package.
 
 %prep
 %setup -q -n %{name} 
-%patch1 -p1
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -488,6 +485,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Nov 01 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-48.llvm37.git
+- Update to git 39bb59a
+
+* Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-47.llvm37.git
+- git 103de02
+
 * Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-46.llvm37.git
 - Update to git 7b8cc37
 
