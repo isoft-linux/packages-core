@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..42e7610 100644
+index fc413a9..fd8af98 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -168,7 +168,7 @@ index fc413a9..42e7610 100644
 +    int count = 0;
 +    int provides = 0;
 +
-+    openDatabase("/", dbpath ? dbpath : "/var/lib/isoft-app", &appdb, O_RDONLY, 0644, 0);
++    openDatabase(ts->rootDir, dbpath ? dbpath : "/var/lib/isoft-app", &appdb, O_RDONLY, 0644, 0);
 +    if (appdb == NULL) {
 +        rc = 1;
 +        goto cleanup;
@@ -200,7 +200,7 @@ index fc413a9..42e7610 100644
  static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
  {
 +    if (m_dbOpened == 0) {
-+        openDatabase("/", "/var/lib/rpm", &ts->rdb, O_RDONLY, 0644, 0);
++        openDatabase(ts->rootDir, "/var/lib/rpm", &ts->rdb, O_RDONLY, 0644, 0);
 +        m_dbOpened = 1;
 +    }
      tsMembers tsmem = rpmtsMembers(ts);
@@ -1412,7 +1412,7 @@ index 03d9ea1..0327cb8 100644
      rpmtsEmpty(ts);
      rpmtsSetVSFlags(ts, ovsflags);
 diff --git a/lib/rpmts.c b/lib/rpmts.c
-index 3f8f880..64ebb7d 100644
+index 3f8f880..7374537 100644
 --- a/lib/rpmts.c
 +++ b/lib/rpmts.c
 @@ -80,6 +80,10 @@ int rpmtsCloseDB(rpmts ts)
@@ -1471,7 +1471,7 @@ index 3f8f880..64ebb7d 100644
 +    if (ts && ts->keyring == NULL)
 +	loadKeyring(ts);
 +
-+    openDatabase("/", "/var/lib/isoft-app", &ts->rdb, O_RDONLY, 0644, 0);
++    openDatabase(ts->rootDir, "/var/lib/isoft-app", &ts->rdb, O_RDONLY, 0644, 0);
 +
 +    /* Parse out "N(EVR)" tokens from a label key if present */
 +    if (rpmtag == RPMDBI_LABEL && keyp != NULL && strchr(keyp, '(')) {
@@ -1648,7 +1648,7 @@ index 5231c80..1dff76d 100644
   *
   * @param ts		transaction set
 diff --git a/lib/transaction.c b/lib/transaction.c
-index 8f440b7..a2f9829 100644
+index 8f440b7..d5afe97 100644
 --- a/lib/transaction.c
 +++ b/lib/transaction.c
 @@ -430,7 +430,7 @@ static void handleInstInstalledFile(const rpmts ts, rpmte p, rpmfiles fi, int fx
@@ -1676,7 +1676,7 @@ index 8f440b7..a2f9829 100644
  
      /* The ordering doesn't matter here */
      /* XXX Only added packages need be checked. */
-@@ -1168,10 +1169,21 @@ static rpmps checkProblems(rpmts ts)
+@@ -1168,10 +1169,28 @@ static rpmps checkProblems(rpmts ts)
  		rpmdbSetIteratorRE(mi, RPMTAG_OS, RPMMIRE_STRCMP, rpmteO(p));
  	    }
  
@@ -1685,10 +1685,14 @@ index 8f440b7..a2f9829 100644
 -				headerGetInstance(h));
 -	    }
 +	    if ((h = rpmdbNextIterator(mi)) == NULL) {
-+            openDatabase("/", isoftApp ? "/var/lib/rpm" : "/var/lib/isoft-app", 
++            openDatabase(ts->rootDir, 
++                    isoftApp ? "/var/lib/rpm" : "/var/lib/isoft-app", 
 +                    &db, O_RDONLY, 0644, 0);
 +            if (db) {
 +                if (rpmdbCountPackages(db, rpmteN(p))) {
++#ifdef RPM_DEBUG
++                    printf("DEBUG: %s, %s, line %d: installed!\n", __FILE__, __func__, __LINE__);
++#endif
 +                    rpmteAddProblem(p, RPMPROB_PKG_INSTALLED, NULL, NULL, 
 +                            headerGetInstance(h));
 +                }
@@ -1696,13 +1700,16 @@ index 8f440b7..a2f9829 100644
 +                db = NULL;
 +            }
 +        } else {
++#ifdef RPM_DEBUG
++            printf("DEBUG: %s, %s, line %d: installed!\n", __FILE__, __func__, __LINE__);
++#endif
 +            rpmteAddProblem(p, RPMPROB_PKG_INSTALLED, NULL, NULL, 
 +                    headerGetInstance(h));
 +        }
  	    rpmdbFreeIterator(mi);
  	}
  
-@@ -1457,7 +1469,103 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
+@@ -1457,7 +1476,103 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
      rpmtxn txn = NULL;
      rpmps tsprobs = NULL;
      int TsmPreDone = 0; /* TsmPre hook hasn't been called */
@@ -1807,7 +1814,7 @@ index 8f440b7..a2f9829 100644
      /* Force default 022 umask during transaction for consistent results */
      mode_t oldmask = umask(022);
  
-@@ -1480,7 +1588,7 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
+@@ -1480,7 +1595,7 @@ int rpmtsRun(rpmts ts, rpmps okProbs, rpmprobFilterFlags ignoreSet)
      }
  
      /* Check package set for problems */
