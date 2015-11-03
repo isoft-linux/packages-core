@@ -1,6 +1,6 @@
-%global nspr_version 4.10.8
-%global nss_util_version 3.19.2
-%global nss_softokn_version 3.19.2
+%global nspr_version 4.10.10
+%global nss_util_version 3.20.1
+%global nss_softokn_version 3.20.1
 %global unsupported_tools_directory %{_libdir}/nss/unsupported-tools
 %global allTools "certutil cmsutil crlutil derdump modutil pk12util signtool signver ssltap vfychain vfyserv"
 
@@ -18,23 +18,18 @@
 
 Summary:          Network Security Services
 Name:             nss
-Version:          3.19.2
-# for Rawhide, please always use release >= 2
-# for Fedora release branches, please use release < 2 (1.0, 1.1, ...)
-Release:          4%{?dist}
+Version:          3.20.1
+Release:          2%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
 Requires:         nspr >= %{nspr_version}
 Requires:         nss-util >= %{nss_util_version}
-# TODO: revert to same version as nss once we are done with the merge
 Requires:         nss-softokn%{_isa} >= %{nss_softokn_version}
 Requires:         nss-system-init
 Requires(post):   %{_sbindir}/update-alternatives
 Requires(postun): %{_sbindir}/update-alternatives
 BuildRoot:        %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:    nspr-devel >= %{nspr_version}
-# TODO: revert to same version as nss once we are done with the merge
-# Using '>=' but on RHEL the requires should be '='
 BuildRequires:    nss-softokn-devel >= %{nss_softokn_version}
 BuildRequires:    nss-util-devel >= %{nss_util_version}
 BuildRequires:    sqlite-devel
@@ -89,10 +84,18 @@ Patch49:          nss-skip-bltest-and-fipstest.patch
 Patch50:          iquote.patch
 Patch52:          disableSSL2libssl.patch
 Patch53:          disableSSL2tests.patch
-# fix upstream bug 1151037, until we rebase to 3.19
+Patch54:          tstclnt-ssl2-off-by-default.patch
+Patch55:          skip_stress_TLS_RC4_128_with_MD5.patch
+# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=923089
+# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
+# See https://hg.mozilla.org/projects/nss/raw-rev/dc7bb2f8cc50
+Patch56: ocsp_stapling_sslauth_sni_tests_client_side_fixes.patch
+# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1205688
+Patch57: rhbz1185708-enable-ecc-ciphers-by-default.patch
+# Local patch for TLS_ECDHE_{ECDSA|RSA}_WITH_3DES_EDE_CBC_SHA ciphers
+Patch58: rhbz1185708-enable-ecc-3des-ciphers-by-default.patch
 
-
-Patch54:         nss-disable-fips-test.patch
+Patch60: nss-disable-fips-test.patch
 
 %description
 Network Security Services (NSS) is a set of libraries designed to
@@ -172,7 +175,15 @@ pushd nss
 %patch52 -p1 -b .disableSSL2libssl
 %patch53 -p1 -b .disableSSL2tests
 popd
-%patch54 -p1
+%patch54 -p0 -b .ssl2_off
+%patch55 -p1 -b .skip_stress_tls_rc4_128_with_md5
+%patch56 -p1 -b .ocsp_sni
+pushd nss
+%patch57 -p1 -b .1185708
+popd
+%patch58 -p0 -b .1185708_3des
+
+%patch60 -p1
 
 
 #########################################################
@@ -780,6 +791,9 @@ fi
 
 
 %changelog
+* Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 3.20.1-2
+- Update to 3.20.1
+
 * Fri Oct 23 2015 cjacker - 3.19.2-4
 - Rebuild for new 4.0 release
 
