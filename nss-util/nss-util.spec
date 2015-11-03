@@ -2,10 +2,8 @@
 
 Summary:          Network Security Services Utilities Library
 Name:             nss-util
-Version:          3.19.2
-# for Rawhide, please always use release >= 2
-# for Fedora release branches, please use release < 2 (1.0, 1.1, ...)
-Release:          3%{?dist}
+Version:          3.20.1
+Release:          1%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
 Requires:         nspr >= %{nspr_version}
@@ -19,15 +17,7 @@ BuildRequires:    perl
 
 Source0:          %{name}-%{version}.tar.gz
 # The nss-util tar ball is a subset of nss-{version}.tar.gz.
-# We use the nss-split-util.sh script for keeping only what we need
-# nss-util is produced via via nss-split-util.sh {version}
-# Detailed Steps:
-# fedpkg clone nss-util
-# cd nss-util
-# Make the source tarball for nss-util out of the nss one:
-# sh ./nss-split-util.sh ${version}
-# A file named ${name}-${version}.tar.gz should appear
-# ready to upload to the lookaside cache.
+# use 'sh ./nss-split-util.sh <nss version> to generate it.
 Source1:          nss-split-util.sh
 Source2:          nss-util.pc.in
 Source3:          nss-util-config.in
