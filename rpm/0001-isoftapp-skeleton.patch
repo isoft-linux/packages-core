@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..600898a 100644
+index fc413a9..42e7610 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -154,7 +154,7 @@ index fc413a9..600898a 100644
  	    /* Ignore self-conflicts */
  	    if (deptag == RPMTAG_CONFLICTNAME) {
  		unsigned int instance = headerGetInstance(h);
-@@ -592,6 +605,44 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -592,6 +605,40 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
      return rc;
  }
  
@@ -166,12 +166,7 @@ index fc413a9..600898a 100644
 +    int rc = 0;
 +    rpmdb appdb = NULL;
 +    int count = 0;
-+    char *nosup[] = {".so", "sh", "rtld", NULL};
-+
-+    for (int i = 0; nosup[i]; i++) {
-+        if (strstr(Name, nosup[i]))
-+            return 0;
-+    }
++    int provides = 0;
 +
 +    openDatabase("/", dbpath ? dbpath : "/var/lib/isoft-app", &appdb, O_RDONLY, 0644, 0);
 +    if (appdb == NULL) {
@@ -180,11 +175,12 @@ index fc413a9..600898a 100644
 +    }
 +
 +    count = rpmdbCountPackages(appdb, Name);
++    provides = rpmdbCountProvides(appdb, Name);
 +#ifdef RPM_DEBUG
-+    printf("DEBUG: %s, %s, line %d: %s %s %s %d\n", 
-+           __FILE__, __func__, __LINE__, dbpath, Name, DNEVR, count);
++    printf("DEBUG: %s, %s, line %d: %s %s %s %d %d\n", 
++           __FILE__, __func__, __LINE__, dbpath, Name, DNEVR, count, provides);
 +#endif
-+    if (count == 0)
++    if (count == 0 && provides == 0)
 +        rc = 1;
 +
 +cleanup:
@@ -199,7 +195,7 @@ index fc413a9..600898a 100644
  /**
   * Check dep for an unsatisfied dependency.
   * @param ts		transaction set
-@@ -601,6 +652,10 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -601,6 +648,10 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
   */
  static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
  {
@@ -210,7 +206,7 @@ index fc413a9..600898a 100644
      tsMembers tsmem = rpmtsMembers(ts);
      int rc;
      int retrying = 0;
-@@ -732,6 +787,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
+@@ -732,6 +783,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
      }
  }
  
@@ -240,7 +236,7 @@ index fc413a9..600898a 100644
  /* Check a given dependency against installed packages */
  static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
  			  rpmTag depTag, const char *dep)
-@@ -1047,3 +1125,175 @@ exit:
+@@ -1047,3 +1121,175 @@ exit:
  	(void) rpmtsCloseDB(ts);
      return rc;
  }
@@ -775,7 +771,7 @@ index 4adb3d1..bb719b6 100644
  }
  #endif
 diff --git a/lib/rpmdb.c b/lib/rpmdb.c
-index 6499efc..443e174 100644
+index 6499efc..63977b1 100644
 --- a/lib/rpmdb.c
 +++ b/lib/rpmdb.c
 @@ -549,7 +549,7 @@ static rpmdb newRpmdb(const char * root, const char * home,
@@ -799,7 +795,35 @@ index 6499efc..443e174 100644
  int rpmdbInit (const char * prefix, int perms)
  {
      rpmdb db = NULL;
-@@ -1619,6 +1624,111 @@ top:
+@@ -799,6 +804,27 @@ int rpmdbCountPackages(rpmdb db, const char * name)
+     return count;
+ }
+ 
++int rpmdbCountProvides(rpmdb db, const char * name)
++{
++    int count = -1;
++    dbiIndex dbi = NULL;
++
++    if (name != NULL && indexOpen(db, RPMDBI_PROVIDENAME, 0, &dbi) == 0) {
++	    dbiIndexSet matches = NULL;
++
++	    rpmRC rc = indexGet(dbi, name, strlen(name), &matches);
++
++	    if (rc == RPMRC_OK) {
++	        count = dbiIndexSetCount(matches);
++	    } else {
++	        count = (rc == RPMRC_NOTFOUND) ? 0 : -1;
++	    }
++	    dbiIndexSetFree(matches);
++    }
++
++    return count;
++}
++
+ /**
+  * Attempt partial matches on name[-version[-release]][.arch] strings.
+  * @param db		rpmdb handle
+@@ -1619,6 +1645,111 @@ top:
      return mi->mi_h;
  }
  
@@ -912,10 +936,35 @@ index 6499efc..443e174 100644
   * sort the iterator by (recnum, filenum)
   * Return database iterator.
 diff --git a/lib/rpmdb.h b/lib/rpmdb.h
-index 4bbd465..5c0648c 100644
+index 4bbd465..03c6c81 100644
 --- a/lib/rpmdb.h
 +++ b/lib/rpmdb.h
-@@ -146,6 +146,14 @@ rpmdbMatchIterator rpmdbInitIterator(rpmdb db, rpmDbiTagVal rpmtag,
+@@ -54,13 +54,21 @@ rpmop rpmdbOp(rpmdb db, rpmdbOpX opx);
+ int rpmdbOpenAll (rpmdb db);
+ 
+ /** \ingroup rpmdb
+- * Return number of instances of package in rpm database.
+- * @param db		rpm database
+- * @param name		rpm package name
++ * Return number of instances of package in rpm or isoft-app database.
++ * @param db		rpm or isoft-app database
++ * @param name		rpm or isoft-app package name
+  * @return		number of instances
+  */
+ int rpmdbCountPackages(rpmdb db, const char * name);
+ 
++/** \ingroupd rpmdb
++ * Return number of instances of provides in rpm or isoft-app database.
++ * @param db        rpm or isoft-app database
++ * @param name      rpm or isoft-app provide name
++ * @return      number of instances
++ */
++int rpmdbCountProvides(rpmdb db, const char *name);
++
+ /** \ingroup rpmdb
+  * Return header join key for current position of rpm database iterator.
+  * @param mi		rpm database iterator
+@@ -146,6 +154,14 @@ rpmdbMatchIterator rpmdbInitIterator(rpmdb db, rpmDbiTagVal rpmtag,
  Header rpmdbNextIterator(rpmdbMatchIterator mi);
  
  /** \ingroup rpmdb
