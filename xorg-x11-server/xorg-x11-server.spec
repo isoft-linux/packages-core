@@ -76,7 +76,7 @@ BuildRequires: xorg-x11-font-utils
 BuildRequires: libXv-devel libxshmfence-devel
 BuildRequires: libepoxy-devel
 BuildRequires: pixman-devel libpciaccess-devel byacc flex
-BuildRequires: mesa-libGL-devel >= 7.1-0.36
+BuildRequires: mesa-libGL-devel mesa-libEGL-devel 
 BuildRequires: mesa-libgbm-devel
 BuildRequires: nettle-devel
 BuildRequires: libdrm-devel kernel-devel
