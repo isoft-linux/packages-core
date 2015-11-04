@@ -1648,18 +1648,9 @@ index 5231c80..1dff76d 100644
   *
   * @param ts		transaction set
 diff --git a/lib/transaction.c b/lib/transaction.c
-index 8f440b7..d5afe97 100644
+index 8f440b7..e0a71c9 100644
 --- a/lib/transaction.c
 +++ b/lib/transaction.c
-@@ -430,7 +430,7 @@ static void handleInstInstalledFile(const rpmts ts, rpmte p, rpmfiles fi, int fx
- 	if (rpmtsFilterFlags(ts) & RPMPROB_FILTER_REPLACEOLDFILES)
- 	    rConflicts = 0;
- 
--	if (rConflicts) {
-+	if (0) {
- 	    char *altNEVR = headerGetAsString(otherHeader, RPMTAG_NEVRA);
- 	    char *fn = rpmfilesFN(fi, fx);
- 	    rpmteAddProblem(p, RPMPROB_FILE_CONFLICT, altNEVR, fn,
 @@ -1128,13 +1128,14 @@ void checkInstalledFiles(rpmts ts, uint64_t fileCount, fingerPrintCache fpc)
   * - verify package arch/os.
   * - verify package epoch:version-release is newer.

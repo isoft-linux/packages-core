@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 18
+Release: 19
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -408,6 +408,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 04 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- By default %_isoftapp macro is N, editable in /usr/lib/rpm/isoft/macros
+- Fix conflict issue.
+
 * Tue Nov 03 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Add rpmdbCountProvides API for verifying isoft-app db.
 - Fix vendor in file check issue.

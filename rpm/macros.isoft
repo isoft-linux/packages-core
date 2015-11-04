@@ -2,6 +2,7 @@
 # ---- configure macros.  note that most of these are inherited
 #      from the defaults.
 #
+%_isoftapp          N
 %_localstatedir		/var
 
 %_pkgdocdir             %{_docdir}/%{name}
