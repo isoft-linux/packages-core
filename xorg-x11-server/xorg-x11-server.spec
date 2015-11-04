@@ -13,8 +13,8 @@
 
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
-Version:   1.17.2
-Release:   18
+Version:   1.17.4
+Release:   2
 URL:       http://www.x.org
 License:   MIT
 
@@ -49,10 +49,6 @@ Patch7025: 0001-Always-install-vbe-and-int10-sdk-headers.patch
 Patch7027: xserver-autobind-hotplug.patch
 # submitted: http://lists.x.org/archives/xorg-devel/2013-October/037996.html
 Patch9100: exa-only-draw-valid-trapezoids.patch
-# http://lists.x.org/archives/xorg-devel/2015-September/047304.html
-Patch9200: 0001-present-Don-t-stash-the-MSC-value-when-present_get_u.patch
-# http://lists.x.org/archives/xorg-devel/2015-October/047558.html
-Patch9300: 0001-linux-Do-not-call-FatalError-from-xf86CloseConsole.patch
 # because the display-managers are not ready yet, do not upstream
 Patch10000: 0001-hack-Make-the-suid-root-wrapper-always-start-.patch
 # Fix build with gcc5, submitted upstream, likely needs a better fix
@@ -77,13 +73,20 @@ BuildRequires: libXt-devel libdmx-devel libXmu-devel libXrender-devel
 BuildRequires: libXi-devel libXpm-devel libXaw-devel libXfixes-devel
 #autoreconf need it
 BuildRequires: xorg-x11-font-utils
-BuildRequires: libXv-devel libxshmfence
+BuildRequires: libXv-devel libxshmfence-devel
 BuildRequires: libepoxy-devel
 BuildRequires: pixman-devel libpciaccess-devel byacc flex
 BuildRequires: mesa-libGL-devel >= 7.1-0.36
+BuildRequires: mesa-libgbm-devel
+BuildRequires: nettle-devel
 BuildRequires: libdrm-devel kernel-devel
 BuildRequires: dbus-devel
-
+BuildRequires: tslib-devel
+BuildRequires: systemd-devel
+BuildRequires: libxcb-devel xcb-util-devel xcb-util-image-devel xcb-util-keysyms-devel xcb-util-renderutil-devel xcb-util-wm-devel
+BuildRequires: libwayland-client-devel libwayland-server-devel
+BuildRequires: gawk make doxygen xmlto libxslt flex bison gdbm-devel kernel-headers
+BuildRequires: libgcrypt-devel openssl-devel 
 Requires: libdrm 
 
 %description
@@ -245,8 +248,6 @@ drivers, input drivers, or other X modules should install this package.
 %patch7025 -p1
 %patch7027 -p1
 %patch9100 -p1
-%patch9200 -p1
-%patch9300 -p1
 %patch10000 -p1
 %patch10001 -p1
 %patch10003 -p1
@@ -433,6 +434,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 1.17.4-2
+- Update to 1.17.4
+
 * Wed Oct 28 2015 Cjacker <cjacker@foxmail.com> - 1.17.2-18
 - Add xvfb-run script
 
