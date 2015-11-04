@@ -1,6 +1,6 @@
 Name:           repairdev
-Version:        0.2
-Release:        3
+Version:        0.3
+Release:        1
 Summary:        fix hardware device for isoft linux
 
 License:        GPL
@@ -34,6 +34,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/repairdev
 
 %changelog
+* Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 0.3-2
+- update to 0.3.
+
 * Tue Nov 03 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 0.2-3
 - don't use %{_unitdir} on koji.
 
