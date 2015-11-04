@@ -1,14 +1,20 @@
 Name: intltool
 Summary: Utility for internationalizing various kinds of data files.
 Version: 0.51.0
-Release: 3
+Release: 4
 License: GPL
-Source: %{name}-%{version}.tar.gz
 URL:    http://freedesktop.org/wiki/Software/intltool/ 
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+Source0: %{name}-%{version}.tar.gz
+Patch0: intltool-merge-Create-cache-file-atomically.patch
+
+BuildRequires: perl(XML::Parser)
+
+Requires: perl(XML::Parser)
 
 Requires: patch
 Requires: gettext
+Requires: automake
+Requires: gettext-devel
 
 BuildArch: noarch
 
@@ -22,6 +28,7 @@ them in the po files.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %configure
@@ -47,6 +54,9 @@ make check
 %{_mandir}/man*/*
 
 %changelog
+* Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 0.51.0-4
+- Add patch0, Fix BuildRequires
+
 * Wed Nov 04 2015 kun.li@i-soft.com.cn - 0.51.0-3
 - ADD Requires: gettext
 
