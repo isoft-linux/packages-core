@@ -3,12 +3,12 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 48.llvm37.git 
+Release: 49.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
 
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: mesa-39bb59a.tar.gz 
+Source0: mesa-4bc16ad.tar.gz 
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
@@ -485,6 +485,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-49.llvm37.git
+- Update to git 4bc16ad, We will update mesa codes Util mesa 11.1 released
+
 * Sun Nov 01 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-48.llvm37.git
 - Update to git 39bb59a
 
