@@ -408,7 +408,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Nov 04 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+* Wed Nov 04 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - By default %_isoftapp macro is N, editable in /usr/lib/rpm/isoft/macros
 - Fix conflict issue.
 
