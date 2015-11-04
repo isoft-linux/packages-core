@@ -1,7 +1,7 @@
 Summary: xkeyboard-config alternative xkb data files
 Name: xkeyboard-config
 Version: 2.15
-Release: 4
+Release: 5
 License: MIT
 Group: User Interface/X
 URL: http://www.x.org
@@ -9,16 +9,25 @@ URL: http://www.x.org
 Source0: http://ftp.x.org/pub/individual/data/xkeyboard-config/xkeyboard-config-%{version}.tar.bz2
 
 Patch0: xkeyboard-config-zh_CN.patch
-BuildArch: noarch
 
-BuildRequires: pkgconfig
-BuildRequires: intltool
-BuildRequires: perl-XML-Parser
+BuildRequires:  pkgconfig
+BuildRequires:  gettext
+BuildRequires:  intltool
+BuildRequires:  libtool
+BuildRequires:  libxslt
+BuildRequires:  perl(XML::Parser)
+BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(x11) >= 1.4.3
+BuildRequires:  pkgconfig(xorg-macros) >= 1.12
+BuildRequires:  pkgconfig(xproto) >= 7.0.20
+BuildRequires:  xorg-x11-xkb-utils
 
 Provides: xkbdata
 Provides: xkeyboard-config
 Provides: xorg-x11-xkbdata
 Provides: %{name}-devel
+
+BuildArch: noarch
 
 %description
 xkeyboard-config alternative xkb data files
@@ -66,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/xkeyboard-config.7.gz
 
 %changelog
+* Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 2.15-5
+- Add all BuildRequires
+
 * Wed Nov 04 2015 kun.li@i-soft.com.cn - 2.15-4
 - add patch0  xkeyboard-config-zh_CN.patch
 
