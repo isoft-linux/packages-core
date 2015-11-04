@@ -25,9 +25,14 @@ Source0: %{tarball}-92e7c93.tar.gz
 BuildRequires: pkgconfig
 BuildRequires: autoconf automake libtool
 BuildRequires: xorg-x11-server-sdk >= 1.3.0
+BuildRequires: xorg-x11-proto-devel
 BuildRequires: libXvMC-devel
 BuildRequires: mesa-libGL-devel >= 6.5-9
+BuildRequires: mesa-libgbm-devel
 BuildRequires: libdrm-devel >= 2.4.62-3
+#for libudev-devel
+BuildRequires: systemd-devel
+
 BuildRequires: xcb-util
 Requires: xorg-x11-server-Xorg >= 1.1.0-1
 
@@ -39,7 +44,9 @@ X.Org X11 AMD video driver.
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
-%configure 
+%configure \
+    --enable-udev \
+    --enable-glamor
 make %{?_smp_mflags}
 
 %install
