@@ -3,9 +3,12 @@ Name: xkeyboard-config
 Version: 2.15
 Release: 2
 License: MIT
+Group: User Interface/X
 URL: http://www.x.org
 
 Source0: http://ftp.x.org/pub/individual/data/xkeyboard-config/xkeyboard-config-%{version}.tar.bz2
+
+Patch0: xkeyboard-config-zh_CN.patch
 BuildArch: noarch
 
 BuildRequires: pkgconfig
@@ -22,6 +25,7 @@ xkeyboard-config alternative xkb data files
 
 %prep
 %setup -q 
+%patch0 -p1
 %build
 %configure \
     --disable-runtime-deps \
@@ -62,9 +66,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/xkeyboard-config.7.gz
 
 %changelog
-* Fri Oct 23 2015 cjacker - 2.15-2
-- Rebuild for new 4.0 release
-
 * Tue Dec 10 2013 Cjacker <cjacker@gmail.com>
 - first build, prepare for the new release.
-
+- add patch0  xkeyboard-config-zh_CN.patch
