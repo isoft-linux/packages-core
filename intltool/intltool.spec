@@ -1,13 +1,14 @@
 Name: intltool
 Summary: Utility for internationalizing various kinds of data files.
 Version: 0.51.0
-Release: 2
+Release: 3
 License: GPL
 Source: %{name}-%{version}.tar.gz
 URL:    http://freedesktop.org/wiki/Software/intltool/ 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 Requires: patch
+Requires: gettext
 
 BuildArch: noarch
 
@@ -46,6 +47,9 @@ make check
 %{_mandir}/man*/*
 
 %changelog
+* Wed Nov 04 2015 kun.li@i-soft.com.cn - 0.51.0-3
+- ADD Requires: gettext
+
 * Fri Oct 23 2015 cjacker - 0.51.0-2
 - Rebuild for new 4.0 release
 
