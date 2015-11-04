@@ -14,6 +14,7 @@ Patch2: libobjc2-fix-c++abi-diff-to-stdc++.patch
 Patch3: libobjc-property-should-have-W-with-Weak.patch
 
 BuildRequires: clang llvm libllvm-devel libllvm-static libclang-devel libclang-static libcxx-devel libcxxabi-devel
+BuildRequires: cmake
 Requires: clang
 
 %description
