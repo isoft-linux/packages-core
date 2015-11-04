@@ -3,7 +3,7 @@
 Summary: A pipeline manipulation library
 Name: libpipeline
 Version: 1.4.1
-Release: 2
+Release: 3
 License: GPLv3+
 Group: Development/Libraries
 URL: http://libpipeline.nongnu.org/
@@ -62,5 +62,8 @@ rm $RPM_BUILD_ROOT/%{_libdir}/libpipeline.la
 %{_mandir}/man3/*
 
 %changelog
+* Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 1.4.1-3
+- rebuilt
+
 * Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 1.4.1-2
 - init for isoft.
