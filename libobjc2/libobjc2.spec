@@ -1,6 +1,6 @@
 Summary: GNUstep Objective-C Runtime
 Name: libobjc2 
-Version: 1.8
+Version: 1.8.1
 Release: 2
 URL: https://github.com/gnustep/libobjc2
 License: see COPYING
@@ -13,7 +13,7 @@ Patch2: libobjc2-fix-c++abi-diff-to-stdc++.patch
 #weak should have a signature W.
 Patch3: libobjc-property-should-have-W-with-Weak.patch
 
-BuildRequires: clang
+BuildRequires: clang llvm libllvm-devel libllvm-static libclang-devel libclang-static libcxx-devel libcxxabi-devel
 Requires: clang
 
 %description
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so
 %{_libdir}/*.a
 %changelog
+* Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 1.8.1-2
+- Update to 1.8.1
+
 * Fri Oct 23 2015 cjacker - 1.8-2
 - Rebuild for new 4.0 release
 
