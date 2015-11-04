@@ -4,7 +4,7 @@
 Summary: Tools for searching and reading man pages
 Name: man-db
 Version: 2.7.4
-Release: 1
+Release: 2
 # GPLv2+ .. man-db
 # GPLv3+ .. gnulib
 License: GPLv2+ and GPLv3+
@@ -141,22 +141,16 @@ fi
 %{_mandir}/man8/accessdb.8*
 %{_mandir}/man8/catman.8*
 %{_mandir}/man8/mandb.8*
-#%lang(da)   %{_datadir}/man/da/man*/*
-#%lang(de)   %{_datadir}/man/de/man*/*
 %lang(es)   %{_datadir}/man/es/man*/*
-#%lang(fr)   %{_datadir}/man/fr/man*/*
-#%lang(id)   %{_datadir}/man/id/man*/*
 %lang(it)   %{_datadir}/man/it/man*/*
-#%lang(ja)   %{_datadir}/man/ja/man*/*
-#%lang(nl)   %{_datadir}/man/nl/man*/*
-#%lang(pl)   %{_datadir}/man/pl/man*/*
-#%lang(ru)   %{_datadir}/man/ru/man*/*
-#%lang(zh_CN)   %{_datadir}/man/zh_CN/man*/*
 
 %files cron
 %config(noreplace) %{_sysconfdir}/cron.daily/man-db.cron
 %config(noreplace) %{_sysconfdir}/sysconfig/man-db
 
 %changelog
-* Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 2.7.4-3
+* Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 2.7.4-2
+- rebuilt
+
+* Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 2.7.4-1
 - init for isoft.
