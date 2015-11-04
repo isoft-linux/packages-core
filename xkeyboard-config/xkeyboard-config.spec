@@ -1,7 +1,7 @@
 Summary: xkeyboard-config alternative xkb data files
 Name: xkeyboard-config
 Version: 2.15
-Release: 2
+Release: 3
 License: MIT
 Group: User Interface/X
 URL: http://www.x.org
