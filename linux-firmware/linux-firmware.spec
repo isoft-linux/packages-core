@@ -3,13 +3,13 @@
 %global _firmwarepath	/lib/firmware
 
 Name: linux-firmware
-Version: 20151013
-Release: %{firmware_release}.git%{?dist}.2
+Version: 20151105
+Release: %{firmware_release}.git%{?dist}.3
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
 URL: http://www.kernel.org/
 #git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-Source0: %{name}.tar.gz
+Source0: linux-firmware-%{version}.tar.xz 
 
 #git repos hold the lastest iwlwifi ucode.
 #git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/linux-firmware.git
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 20151105-58.git.3
+- Update, add Intel Skylake audio firmware
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 20151013-58.git.2
 - Update to latest git.
 - Change firmware path from /usr/lib to /lib.
