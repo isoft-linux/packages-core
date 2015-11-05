@@ -1,6 +1,6 @@
 Name: cmake
 Version: 3.3.1
-Release: 2
+Release: 3
 Summary: Cross-platform make system
 
 License: BSD
@@ -9,10 +9,19 @@ Source0: http://www.cmake.org/files/v3.3/cmake-%{version}.tar.gz
 Source2: macros.cmake
 Source3: cmake-init.el
 Patch0: cmake-set-lib-to-usr_lib.patch
+#cmake can only detect python3 up to 3.4
+#here we added python 3.5/3.6 version.
+#so it can find it in future.
 
-BuildRequires:  ncurses-devel
+Patch1: cmake-add-more-python3-ver.patch
 BuildRequires:  expat-devel, zlib-devel, libcurl-devel
-#BuildRequires:  libarchive-devel
+BuildRequires:  gcc-gfortran
+BuildRequires:  ncurses-devel, libX11-devel
+BuildRequires:  bzip2-devel
+BuildRequires:  jsoncpp-devel
+BuildRequires:  libarchive-devel
+BuildRequires:  python-sphinx
+BuildRequires:  xz-devel
 Requires:       rpm
 
 
@@ -28,6 +37,8 @@ generation, code generation, and template instantiation.
 %prep
 %setup -q -n cmake-%{version}
 %patch0 -p1
+%patch1 -p1
+
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS="$RPM_OPT_FLAGS"
@@ -74,6 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 3.3.1-3
+- Add more python3 version support
+
 * Fri Oct 23 2015 cjacker - 3.3.1-2
 - Rebuild for new 4.0 release
 

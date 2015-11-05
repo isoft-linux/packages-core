@@ -1,0 +1,24 @@
+diff -Nur cmake-3.3.1/Modules/FindPythonInterp.cmake cmake-3.3.1n/Modules/FindPythonInterp.cmake
+--- cmake-3.3.1/Modules/FindPythonInterp.cmake	2015-08-13 22:56:59.000000000 +0800
++++ cmake-3.3.1n/Modules/FindPythonInterp.cmake	2015-11-05 15:59:17.765601863 +0800
+@@ -51,7 +51,7 @@
+ 
+ set(_PYTHON1_VERSIONS 1.6 1.5)
+ set(_PYTHON2_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
+-set(_PYTHON3_VERSIONS 3.4 3.3 3.2 3.1 3.0)
++set(_PYTHON3_VERSIONS 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
+ 
+ if(PythonInterp_FIND_VERSION)
+     if(PythonInterp_FIND_VERSION_COUNT GREATER 1)
+diff -Nur cmake-3.3.1/Modules/FindPythonLibs.cmake cmake-3.3.1n/Modules/FindPythonLibs.cmake
+--- cmake-3.3.1/Modules/FindPythonLibs.cmake	2015-08-13 22:56:59.000000000 +0800
++++ cmake-3.3.1n/Modules/FindPythonLibs.cmake	2015-11-05 15:59:04.772602096 +0800
+@@ -55,7 +55,7 @@
+ 
+ set(_PYTHON1_VERSIONS 1.6 1.5)
+ set(_PYTHON2_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
+-set(_PYTHON3_VERSIONS 3.4 3.3 3.2 3.1 3.0)
++set(_PYTHON3_VERSIONS 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
+ 
+ if(PythonLibs_FIND_VERSION)
+     if(PythonLibs_FIND_VERSION_COUNT GREATER 1)
