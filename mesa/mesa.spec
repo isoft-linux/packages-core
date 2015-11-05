@@ -3,12 +3,12 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 49.llvm37.git 
+Release: 50.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
 
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: mesa-4bc16ad.tar.gz 
+Source0: mesa-6d3a24b.tar.gz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
@@ -485,6 +485,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-50.llvm37.git
+- Update to latest git, Intel  ARB_arrays_of_arrays  support included
+
 * Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-49.llvm37.git
 - Update to git 4bc16ad, We will update mesa codes Util mesa 11.1 released
 
