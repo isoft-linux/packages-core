@@ -15,7 +15,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 22.%{snapver}
+Release: 23.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -159,7 +159,10 @@ about it in /var/log/apt.log, or in the configured file.
 
 
 %prep
-%setup -q -n %{name}-%{srcver}
+%setup -q -c
+
+#apply common patches.
+pushd %{name}-%{srcver}
 %patch0 -p1 -b .ppc
 %patch1 -p0 -b .mmap
 %patch2 -p1 -b .gcc47
@@ -167,17 +170,26 @@ about it in /var/log/apt.log, or in the configured file.
 %patch4 -p1 -b .format-security
 %patch5 -p1 -b .rpm-suggest-fix
 %patch6 -p1 -b .lua-53
-%patch7 -p1 -b .isoftapp
 
 install -pm 644 %{SOURCE19} comps2prio.xsl
-
 # don't require python, lua etc because of stuff in doc/contrib
 find contrib/ -type f | xargs chmod 0644
 
-%build
-CXXFLAGS="%{optflags} -DLUA_COMPAT_MODULE"
+popd
 
-%configure --disable-dependency-tracking --disable-static
+#cp original apt to apt-<version>-isoftapp, and apply our isoftapp customized pactch
+cp -r %{name}-%{srcver} %{name}-%{srcver}-isoftapp
+pushd %{name}-%{srcver}-isoftapp
+%patch7 -p1 -b .isoftapp
+popd
+
+
+%build
+#build common apt.
+pushd %{name}-%{srcver}
+
+CXXFLAGS="%{optflags} -DLUA_COMPAT_MODULE"
+%configure --disable-static
 
 make %{?_smp_mflags}
 
@@ -190,11 +202,19 @@ cp -p %{SOURCE5} rpmpriorities
 %if %{generate_rpmpriorities}
 xsltproc -o rpmpriorities comps2prio.xsl %{comps}
 %endif
+popd #common apt.
 
+#static build apt with isoftapp support
+pushd %{name}-%{srcver}-isoftapp
+CXXFLAGS="%{optflags} -DLUA_COMPAT_MODULE"
+%configure --enable-static --disable-shared
+make %{?_smp_mflags}
+popd #apt with isoftapp support.
 
 %install
+#install common apt.
+pushd %{name}-%{srcver}
 make install DESTDIR=%{buildroot} includedir=%{_includedir}/apt-pkg
-%find_lang %{name}
 
 # The state files
 mkdir -p %{buildroot}%{_localstatedir}/cache/apt/archives/partial
@@ -255,14 +275,23 @@ install -pm 644 contrib/log/log.conf %{buildroot}/%{_sysconfdir}/apt/apt.conf.d/
 # nuke .la files
 rm -f %{buildroot}%{_libdir}/*.la
 
+popd #end installation of common apt.
+
+#install static build apt-get with isoftapp support.
+#what we need is 'apt-get', also we rename it to 'app-get'
+pushd %{name}-%{srcver}-isoftapp
+install -m 0755 cmdline/apt-get %{buildroot}/%{_bindir}/isoftapp
+popd
+
+%find_lang %{name}
+
 %post -p /sbin/ldconfig
-
-
 %postun -p /sbin/ldconfig
 
 %files -f %{name}.lang
-%doc AUTHORS* COPYING* ABOUT* TODO comps2prio.xsl doc/examples/ contrib/
-%doc ChangeLog
+#the build dir layout changed. we comment out this now.
+#doc AUTHORS* COPYING* ABOUT* TODO comps2prio.xsl doc/examples/ contrib/
+#doc ChangeLog
 
 %dir %{_sysconfdir}/apt/
 %config(noreplace) %{_sysconfdir}/apt/apt.conf
@@ -283,6 +312,7 @@ rm -f %{buildroot}%{_libdir}/*.la
 %{_bindir}/apt-config
 %{_bindir}/apt-shell
 %{_bindir}/apt-get
+%{_bindir}/isoftapp
 %{_bindir}/countpkglist
 %{_bindir}/genpkglist
 %{_bindir}/gensrclist
@@ -333,6 +363,9 @@ rm -f %{buildroot}%{_libdir}/*.la
 
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 0.5.15lorg3.95-23.git522
+- enable static build apt-get with isoftapp support, do not affect original apt
+
 * Mon Nov 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Restore original seperate patches of lua and others.
 - Apply isoftapp based on them.
