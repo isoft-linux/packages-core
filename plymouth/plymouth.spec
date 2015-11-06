@@ -6,7 +6,7 @@
 Summary: Graphical Boot Animation and Logger
 Name: plymouth
 Version: 0.8.9
-Release: 6
+Release: 7
 License: GPLv2+
 Source0: http://freedesktop.org/software/plymouth/releases/%{name}-%{version}.tar.bz2
 
@@ -163,16 +163,7 @@ fi
 %{_datadir}/plymouth/themes/fade-in/fade-in.plymouth
 
 %dir %{_datadir}/plymouth/themes/isoft-splash
-%{_datadir}/plymouth/themes/isoft-splash/background.png
-%{_datadir}/plymouth/themes/isoft-splash/logo.png
-%{_datadir}/plymouth/themes/isoft-splash/spec0.png
-%{_datadir}/plymouth/themes/isoft-splash/spec1.png
-%{_datadir}/plymouth/themes/isoft-splash/password_field.png
-%{_datadir}/plymouth/themes/isoft-splash/progress_bar.png
-%{_datadir}/plymouth/themes/isoft-splash/progress_dot_off.png
-%{_datadir}/plymouth/themes/isoft-splash/progress_dot_on.png
-%{_datadir}/plymouth/themes/isoft-splash/isoft-splash.plymouth
-%{_datadir}/plymouth/themes/isoft-splash/isoft-splash.script
+%{_datadir}/plymouth/themes/isoft-splash/*
 
 %dir %{_datadir}/plymouth/themes/spinner
 %{_datadir}/plymouth/themes/spinner/*.png
@@ -221,6 +212,9 @@ fi
 
 
 %changelog
+* Fri Nov 06 2015 sulit <sulitsrc@gmail.com> - 0.8.9-7
+- update isoft-splash.txz
+
 * Fri Nov 06 2015 sulit <sulitsrc@gmail.com> - 0.8.9-6
 - update isoft-splash.txz
 
