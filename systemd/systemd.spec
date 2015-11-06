@@ -7,13 +7,15 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        227
-Release:        2
+Release:        3
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
+
+Patch0: systemd-fix-logind-failed-upstream-issue-1505.patch
 
 BuildRequires:  libcap-devel
 BuildRequires:  pam-devel
@@ -110,6 +112,7 @@ glib-based applications using libudev functionality.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -470,6 +473,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Fri Nov 06 2015 Cjacker <cjacker@foxmail.com> - 227-3
+- Fix 1505 issue, logind failed sometimes
+
 * Fri Oct 23 2015 cjacker - 227-2
 - Rebuild for new 4.0 release
 
