@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        38%{?dist}
+Release:        39%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -529,6 +529,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Fri Nov 06 2015 sulit <sulitsrc@gmail.com> - 1:2.02-39
+- update isoft-silence-theme.txz
+
 * Fri Nov 06 2015 sulit <sulitsrc@gmail.com> - 1:2.02-38
 - update isoft-silence-theme.txz
 
