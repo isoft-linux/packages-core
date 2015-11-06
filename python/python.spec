@@ -20,6 +20,7 @@ License:	Python
 URL:		http://www.python.org
 Source0:	Python-%{version}.tar.xz
 
+Source9:  macros.python
 Source10:   macros.python2
 
 Patch30:    00153-fix-test_gdb-noise.patch  
@@ -38,6 +39,7 @@ BuildRequires:  tix-devel
 
 
 BuildRequires: autoconf
+BuildRequires: bluez-libs-devel
 BuildRequires: bzip2
 BuildRequires: bzip2-devel
 
@@ -58,7 +60,6 @@ BuildRequires: pkgconfig
 BuildRequires: readline-devel
 BuildRequires: sqlite-devel
 BuildRequires: zlib-devel
-
 
 Requires:	openssl
 
@@ -149,6 +150,7 @@ make install DESTDIR=%{buildroot}
 
 # Install macros for rpm:
 mkdir -p %{buildroot}/%{_rpmconfigdir}/macros.d/
+install -m 644 %{SOURCE9} %{buildroot}/%{_rpmconfigdir}/macros.d/
 install -m 644 %{SOURCE10} %{buildroot}/%{_rpmconfigdir}/macros.d/
 
 
@@ -186,6 +188,7 @@ EXTRATESTOPTS="$EXTRATESTOPTS" make test
 %{_bindir}/python*-config
 %{_libdir}/libpython*.so
 
+%{_rpmconfigdir}/macros.d/macros.python
 %{_rpmconfigdir}/macros.d/macros.python2
 
 %files tools
