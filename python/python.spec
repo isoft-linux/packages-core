@@ -13,7 +13,7 @@
 
 Name:		python
 Version:	2.7.10
-Release:	2
+Release:	3
 Summary:    An interpreted, interactive, object-oriented programming language	
 
 License:	Python
@@ -204,6 +204,9 @@ EXTRATESTOPTS="$EXTRATESTOPTS" make test
 
 
 %changelog
+* Fri Nov 06 2015 Cjacker <cjacker@foxmail.com> - 2.7.10-3
+- Improve python rpm macro
+
 * Fri Oct 23 2015 cjacker - 2.7.10-2
 - Rebuild for new 4.0 release
 
