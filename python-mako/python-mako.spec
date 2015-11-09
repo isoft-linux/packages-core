@@ -3,8 +3,8 @@
 %global upname Mako
 
 Name: python-mako
-Version: 1.0.1
-Release: 3%{?dist}
+Version: 1.0.3
+Release: 4%{?dist}
 Summary: Mako template library for Python
 
 # Mostly MIT, but _ast_util.py is Python licensed.
@@ -115,13 +115,19 @@ popd
 rm -rf doc/build
 
 %check
-#PYTHONPATH=$(pwd) nosetests
-#
-#%if 0%{?with_python3}
-#pushd %{py3dir}
-#PYTHONPATH=$(pwd) nosetests-%{python3_version}
-#popd
-#%endif
+# we put it in 'core' components category and no nosetest in it.
+# add runtime detect of nose
+if [ -x "/usr/bin/nosetest" ]; then
+  PYTHONPATH=$(pwd) nosetests
+fi
+
+%if 0%{?with_python3}
+pushd %{py3dir}
+if [ -x "/usr/bin/nosetests-%{python3_version}" ]; then
+  PYTHONPATH=$(pwd) nosetests-%{python3_version}
+fi
+popd
+%endif
 
 %clean
 rm -rf %{buildroot}
@@ -146,6 +152,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 1.0.1-4
+- Rebuild with python 3.5
+
 * Fri Oct 23 2015 cjacker - 1.0.1-3
 - Rebuild for new 4.0 release
 

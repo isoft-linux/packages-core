@@ -3,7 +3,7 @@
 Summary: A utility for determining file types
 Name: file
 Version: 5.23
-Release: 16
+Release: 17
 License: BSD
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
 URL: http://www.darwinsys.com/file/
@@ -146,11 +146,13 @@ rm -rf $RPM_BUILD_ROOT
 %{python3_sitelib}/magic.py
 %{python3_sitelib}/*egg-info
 %{python3_sitelib}/__pycache__/magic*.pyc
-%{python3_sitelib}/__pycache__/magic*.pyo
 %endif
 
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 5.23-17
+- Rebuild with python 3.5
+
 * Fri Oct 23 2015 cjacker - 5.23-16
 - Rebuild for new 4.0 release
 

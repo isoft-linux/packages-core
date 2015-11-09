@@ -3,7 +3,7 @@
 Summary: An alternate posix capabilities library
 Name: libcap-ng
 Version: 0.7.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: LGPLv2+
 URL: http://people.redhat.com/sgrubb/libcap-ng
 Source0: http://people.redhat.com/sgrubb/libcap-ng/%{name}-%{version}.tar.gz
@@ -124,6 +124,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man8/*
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 0.7.7-4
+- Rebuild with python 3.5
+
 * Fri Oct 23 2015 cjacker - 0.7.7-3
 - Rebuild for new 4.0 release
 

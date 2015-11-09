@@ -2,7 +2,7 @@
 
 Name: python-markupsafe
 Version: 0.23
-Release: 8%{?dist}
+Release: 9%{?dist}
 Summary: Implements a XML/HTML/XHTML Markup safe string for Python
 
 License: BSD
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 0.23-9
+- Rebuild with python 3.5
+
 * Fri Oct 23 2015 cjacker - 0.23-8
 - Rebuild for new 4.0 release
 

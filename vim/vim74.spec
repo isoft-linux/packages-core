@@ -12,7 +12,7 @@ Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 10
+Release: 11
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
@@ -193,6 +193,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/vim/*
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 7.4.909-11
+- Build with python3
+
 * Sun Nov 08 2015 Cjacker <cjacker@foxmail.com> - 7.4.796-10
 - Update to patch level 909
 

@@ -5,7 +5,7 @@
 Summary: Create deltas between rpms
 Name: deltarpm
 Version: 3.6
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: BSD
 URL: http://gitorious.org/deltarpm/deltarpm
 Source: ftp://ftp.suse.com/pub/projects/deltarpm/%{name}-%{version}.tar.bz2
@@ -137,6 +137,9 @@ rm -rf %{buildroot}%{_libdir}/python3*
 %endif
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 3.6-12
+- Rebuild with python 3.5
+
 * Fri Oct 23 2015 cjacker - 3.6-11
 - Rebuild for new 4.0 release
 
