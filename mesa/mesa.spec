@@ -3,17 +3,20 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 50.llvm37.git 
+Release: 52.llvm37.git 
 License: MIT
 URL: http://www.mesa3d.org
 
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: mesa-6d3a24b.tar.gz
+Source0: mesa-df4f9b0.tar.gz 
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
 #By Cjacker.
 Patch0: mesa-fix-build-with-llvm-libc++.patch
+
+#if build mesa with clang, should apply this patch.
+Patch1: mesa-hide-some-symbols-to-workaround-build-with-llvm-clang.patch
 
 BuildRequires: pkgconfig autoconf automake libtool
 BuildRequires: kernel-headers
@@ -248,6 +251,10 @@ Mesa OpenCL development package.
 %setup -q -n %{name} 
 
 %build
+#make sure mesa build with gcc/g++
+export CC=gcc
+export CXX=g++
+
 export CFLAGS="$RPM_OPT_FLAGS"
 #we had to force -fno-rtti -fno-exceptions here.
 #But it will failed clover build.
@@ -485,6 +492,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Nov 08 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-52.llvm37.git
+- Update to df4f9b0
+
+* Sat Nov 07 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-51.llvm37.git
+- Update to mesa-8e9ade7
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-50.llvm37.git
 - Update to latest git, Intel  ARB_arrays_of_arrays  support included
 
