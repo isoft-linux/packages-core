@@ -1,6 +1,6 @@
 Name: libgcrypt
 Version: 1.6.4
-Release: 4 
+Release: 5 
 URL: http://www.gnupg.org/
 Source0: libgcrypt-%{version}.tar.bz2
 License: LGPLv2+
@@ -68,6 +68,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 1.6.4-5
+- Rebuild, fix wrong tripplet
+
 * Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 1.6.4-4
 - Update
 
