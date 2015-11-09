@@ -57,7 +57,7 @@ Patch10: apt-isoftapp-use-own-conf-method-data-dir.patch
 Patch11: 0001-isoft-app-skeleton.patch
 
 # TODO: verify the required minimum Python version
-BuildRequires: autoconf automake m4
+BuildRequires: autoconf automake m4 libtool
 BuildRequires: python-devel >= 2.2
 BuildRequires: swig
 BuildRequires: libxml2-devel
