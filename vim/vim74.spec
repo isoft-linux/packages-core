@@ -1,16 +1,18 @@
 %define withvimspell 0
 %define withhunspell 0
+%define withruby 1
+%define withlua 1
 
 %define baseversion 7.4
 #should as same as Source1
-%define patchlevel 796
+%define patchlevel 909 
 %define vimdir vim74
 
 Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 9
+Release: 10
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
@@ -41,7 +43,17 @@ Patch3010: vim-7.0-syncolor.patch
 Patch3012: vim-7.0-specedit.patch
 Patch3013: vim-add-vala.patch
 
-BuildRequires: ncurses-devel gettext
+BuildRequires: python-devel python3-devel ncurses-devel gettext perl-devel
+BuildRequires: perl(ExtUtils::Embed) perl(ExtUtils::ParseXS)
+BuildRequires: libacl-devel gpm-devel autoconf file
+
+%if %{withruby}
+Buildrequires: ruby-devel ruby
+%endif
+
+%if %{withlua}
+Buildrequires: lua-devel
+%endif
 
 %description
 VIM (VIsual editor iMproved) is an updated and improved version of the
@@ -84,17 +96,19 @@ perl -pi -e "s,bin/nawk,bin/awk,g" runtime/tools/mve.awk
 %patch3013 -p1
 
 %build
+export CFLAGS="%{optflags} -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2"
+export CXXFLAGS="%{optflags} -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2"
 
+#build a minimum vi
 rm -rf mini
 cp -r src mini
-#build a minimum vi
 cd mini
+perl -pi -e "s/\/etc\/vimrc/\/etc\/virc/"  os_unix.h
 %configure \
         --with-features=small \
         --enable-multibyte \
-        --without-x \
-        --disable-nls \
         --disable-netbeans \
+        --without-x \
         --disable-gui \
         --disable-perlinterp \
         --disable-pythoninterp \
@@ -110,11 +124,17 @@ cd src
         --without-x \
         --enable-multibyte \
         --enable-gui=no \
-        --enable-perlinterp=yes \
+        --enable-perlinterp \
         --enable-pythoninterp=dynamic \
+        --enable-python3interp=dynamic \
+        %if "%{withruby}" == "1"
+        --enable-rubyinterp=dynamic \
+        %endif
+        %if "%{withlua}" == "1"
         --enable-luainterp=dynamic \
+        %endif
         --disable-tclinterp \
-        --disable-netbeans \
+        --enable-netbeans \
         --enable-gpm
 make %{?_smp_mflags}
 cd ..
@@ -132,6 +152,7 @@ cp -f %{SOURCE20} %{buildroot}/%{_datadir}/%{name}/vimfiles/template.spec
 
 mkdir -p $RPM_BUILD_ROOT/etc
 install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/vimrc
+install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/virc
 
 #remove this files, do not import unneeded dependencies
 rm -rf $RPM_BUILD_ROOT%{_datadir}/vim/vim74/tools
@@ -149,9 +170,9 @@ cd .. # from src
 install -m0755 mini/vim $RPM_BUILD_ROOT%{_bindir}/vi
 
 #remove localized man page.
-rm -rf $RPM_BUILD_ROOT%{_mandir}/{fr.ISO8859-1, fr.UTF-8, fr, it.ISO8859-1}
-rm -rf $RPM_BUILD_ROOT%{_mandir}/{it.UTF-8, it, ja, pl.ISO8859-1, pl.UTF-8, pl}
-rm -rf $RPM_BUILD_ROOT%{_mandir}/{ru.KOI8-R, ru.UTF-8}
+rm -rf $RPM_BUILD_ROOT%{_mandir}/{fr.ISO8859-1,fr.UTF-8,fr,it.ISO8859-1}
+rm -rf $RPM_BUILD_ROOT%{_mandir}/{it.UTF-8,it,ja,pl.ISO8859-1,pl.UTF-8,pl,pl.ISO8859-2}
+rm -rf $RPM_BUILD_ROOT%{_mandir}/{ru.KOI8-R,ru.UTF-8}
 
 
 %postun
@@ -164,13 +185,17 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %{_sysconfdir}/profile.d/vim.sh
-%{_sysconfdir}/vimrc
+%config(noreplace) %{_sysconfdir}/vimrc
+%config(noreplace) %{_sysconfdir}/virc
 %{_bindir}/*
 %{_mandir}/man1/*
 %dir %{_datadir}/vim
 %{_datadir}/vim/*
 
 %changelog
+* Sun Nov 08 2015 Cjacker <cjacker@foxmail.com> - 7.4.796-10
+- Update to patch level 909
+
 * Fri Oct 23 2015 cjacker - 7.4.796-9
 - Rebuild for new 4.0 release
 

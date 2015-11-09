@@ -13,7 +13,7 @@ set ruler		" show the cursor position all the time
 
 " Only do this part when compiled with support for autocommands
 if has("autocmd")
-  augroup pure64 
+  augroup isoft 
   autocmd!
   " In text files, always limit the width of text to 78 characters
   " autocmd BufRead *.txt set tw=78
