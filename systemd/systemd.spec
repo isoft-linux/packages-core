@@ -39,6 +39,7 @@ BuildRequires:  gnutls-devel
 BuildRequires:  iptables-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  lz4-devel
+BuildRequires:  lz4-static
 BuildRequires:  libxslt
 BuildRequires:  docbook-style-xsl
 BuildRequires:  pkgconfig
