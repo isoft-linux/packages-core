@@ -124,7 +124,7 @@ Patch139: bash-4.3-old-memleak.patch
 
 Patch200: privmode-setuid-fail.patch
 
-
+BuildRequires: bison flex byacc
 BuildRequires: ncurses-devel
 BuildRequires: gettext
 Provides: /bin/sh
