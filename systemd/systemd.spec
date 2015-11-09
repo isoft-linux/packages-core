@@ -7,7 +7,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        227
-Release:        4
+Release:        5
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
@@ -508,6 +508,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 227-5
+- Bump version
+
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 227-4
 - Add yum protect config file, fix build requires
 
