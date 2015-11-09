@@ -2,12 +2,13 @@
 
 Name: dracut
 Version: 043
-Release: 3 
+Release: 4 
 
 Summary: Initramfs generator using udev
 License: GPLv2+ and LGPLv2.1+
 URL: https://dracut.wiki.kernel.org/
 Source0: http://www.kernel.org/pub/linux/utils/boot/dracut/dracut-%{version}.tar.xz
+Patch0: 0001-Fix-default-udev-systemd-dir-detection-in-usr-merge-.patch
 
 BuildRequires: bash 
 
@@ -46,6 +47,7 @@ NFS, iSCSI, NBD, FCoE with the dracut-network package.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1
 
 %build
 export CC=gcc
@@ -258,6 +260,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Nov 07 2015 Cjacker <cjacker@foxmail.com> - 043-4
+- Add patch0
+
 * Fri Oct 23 2015 cjacker - 043-3
 - Rebuild for new 4.0 release
 
