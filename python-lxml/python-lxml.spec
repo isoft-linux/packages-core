@@ -5,14 +5,13 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           python-lxml
-Version:        3.3.6
-Release:        2
+Version:        3.4.4
+Release:        3
 Summary:        ElementTree-like Python bindings for libxml2 and libxslt
 
 License:        BSD
 URL:            http://lxml.de
 Source0:        http://lxml.de/files/lxml-%{version}.tgz
-Source1:        http://lxml.de/files/lxml-%{version}.tgz.asc
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -111,22 +110,14 @@ popd
 BUILD_LIB_DIR=$(find $(pwd) -name "*.so" | head -n 1 | xargs dirname)
 cp $BUILD_LIB_DIR/*.so src/lxml
 export LANG=en_US.utf8
-#%{__python} test.py -p -v
-export PYTHONPATH=src
-#%{__python} selftest.py
-#%{__python} selftest2.py
+%{__python} test.py -p -v
 
 %if 0%{?with_python3}
 pushd %{py3dir}
-
 BUILD_LIB_DIR=$(find $(pwd) -name "*.so" | head -n 1 | xargs dirname)
 cp $BUILD_LIB_DIR/*.so src/lxml
 export LANG=en_US.utf8
-#%{__python3} test.py -p -v
-export PYTHONPATH=src
-#%{__python3} selftest.py
-#%{__python3} selftest2.py
-
+%{__python3} test.py -p -v
 popd
 %endif
 
@@ -152,6 +143,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 3.3.6-3
+- Rebuild with python 3.5
+
 * Sat Oct 24 2015 Cjacker <cjacker@foxmail.com> - 3.3.6-2
 - Rebuild for new 4.0 release.
 

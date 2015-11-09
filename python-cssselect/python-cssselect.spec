@@ -7,7 +7,7 @@
 
 Name:           python-cssselect
 Version:        0.9.1
-Release:        7
+Release:        8
 Summary:        Parses CSS3 Selectors and translates them to XPath 1.0
 
 License:        BSD
@@ -94,6 +94,9 @@ chmod 755 $RPM_BUILD_ROOT/%{python_sitelib}/cssselect/tests.py
 %endif # with_python3
 
 %changelog
+* Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 0.9.1-8
+- Rebuild with python 3.5
+
 * Sat Oct 24 2015 Cjacker <cjacker@foxmail.com> - 0.9.1-7
 - Rebuild for new 4.0 release.
 
