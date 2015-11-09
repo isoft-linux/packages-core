@@ -1,7 +1,7 @@
 Name:    libassuan
 Summary: GnuPG IPC library
 Version: 2.3.0
-Release: 7
+Release: 8
 
 # The library is LGPLv2+, the documentation GPLv3+
 License: LGPLv2+ and GPLv3+
@@ -71,6 +71,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 2.3.0-8
+- Rebuild, fix wrong tripplet cause by koji build system previously.
+
 * Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 2.3.0-7
 - Update
 
