@@ -9,7 +9,6 @@
 #checkout branch: svn co http://llvm.org/svn/llvm-project/<component>/branches/release_XY <component>-XY.src 
 #!!!!!!!!!!!!!!!!!!!!!!!
 
-
 #link binaries and libraries to libcxx/libcxxabi
 %global rebuild_use_libcxx 0 
 
@@ -20,7 +19,6 @@
 #By Cjacker
 
 %global rebuild_drop_libgcc 0 
-
 
 %global enable_rtti 1
 %global enable_exception 1
@@ -50,32 +48,10 @@
 
 Name: llvm
 Version: %{project_version}
-Release: 3.svn20151026
+Release: 4.252402.svn
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of llinois/NCSA Open Source License 
 URL: http://llvm.org
-BuildRequires: clang
-BuildRequires: glibc-devel
-
-%if %{rebuild_use_libcxx}
-BuildRequires: libcxx-devel
-Requires:   libcxx
-%endif
-
-%if %{build_lldb}
-BuildRequires:swig
-%endif
-
-%if %{build_polly}
-BuildRequires: cloog-isl-shared-devel >= 0.18.1
-%endif
-
-BuildRequires: libedit-devel >= 3.0
-BuildRequires: cmake, ninja-build
-BuildRequires: chrpath
-%if %{build_lld}
-Requires: alternatives
-%endif
 
 Source:      llvm-%{llvm_ver}.src.tar.xz
 Source1:     cfe-%{cfe_ver}.src.tar.xz
@@ -99,8 +75,11 @@ Source21:    polly++
 #if host clang use unwind instead of libgcc, this patch will be needed.
 Patch1:       llvm-remove-ehtable-support-when-with-nolibgcc.patch
 
-Patch10:      clang-pure64-gcc-toolchain.patch
+#Add our own tripplet to clang search path.
+Patch10:      clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
+#We use 'lib' under x86_64
 Patch11:      clang-lib64-to-lib.patch
+
 Patch12:      clang-fix-objc-exceptions-cflags.patch
 
 #the dso link behaviour change can not load implicit DSO when link.
@@ -112,8 +91,50 @@ Patch14:      clang-use-unwind-with-fnolibgcc.patch
 #pp-trace in clang-tools-extra did not install properly.
 Patch15:      clang-extra-install-pp-trace.patch
 
+#a typo of include path
+Patch19: fix-broken-include-path.patch
 #https://llvm.org/bugs/show_bug.cgi?id=25021
 Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
+
+BuildRequires: clang
+BuildRequires: bison flex libtool-ltdl-devel
+BuildRequires: binutils-devel
+BuildRequires: ncurses-devel
+BuildRequires: zip
+#for test
+BuildRequires: dejagnu tcl-devel
+
+BuildRequires: glibc-devel
+BuildRequires: glibc-headers
+BuildRequires: libffi-devel
+BuildRequires: libstdc++-devel
+BuildRequires: python-devel
+
+BuildRequires: doxygen
+
+%if %{rebuild_use_libcxx}
+BuildRequires: libcxx-devel
+Requires:   libcxx
+%endif
+
+%if %{build_lldb}
+BuildRequires:swig
+%endif
+
+%if %{build_polly}
+BuildRequires: cloog-isl-shared-devel >= 0.18.1
+%endif
+
+BuildRequires: libxml2-devel
+
+BuildRequires: libedit-devel >= 3.0
+BuildRequires: cmake, ninja-build
+BuildRequires: chrpath
+
+%if %{build_lld}
+Requires: alternatives
+%endif
+
 %description
 Low Level Virtual Machine (LLVM) is:
    1.A compilation strategy designed to enable effective program optimization across the entire lifetime of a program. LLVM supports effective optimization at compile time, link-time (particularly interprocedural), run-time and offline (i.e., after software is installed), while remaining transparent to developers and maintaining compatibility with existing build scripts.
@@ -123,24 +144,24 @@ Low Level Virtual Machine (LLVM) is:
 
 
 %package -n libllvm
-Summary:        LLVM shared libraries
+Summary: LLVM shared libraries
 
 %description -n libllvm
 Shared libraries for the LLVM compiler infrastructure.
 
 
 %package -n libllvm-devel
-Summary:        Libraries and header files for LLVM
-Requires:       libllvm = %{version}-%{release}
-Requires:       libffi-devel
+Summary: Libraries and header files for LLVM
+Requires: libllvm = %{version}-%{release}
+Requires: libffi-devel
 
 %description -n libllvm-devel
 This package contains library and header files needed to develop new
 native programs that use the LLVM infrastructure.
 
 %package -n libllvm-static
-Summary:        Static libraries for LLVM
-Requires:       libllvm-devel = %{version}-%{release}
+Summary: Static libraries for LLVM
+Requires: libllvm-devel = %{version}-%{release}
 
 %description -n libllvm-static
 This package contains static libraries needed to develop new
@@ -152,8 +173,8 @@ Summary: A C language family frontend for LLVM
 Requires: llvm = %{version}-%{release} 
 Requires: libllvm = %{version}-%{release} 
 %if %{rebuild_use_libcxx}
-Requires:   libcxx
-Requires:   libcxx-devel
+Requires: libcxx
+Requires: libcxx-devel
 %endif
 
 %description -n clang 
@@ -167,95 +188,94 @@ Requires: clang = %{version}-%{release}
 Extra tools of clang.
 
 %package -n libclang
-Summary:        Libraries for develop program with libclang
-Requires:       libllvm = %{version}-%{release}
+Summary: Libraries for develop program with libclang
+Requires: libllvm = %{version}-%{release}
 
 %description -n libclang
 This package contains libraries for develop program with libclang.
 
 %package -n libclang-devel
-Summary:        Header files for clang
-Requires:       libclang = %{version}-%{release}
-
+Summary: Header files for clang
+Requires: libclang = %{version}-%{release}
 %description -n libclang-devel
 This package contains header files for the Clang compiler.
 
 %package -n libclang-static
-Summary:        Static libraries for clang
-Requires:       libclang-devel = %{version}-%{release}
+Summary: Static libraries for clang
+Requires: libclang-devel = %{version}-%{release}
 
 %description -n libclang-static
 This package contains static libraries for develop program with Clang library.
 
 
 %package -n lldb
-Summary:        LLDB is a next generation, high-performance debugger 
-Requires:       liblldb = %{version}-%{release}
+Summary: LLDB is a next generation, high-performance debugger 
+Requires: liblldb = %{version}-%{release}
 
 %description -n lldb 
 LLDB is a next generation, high-performance debugger. It is built as a set of reusable components which highly leverage existing libraries in the larger LLVM Project, such as the Clang expression parser and LLVM disassembler.
 
 %package -n liblldb
-Summary:        Libraries for develop program with liblldb
-Requires:       libllvm = %{version}-%{release}
+Summary: Libraries for develop program with liblldb
+Requires: libllvm = %{version}-%{release}
 
 %description -n liblldb
 This package contains libraries for develop program with liblldb.
 
 %package -n liblldb-devel
-Summary:        Header files for lldb library. 
-Requires:       liblldb = %{version}-%{release}
+Summary: Header files for lldb library. 
+Requires: liblldb = %{version}-%{release}
 
 %description -n liblldb-devel
 This package contains header files for lldb library.
 
 %package -n liblldb-static
-Summary:        Static libraries for lldb
-Requires:       liblldb-devel = %{version}-%{release}
+Summary: Static libraries for lldb
+Requires: liblldb-devel = %{version}-%{release}
 
 %description -n liblldb-static
 This package contains static libraries for develop program with lldb library.
 
 
 %package -n polly 
-Summary:        LLVM Framework for High-Level Loop and Data-Locality Optimizations
-Requires:       clang = %{version}-%{release}
-Requires:       cloog-isl >= 0.18.1
-Requires:       gmp
+Summary: LLVM Framework for High-Level Loop and Data-Locality Optimizations
+Requires: clang = %{version}-%{release}
+Requires: cloog-isl >= 0.18.1
+Requires: gmp-devel
 
 %description -n polly 
 LLVM Framework for High-Level Loop and Data-Locality Optimizations
 
 %package -n libpolly-devel
-Summary:        Header files for polly library.
+Summary: Header files for polly library.
 
 %description -n libpolly-devel
 This package contains header files for polly library.
 
 %package -n libpolly-static
-Summary:        Static libraries for polly 
-Requires:       libpolly-devel = %{version}-%{release}
+Summary: Static libraries for polly 
+Requires: libpolly-devel = %{version}-%{release}
 
 %description -n libpolly-static
 This package contains static libraries for develop program with polly library.
 
 
 %package -n lld
-Summary:        The LLVM Linker
+Summary: The LLVM Linker
 
 %description -n lld
 The LLVM Linker
 
 
 %package -n liblld-devel
-Summary:        Header files for lld library.
+Summary: Header files for lld library.
 
 %description -n liblld-devel
 This package contains header files for lld library.
 
 %package -n liblld-static
-Summary:        Static libraries for lld
-Requires:       liblld-devel = %{version}-%{release}
+Summary: Static libraries for lld
+Requires: liblld-devel = %{version}-%{release}
 
 %description -n liblld-static
 This package contains static libraries for develop program with lld library.
@@ -325,15 +345,17 @@ tar xf %{SOURCE13} -C projects/test-suite --strip-components=1
 ########%patch14 -p1
 
 %patch15 -p1
+%patch19 -p1
 %patch20 -p1
 popd
 
 
 pushd llvm-shared-%{version}
+%patch19 -p1
 %patch20 -p1
 popd
 
-%Build
+%build
 #we use clang/clang++ build llvm/clang
 export CC="clang"
 export CXX="clang++"
@@ -345,7 +367,8 @@ pushd llvm-static-%{version}/build
     -G Ninja \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
-    -DCMAKE_BUILD_TYPE="Release" \
+    -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
+    -DCMAKE_CONFIGURATION_TYPES="RelWithDebInfo" \
     -DCMAKE_C_FLAGS="-fPIC" \
     %if %{rebuild_use_libcxx}
     %if %{rebuild_drop_libgcc}
@@ -377,7 +400,8 @@ pushd llvm-shared-%{version}/build
     -G Ninja \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
-    -DCMAKE_BUILD_TYPE="Release" \
+    -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
+    -DCMAKE_CONFIGURATION_TYPES="RelWithDebInfo" \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
     %if %{enable_exception}
@@ -438,7 +462,6 @@ popd
 #rm -rf $RPM_BUILD_ROOT/%{_libdir}/libgtest_main.a
 
 rm -rf $RPM_BUILD_ROOT/usr/docs
-
 
 %check
 %if %{enable_check}
@@ -683,6 +706,9 @@ exit 0
 %endif
 
 %changelog
+* Sat Nov 07 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-4.252402.svn
+- Update to svn 252402
+
 * Mon Oct 26 2015 cjacker - 3.7.1-3.svn20151017
 - Update to 3.7.1 svn 251274
 - Add patch20 to fix cpu type detect issue. this issue will cause mesa not work on old core2 CPU.
