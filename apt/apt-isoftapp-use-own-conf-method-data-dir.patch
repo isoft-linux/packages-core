@@ -1,0 +1,69 @@
+diff -Nur apt-0.5.15lorg3.95.git522-isoftapp/apt-pkg/init.cc apt-0.5.15lorg3.95.git522-isoftappn/apt-pkg/init.cc
+--- apt-0.5.15lorg3.95.git522-isoftapp/apt-pkg/init.cc	2015-11-08 20:01:45.130975410 +0800
++++ apt-0.5.15lorg3.95.git522-isoftappn/apt-pkg/init.cc	2015-11-08 20:02:08.022975000 +0800
+@@ -50,7 +50,7 @@
+    Cnf.Set("Dir","/");
+    
+    // State   
+-   Cnf.Set("Dir::State","var/lib/apt/");
++   Cnf.Set("Dir::State","var/lib/isoftapp/");
+    
+    struct stat St;   
+    if (stat(Cnf.FindDir("Dir::State").c_str(),&St) != 0)
+@@ -61,27 +61,27 @@
+    Cnf.Set("Dir::State::cdroms","cdroms.list");
+    
+    // Cache
+-   Cnf.Set("Dir::Cache","var/cache/apt/");
++   Cnf.Set("Dir::Cache","var/cache/isoftapp/");
+    Cnf.Set("Dir::Cache::archives","archives/");
+    Cnf.Set("Dir::Cache::srcpkgcache","srcpkgcache.bin");
+    Cnf.Set("Dir::Cache::pkgcache","pkgcache.bin");
+    
+    // Configuration
+-   Cnf.Set("Dir::Etc","etc/apt/");
++   Cnf.Set("Dir::Etc","etc/isoftapp/");
+    Cnf.Set("Dir::Etc::sourcelist","sources.list");
+    // CNC:2003-03-03
+    Cnf.Set("Dir::Etc::sourceparts","sources.list.d");
+    Cnf.Set("Dir::Etc::vendorlist","vendors.list");
+    Cnf.Set("Dir::Etc::vendorparts","vendors.list.d");
+-   Cnf.Set("Dir::Etc::main","apt.conf");
+-   Cnf.Set("Dir::Etc::parts","apt.conf.d");
++   Cnf.Set("Dir::Etc::main","isoftapp.conf");
++   Cnf.Set("Dir::Etc::parts","isoftapp.conf.d");
+    Cnf.Set("Dir::Etc::preferences","preferences");
+-   Cnf.Set("Dir::Bin::methods",LIBDIR "/apt/methods");
++   Cnf.Set("Dir::Bin::methods",LIBDIR "/isoftapp/methods");
+ 	      
+    bool Res = true;
+    
+    // Read an alternate config file
+-   const char *Cfg = getenv("APT_CONFIG");
++   const char *Cfg = getenv("ISOFTAPP_CONFIG");
+    if (Cfg != 0 && FileExists(Cfg) == true)
+       Res &= ReadConfigFile(Cnf,Cfg);
+    
+diff -Nur apt-0.5.15lorg3.95.git522-isoftapp/configure.ac apt-0.5.15lorg3.95.git522-isoftappn/configure.ac
+--- apt-0.5.15lorg3.95.git522-isoftapp/configure.ac	2015-11-08 20:01:45.132975410 +0800
++++ apt-0.5.15lorg3.95.git522-isoftappn/configure.ac	2015-11-08 20:02:03.910975074 +0800
+@@ -1,7 +1,7 @@
+ dnl Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ(2.59)
+-AC_INIT([apt],[0.5.15lorg3.95],[apt-rpm@lists.laiskiainen.org])
++AC_INIT([isoftapp],[0.5.15lorg3.95],[apt-rpm@lists.laiskiainen.org])
+ dnl Check the archs, we want the target type.
+ AC_CONFIG_AUX_DIR([buildlib])
+ AC_CONFIG_MACRO_DIR([m4])
+diff -Nur apt-0.5.15lorg3.95.git522-isoftapp/methods/Makefile.am apt-0.5.15lorg3.95.git522-isoftappn/methods/Makefile.am
+--- apt-0.5.15lorg3.95.git522-isoftapp/methods/Makefile.am	2015-11-08 20:01:45.127975410 +0800
++++ apt-0.5.15lorg3.95.git522-isoftappn/methods/Makefile.am	2015-11-08 20:04:29.951972458 +0800
+@@ -1,6 +1,6 @@
+ AM_CPPFLAGS = -DGPG=\"@GPG@\"
+ 
+-methodsdir=${libdir}/apt/methods
++methodsdir=${libdir}/isoftapp/methods
+ methods_PROGRAMS = cdrom copy file ftp gpg gzip bzip2 http rsh ssh
+ 
+ LDADD = ../apt-pkg/libapt-pkg.la

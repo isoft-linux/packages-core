@@ -7,15 +7,10 @@
 %define snapver git522
 %define srcver %{aptver}.%{snapver}
 
-# This is disabled because
-# A) it is broken and bitrotten
-# B) fixing it involves swig and ain't no one got time for that
-%global with_python 0
-
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 23.%{snapver}
+Release: 25.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -54,8 +49,12 @@ Patch4: apt-0.5.15lorg3.95-format-security.patch
 Patch5: apt-0.5.15lorg3.95-rpm-suggest-fix.patch
 # Fix for lua 5.3
 Patch6: apt-0.5.15lorg3.95-lua-5.3.patch
+
+#isoftapp patches, only applied to static build.
+#use own config files and data dir.
+Patch10: apt-isoftapp-use-own-conf-method-data-dir.patch
 # iSOFT App skeleton implemented by fujiang and Leslie Zhai
-Patch7: 0001-isoft-app-skeleton.patch
+Patch11: 0001-isoft-app-skeleton.patch
 
 # TODO: verify the required minimum Python version
 BuildRequires: python-devel >= 2.2
@@ -81,9 +80,6 @@ BuildRequires: lua-devel >= 5.3
 Requires: gnupg
 Requires: bzip2
 Requires: os-release
-%if 0%{!?_with_groupinstall:1}
-Obsoletes: %{name}-plugins-groupinstall < %{version}-%{release}
-%endif
 %if 0%{?_without_list:1}
 Obsoletes: %{name}-plugins-list < %{version}-%{release}
 %endif
@@ -98,6 +94,12 @@ install and upgrade packages. APT features complete installation
 ordering, multiple source capability and several other useful
 features.
 
+%package -n isoftapp 
+Summary: Modified APT-RPM to support iSoft AppDB
+
+%description -n isoftapp
+Modified APT-RPM to support iSoft AppDB
+
 %package devel
 Summary: Development files and documentation for APT's libapt-pkg
 Requires: %{name} = %{version}-%{release}
@@ -107,32 +109,6 @@ Requires: pkgconfig
 %description devel
 This package contains development files for developing with APT's
 libapt-pkg package manipulation library, modified for RPM.
-
-%package python
-Summary: Python bindings for libapt-pkg
-Requires: %{name} = %{version}-%{release}
-
-%description python
-The apt-python package contains a module which allows python programs
-to access the APT library interface.
-
-%package plugins-groupinstall
-Summary: Additional commands to install and remove package groups
-Requires: %{name} = %{version}-%{release}
-Requires: rhpl
-Requires: comps
-
-%description plugins-groupinstall
-This package adds four new commands to apt for installing, removing
-and viewing groups of packages:
-apt-cache groupnames
-apt-cache showgroup <groupname> [<groupname2> ..]
-apt-get groupinstall <groupname> [<groupname2> ..]
-apt-get groupremove <groupname> [<groupname2> ..]
-
-The group information is retrieved from comps.xml used by anaconda
-(the system installer) and other package management tools of
-RHL/RHEL/FC distributions.
 
 %package plugins-list
 Summary: Additional commands to list extra packages and leaves
@@ -180,7 +156,8 @@ popd
 #cp original apt to apt-<version>-isoftapp, and apply our isoftapp customized pactch
 cp -r %{name}-%{srcver} %{name}-%{srcver}-isoftapp
 pushd %{name}-%{srcver}-isoftapp
-%patch7 -p1 -b .isoftapp
+%patch10 -p1
+%patch11 -p1 -b .isoftapp
 popd
 
 
@@ -193,11 +170,6 @@ CXXFLAGS="%{optflags} -DLUA_COMPAT_MODULE"
 
 make %{?_smp_mflags}
 
-%if 0%{?with_python}
-make -C python %{?_smp_mflags} PYTHON="%{__python}"
-python -O -c "import py_compile; py_compile.compile('python/apt.py')"
-%endif
-
 cp -p %{SOURCE5} rpmpriorities
 %if %{generate_rpmpriorities}
 xsltproc -o rpmpriorities comps2prio.xsl %{comps}
@@ -206,9 +178,16 @@ popd #common apt.
 
 #static build apt with isoftapp support
 pushd %{name}-%{srcver}-isoftapp
+autoreconf -ivf
 CXXFLAGS="%{optflags} -DLUA_COMPAT_MODULE"
 %configure --enable-static --disable-shared
 make %{?_smp_mflags}
+
+cp -p %{SOURCE5} rpmpriorities
+%if %{generate_rpmpriorities}
+xsltproc -o rpmpriorities comps2prio.xsl %{comps}
+%endif
+
 popd #apt with isoftapp support.
 
 %install
@@ -242,22 +221,6 @@ for script in %{SOURCE51} %{SOURCE52} ; do
  install -pm 755 $script %{buildroot}%{_datadir}/apt/scripts
 done
 
-%if 0%{?with_python}
-# The python bindings
-mkdir -p %{buildroot}%{python_sitearch}/
-install -pm 755 python/_apt.so %{buildroot}%{python_sitearch}/
-install -pm 644 python/apt.py* %{buildroot}%{python_sitearch}/
-touch %{buildroot}%{python_sitearch}/apt.pyo
-%endif
-
-# apt-plugins-groupinstall from contrib
-%if 0%{?_with_groupinstall:1}
-install -pm 755 contrib/apt-groupinstall/{groupinstall-backend-comps.py,apt-groupinstall.lua} %{buildroot}/%{_datadir}/apt/scripts
-touch %{buildroot}%{_datadir}/apt/scripts/groupinstall-backend-comps.py{c,o}
-install -pm 644 contrib/apt-groupinstall/apt-groupinstall.conf \
- %{buildroot}/%{_sysconfdir}/apt/apt.conf.d/
-%endif
-
 # apt-plugins-list from contrib
 %if 0%{!?_without_list:1}
 install -pm 755 contrib/list-extras/list-extras.lua %{buildroot}/%{_datadir}/apt/scripts
@@ -277,11 +240,42 @@ rm -f %{buildroot}%{_libdir}/*.la
 
 popd #end installation of common apt.
 
+
+
 #install static build apt-get with isoftapp support.
 #what we need is 'apt-get', also we rename it to 'app-get'
 pushd %{name}-%{srcver}-isoftapp
 install -m 0755 cmdline/apt-get %{buildroot}/%{_bindir}/isoftapp
+
+#install own method copy.
+pushd methods
+make install DESTDIR=%{buildroot}
 popd
+
+# The state files
+mkdir -p %{buildroot}%{_localstatedir}/cache/isoftapp/archives/partial
+mkdir -p %{buildroot}%{_localstatedir}/cache/isoftapp/genpkglist
+mkdir -p %{buildroot}%{_localstatedir}/cache/isoftapp/gensrclist
+mkdir -p %{buildroot}%{_localstatedir}/lib/isoftapp/lists/partial
+
+# The config files
+mkdir -p %{buildroot}%{_sysconfdir}/isoftapp
+mkdir -p %{buildroot}%{_sysconfdir}/isoftapp/isoftapp.conf.d
+mkdir -p %{buildroot}%{_sysconfdir}/isoftapp/sources.list.d
+mkdir -p %{buildroot}%{_sysconfdir}/isoftapp/vendors.list.d
+install -pm 644 %{SOURCE1} %{buildroot}/%{_sysconfdir}/isoftapp/isoftapp.conf
+install -pm 644 %{SOURCE2} %{buildroot}/%{_sysconfdir}/isoftapp/sources.list
+install -pm 644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/isoftapp/vendors.list
+install -pm 644 %{SOURCE4} %{buildroot}/%{_sysconfdir}/isoftapp/preferences
+install -pm 644 rpmpriorities %{buildroot}/%{_sysconfdir}/isoftapp/
+
+# install config parts
+install -pm 644 %{SOURCE150} %{buildroot}%{_sysconfdir}/isoftapp/isoftapp.conf.d/
+
+# Lua scripts
+mkdir -p %{buildroot}%{_datadir}/isoftapp/scripts
+
+popd #end of isoftapp
 
 %find_lang %{name}
 
@@ -312,7 +306,6 @@ popd
 %{_bindir}/apt-config
 %{_bindir}/apt-shell
 %{_bindir}/apt-get
-%{_bindir}/isoftapp
 %{_bindir}/countpkglist
 %{_bindir}/genpkglist
 %{_bindir}/gensrclist
@@ -327,25 +320,30 @@ popd
 %{_localstatedir}/lib/apt/
 %{_mandir}/man[58]/*.[58]*
 
+%files -n isoftapp
+%dir %{_sysconfdir}/isoftapp/
+%config(noreplace) %{_sysconfdir}/isoftapp/isoftapp.conf
+%config(noreplace) %{_sysconfdir}/isoftapp/preferences
+%config(noreplace) %{_sysconfdir}/isoftapp/rpmpriorities
+%config(noreplace) %{_sysconfdir}/isoftapp/sources.list
+%config(noreplace) %{_sysconfdir}/isoftapp/vendors.list
+%dir %{_sysconfdir}/isoftapp/isoftapp.conf.d/
+# NOTE: no noreplace because we WANT to be able to change the defaults
+# without user intervention!
+%config %{_sysconfdir}/isoftapp/isoftapp.conf.d/default.conf
+%dir %{_sysconfdir}/isoftapp/sources.list.d/
+%dir %{_sysconfdir}/isoftapp/vendors.list.d/
+%{_bindir}/isoftapp
+%{_libdir}/isoftapp/
+%dir %{_datadir}/isoftapp/
+%dir %{_datadir}/isoftapp/scripts/
+%{_localstatedir}/cache/isoftapp/
+%{_localstatedir}/lib/isoftapp/
+
 %files devel
 %{_includedir}/apt-pkg/
 %{_libdir}/libapt-pkg*.so
 %{_libdir}/pkgconfig/libapt-pkg.pc
-
-%if 0%{?with_python}
-%files python
-%{python_sitearch}/_apt.so
-%{python_sitearch}/apt.py*
-%endif
-
-%if 0%{?_with_groupinstall:1}
-%files plugins-groupinstall
-# XXX not config?
-%{_sysconfdir}/apt/apt.conf.d/apt-groupinstall.conf
-%{_datadir}/apt/scripts/apt-groupinstall.lua
-%{_datadir}/apt/scripts/groupinstall-backend-comps.py
-%ghost %{_datadir}/apt/scripts/groupinstall-backend-comps.py[co]
-%endif
 
 %if 0%{!?_without_list:1}
 %files plugins-list
@@ -363,6 +361,9 @@ popd
 
 
 %changelog
+* Sun Nov 08 2015 Cjacker <cjacker@foxmail.com> - 0.5.15lorg3.95-25.git522
+- Seperate isoftapp package, use own config files
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 0.5.15lorg3.95-23.git522
 - enable static build apt-get with isoftapp support, do not affect original apt
 
