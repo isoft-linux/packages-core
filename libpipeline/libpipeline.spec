@@ -3,9 +3,8 @@
 Summary: A pipeline manipulation library
 Name: libpipeline
 Version: 1.4.1
-Release: 3
+Release: 4
 License: GPLv3+
-Group: Development/Libraries
 URL: http://libpipeline.nongnu.org/
 Source: http://download.savannah.gnu.org/releases/libpipeline/libpipeline-%{version}.tar.gz
 
@@ -23,7 +22,6 @@ and execve(2).
 
 %package devel
 Summary: Header files and libraries for pipeline manipulation library
-Group: Development/Libraries
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: pkgconfig
 
@@ -62,6 +60,9 @@ rm $RPM_BUILD_ROOT/%{_libdir}/libpipeline.la
 %{_mandir}/man3/*
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 1.4.1-4
+- Remove Group from spec
+
 * Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 1.4.1-3
 - rebuilt
 

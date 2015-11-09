@@ -4,11 +4,10 @@
 Summary: Tools for searching and reading man pages
 Name: man-db
 Version: 2.7.4
-Release: 2
+Release: 3
 # GPLv2+ .. man-db
 # GPLv3+ .. gnulib
 License: GPLv2+ and GPLv3+
-Group: System Environment/Base
 URL: http://www.nongnu.org/man-db/
 
 Source0: http://download.savannah.gnu.org/releases/%{name}/%{name}-%{version}.tar.xz
@@ -36,7 +35,6 @@ manual pages.
 
 %package cron
 Summary: Periodic update of man-db cache
-Group: System Environment/Base
 
 Requires: %{name} = %{version}-%{release}
 Requires: crontabs
@@ -149,6 +147,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/man-db
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 2.7.4-3
+- Remove Group from spec
+
 * Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 2.7.4-2
 - rebuilt
 

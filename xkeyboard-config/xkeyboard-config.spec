@@ -1,9 +1,8 @@
 Summary: xkeyboard-config alternative xkb data files
 Name: xkeyboard-config
 Version: 2.15
-Release: 5
+Release: 6
 License: MIT
-Group: User Interface/X
 URL: http://www.x.org
 
 Source0: http://ftp.x.org/pub/individual/data/xkeyboard-config/xkeyboard-config-%{version}.tar.bz2
@@ -75,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man7/xkeyboard-config.7.gz
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 2.15-6
+- Remove Group from spec
+
 * Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 2.15-5
 - Add all BuildRequires
 
