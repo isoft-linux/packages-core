@@ -1,5 +1,5 @@
 diff --git a/doc/grep.in.1 b/doc/grep.in.1
-index b6362ee..5a1e3ea 100644
+index 2b513a8..40ac40d 100644
 --- a/doc/grep.in.1
 +++ b/doc/grep.in.1
 @@ -314,7 +314,7 @@ Print
@@ -47,10 +47,10 @@ index b6362ee..5a1e3ea 100644
  .TP
  .BR \-a ", " \-\^\-text
 diff --git a/src/grep.c b/src/grep.c
-index 8dbf86e..e3461a7 100644
+index 2c5e09a..7315bd0 100644
 --- a/src/grep.c
 +++ b/src/grep.c
-@@ -1781,6 +1781,8 @@ Context control:\n\
+@@ -1837,6 +1837,8 @@ Context control:\n\
  "));
        printf (_("\
    -NUM                      same as --context=NUM\n\

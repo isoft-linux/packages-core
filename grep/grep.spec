@@ -1,6 +1,6 @@
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.21
+Version: 2.22
 Release: 2 
 License: GPL
 URL: http://www.gnu.org/software/grep/
@@ -8,22 +8,18 @@ URL: http://www.gnu.org/software/grep/
 Source0: ftp://ftp.gnu.org/pub/gnu/grep/grep-%{version}.tar.xz
 
 Source1: colorgrep.sh
+Source2: colorgrep.csh
 Source3: GREP_COLORS
 Source4: grepconf.sh
 
 # upstream ticket 39444
-Patch0: grep-2.21-man-fix-gs.patch
+Patch0: grep-2.22-man-fix-gs.patch
 # upstream ticket 39445
-Patch1: grep-2.21-help-align.patch
-# fix buffer overrun for grep -F, rhbz#1183653
-Patch2: grep-2.21-buf-overrun-fix.patch
-# backported from upstream
-# http://git.savannah.gnu.org/cgit/grep.git/commit/?id=c8b9364d5900a40809827aee6cc53705073278f6
-Patch3: grep-2.21-recurse-behaviour-change-doc.patch
-# http://www.mail-archive.com/bug-gnulib%40gnu.org/msg31638.html
-Patch4: grep-2.21-gnulib.patch
+Patch1: grep-2.22-help-align.patch
+Patch2: grep-2.22-disable-performance-related-tests.patch
 
 Buildrequires: pcre-devel >= 3.9-10, gettext, gzip
+BuildRequires: autoconf automake
 
 %description
 The GNU versions of commonly used grep utilities.  Grep searches
@@ -38,9 +34,7 @@ utility for searching through text.
 %setup -q
 %patch0 -p1 -b .man-fix-gs
 %patch1 -p1 -b .help-align
-%patch2 -p1 -b .buf-overrun-fix
-%patch3 -p1 -b .recurse-behaviour-change-doc
-%patch4 -p1 -b .gnulib
+%patch2 -p1
 
 chmod 755 tests/kwset-abuse
 
@@ -64,7 +58,7 @@ make %{?_smp_mflags}
 rm -rf ${RPM_BUILD_ROOT}
 %makeinstall LDFLAGS=-s prefix=${RPM_BUILD_ROOT}%{_prefix} exec_prefix=${RPM_BUILD_ROOT}
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/profile.d
-install -pm 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/profile.d
+install -pm 644 %{SOURCE1} %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/profile.d
 install -pm 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}
 install -Dpm 755 %{SOURCE4} $RPM_BUILD_ROOT%{_libexecdir}/grepconf.sh
 
@@ -87,6 +81,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/*/*
 
 %changelog
+* Sat Nov 07 2015 Cjacker <cjacker@foxmail.com> - 2.22-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 2.21-2
 - Rebuild for new 4.0 release
 

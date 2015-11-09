@@ -1,0 +1,54 @@
+From e938d22e2131972a6e9eaddbf850c6a04a4f750c Mon Sep 17 00:00:00 2001
+From: Jim Meyering <meyering@fb.com>
+Date: Wed, 4 Nov 2015 10:57:07 -0800
+Subject: [PATCH] tests: mark performance-related tests as expensive
+
+These performance-related tests are slightly failure prone due to
+varying system load during the two runs.
+Marking these tests as "expensive" makes it so they are no longer run
+via "make check". You can still run them via make "check-expensive".
+This makes them less likely to be run by regular users.
+* tests/long-pattern-perf: Use expensive_.
+* tests/mb-non-UTF8-performance: Likewise.
+Reported by Jaroslav Skarvada in http://debbugs.gnu.org/21826
+and by Andreas Schwab in http://debbugs.gnu.org/21812.
+---
+ tests/long-pattern-perf       | 5 +++++
+ tests/mb-non-UTF8-performance | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/tests/long-pattern-perf b/tests/long-pattern-perf
+index c222c02..2c9d080 100755
+--- a/tests/long-pattern-perf
++++ b/tests/long-pattern-perf
+@@ -20,6 +20,11 @@
+
+ fail=0
+
++# This test is susceptible to failure due to differences in
++# system load during the two test runs, so we'll mark it as
++# "expensive", making it less likely to be run by regular users.
++expensive_
++
+ echo x > in || framework_failure_
+ # We could use seq -s '' (avoiding the tr filter), but I
+ # suspect some version of seq does not honor that option.
+diff --git a/tests/mb-non-UTF8-performance b/tests/mb-non-UTF8-performance
+index 228361d..9bd5d39 100755
+--- a/tests/mb-non-UTF8-performance
++++ b/tests/mb-non-UTF8-performance
+@@ -22,6 +22,11 @@
+
+ fail=0
+
++# This test is susceptible to failure due to differences in
++# system load during the two test runs, so we'll mark it as
++# "expensive", making it less likely to be run by regular users.
++expensive_
++
+ # Make this large enough so that even on high-end systems
+ # it incurs at least 5-10ms of user time.
+ yes $(printf '%078d' 0) | head -400000 > in || framework_failure_
+-- 
+2.6.0
+
