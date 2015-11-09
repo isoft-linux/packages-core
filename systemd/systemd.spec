@@ -173,7 +173,8 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
 	--with-certificate-root=/etc/pki/tls \
         --with-sysvinit-path=/etc/rc.d/init.d \
         --with-rc-local-script-path-start=/etc/rc.d/rc.local \
-        --enable-introspection=no
+        --enable-introspection=no \
+        PYTHON=%{__python3}
         
 #-fno-lto to fix compile with gcc-4.9
 make CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
