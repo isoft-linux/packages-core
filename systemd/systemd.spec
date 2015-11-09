@@ -15,22 +15,44 @@ Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
 
+# Prevent accidental removal of the systemd package
+Source10:        yum-protect-systemd.conf
+
 Patch0: systemd-fix-logind-failed-upstream-issue-1505.patch
 
+BuildRequires:  glib2-devel
+BuildRequires:  pciutils-devel
 BuildRequires:  libcap-devel
+BuildRequires:  libmount-devel
 BuildRequires:  pam-devel
+BuildRequires:  audit-libs-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libacl-devel
-BuildRequires:  pciutils-devel
-BuildRequires:  glib2-devel
+BuildRequires:  gobject-introspection-devel
 BuildRequires:  libblkid-devel
 BuildRequires:  xz-devel
+BuildRequires:  libcurl-devel
 BuildRequires:  kmod-devel
+BuildRequires:  libelfutils-devel
+BuildRequires:  libgcrypt-devel
+BuildRequires:  gnutls-devel
+BuildRequires:  iptables-devel
+BuildRequires:  bzip2-devel
+BuildRequires:  libxslt
+BuildRequires:  docbook-style-xsl
 BuildRequires:  pkgconfig
 BuildRequires:  intltool
 BuildRequires:  gperf
-BuildRequires:  libcurl-devel
-BuildRequires:  audit-libs-devel
+BuildRequires:  gawk
+BuildRequires:  python3-devel
+BuildRequires:  python3-lxml
+%ifarch %{ix86} x86_64
+BuildRequires:  gnu-efi gnu-efi-devel
+%endif
+
+BuildRequires:  automake
+BuildRequires:  autoconf
+BuildRequires:  libtool
 
 %if %enable_terminal
 BuildRequires:  libxkbcommon-devel
@@ -155,6 +177,9 @@ make CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+
+# Install yum protection fragment
+install -Dm0644 %{SOURCE10} %{buildroot}%{_sysconfdir}/yum/protected.d/systemd.conf
 
 find %{buildroot} \( -name '*.a' -o -name '*.la' \) -delete
 
@@ -370,6 +395,8 @@ fi
 %config(noreplace) %{_sysconfdir}/systemd/journal-upload.conf
 %config(noreplace) %{_sysconfdir}/systemd/resolved.conf
 %config(noreplace) %{_sysconfdir}/udev/udev.conf
+
+%{_sysconfdir}/yum/protected.d/systemd.conf
 
 %ghost %{_sysconfdir}/udev/hwdb.bin
 %{_sysconfdir}/rpm/macros.systemd
