@@ -54,6 +54,9 @@ BuildRequires:  automake
 BuildRequires:  autoconf
 BuildRequires:  libtool
 
+#for test-path-util fsck.minix
+BuildRequires:  util-linux
+
 %if %enable_terminal
 BuildRequires:  libxkbcommon-devel
 %endif
