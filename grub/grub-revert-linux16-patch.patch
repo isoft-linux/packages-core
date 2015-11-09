@@ -1,0 +1,31 @@
+From: Cjacker <cjacker@foxmail.com>
+Date: Mon, 09 Nov 2015
+Subject: Revert linux16 patches.
+
+Signed-off-by: Cjacker <cjacker@foxmail.com> 
+diff -Nur grub-2.02~beta2/util/grub.d/10_linux.in grub-2.02~beta2n/util/grub.d/10_linux.in
+--- grub-2.02~beta2/util/grub.d/10_linux.in	2015-11-09 10:33:28.625310515 +0800
++++ grub-2.02~beta2n/util/grub.d/10_linux.in	2015-11-09 10:36:02.375317466 +0800
+@@ -89,7 +89,8 @@
+   initrdefi="initrd"
+   case "$machine" in
+     i?86|x86_64)
+-	sixteenbit="16"
++        #remove this will fix GFXPAYLOAD=keep issue.
++	#sixteenbit="16"
+ 	linuxefi="linuxefi"
+ 	initrdefi="initrdefi"
+ 	;;
+diff -Nur grub-2.02~beta2/util/grub.d/30_os-prober.in grub-2.02~beta2n/util/grub.d/30_os-prober.in
+--- grub-2.02~beta2/util/grub.d/30_os-prober.in	2015-11-09 10:33:28.625310515 +0800
++++ grub-2.02~beta2n/util/grub.d/30_os-prober.in	2015-11-09 10:36:26.440318554 +0800
+@@ -140,7 +140,8 @@
+   initrdefi="initrd"
+   case "$machine" in
+     i?86|x86_64)
+-      sixteenbit="16"
++      #remove this will fix GFXPAYLOAD=keep issue.
++      #sixteenbit="16"
+       linuxefi="linuxefi"
+       initrdefi="initrdefi"
+       ;;

@@ -88,7 +88,7 @@ Patch0023: 0023-Fix-margins.patch
 Patch0024: 0024-Add-support-for-UEFI-operating-systems-returned-by-o.patch
 Patch0025: 0025-Disable-GRUB-video-support-for-IBM-power-machines.patch
 Patch0026: 0026-Use-2-instead-of-1-for-our-right-hand-margin-so-line.patch
-#Patch0027: 0027-Use-linux16-when-appropriate-880840.patch
+Patch0027: 0027-Use-linux16-when-appropriate-880840.patch
 Patch0028: 0028-Enable-pager-by-default.-985860.patch
 Patch0029: 0029-F10-doesn-t-work-on-serial-so-don-t-tell-the-user-to.patch
 Patch0030: 0030-Don-t-say-GNU-Linux-in-generated-menus.patch
@@ -96,7 +96,7 @@ Patch0031: 0031-Don-t-draw-a-border-around-the-menu.patch
 Patch0032: 0032-Use-the-standard-margin-for-the-timeout-string.patch
 Patch0033: 0033-Fix-grub_script_execute_sourcecode-usage-on-ppc.patch
 Patch0034: 0034-Add-.eh_frame-to-list-of-relocations-stripped.patch
-#Patch0035: 0035-Make-10_linux-work-with-our-changes-for-linux16-and-.patch
+Patch0035: 0035-Make-10_linux-work-with-our-changes-for-linux16-and-.patch
 Patch0036: 0036-Don-t-print-during-fdt-loading-method.patch
 Patch0037: 0037-Honor-a-symlink-when-generating-configuration-by-gru.patch
 Patch0038: 0038-Don-t-munge-raw-spaces-when-we-re-doing-our-cmdline-.patch
@@ -124,7 +124,7 @@ Patch0059: 0059-Add-GRUB_DISABLE_UUID.patch
 Patch0060: 0060-Allow-fallback-to-include-entries-by-title-not-just-.patch
 Patch0061: 0061-Load-arm-with-SB-enabled.patch
 Patch0062: 0062-Try-prefix-if-fw_path-doesn-t-work.patch
-#Patch0063: 0063-Try-to-emit-linux16-initrd16-and-linuxefi-initrdefi-.patch
+Patch0063: 0063-Try-to-emit-linux16-initrd16-and-linuxefi-initrdefi-.patch
 Patch0064: 0064-Update-to-minilzo-2.08.patch
 Patch0065: 0065-Make-grub2-mkconfig-construct-titles-that-look-like-.patch
 Patch0066: 0066-Make-rescue-and-debug-entries-sort-right-again-in-gr.patch
@@ -137,7 +137,10 @@ Patch0072: 0072-Add-some-__unused__-where-gcc-5.x-is-more-picky-abou.patch
 Patch0073: 0073-Fix-race-in-EFI-validation.patch
 Patch0074: 0074-Mark-po-exclude.pot-as-binary-so-git-won-t-try-to-di.patch
 
-
+#revert patch27/patch35/patch63
+#fix "GFXPAYLOAD=keep" not work issue.
+#By Cjacker
+Patch0075: grub-revert-linux16-patch.patch
 
 
 Patch10001: 10001-Put-the-correct-.file-directives-in-our-.S-files.patch
@@ -530,7 +533,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 1:2.02-40
-- Remove 'linux16/initrd16' patches, make 'GFXPAYLOAD=keep' work
+- Revert 'linux16/initrd16' patches, make 'GFXPAYLOAD=keep' work
 
 * Fri Nov 06 2015 sulit <sulitsrc@gmail.com> - 1:2.02-39
 - update isoft-silence-theme.txz
