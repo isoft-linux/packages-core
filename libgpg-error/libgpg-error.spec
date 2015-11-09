@@ -1,7 +1,7 @@
 Summary: Library for error values used by GnuPG components
 Name: libgpg-error
 Version: 1.20
-Release: 4
+Release: 5
 URL: ftp://ftp.gnupg.org/gcrypt/libgpg-error/
 Source0: ftp://ftp.gnupg.org/gcrypt/libgpg-error/%{name}-%{version}.tar.bz2
 License: LGPLv2+
@@ -62,6 +62,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_mandir}/man1/gpg-error-config.*
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 1.20-5
+- Rebuild
+
 * Fri Oct 30 2015 Cjacker <cjacker@foxmail.com> - 1.20-4
 - Update
 
