@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.3.0
-%define release 120
+%define release 121
 
 %define extraversion -%{release}
 
@@ -96,8 +96,9 @@ Patch616: RDS-fix-race-condition-when-sending-a-message-on-unb.patch
 Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
 
 
-#fix *ERROR* crtc 21: Can't calculate constants, dotclock = 0!
-#Patch2001: drm-i915-assign-hwmode-after-encoder-statereadout.patch
+#check nouveau device pmu
+Patch2001: nouveau-check-device-pmu.patch
+Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -269,7 +270,9 @@ cat %{SOURCE3000} |patch -p1
 %patch616 -p1
 
 %patch2000 -p1
-#%patch2001 -p1
+%patch2001 -p1
+%patch2002 -p1
+
 # END OF PATCH APPLICATIONS
 
 
@@ -676,6 +679,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-121
+- Add check of nouveau device pmu, try fix dell vostro 2421 issue
+
 * Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-120
 - Update to kernel-4.3.0 official release
 
