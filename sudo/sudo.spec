@@ -31,7 +31,8 @@ BuildRequires: automake autoconf libtool
 BuildRequires: audit-libs-devel libcap-devel
 BuildRequires: gettext
 BuildRequires: zlib-devel
-
+#for systemd rpm macros
+BuildRequires: systemd-devel
 %description
 Sudo (superuser do) allows a system administrator to give certain
 users (or groups of users) the ability to run some (or all) commands
