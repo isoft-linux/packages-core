@@ -17,6 +17,9 @@ Patch4:         git-infinite-loop.patch
 
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext, pcre-devel
 
+#for unitdir rpm macros
+BuildRequires: systemd-devel
+
 #otherwise perl-Git will provide one.
 BuildRequires: perl-Error
 
