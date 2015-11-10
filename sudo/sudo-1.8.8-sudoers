@@ -50,13 +50,12 @@
 # Defaults specification
 
 #
-# Disable "ssh hostname sudo <cmd>", because it will show the password in clear. 
-#         You have to run "ssh -t hostname sudo <cmd>".
+# Refuse to run if unable to disable echo on the tty.
 #
-Defaults    requiretty
+Defaults   !visiblepw
 
 Defaults    env_reset
-Defaults    env_keep =  "COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS"
+Defaults    env_keep =  "COLORS HOME DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS"
 Defaults    env_keep += "MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE"
 Defaults    env_keep += "LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES"
 Defaults    env_keep += "LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE"

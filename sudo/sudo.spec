@@ -1,24 +1,36 @@
 Summary: Allows restricted root access for specified users
 Name: sudo
-Version: 1.8.10
+Version: 1.8.15
 Release: 2
 License: ISC
 URL: http://www.courtesan.com/sudo/
-Source0: http://www.courtesan.com/sudo/dist/sudo-%{version}p2.tar.gz
-Source1: sudo-1.7.4p4-sudoers
+Source0: http://www.courtesan.com/sudo/dist/sudo-%{version}.tar.gz
+
+#NOTE: HOME also will be keeped. this will fix "sudo" can not get correct theme of gtk/qt 
+Source1: sudo-1.8.8-sudoers 
+
+
+# don't strip
+Patch1: sudo-1.6.7p5-strip.patch
+# Patch to read ldap.conf more closely to nss_ldap
+Patch2: sudo-1.8.14p1-ldapconfpatch.patch
+# Patch makes changes in documentation bz:1162070
+Patch3: sudo-1.8.14p1-docpassexpire.patch
+# Patch initialize variable before executing sudo_strsplit
+Patch4: sudo-1.8.14p3-initialization.patch
+
 
 Requires: /etc/pam.d/system-auth, vim
 Requires(post): /bin/chmod
 
 BuildRequires: pam-devel
+BuildRequires: groff
 BuildRequires: flex
 BuildRequires: bison
 BuildRequires: automake autoconf libtool
+BuildRequires: audit-libs-devel libcap-devel
 BuildRequires: gettext
 BuildRequires: zlib-devel
-
-# don't strip
-Patch1: sudo-1.6.7p5-strip.patch
 
 %description
 Sudo (superuser do) allows a system administrator to give certain
@@ -40,9 +52,11 @@ The %{name}-devel package contains header files developing sudo
 plugins that use %{name}.
 
 %prep
-%setup -q -n %{name}-%{version}p2
-
+%setup -q -n %{name}-%{version}
 %patch1 -p1 -b .strip
+%patch2 -p1 -b .ldapconfpatch
+%patch3 -p1 -b .docpassexpire
+%patch4 -p1 -b .initialization
 
 %build
 autoreconf -I m4 -fv --install
@@ -70,7 +84,7 @@ export CFLAGS="$RPM_OPT_FLAGS $F_PIE" LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
         --without-ldap \
         --without-selinux \
         --with-passprompt="[sudo] password for %p: " \
-        --without-linux-audit \
+        --with-linux-audit \
         --with-sssd
 #       --without-kerb5 \
 #       --without-kerb4
@@ -101,7 +115,9 @@ account    include      system-auth
 password   include      system-auth
 session    optional     pam_keyinit.so revoke
 session    required     pam_limits.so
+session    include      system-auth
 EOF
+
 
 cat > $RPM_BUILD_ROOT/etc/pam.d/sudo-i << EOF
 #%%PAM-1.0
@@ -109,9 +125,8 @@ auth       include      sudo
 account    include      sudo
 password   include      sudo
 session    optional     pam_keyinit.so force revoke
-session    required     pam_limits.so
+session    include      sudo
 EOF
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -122,15 +137,19 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,root,root) %dir /etc/sudoers.d/
 %config(noreplace) /etc/pam.d/sudo
 %config(noreplace) /etc/pam.d/sudo-i
+%attr(0644,root,root) %{_tmpfilesdir}/sudo.conf
 %dir /var/db/sudo
 %attr(4111,root,root) %{_bindir}/sudo
 %attr(4111,root,root) %{_bindir}/sudoedit
 %attr(0111,root,root) %{_bindir}/sudoreplay
 %attr(0755,root,root) %{_sbindir}/visudo
+%dir %{_libexecdir}/sudo
 %attr(0644,root,root) %{_libexecdir}/sudo/sudo_noexec.so
 %attr(0644,root,root) %{_libexecdir}/sudo/sudoers.so
 %attr(0644,root,root) %{_libexecdir}/sudo/group_file.so
 %attr(0644,root,root) %{_libexecdir}/sudo/system_group.so
+%attr(0644,root,root) %{_libexecdir}/sudo/libsudo_util.so.?.?.?
+%{_libexecdir}/sudo/libsudo_util.so.?
 %{_mandir}/man5/sudoers.5*
 %{_mandir}/man5/sudo.conf.5*
 %{_mandir}/man8/sudo.8*
@@ -147,7 +166,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc plugins/sample/sample_plugin.c
 %{_includedir}/sudo_plugin.h
-#%{_mandir}/man8/sudo_plugin.8*
+%{_mandir}/man8/sudo_plugin.8*
+%{_libexecdir}/sudo/libsudo_util.so
 
 %changelog
 * Fri Oct 23 2015 cjacker - 1.8.10-2
