@@ -5,8 +5,8 @@
 
 Summary:    Xorg X11 libinput input driver
 Name:       xorg-x11-drv-libinput
-Version:    0.14.0
-Release:    2
+Version:    0.15.0
+Release:    3
 URL:        http://ww.x.org
 License:    MIT
 Source0:    %{tarball}-%{version}.tar.bz2
@@ -62,6 +62,9 @@ install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d/90-libi
 %{_includedir}/xorg/libinput-properties.h
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.15.0-3
+- Update, rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 0.14.0-2
 - Rebuild for new 4.0 release
 
