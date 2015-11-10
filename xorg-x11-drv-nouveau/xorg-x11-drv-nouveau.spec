@@ -6,7 +6,7 @@
 Summary:   Xorg X11 nouveau video driver(s)
 Name:      xorg-x11-drv-nouveau
 Version:   1.0.11
-Release:   5.git 
+Release:   6.git 
 URL:       http://www.x.org
 License:   MIT
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/nouveau.4*
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 1.0.11-6.git
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 1.0.11-5.git
 - Rebuild for new 4.0 release
 
