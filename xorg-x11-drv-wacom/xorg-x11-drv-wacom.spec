@@ -5,8 +5,8 @@
 
 Summary:    Xorg X11 wacom input driver
 Name:       xorg-x11-drv-wacom
-Version:    0.30.0
-Release:    3 
+Version:    0.31.0
+Release:    4 
 URL:        http://www.x.org
 License:    GPLv2+
 
@@ -17,7 +17,7 @@ ExcludeArch: s390 s390x
 
 BuildRequires: xorg-x11-server-devel >= 1.10.99.902
 BuildRequires: xorg-x11-util-macros >= 1.3.0
-BuildRequires: libX11-devel libXi-devel libXrandr-devel libXinerama-devel
+BuildRequires: libX11-devel libXi-devel libXrandr-devel libXinerama-devel libXext-devel
 BuildRequires: autoconf automake libtool
 BuildRequires: systemd-devel
 
@@ -84,6 +84,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/isdv4-serial-debugger
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.31.0-4
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 0.30.0-3
 - Rebuild for new 4.0 release
 
