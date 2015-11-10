@@ -6,7 +6,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        1.git 
+Release:        4.git 
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 #Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
@@ -507,6 +507,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 228-4.git
+- Update to 228 git
+
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 227-6
 - Enable lz4
 
