@@ -5,8 +5,8 @@
 
 Name:           xorg-x11-drv-synaptics
 Summary:        Xorg X11 Synaptics touchpad input driver
-Version:        1.8.2
-Release:        3
+Version:        1.8.3
+Release:        4
 URL:            http://www.x.org
 License:        MIT
 
@@ -24,7 +24,7 @@ BuildRequires:  xorg-x11-server-devel >= 1.10.99.902
 BuildRequires:  libX11-devel libXi-devel libXtst-devel
 BuildRequires:  xorg-x11-util-macros >= 1.8.0
 BuildRequires:  libevdev-devel
-BuildRequires:  systemd
+BuildRequires:  systemd-devel
 
 Requires:       Xorg %(xserver-sdk-abi-requires ansic)
 Requires:       Xorg %(xserver-sdk-abi-requires xinput)
@@ -92,6 +92,9 @@ udevadm control --reload-rules || :
 %{_includedir}/xorg/synaptics-properties.h
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 1.8.3-4
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 1.8.2-3
 - Rebuild for new 4.0 release
 
