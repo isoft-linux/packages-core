@@ -1,4 +1,3 @@
-
 #the package contains pkg-config files, but DO NOT let it depend on pkgconfig
 %global __requires_exclude pkg-config
 
@@ -6,19 +5,18 @@
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        227
-Release:        6
+Version:        228
+Release:        1.git 
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
-Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
+#Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
+Source0:        systemd-%{version}-b18fc75.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
 
 # Prevent accidental removal of the systemd package
 Source10:        yum-protect-systemd.conf
-
-Patch0: systemd-fix-logind-failed-upstream-issue-1505.patch
 
 BuildRequires:  glib2-devel
 BuildRequires:  pciutils-devel
@@ -139,7 +137,6 @@ glib-based applications using libudev functionality.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -152,6 +149,7 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
 	--enable-manpages \
         --enable-resolved \
         --enable-libcurl \
+        --enable-gnuefi \
         --disable-gtk-doc \
         --disable-static \
         --disable-qrencode \
