@@ -15,6 +15,9 @@ Source0:   xf86-input-evdev-%{version}.tar.bz2
 License:   MIT/X11
 
 BuildRequires: pkgconfig mtdev-devel
+
+BuildRequires: libevdev-devel systemd-devel
+
 BuildRequires: xorg-x11-server-sdk
 
 Requires: Xorg %(xserver-sdk-abi-requires ansic)
