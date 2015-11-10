@@ -9,7 +9,7 @@
 Summary:    Xorg X11 vmmouse input driver
 Name:	    xorg-x11-drv-vmmouse
 Version:    13.1.0
-Release:    2%{?gitdate:.%{gitdate}git%{gitversion}}%{?dist}
+Release:    3%{?gitdate:.%{gitdate}git%{gitversion}}%{?dist}
 URL:	    http://www.x.org
 License:    MIT
 
@@ -64,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT/%{_datadir}/hal/fdi/
 %{_prefix}/lib/udev/rules.d/*.rules
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 13.1.0-3
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 13.1.0-2
 - Rebuild for new 4.0 release
 
