@@ -6,7 +6,7 @@
 Summary:        Xorg X11 openchrome video driver
 Name:           xorg-x11-drv-openchrome
 Version:        0.3.3
-Release:        15.git
+Release:        16.git
 URL:            http://www.freedesktop.org/wiki/Openchrome/
 License:        MIT
 
@@ -85,6 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libchromeXvMCPro.so
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.3.3-16.git
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 0.3.3-15.git
 - Rebuild for new 4.0 release
 
