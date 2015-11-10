@@ -18,6 +18,7 @@ Source0:	%{tarball}.tar.gz
 
 ExclusiveArch:  %{ix86} x86_64
 
+BuildRequires:  automake autoconf libtool
 BuildRequires:  xorg-x11-server-devel
 BuildRequires:  libX11-devel
 BuildRequires:  libXext-devel
