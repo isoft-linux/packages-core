@@ -1,6 +1,6 @@
 Name: 		git
 Version:    	2.6.3
-Release: 	2
+Release: 	3
 Summary:  	Core git tools
 License: 	GPLv2
 URL: 		http://kernel.org/pub/software/scm/git/
@@ -16,6 +16,7 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 Patch4:         git-infinite-loop.patch
 
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext, pcre-devel
+BuildRequires:  libcurl-devel
 
 #for unitdir rpm macros
 BuildRequires: systemd-devel
@@ -220,6 +221,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 2.6.3-3
+- My fault, forget add libcurl-devel, brokend http support
+
 * Fri Oct 23 2015 cjacker - 2.6.0-2
 - Rebuild for new 4.0 release
 
