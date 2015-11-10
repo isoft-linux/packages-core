@@ -8,7 +8,7 @@
 Summary:    Xorg X11 sisusb video driver
 Name:	    xorg-x11-drv-sisusb
 Version:    0.9.6
-Release:    22%{?dist}
+Release:    23%{?dist}
 URL:	    http://www.x.org
 License:    MIT
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/*.4*
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.9.6-23
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 0.9.6-22
 - Rebuild for new 4.0 release
 
