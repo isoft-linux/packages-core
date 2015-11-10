@@ -6,7 +6,7 @@
 Summary:    Xorg X11 vmware video driver
 Name:	    xorg-x11-drv-vmware
 Version:    13.0.2
-Release:    10.git%{?dist}
+Release:    11.git%{?dist}
 URL:	    http://www.x.org
 License:    MIT
 
@@ -49,6 +49,9 @@ find $RPM_BUILD_ROOT -regex ".*\.la$" | xargs rm -f --
 %{_mandir}/man4/vmware.4*
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 13.0.2-11.git
+- Rebuild with xorg-server 1.8.0
+
 * Fri Oct 23 2015 cjacker - 13.0.2-10.git
 - Rebuild for new 4.0 release
 
