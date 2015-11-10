@@ -1,5 +1,5 @@
 Name: 		git
-Version:    	2.6.0
+Version:    	2.6.3
 Release: 	2
 Summary:  	Core git tools
 License: 	GPLv2
@@ -15,7 +15,7 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # could be removed when update/branch of Michael will be merged in upstream
 Patch4:         git-infinite-loop.patch
 
-BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext
+BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext, pcre-devel
 
 #otherwise perl-Git will provide one.
 BuildRequires: perl-Error
