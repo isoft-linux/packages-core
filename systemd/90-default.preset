@@ -20,6 +20,7 @@ enable restorecond.service
 enable bluetooth.*
 enable avahi-daemon.*
 enable cups.*
+enable smb.service
 
 # The various syslog implementations
 enable rsyslog.*

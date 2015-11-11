@@ -2,6 +2,7 @@
 # actually be enabled at the same time the one which is installed
 # first wins
 
+enable sddm-plymouth.service
 enable gdm.service
 enable lightdm.service
 enable slim.service

@@ -1,7 +1,7 @@
 Summary: The basic required files for the root user's directory.
 Name: rootfiles
 Version: 8.1
-Release: 10.1 
+Release: 11.1 
 License: Public Domain
  
 Source0: dot-bashrc
@@ -45,6 +45,9 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/skel/.zshrc
 
 %changelog
+* Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 8.1-11.1
+- Modify dot-zshrc to add aliases and remove AUTOUPDATE option
+
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 8.1-10.1
 - add dot-zshrc
 

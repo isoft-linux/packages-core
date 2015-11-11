@@ -6,7 +6,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        4.git 
+Release:        5.git 
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 #Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
@@ -507,6 +507,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Wed Nov 11 2015 Cjacker <cjacker@foxmail.com> - 228-5.git
+- Enable sddm-plymouth in preset
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 228-4.git
 - Update to 228 git
 
