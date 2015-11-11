@@ -67,7 +67,7 @@ new file mode 100644
 index 0000000..7887648
 Binary files /dev/null and b/doc/rpm-design.doc differ
 diff --git a/lib/depends.c b/lib/depends.c
-index fc413a9..fd8af98 100644
+index fc413a9..0e6863c 100644
 --- a/lib/depends.c
 +++ b/lib/depends.c
 @@ -10,12 +10,14 @@
@@ -85,7 +85,16 @@ index fc413a9..fd8af98 100644
  
  #include "debug.h"
  
-@@ -170,10 +172,12 @@ static int skipColor(rpm_color_t tscolor, rpm_color_t color, rpm_color_t ocolor)
+@@ -70,6 +72,8 @@ enum addOp_e {
+     RPMTE_REINSTALL	= 2,
+ };
+ 
++static int m_dbOpened = 0;
++
+ /**
+  * Check for supported payload format in header.
+  * @param h		header to check
+@@ -170,10 +174,12 @@ static int skipColor(rpm_color_t tscolor, rpm_color_t color, rpm_color_t ocolor)
  
  /* Add erase elements for older packages of same color (if any). */
  static int addSelfErasures(rpmts ts, rpm_color_t tscolor, int op,
@@ -100,7 +109,7 @@ index fc413a9..fd8af98 100644
      int rc = 0;
      int cmp;
  
-@@ -410,7 +414,7 @@ rpmal rpmtsCreateAl(rpmts ts, rpmElementTypes types)
+@@ -410,7 +416,7 @@ rpmal rpmtsCreateAl(rpmts ts, rpmElementTypes types)
  }
  
  static int addPackage(rpmts ts, Header h,
@@ -109,7 +118,7 @@ index fc413a9..fd8af98 100644
  {
      tsMembers tsmem = rpmtsMembers(ts);
      rpm_color_t tscolor = rpmtsColor(ts);
-@@ -476,7 +480,7 @@ static int addPackage(rpmts ts, Header h,
+@@ -476,7 +482,7 @@ static int addPackage(rpmts ts, Header h,
      /* Add erasure elements for old versions and obsoletions on upgrades */
      /* XXX TODO: If either of these fails, we'd need to undo all additions */
      if (op != RPMTE_INSTALL)
@@ -118,7 +127,7 @@ index fc413a9..fd8af98 100644
      if (op == RPMTE_UPGRADE)
  	addObsoleteErasures(ts, tscolor, p);
  
-@@ -490,7 +494,16 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
+@@ -490,7 +496,16 @@ int rpmtsAddInstallElement(rpmts ts, Header h,
      int op = (upgrade == 0) ? RPMTE_INSTALL : RPMTE_UPGRADE;
      if (rpmtsSetupTransactionPlugins(ts) == RPMRC_FAIL)
  	return 1;
@@ -136,7 +145,7 @@ index fc413a9..fd8af98 100644
  }
  
  int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
-@@ -499,7 +512,7 @@ int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
+@@ -499,7 +514,7 @@ int rpmtsAddReinstallElement(rpmts ts, Header h, fnpyKey key)
  	return 1;
      /* TODO: pull relocations from installed package */
      /* TODO: should reinstall of non-installed package fail? */
@@ -145,7 +154,7 @@ index fc413a9..fd8af98 100644
  }
  
  int rpmtsAddEraseElement(rpmts ts, Header h, int dboffset)
-@@ -540,7 +553,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -540,7 +555,7 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
       */
      if (deptag != RPMTAG_OBSOLETENAME && Name[0] == '/') {
  	mi = rpmtsPrunedIterator(ts, RPMDBI_INSTFILENAMES, Name, prune);
@@ -154,7 +163,7 @@ index fc413a9..fd8af98 100644
  	    /* Ignore self-conflicts */
  	    if (deptag == RPMTAG_CONFLICTNAME) {
  		unsigned int instance = headerGetInstance(h);
-@@ -592,6 +605,40 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -592,6 +607,39 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
      return rc;
  }
  
@@ -191,11 +200,10 @@ index fc413a9..fd8af98 100644
 +    return rc;
 +}
 +
-+static int m_dbOpened = 0;
  /**
   * Check dep for an unsatisfied dependency.
   * @param ts		transaction set
-@@ -601,6 +648,10 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
+@@ -601,6 +649,10 @@ static int rpmdbProvides(rpmts ts, depCache dcache, rpmds dep)
   */
  static int unsatisfiedDepend(rpmts ts, depCache dcache, rpmds dep)
  {
@@ -206,7 +214,7 @@ index fc413a9..fd8af98 100644
      tsMembers tsmem = rpmtsMembers(ts);
      int rc;
      int retrying = 0;
-@@ -732,6 +783,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
+@@ -732,6 +784,29 @@ static void checkDS(rpmts ts, depCache dcache, rpmte te,
      }
  }
  
@@ -236,13 +244,14 @@ index fc413a9..fd8af98 100644
  /* Check a given dependency against installed packages */
  static void checkInstDeps(rpmts ts, depCache dcache, rpmte te,
  			  rpmTag depTag, const char *dep)
-@@ -1047,3 +1121,175 @@ exit:
+@@ -1047,3 +1122,176 @@ exit:
  	(void) rpmtsCloseDB(ts);
      return rc;
  }
 +
 +int rpmtsCheckISoftApp(rpmts ts, const char *dbpath)
 +{
++    m_dbOpened = 0;
 +    rpm_color_t tscolor = rpmtsColor(ts);
 +    rpmtsi pi = NULL; rpmte p;
 +    int closeatexit = 0;
