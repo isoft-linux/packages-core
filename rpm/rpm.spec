@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 23
+Release: 24
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -408,6 +408,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 12 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- rpm only rpmpsPrint problem into console
+- but isoft-package-installer need probPtr to emit detail error info 
+- add probPtr for rpmInstallISoftApp interface
+- add rpmpsToChunk and chunk_t struct
+
 * Wed Nov 11 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix unsatisfiedDepend dbOpened issue.
 - Fix open too many db issue.
