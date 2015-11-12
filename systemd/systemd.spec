@@ -6,11 +6,11 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        5.git 
+Release:        6.git 
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 #Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
-Source0:        systemd-%{version}-b18fc75.tar.gz
+Source0:        systemd-%{version}-fb5c818.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
@@ -507,6 +507,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Thu Nov 12 2015 Cjacker <cjacker@foxmail.com> - 228-6.git
+- Update to git fb5c818
+
 * Wed Nov 11 2015 Cjacker <cjacker@foxmail.com> - 228-5.git
 - Enable sddm-plymouth in preset
 
