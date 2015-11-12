@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        42%{?dist}
+Release:        43%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -56,7 +56,9 @@ Source3: 	dejavu-fonts-ttf-2.35.tar.bz2
 Source4:	http://unifoundry.com/unifont-5.1.20080820.pcf.gz
 Source5:	theme.tar.bz2
 Source6:	gitignore
-Source7:	isoft-silence-theme.txz
+
+#isoft silence theme for grub
+Source7:	isoft-silence.tar.gz
 
 # generate with:
 # git diff grub-2.02-beta2..origin/master
@@ -410,10 +412,12 @@ ln -sf %{_sysconfdir}/default/grub \
 cd ..
 %find_lang grub
 
-# iSoft theme in /boot/grub/themes/system/
 cd $RPM_BUILD_ROOT
 tar xjf %{SOURCE5}
-tar xf %{SOURCE7} -C usr/share/grub/themes/
+
+# iSoft theme
+tar zxf %{SOURCE7} -C usr/share/grub/themes
+
 mv usr/share/grub/themes/isoft-silence-theme usr/share/grub/themes/isoft-silence
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-10.pf2      -s 10 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 10"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-12.pf2      -s 12 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 12"
@@ -532,6 +536,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Thu Nov 12 2015 Cjacker <cjacker@foxmail.com> - 1:2.02-43
+- Update isoft theme, drop useless monochrome grub background picture, what we
+  need is only a logo. large picture make grub slow
+
 * Thu Nov 12 2015 dingkai - 1:2.02-42
 - update isoft-silence-theme.txz
 
