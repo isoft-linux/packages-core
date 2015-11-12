@@ -418,7 +418,6 @@ tar xjf %{SOURCE5}
 # iSoft theme
 tar zxf %{SOURCE7} -C usr/share/grub/themes
 
-mv usr/share/grub/themes/isoft-silence-theme usr/share/grub/themes/isoft-silence
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-10.pf2      -s 10 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 10"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-12.pf2      -s 12 /usr/share/fonts/DejaVuSans.ttf # "DejaVu Sans Regular 12"
 $RPM_BUILD_ROOT%{_bindir}/%{name}-mkfont -o boot/grub/themes/system/DejaVuSans-Bold-14.pf2 -s 14 /usr/share/fonts/DejaVuSans-Bold.ttf # "DejaVu Sans Bold 14"
