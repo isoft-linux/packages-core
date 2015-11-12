@@ -1,16 +1,19 @@
 Summary: X.Org X11 libXi runtime library
 Name:    libXi
-Version: 1.7.4
+Version: 1.7.5
 Release: 2
 License: MIT/X11
 URL: http://www.x.org
 Source0: %{name}-%{version}.tar.bz2 
 
 BuildRequires: pkgconfig
+BuildRequires: autoconf automake libtool
+BuildRequires: xorg-x11-util-macros
 BuildRequires: xorg-x11-proto-devel
-BuildRequires: libX11-devel
-BuildRequires: libXext-devel
-BuildRequires: libXau-devel
+BuildRequires: pkgconfig(inputproto) >= 2.2.99.1
+BuildRequires: libX11-devel >= 1.5.99.902
+BuildRequires: libXext-devel libXfixes-devel
+BuildRequires: xmlto asciidoc >= 8.4.5
 
 %description
 X.Org X11 libXi runtime library
@@ -57,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/libXi/*.xml
 
 %changelog
+* Wed Nov 11 2015 Cjacker <cjacker@foxmail.com> - 1.7.5-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.7.4-2
 - Rebuild for new 4.0 release
 
