@@ -658,7 +658,7 @@ index f17a18a..5d71ba8 100644
 +    return res;
 +}
 diff --git a/lib/rpmcli.h b/lib/rpmcli.h
-index 4adb3d1..bb719b6 100644
+index 4adb3d1..1228666 100644
 --- a/lib/rpmcli.h
 +++ b/lib/rpmcli.h
 @@ -230,6 +230,15 @@ int showQueryPackage(QVA_t qva, rpmts ts, Header h);
@@ -711,7 +711,7 @@ index 4adb3d1..bb719b6 100644
  /* ==================================================================== */
  /** \name RPMEIU */
  /* --- install/upgrade/erase modes */
-@@ -359,6 +388,18 @@ struct rpmInstallArguments_s {
+@@ -359,6 +388,22 @@ struct rpmInstallArguments_s {
  int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
  
  /** \ingroup rpmcli
@@ -719,18 +719,22 @@ index 4adb3d1..bb719b6 100644
 + * @param ts		transaction set
 + * @param ia		mode flags and parameters
 + * @param fileArgv	array of package file names (NULL terminated)
++ * @param probPtr     problem string reference
 + * @return		0 on success
 + *
 + * @todo		fileArgv is modified on errors, should be ARGV_const_t
 + */
-+int rpmInstallISoftApp(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
++int rpmInstallISoftApp(rpmts ts, 
++                       struct rpmInstallArguments_s * ia, 
++                       ARGV_t fileArgv, 
++                       void *probPtr);
 +
 +
 +/** \ingroup rpmcli
   * Erase binary rpm package.
   * @param ts		transaction set
   * @param ia		control args/bits
-@@ -369,6 +410,16 @@ int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
+@@ -369,6 +414,16 @@ int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
  int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv);
  
  /** \ingroup rpmcli
@@ -747,7 +751,7 @@ index 4adb3d1..bb719b6 100644
   */
  extern struct rpmInstallArguments_s rpmIArgs;
  
-@@ -386,6 +437,16 @@ extern struct poptOption rpmInstallPoptTable[];
+@@ -386,6 +441,16 @@ extern struct poptOption rpmInstallPoptTable[];
   */
  int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
  
@@ -764,7 +768,7 @@ index 4adb3d1..bb719b6 100644
  /** \ingroup rpmcli
   * Verify package signatures
   * @param ts		transaction set
-@@ -394,6 +455,14 @@ int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
+@@ -394,6 +459,14 @@ int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
   */
  int rpmcliVerifySignatures(rpmts ts, ARGV_const_t argv);
  
@@ -1031,7 +1035,7 @@ index 92848ab..27dccad 100644
  }
  #endif
 diff --git a/lib/rpminstall.c b/lib/rpminstall.c
-index 03d9ea1..0327cb8 100644
+index 03d9ea1..79ae0bd 100644
 --- a/lib/rpminstall.c
 +++ b/lib/rpminstall.c
 @@ -249,7 +249,7 @@ struct rpmEIU {
@@ -1039,11 +1043,11 @@ index 03d9ea1..0327cb8 100644
  
  static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
 -		      int numPackages)
-+		      int numPackages, int isoftApp)
++		      int numPackages, int isoftApp, void *probPtr)
  {
      rpmps ps;
  
-@@ -260,12 +260,20 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
+@@ -260,15 +260,24 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
  
      if (!(ia->installInterfaceFlags & INSTALL_NODEPS)) {
  
@@ -1069,7 +1073,11 @@ index 03d9ea1..0327cb8 100644
  	if (!stop && rpmpsNumProblems(ps) > 0) {
  	    rpmlog(RPMLOG_ERR, _("Failed dependencies:\n"));
  	    rpmpsPrint(NULL, ps);
-@@ -286,7 +294,10 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
++        rpmpsToChunk(probPtr, ps);
+ 	    rc = numPackages;
+ 	    stop = 1;
+ 	}
+@@ -286,19 +295,24 @@ static int rpmcliTransaction(rpmts ts, struct rpmInstallArguments_s * ia,
  	rpmlog(RPMLOG_DEBUG, eflags ? "erasing packages\n" :
  				      "installing binary packages\n");
  	rpmtsClean(ts);
@@ -1081,12 +1089,60 @@ index 03d9ea1..0327cb8 100644
  
  	ps = rpmtsProblems(ts);
  
-@@ -609,7 +620,263 @@ restart:
+-	if (rpmpsNumProblems(ps) > 0 && (eflags || rc > 0))
++	if (rpmpsNumProblems(ps) > 0 && (eflags || rc > 0)) {
+ 	    rpmpsPrint(NULL, ps);
++        rpmpsToChunk(probPtr, ps);
++    }
+ 	ps = rpmpsFree(ps);
+     }
+ 
+     return rc;
+ }
+ 
+-static int tryReadManifest(struct rpmEIU * eiu)
++static int tryReadManifest(struct rpmEIU * eiu, void *probPtr)
+ {
+     int rc;
+ 
+@@ -317,9 +331,21 @@ static int tryReadManifest(struct rpmEIU * eiu)
+ 
+     /* Read list of packages from manifest. */
+     rc = rpmReadPackageManifest(fd, &eiu->argc, &eiu->argv);
+-    if (rc != RPMRC_OK)
++    if (rc != RPMRC_OK) {
+         rpmlog(RPMLOG_ERR, _("%s: not an rpm package (or package manifest): %s\n"),
+ 	       *eiu->fnp, Fstrerror(fd));
++        if (probPtr) {
++            char *error = "not an rpm package (or package manifest)";
++            size_t realsize = strlen(error);
++            chunk_t *mem = (chunk_t *)probPtr;
++            mem->memory = realloc(mem->memory, mem->size + realsize + 1);
++            if (mem->memory) {
++                memcpy(&(mem->memory[mem->size]), error, realsize);
++                mem->size += realsize;
++                mem->memory[mem->size] = 0;
++            }
++        }
++    }
+     Fclose(fd);
+     fd = NULL;
+ 
+@@ -532,7 +558,7 @@ restart:
+ 	    continue;
+ 
+ 	if (eiu->rpmrc == RPMRC_NOTFOUND) {
+-	    rc = tryReadManifest(eiu);
++	    rc = tryReadManifest(eiu, NULL);
+ 	    if (rc == RPMRC_OK) {
+ 	        eiu->prevx++;
+ 	        goto restart;
+@@ -609,7 +635,264 @@ restart:
      if (eiu->numFailed) goto exit;
  
      if (eiu->numRPMS) {
 -        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs);
-+        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs, 0);
++        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs, 0, NULL);
 +        if (rc < 0)
 +            eiu->numFailed += eiu->numRPMS;
 +	else if (rc > 0)
@@ -1132,7 +1188,8 @@ index 03d9ea1..0327cb8 100644
 +
 +int rpmInstallISoftApp(rpmts ts,
 +                       struct rpmInstallArguments_s *ia,
-+                       ARGV_t fileArgv)
++                       ARGV_t fileArgv, 
++                       void *probPtr)
 +{
 +    struct rpmEIU * eiu = xcalloc(1, sizeof(*eiu));
 +    rpmRelocation * relocations;
@@ -1265,7 +1322,7 @@ index 03d9ea1..0327cb8 100644
 +	    continue;
 +
 +	if (eiu->rpmrc == RPMRC_NOTFOUND) {
-+	    rc = tryReadManifest(eiu);
++	    rc = tryReadManifest(eiu, probPtr);
 +	    if (rc == RPMRC_OK) {
 +	        eiu->prevx++;
 +	        goto restart;
@@ -1342,16 +1399,16 @@ index 03d9ea1..0327cb8 100644
 +    if (eiu->numFailed) goto exit;
 +
 +    if (eiu->numRPMS) {
-+        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs, 1);
++        int rc = rpmcliTransaction(ts, ia, eiu->numPkgs, 1, probPtr);
          if (rc < 0)
              eiu->numFailed += eiu->numRPMS;
  	else if (rc > 0)
-@@ -706,7 +973,72 @@ int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv)
+@@ -706,7 +989,72 @@ int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv)
      free(qfmt);
  
      if (numFailed) goto exit;
 -    numFailed = rpmcliTransaction(ts, ia, numPackages);
-+    numFailed = rpmcliTransaction(ts, ia, numPackages, 0);
++    numFailed = rpmcliTransaction(ts, ia, numPackages, 0, NULL);
 +exit:
 +    rpmtsEmpty(ts);
 +    rpmtsSetVSFlags(ts, ovsflags);
@@ -1416,10 +1473,73 @@ index 03d9ea1..0327cb8 100644
 +    free(qfmt);
 +
 +    if (numFailed) goto exit;
-+    numFailed = rpmcliTransaction(ts, ia, numPackages, 1);
++    numFailed = rpmcliTransaction(ts, ia, numPackages, 1, NULL);
  exit:
      rpmtsEmpty(ts);
      rpmtsSetVSFlags(ts, ovsflags);
+diff --git a/lib/rpmps.c b/lib/rpmps.c
+index 50b7d29..7282755 100644
+--- a/lib/rpmps.c
++++ b/lib/rpmps.c
+@@ -170,3 +170,28 @@ void rpmpsPrint(FILE *fp, rpmps ps)
+     rpmpsFreeIterator(psi);
+ }
+ 
++void rpmpsToChunk(void *ptr, rpmps ps)
++{
++    rpmProblem p;
++
++    if (ptr == NULL)
++        return;
++
++    rpmpsi psi = rpmpsInitIterator(ps);
++    chunk_t *mem = (chunk_t *)ptr;
++
++    while ((p = rpmpsiNext(psi))) {
++	    char *msg = rpmProblemString(p);
++        size_t realsize = strlen(msg);
++        mem->memory = realloc(mem->memory, mem->size + realsize + 1);
++        if (mem->memory == NULL)
++            return;
++
++        memcpy(&(mem->memory[mem->size]), msg, realsize);
++        mem->size += realsize;
++        mem->memory[mem->size] = 0;
++    }
++
++    rpmpsFreeIterator(psi);
++}
++
+diff --git a/lib/rpmps.h b/lib/rpmps.h
+index 1b1142b..bbf55eb 100644
+--- a/lib/rpmps.h
++++ b/lib/rpmps.h
+@@ -14,6 +14,11 @@
+ extern "C" {
+ #endif
+ 
++typedef struct {
++    char *memory;
++    size_t size;
++} chunk_t;
++
+ /** \ingroup rpmps
+  * Problem set iterator
+  */
+@@ -89,6 +94,13 @@ rpmps rpmpsFree(rpmps ps);
+ void rpmpsPrint(FILE *fp, rpmps ps);
+ 
+ /** \ingroup rpmps
++ * Convert problems to chunk.
++ * @param ptr	    chunk ptr
++ * @param ps		problem set
++ */
++void rpmpsToChunk(void *ptr, rpmps ps);
++
++/** \ingroup rpmps
+  * Append a problem to current set of problems.
+  * @param ps		problem set
+  * @param prob		rpmProblem 
 diff --git a/lib/rpmts.c b/lib/rpmts.c
 index 3f8f880..7374537 100644
 --- a/lib/rpmts.c
@@ -2046,7 +2166,7 @@ index fa4e4d86..ce7019a 100644
      /* XXX TODO: actually implement these... */
      case MODE_DELKEY:
 diff --git a/rpmqv.c b/rpmqv.c
-index 3081ce3..920e96c 100644
+index 3081ce3..945add5 100644
 --- a/rpmqv.c
 +++ b/rpmqv.c
 @@ -32,6 +32,7 @@ enum modes {
@@ -2085,7 +2205,7 @@ index 3081ce3..920e96c 100644
  	    /* FIX: ia->relocations[0].newPath undefined */
 -	    ec += rpmInstall(ts, ia, (ARGV_t) poptGetArgs(optCon));
 +        ec += isoftApp | rpmExpandNumeric("%{_isoftapp}") ? 
-+              rpmInstallISoftApp(ts, ia, (ARGV_t) poptGetArgs(optCon)) : 
++              rpmInstallISoftApp(ts, ia, (ARGV_t) poptGetArgs(optCon), NULL) : 
 +              rpmInstall(ts, ia, (ARGV_t) poptGetArgs(optCon));
  	}
  	break;
