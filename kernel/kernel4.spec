@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.3.0
-%define release 121
+%define release 122
 
 %define extraversion -%{release}
 
@@ -57,6 +57,11 @@ BuildRequires: pciutils-devel gettext ncurses-devel
 
 Source0: linux-%{kversion}.tar.xz
 
+#amdgpu with powerplay
+#git clone --depth 1 -b "amdgpu-powerplay" git://people.freedesktop.org/~agd5f/linux amdgpu
+#tar drivers/gpu/drm/amd.
+Source1: amd.tar.gz 
+
 Source20: kernel-%{kversion}-x86_64.config
 
 # Sources for kernel-tools
@@ -67,6 +72,15 @@ Source2001: cpupower.config
 Source3000: kbuild-AFTER_LINK.patch
  
 Patch0: linux-tune-cdrom-default.patch
+
+#Start amdgpu
+#Enabel amdgpu powerplay Kconfig
+Patch1: linux-add-amdgpu-powerplay-config.patch
+#Backport some fence api for amdgpu.
+Patch2: linux-backport-some-fence-api-for-amdgpu.patch
+#drm_calc_vbltimestamp_from_scanoutpos func proto changed, revert it.
+Patch3: amdgpu-with-current-drm_calc_vbltimestamp_from_scanoutpos-func.patch
+#End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
 Patch452: no-pcspkr-modalias.patch
@@ -230,7 +244,16 @@ This package provides debug information for the perf python bindings.
 if [ ! -d kernel-%{kversion}/vanilla ]; then
 %setup -q -n %{name}-%{version} -c
   mv linux-%{kversion} vanilla
-else
+  #start amdgpu
+  rm -rf vanilla/drivers/gpu/drm/amd
+  tar zxf %{SOURCE1} -C vanilla/drivers/gpu/drm
+  pushd vanilla
+  cat %{PATCH1} |patch -p1
+  cat %{PATCH2} |patch -p1
+  cat %{PATCH3} |patch -p1
+  popd
+  #end amdgpu
+else 
   cd kernel-%{kversion}
   if [ -d linux-%{kversion}.%{_target_cpu} ]; then
      rm -rf deleteme.%{_target_cpu}
@@ -679,6 +702,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-122
+- Backport amdgpu powerplay
+
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-121
 - Add check of nouveau device pmu, try fix dell vostro 2421 issue
 
