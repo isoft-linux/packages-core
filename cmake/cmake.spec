@@ -1,6 +1,6 @@
 Name: cmake
-Version: 3.3.1
-Release: 3
+Version: 3.4.0
+Release: 2 
 Summary: Cross-platform make system
 
 License: BSD
@@ -9,11 +9,7 @@ Source0: http://www.cmake.org/files/v3.3/cmake-%{version}.tar.gz
 Source2: macros.cmake
 Source3: cmake-init.el
 Patch0: cmake-set-lib-to-usr_lib.patch
-#cmake can only detect python3 up to 3.4
-#here we added python 3.5/3.6 version.
-#so it can find it in future.
 
-Patch1: cmake-add-more-python3-ver.patch
 BuildRequires:  expat-devel, zlib-devel, libcurl-devel
 BuildRequires:  gcc-gfortran
 BuildRequires:  ncurses-devel, libX11-devel
@@ -37,7 +33,6 @@ generation, code generation, and template instantiation.
 %prep
 %setup -q -n cmake-%{version}
 %patch0 -p1
-%patch1 -p1
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -79,12 +74,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cpack
 %{_bindir}/ctest
 %{_datadir}/%{name}/
-#%{_mandir}/man1/*.1*
 %{_datadir}/emacs/site-lisp/*.el
 %{_datadir}/emacs/site-lisp/site-start.d/*.el
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 3.4.0-2
+- Update, drop python ver patch, already upstream
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 3.3.1-3
 - Add more python3 version support
 
