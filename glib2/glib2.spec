@@ -1,7 +1,7 @@
 Summary: A library of handy utility functions
 Name: glib2
-Version: 2.46.1
-Release: 4 
+Version: 2.46.2
+Release: 2
 License: LGPL
 URL: http://www.gtk.org
 %global versiondir %(echo %{version} | cut -d. -f1-2)
@@ -144,6 +144,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-gettextize.1.gz
 
 %changelog
+* Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 2.46.2-2
+- Update to match gnome-3.18.2
+
 * Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 2.46.1-4
 - Rebuild, fix pkgconfig requires, fix build requires
 
