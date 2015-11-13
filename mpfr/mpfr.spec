@@ -1,10 +1,12 @@
 Summary: A C library for multiple-precision floating-point computations
 Name: mpfr
 Version: 3.1.3
-Release: 2 
+Release: 3 
 URL: http://www.mpfr.org/
 Source0: http://www.mpfr.org/mpfr-current/mpfr-%{version}.tar.xz
 License: LGPL 
+
+BuildRequires: autoconf libtool gmp-devel
 Requires: gmp >= 4.2.1
 
 %description
@@ -17,6 +19,7 @@ ANSI/IEEE-754 standard for double-precision floating-point arithmetic
 %package devel
 Summary: Development tools A C library for mpfr library
 Requires: %{name} = %{version}-%{release}
+Requires: gmp-devel
 
 %description devel
 The static libraries, header files and documentation for using the MPFR 
@@ -29,7 +32,6 @@ install the mpfr package.
 %prep
 %setup -q
 %build
-
 %configure --disable-assert --enable-shared
 make %{?_smp_mflags}
 
@@ -62,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*.h
 
 %changelog
+* Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 3.1.3-3
+- Add gmp-devel requires to mpfr-devel package
+
 * Fri Oct 23 2015 cjacker - 3.1.3-2
 - Rebuild for new 4.0 release
 
