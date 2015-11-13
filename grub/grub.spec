@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        43%{?dist}
+Release:        44%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -138,6 +138,7 @@ Patch0071: 0071-Make-exit-take-a-return-code.patch
 Patch0072: 0072-Add-some-__unused__-where-gcc-5.x-is-more-picky-abou.patch
 Patch0073: 0073-Fix-race-in-EFI-validation.patch
 Patch0074: 0074-Mark-po-exclude.pot-as-binary-so-git-won-t-try-to-di.patch
+Patch0082: 0082-modify-grub-mkconfig-for-hiding-grub-menu-when-the-p.patch
 
 #revert patch27/patch35/patch63
 #fix "GFXPAYLOAD=keep" not work issue.
@@ -535,6 +536,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Thu Nov 13 2015 sulit <sulitsrc@gmail.com> - 1:2.02-44
+- modify grub-mkconfig for hiding grub menu when the pc has the only os.
+
 * Thu Nov 12 2015 Cjacker <cjacker@foxmail.com> - 1:2.02-43
 - Update isoft theme, drop useless monochrome grub background picture, what we
   need is only a logo. large picture make grub slow

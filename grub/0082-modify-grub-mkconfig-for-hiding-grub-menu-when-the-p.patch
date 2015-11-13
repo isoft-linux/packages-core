@@ -1,0 +1,39 @@
+From 213f76289772add608ebe4e5b9570c6d8ff501fd Mon Sep 17 00:00:00 2001
+From: sulit <sulitsrc@gmail.com>
+Date: Fri, 13 Nov 2015 11:57:22 +0800
+Subject: [PATCH 82/82] modify grub mkconfig for hiding grub menu when the pc
+ has the only os
+
+---
+ util/grub-mkconfig.in | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/util/grub-mkconfig.in b/util/grub-mkconfig.in
+index 55ed21e..34ce9af 100644
+--- a/util/grub-mkconfig.in
++++ b/util/grub-mkconfig.in
+@@ -151,6 +151,21 @@ if test -f ${sysconfdir}/default/grub ; then
+   . ${sysconfdir}/default/grub
+ fi
+ 
++probe_othersystem=$(mktemp)
++${grub_mkconfig_dir}/30* &> $probe_othersystem
++grep Found $probe_othersystem &> /dev/null && grep menuentry $probe_othersystem &> /dev/null
++if [ $? ]; then
++        if [ -z "$GRUB_TIMEOUT" ]; then
++                GRUB_TIMEOUT=0
++        fi
++        if [ -z "$GRUB_HIDDEN_TIMEOUT" ]; then
++                GRUB_HIDDEN_TIMEOUT=1
++        fi
++        if [ -z "$GRUB_HIDDEN_TIMEOUT_QUIET" ]; then
++                GRUB_HIDDEN_TIMEOUT_QUIET=true
++        fi
++fi
++
+ if [ "x$GRUB_DISABLE_UUID" != "xtrue" -a -z "$GRUB_DEVICE_UUID" ]; then
+   GRUB_DEVICE_UUID="$GRUB_DEVICE_UUID_GENERATED"
+ fi
+-- 
+2.6.3
+
