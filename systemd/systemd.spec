@@ -6,11 +6,11 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        6.git 
+Release:        7.git 
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 #Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
-Source0:        systemd-%{version}-fb5c818.tar.gz
+Source0:        systemd-%{version}-eee15ab.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
@@ -507,6 +507,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 228-7.git
+- Update to eee15ab
+
 * Thu Nov 12 2015 Cjacker <cjacker@foxmail.com> - 228-6.git
 - Update to git fb5c818
 
