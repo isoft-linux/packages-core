@@ -14,7 +14,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.18.0
-Release:   2
+Release:   3
 URL:       http://www.x.org
 License:   MIT
 
@@ -46,6 +46,7 @@ Patch10000: 0001-hack-Make-the-suid-root-wrapper-always-start-.patch
 # Fix build with gcc5, submitted upstream, likely needs a better fix
 Patch10001: 0001-sdksyms.sh-Make-sdksyms.sh-work-with-gcc5.patch
 Patch10003: 0001-include-Fix-endianness-setup.patch
+Patch10004: 0001-Xorg.wrap-activate-libdrm-based-detection-for-KMS-dr.patch
 
 BuildRequires: automake autoconf libtool pkgconfig
 BuildRequires: xorg-x11-util-macros >= 1.1.5
@@ -232,6 +233,7 @@ drivers, input drivers, or other X modules should install this package.
 %patch10000 -p1
 %patch10001 -p1
 %patch10003 -p1
+%patch10004 -p1
 
 %build
 autoreconf -ivf
@@ -402,6 +404,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-3
+- Fix Xorg.wrap kms detection
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-2
 - Update
 
