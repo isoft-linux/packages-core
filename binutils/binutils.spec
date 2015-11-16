@@ -3,7 +3,7 @@
 
 Name: binutils	
 Version: 2.25.1
-Release: 5 
+Release: 6 
 Summary: A GNU collection of binary utilities	
 
 License: MIT
@@ -24,7 +24,11 @@ Requires(post): coreutils
 Requires(post): %{_sbindir}/alternatives
 Requires(preun): %{_sbindir}/alternatives
 
-BuildRequires:  gcc, binutils	
+BuildRequires: texinfo, gettext, flex, bison, zlib-devel
+#BuildRequires: /usr/bin/pod2man
+BuildRequires: perl
+BuildRequires: dejagnu, zlib-devel, glibc-devel, sharutils, bc
+BuildRequires: libstdc++
 
 %description
 Binutils is a collection of binary utilities, including ar (for
@@ -86,23 +90,50 @@ pushd %{_target_platform}
     --disable-gdb
 
 make %{?_smp_mflags} MAKEINFO=true
+
+# Do not use %%check as it is run after %%install where libbfd.so is rebuild
+# with -fvisibility=hidden no longer being usable in its shared form.
+echo ====================TESTING=========================
+make -k check < /dev/null || :
+echo ====================TESTING END=====================
+
 popd
 
 %install
 pushd %{_target_platform}
 make install DESTDIR=%{buildroot} MAKEINFO=true
+# Rebuild libiberty.a with -fPIC.
+# Future: Remove it together with its header file, projects should bundle it.
+make -C libiberty clean
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty
+
+# Rebuild libbfd.a with -fPIC.
+# Without the hidden visibility the 3rd party shared libraries would export
+# the bfd non-stable ABI.
+make -C bfd clean
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS -fvisibility=hidden" -C bfd
+
+# Rebuild libopcodes.a with -fPIC.
+make -C opcodes clean
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C opcodes
+
+install -m 644 bfd/libbfd.a %{buildroot}%{_libdir}
+install -m 644 libiberty/libiberty.a %{buildroot}%{_libdir}
+install -m 644 opcodes/libopcodes.a %{buildroot}%{_libdir}
 popd
+
+install -m 644 include/libiberty.h %{buildroot}%{_prefix}/include
 
 rm -rf $RPM_BUILD_ROOT%{_infodir}
 
-%check
-pushd %{_target_platform} 
-#this is all checkes.
-make check-binutils
-make check-gas
-make check-ld
-make check-gold
-popd
+##check
+#pushd %{_target_platform} 
+##this is all checkes.
+#make check-binutils
+#make check-gas
+#make check-ld
+#make check-gold
+#popd
 
 %post
 %__rm -f %{_bindir}/ld
@@ -132,12 +163,14 @@ exit 0
 
 %files devel
 %{_includedir}/*.h
-%{_libdir}/libbfd.a
+%{_libdir}/lib*.a
 %{_libdir}/libbfd.so
-%{_libdir}/libopcodes.a
 %{_libdir}/libopcodes.so
 
 %changelog
+* Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 2.25.1-6
+- Enable libbfd.a/libiberty.a/libopcodes.a
+
 * Fri Oct 23 2015 cjacker - 2.25.1-5
 - Rebuild for new 4.0 release
 
