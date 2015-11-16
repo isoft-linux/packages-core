@@ -1,0 +1,33 @@
+From 9d1d459bf52b4a07a934558e055bb61ad82f44cd Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Mon, 12 Oct 2015 14:19:48 +0300
+Subject: [PATCH] intel_scu_ipc: Protect dev member assignment on ->remove()
+
+Protect the dev member assignment in ->remove() since user may potentially call
+unbind from a sysfs even if the driver is built-in. The latter might be racy
+with ongoing SCU communication.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Darren Hart <dvhart@linux.intel.com>
+---
+ drivers/platform/x86/intel_scu_ipc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index 9de2029..f94b730 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -625,7 +625,10 @@ static void ipc_remove(struct pci_dev *pdev)
+ {
+ 	struct intel_scu_ipc_dev *scu = pci_get_drvdata(pdev);
+ 
++	mutex_lock(&ipclock);
+ 	scu->dev = NULL;
++	mutex_unlock(&ipclock);
++
+ 	iounmap(scu->i2c_base);
+ 	intel_scu_devices_destroy();
+ }
+-- 
+1.9.3
+

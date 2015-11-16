@@ -1,0 +1,57 @@
+From 963406ffa6e77ae85b400a9bc8b747813c4497cf Mon Sep 17 00:00:00 2001
+From: Andrzej Hajda <a.hajda@samsung.com>
+Date: Thu, 24 Sep 2015 16:00:22 +0200
+Subject: [PATCH] sony-laptop: Fix handling sony_nc_hotkeys_decode result
+
+sony_nv_hotkeys_decode can return a negative value. real_ev is a u32 variable.
+The check for real_ev > 0 is incorrect.
+
+Use an intermediate ret variable.
+
+The problem has been detected using proposed semantic patch
+scripts/coccinelle/tests/assign_signed_to_unsigned.cocci [1].
+
+[1]: http://permalink.gmane.org/gmane.linux.kernel/2046107
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+[dvhart: clarify commit msg, drop superfluous else block]
+Signed-off-by: Darren Hart <dvhart@linux.intel.com>
+---
+ drivers/platform/x86/sony-laptop.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index aeb80d1..f73c295 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -1204,6 +1204,8 @@ static void sony_nc_notify(struct acpi_device *device, u32 event)
+ {
+ 	u32 real_ev = event;
+ 	u8 ev_type = 0;
++	int ret;
++
+ 	dprintk("sony_nc_notify, event: 0x%.2x\n", event);
+ 
+ 	if (event >= 0x90) {
+@@ -1225,13 +1227,12 @@ static void sony_nc_notify(struct acpi_device *device, u32 event)
+ 		case 0x0100:
+ 		case 0x0127:
+ 			ev_type = HOTKEY;
+-			real_ev = sony_nc_hotkeys_decode(event, handle);
++			ret = sony_nc_hotkeys_decode(event, handle);
+ 
+-			if (real_ev > 0)
+-				sony_laptop_report_input_event(real_ev);
+-			else
+-				/* restore the original event for reporting */
+-				real_ev = event;
++			if (ret > 0) {
++				sony_laptop_report_input_event(ret);
++				real_ev = ret;
++			}
+ 
+ 			break;
+ 
+-- 
+1.9.3
+

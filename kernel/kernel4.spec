@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.3.0
-%define release 122
+%define release 128
 
 %define extraversion -%{release}
 
@@ -62,6 +62,15 @@ Source0: linux-%{kversion}.tar.xz
 #tar drivers/gpu/drm/amd.
 Source1: amd.tar.gz 
 
+#Virtio from Linux next-20151113
+#tar drivers/gpu/drm/virtio
+Source2: virtio.tar.gz
+#include/uapi/drm/virtgpu_drm.h
+Source3: virtgpu_drm.h
+#include/uapi/linux/virtio_gpu.h
+Source4: virtio_gpu.h
+
+
 Source20: kernel-%{kversion}-x86_64.config
 
 # Sources for kernel-tools
@@ -78,9 +87,17 @@ Patch0: linux-tune-cdrom-default.patch
 Patch1: linux-add-amdgpu-powerplay-config.patch
 #Backport some fence api for amdgpu.
 Patch2: linux-backport-some-fence-api-for-amdgpu.patch
+#amd added drm_pcie_get_max_link_width to drm.
+Patch3: amd-gpu-backport-func-in-drm.patch
 #drm_calc_vbltimestamp_from_scanoutpos func proto changed, revert it.
-Patch3: amdgpu-with-current-drm_calc_vbltimestamp_from_scanoutpos-func.patch
+Patch4: amdgpu-with-current-drm_calc_vbltimestamp_from_scanoutpos-func.patch
 #End amdgpu
+
+#Start virgl
+#virgl add a new header file.
+#include/uapi/drm/Kbuild
+Patch10: add-virtgpu_drm-header-to-kbuild.patch 
+#End virgl
 
 Patch450: input-kill-stupid-messages.patch
 Patch452: no-pcspkr-modalias.patch
@@ -101,8 +118,6 @@ Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
 Patch613: ideapad-laptop-Add-Lenovo-Yoga-3-14-to-no_hw_rfkill-.patch
 
-Patch614: kernel43-kdbus.patch
-
 Patch615: 0001-iwlwifi-Add-new-PCI-IDs-for-the-8260-series.patch
 Patch616: RDS-fix-race-condition-when-sending-a-message-on-unb.patch
  
@@ -113,6 +128,31 @@ Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-
 #check nouveau device pmu
 Patch2001: nouveau-check-device-pmu.patch
 Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
+
+#backport lenovo yoga ESC key fix
+#https://groups.google.com/forum/#!topic/fa.linux.kernel/f7lTE1YafwQ
+Patch2003: lenovo-yoga-3-special-esc-key.patch
+
+#Already upstreamed in 4.4, all these patches is for 4.4-1/4.4-2
+#http://git.infradead.org/users/dvhart/linux-platform-drivers-x86.git
+Patch2004: asus-wmi-fix-error-handling.patch
+Patch2005: add-lenovo-yoga900-to-no-hw-rfkill-dmi-list.patch
+Patch2006: thinkpad_acpi-dont-yell-on-unsupported-brightness-interface.patch
+Patch2007: 0001-asus-wmi-restore-kbd-led-level-after-resume.patch
+Patch2008: 0002-compal-laptop-add-charge-control-limit.patch
+Patch2009: 0003-intel-mid-powerbtn-remove-misuse-of-IRQF_NO_SUSPEND-flag.patch
+Patch2010: 0004-sony-laptop-fix-handling-sony_nc_hotkeys_decode-result.patch
+Patch2011: 0005-add-toshiba-wmi-hotkey-driver.patch
+Patch2012: 0006-add-olpc-to-x86-platform.patch
+Patch2013: 0007-olpc-use-ph-specifier-instead-of-passing-direct-values.patch
+Patch2014: 0008-acer-wmi-remove-threeg-and-interfaces-sysfs-interfaces.patch
+Patch2015: 0009-fix-error-path-by-turning-to-devm_-pcim_.patch
+Patch2016: 0010-intel-scu-ipc-propagate-pointer-to-struct-intel_scu_ipc_dev.patch
+Patch2017: 0011-intel_scu_ipc-convert-to-use-struct-device.patch
+Patch2018: 0012-intel_scu_ipc-switch-to-use-module_pci_driver-macro.patch
+Patch2019: 0013-intel_scu_ipc-protect-dev-member-assignment-on-remove.patch
+Patch2020: 0014-toshiba_acpi-initialize-hotkey_event_type.patch
+
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -251,8 +291,21 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   cat %{PATCH1} |patch -p1
   cat %{PATCH2} |patch -p1
   cat %{PATCH3} |patch -p1
+  cat %{PATCH4} |patch -p1
   popd
   #end amdgpu
+
+  #start virgl
+  rm -rf vanilla/drivers/gpu/drm/virtio
+  tar zxf %{SOURCE2} -C vanilla/drivers/gpu/drm
+  rm -rf vanilla/include/uapi/drm/virtgpu_drm.h
+  cp %{SOURCE3} vanilla/include/uapi/drm/
+  rm -rf vanilla/include/uapi/linux/virtio_gpu.h
+  cp %{SOURCE4} vanilla/include/uapi/linux/
+  pushd vanilla
+  cat %{PATCH10} |patch -p1
+  popd 
+  #endif virgl
 else 
   cd kernel-%{kversion}
   if [ -d linux-%{kversion}.%{_target_cpu} ]; then
@@ -288,13 +341,32 @@ cat %{SOURCE3000} |patch -p1
 %patch612 -p1
 %patch613 -p1
 
-##############################%patch614 -p1
 %patch615 -p1
 %patch616 -p1
 
 %patch2000 -p1
 %patch2001 -p1
 %patch2002 -p1
+%patch2003 -p1
+
+#backport fix from 4.4
+%patch2004 -p1
+%patch2005 -p1
+%patch2006 -p1
+%patch2007 -p1
+%patch2008 -p1
+%patch2009 -p1
+%patch2010 -p1
+%patch2011 -p1
+%patch2012 -p1
+%patch2013 -p1
+%patch2014 -p1
+%patch2015 -p1
+%patch2016 -p1
+%patch2017 -p1
+%patch2018 -p1
+%patch2019 -p1
+%patch2020 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -702,6 +774,11 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Sat Nov 14 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-128
+- backport virious platform driver fixes.
+- update to latest amdgpu drm codes.
+- backport virgl support from linux-next.
+
 * Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 4.3.0-122
 - Backport amdgpu powerplay
 
@@ -741,7 +818,7 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 * Mon Aug 24 2015 Cjacker <cjacker@foxmail.com>
 - update to 4.2.0rc8
-- remove patch614 dell sound noise fix, already upstream.
+- remove dell sound noise fix, already upstream.
 
 * Wed Aug 19 2015 Cjacker <cjacker@foxmail.com>
 - build kernel-tools package.

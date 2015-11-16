@@ -1,0 +1,81 @@
+From f63fbcee6720a529b8f94c7d72539c15a1a7a7f8 Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Mon, 12 Oct 2015 14:19:44 +0300
+Subject: [PATCH] intel_scu_ipc: Fix error path by turning to devm_* / pcim_*
+
+The error handling is broken right now since it leaves resources unfreed.
+Convert the code to use managed resources to fix the error handling.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Darren Hart <dvhart@linux.intel.com>
+---
+ drivers/platform/x86/intel_scu_ipc.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index 187d108..7148535 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -563,7 +563,6 @@ static int ipc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ {
+ 	int err;
+ 	struct intel_scu_ipc_pdata_t *pdata;
+-	resource_size_t base;
+ 
+ 	if (ipcdev.pdev)		/* We support only one SCU */
+ 		return -EBUSY;
+@@ -573,32 +572,26 @@ static int ipc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	ipcdev.pdev = pci_dev_get(dev);
+ 	ipcdev.irq_mode = pdata->irq_mode;
+ 
+-	err = pci_enable_device(dev);
++	err = pcim_enable_device(dev);
+ 	if (err)
+ 		return err;
+ 
+-	err = pci_request_regions(dev, "intel_scu_ipc");
++	err = pcim_iomap_regions(dev, 1 << 0, pci_name(dev));
+ 	if (err)
+ 		return err;
+ 
+-	base = pci_resource_start(dev, 0);
+-	if (!base)
+-		return -ENOMEM;
+-
+ 	init_completion(&ipcdev.cmd_complete);
+ 
+-	if (request_irq(dev->irq, ioc, 0, "intel_scu_ipc", &ipcdev))
+-		return -EBUSY;
++	err = devm_request_irq(&dev->dev, dev->irq, ioc, 0, "intel_scu_ipc",
++			       &ipcdev);
++	if (err)
++		return err;
+ 
+-	ipcdev.ipc_base = ioremap_nocache(base, pci_resource_len(dev, 0));
+-	if (!ipcdev.ipc_base)
+-		return -ENOMEM;
++	ipcdev.ipc_base = pcim_iomap_table(dev)[0];
+ 
+ 	ipcdev.i2c_base = ioremap_nocache(pdata->i2c_base, pdata->i2c_len);
+-	if (!ipcdev.i2c_base) {
+-		iounmap(ipcdev.ipc_base);
++	if (!ipcdev.i2c_base)
+ 		return -ENOMEM;
+-	}
+ 
+ 	intel_scu_devices_create();
+ 
+@@ -617,10 +610,7 @@ static int ipc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+  */
+ static void ipc_remove(struct pci_dev *pdev)
+ {
+-	free_irq(pdev->irq, &ipcdev);
+-	pci_release_regions(pdev);
+ 	pci_dev_put(ipcdev.pdev);
+-	iounmap(ipcdev.ipc_base);
+ 	iounmap(ipcdev.i2c_base);
+ 	ipcdev.pdev = NULL;
+ 	intel_scu_devices_destroy();
+-- 
+1.9.3
+

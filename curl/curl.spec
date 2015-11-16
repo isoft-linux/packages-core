@@ -1,12 +1,48 @@
 Summary: A utility for getting files from remote servers (FTP, HTTP, and others)
 Name:    curl 
-Version: 7.43.0
-Release: 3 
+Version: 7.45.0
+Release: 1
 License: MIT
-Source:  http://curl.haxx.se/download/%{name}-%{version}.tar.bz2
+Source0:  http://curl.haxx.se/download/%{name}-%{version}.tar.bz2
+
+# use localhost6 instead of ip6-localhost in the curl test-suite
+Patch0: 0104-curl-7.19.7-localhost6.patch
+
+# work around valgrind bug (#678518)
+Patch1: 0107-curl-7.21.4-libidn-valgrind.patch
+
 URL:     http://curl.haxx.se/
 
-BuildRequires: openssl-devel, libtool, pkgconfig
+BuildRequires: libtool
+BuildRequires: groff
+BuildRequires: krb5-devel
+BuildRequires: libidn-devel
+BuildRequires: libmetalink-devel
+BuildRequires: libnghttp2-devel
+BuildRequires: nss-devel
+BuildRequires: openldap-devel
+BuildRequires: pkgconfig
+BuildRequires: python
+BuildRequires: zlib-devel
+
+# perl modules used in the test suite
+BuildRequires: perl(Cwd)
+BuildRequires: perl(Digest::MD5)
+BuildRequires: perl(Exporter)
+BuildRequires: perl(File::Basename)
+BuildRequires: perl(File::Copy)
+BuildRequires: perl(File::Spec)
+BuildRequires: perl(IPC::Open2)
+BuildRequires: perl(MIME::Base64)
+BuildRequires: perl(strict)
+BuildRequires: perl(Time::Local)
+BuildRequires: perl(Time::HiRes)
+BuildRequires: perl(warnings)
+BuildRequires: perl(vars)
+
+%ifarch %{ix86} x86_64
+BuildRequires: valgrind
+%endif
 
 Requires: libcurl = %{version}-%{release}
 
@@ -38,22 +74,29 @@ use cURL's capabilities internally.
 
 %prep
 %setup -q 
+%patch0 -p1
+%patch1 -p1
+
+# disable test 1112 (#565305) and test 1801
+# <https://github.com/bagder/curl/commit/21e82bd6#commitcomment-12226582>
+printf "1112\n1801\n" >> tests/data/DISABLED
 
 %build
 #autoreconf -if
 if pkg-config openssl ; then
-	CPPFLAGS=`pkg-config --cflags openssl`; export CPPFLAGS
-	LDFLAGS=`pkg-config --libs openssl`; export LDFLAGS
+  CPPFLAGS=`pkg-config --cflags openssl`; export CPPFLAGS
+  LDFLAGS=`pkg-config --libs openssl`; export LDFLAGS
 fi
 %configure --with-ssl=%{_prefix} \
     --enable-ipv6 \
     --with-ca-bundle=%{_sysconfdir}/pki/tls/certs/ca-bundle.crt \
-	--without-libidn \
-	--enable-static \
+    --enable-static \
     --without-librtmp \
     --without-libssh2 \
     --enable-threaded-resolver \
-    --without-libidn \
+    --with-libidn \
+    --with-libmetalink \
+    --with-nghttp2 \
     --without-libssh2 \
     --without-ssl --with-nss
 
@@ -69,13 +112,22 @@ find ${RPM_BUILD_ROOT} -name ca-bundle.crt -exec rm -f '{}' \;
 
 %check
 #totally 938 checks
-make check -n
+LD_LIBRARY_PATH=$RPM_BUILD_ROOT%{_libdir}
+export LD_LIBRARY_PATH
+
+# uncomment to use the non-stripped library in tests
+# LD_PRELOAD=`find -name \*.so`
+# LD_PRELOAD=`readlink -f $LD_PRELOAD`
+
+cd tests
+make %{?_smp_mflags}
+
+./runtests.pl -a -b90 -p -v '!flaky'
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post -n libcurl -p /sbin/ldconfig
-
 %postun -n libcurl -p /sbin/ldconfig
 
 %files
