@@ -1,10 +1,13 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.65
-Release: 2 
+Version: 2.4.66
+Release: 2.git
 License: MIT
 URL: http://dri.sourceforge.net
-Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+
+#Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+#http://anongit.freedesktop.org/git/mesa/drm.git
+Source0: libdrm.tar.gz
 
 Source2: 91-drm-modeset.rules
 
@@ -47,7 +50,7 @@ Summary: Direct Rendering Manager utilities
 Utility programs for the kernel DRM interface.
 
 %prep
-%setup -q
+%setup -q -n libdrm
 %patch3 -p1 -b .forceperms
 %patch4 -p1 -b .no-bc
 %patch5 -p1 -b .check
@@ -128,6 +131,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n drm-utils
 %{_bindir}/dristat
+%{_bindir}/drmdevice
 %{_bindir}/drmstat
 %{_bindir}/getclient
 %{_bindir}/getstats
@@ -147,6 +151,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Sat Nov 14 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-2.git
+- Update to git codes
+
 * Thu Oct 29 2015 Cjacker <cjacker@foxmail.com> - 2.4.65-2
 - Update to 2.4.65
 
