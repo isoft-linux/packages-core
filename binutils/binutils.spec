@@ -3,7 +3,7 @@
 
 Name: binutils	
 Version: 2.25.1
-Release: 6 
+Release: 7 
 Summary: A GNU collection of binary utilities	
 
 License: MIT
@@ -168,6 +168,9 @@ exit 0
 %{_libdir}/libopcodes.so
 
 %changelog
+* Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 2.25.1-7
+- Rebuild, enable critical check, we can pass all of them
+
 * Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 2.25.1-6
 - Enable libbfd.a/libiberty.a/libopcodes.a
 
