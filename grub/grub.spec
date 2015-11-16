@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        44%{?dist}
+Release:        45%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -536,7 +536,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
-* Thu Nov 13 2015 sulit <sulitsrc@gmail.com> - 1:2.02-44
+* Mon Nov 16 2015 sulit <sulitsrc@gmail.com> - 1:2.02-45
+- modify grub isoft-silence theme font and add chinese fonts.
+- modify zh_CN.po and rebuild zh_CN.gmo
+
+* Fri Nov 13 2015 sulit <sulitsrc@gmail.com> - 1:2.02-44
 - modify grub-mkconfig for hiding grub menu when the pc has the only os.
 
 * Thu Nov 12 2015 Cjacker <cjacker@foxmail.com> - 1:2.02-43
