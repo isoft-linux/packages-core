@@ -3,8 +3,8 @@
 %global _firmwarepath	/lib/firmware
 
 Name: linux-firmware
-Version: 20151105
-Release: %{firmware_release}.git%{?dist}.3
+Version: 20151117
+Release: %{firmware_release}.git%{?dist}.4
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
 URL: http://www.kernel.org/
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Tue Nov 17 2015 Cjacker <cjacker@foxmail.com> - 20151117-58.git.4
+- Update to 20151117, add amd stoney firmware, prepare for kernel 4.4
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 20151105-58.git.3
 - Update, add Intel Skylake audio firmware
 
