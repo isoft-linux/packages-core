@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 24
+Release: 25
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -408,6 +408,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Nov 17 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Public openDatabase and rpmdbClose for isoft-package-installer.
+
 * Thu Nov 12 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - rpm only rpmpsPrint problem into console
 - but isoft-package-installer need probPtr to emit detail error info 

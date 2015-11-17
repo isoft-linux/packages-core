@@ -949,7 +949,7 @@ index 6499efc..63977b1 100644
   * sort the iterator by (recnum, filenum)
   * Return database iterator.
 diff --git a/lib/rpmdb.h b/lib/rpmdb.h
-index 4bbd465..03c6c81 100644
+index 4bbd465..c8ca0e9 100644
 --- a/lib/rpmdb.h
 +++ b/lib/rpmdb.h
 @@ -54,13 +54,21 @@ rpmop rpmdbOp(rpmdb db, rpmdbOpX opx);
@@ -992,31 +992,9 @@ index 4bbd465..03c6c81 100644
   * Check for and exit on termination signals.
   */
  int rpmdbCheckSignals(void);
-diff --git a/lib/rpmdb_internal.h b/lib/rpmdb_internal.h
-index 92848ab..27dccad 100644
---- a/lib/rpmdb_internal.h
-+++ b/lib/rpmdb_internal.h
-@@ -42,6 +42,17 @@ RPM_GNUC_INTERNAL
- int rpmdbOpen (const char * prefix, rpmdb * dbp, int mode, int perms);
- 
- /** \ingroup rpmdb
-+ * Open isoft-app database.
-+ * @param prefix	path to top of install tree
-+ * @retval dbp		address of rpm database
-+ * @param mode		open(2) flags:  O_RDWR or O_RDONLY (O_CREAT also)
-+ * @param perms		database permissions
-+ * @return		0 on success
-+ */
-+RPM_GNUC_INTERNAL
-+int rpmdbOpenISoftApp(const char * prefix, rpmdb * dbp, int mode, int perms);
-+
-+/** \ingroup rpmdb
-  * Initialize database.
-  * @param prefix	path to top of install tree
-  * @param perms		database permissions
-@@ -211,6 +222,19 @@ unsigned int rpmdbGetIteratorOffsetFor(rpmdbMatchIterator mi, unsigned int ix);
- RPM_GNUC_INTERNAL
- Header rpmdbGetHeaderAt(rpmdb db, unsigned int offset);
+@@ -233,6 +249,26 @@ rpmdbIndexIterator rpmdbIndexIteratorFree(rpmdbIndexIterator ii);
+  */
+ int rpmdbCtrl(rpmdb db, rpmdbCtrlOp ctrl);
  
 +/** \ingroup rpmdb
 + * open database directly
@@ -1031,9 +1009,50 @@ index 92848ab..27dccad 100644
 +        const char * dbpath, rpmdb *dbp,
 +        int mode, int perms, int flags);
 +
++/** \ingroup rpmdb
++ * Close all database indices and free rpmdb.
++ * @param db		rpm database
++ * @return		0 on success
++ */
++int rpmdbClose(rpmdb db);
++
  #ifdef __cplusplus
  }
  #endif
+diff --git a/lib/rpmdb_internal.h b/lib/rpmdb_internal.h
+index 92848ab..5200f31 100644
+--- a/lib/rpmdb_internal.h
++++ b/lib/rpmdb_internal.h
+@@ -42,21 +42,24 @@ RPM_GNUC_INTERNAL
+ int rpmdbOpen (const char * prefix, rpmdb * dbp, int mode, int perms);
+ 
+ /** \ingroup rpmdb
+- * Initialize database.
++ * Open isoft-app database.
+  * @param prefix	path to top of install tree
++ * @retval dbp		address of rpm database
++ * @param mode		open(2) flags:  O_RDWR or O_RDONLY (O_CREAT also)
+  * @param perms		database permissions
+  * @return		0 on success
+  */
+ RPM_GNUC_INTERNAL
+-int rpmdbInit(const char * prefix, int perms);
++int rpmdbOpenISoftApp(const char * prefix, rpmdb * dbp, int mode, int perms);
+ 
+ /** \ingroup rpmdb
+- * Close all database indices and free rpmdb.
+- * @param db		rpm database
++ * Initialize database.
++ * @param prefix	path to top of install tree
++ * @param perms		database permissions
+  * @return		0 on success
+  */
+ RPM_GNUC_INTERNAL
+-int rpmdbClose (rpmdb db);
++int rpmdbInit(const char * prefix, int perms);
+ 
+ /** \ingroup rpmdb
+  * Rebuild database indices from package headers.
 diff --git a/lib/rpminstall.c b/lib/rpminstall.c
 index 03d9ea1..79ae0bd 100644
 --- a/lib/rpminstall.c
