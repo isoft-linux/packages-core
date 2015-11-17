@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        45%{?dist}
+Release:        46%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -141,6 +141,7 @@ Patch0072: 0072-Add-some-__unused__-where-gcc-5.x-is-more-picky-abou.patch
 Patch0073: 0073-Fix-race-in-EFI-validation.patch
 Patch0074: 0074-Mark-po-exclude.pot-as-binary-so-git-won-t-try-to-di.patch
 Patch0082: 0082-modify-grub-mkconfig-for-hiding-grub-menu-when-the-p.patch
+Patch0083: 0083-fixed-logical-error.patch
 
 #revert patch27/patch35/patch63
 #fix "GFXPAYLOAD=keep" not work issue.
@@ -544,8 +545,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
-* Mon Nov 16 2015 sulit <sulitsrc@gmail.com> - 1:2.02-46
-- redo it.
+* Tue Nov 17 2015 sulit <sulitsrc@gmail.com> - 1:2.02-46
+- fix grub-mkconfig logical error
 
 * Mon Nov 16 2015 sulit <sulitsrc@gmail.com> - 1:2.02-45
 - modify grub isoft-silence theme font and add chinese fonts.
