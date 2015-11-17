@@ -6,11 +6,11 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        7.git 
+Release:        8.git 
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 #Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
-Source0:        systemd-%{version}-eee15ab.tar.gz
+Source0:        systemd-%{version}-f1f8a5a.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
@@ -507,6 +507,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Tue Nov 17 2015 Cjacker <cjacker@foxmail.com> - 228-8.git
+- Update, and enable dkms service by default
+
 * Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 228-7.git
 - Update to eee15ab
 
