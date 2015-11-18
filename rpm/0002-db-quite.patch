@@ -1,3 +1,4 @@
+diff -Naur a/db-6.1.23/src/lock/lock_failchk.c b/db-6.1.23/src/lock/lock_failchk.c
 --- a/db-6.1.23/src/lock/lock_failchk.c	2015-02-18 01:13:26.000000000 +0800
 +++ b/db-6.1.23/src/lock/lock_failchk.c	2015-11-02 17:24:10.509541827 +0800
 @@ -80,11 +80,6 @@
@@ -12,3 +13,18 @@
  				UNLOCK_LOCKERS(env, lrp);
  				memset(&request, 0, sizeof(request));
  				request.op = DB_LOCK_PUT_READ;
+diff -Naur a/db-6.1.23/src/mp/mp_region.c b/db-6.1.23/src/mp/mp_region.c
+--- a/db-6.1.23/src/mp/mp_region.c	2015-02-18 01:13:26.000000000 +0800
++++ b/db-6.1.23/src/mp/mp_region.c	2015-11-18 15:52:09.702901679 +0800
+@@ -521,11 +521,6 @@
+ 		mp->mp_maxwrite = dbenv->mp_maxwrite;
+ 		mp->mp_maxwrite_sleep = dbenv->mp_maxwrite_sleep;
+ 	} else {
+-		if (dbenv->mp_mmapsize != 0 &&
+-		    mp->mp_mmapsize != (db_size_t)dbenv->mp_mmapsize)
+-			__db_msg(env, DB_STR("3044",
+-"Warning: Ignoring maximum memory map size when joining environment"));
+-
+ 		if (dbenv->mp_maxopenfd != 0 &&
+ 		    mp->mp_maxopenfd != dbenv->mp_maxopenfd)
+ 			__db_msg(env, DB_STR("3045",
