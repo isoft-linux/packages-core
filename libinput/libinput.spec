@@ -1,7 +1,7 @@
 Summary: libinput is a library to handle input devices in Wayland compositors and to provide a generic X.Org input driver. 
 Name:    libinput 
-Version: 1.1.0
-Release: 4
+Version: 1.1.1
+Release: 2 
 License: GPL
 Source0: http://www.freedesktop.org/software/libinput/libinput-%{version}.tar.xz
 
@@ -61,6 +61,9 @@ rm -rf %{buildroot}
 %{_includedir}/*
 
 %changelog
+* Wed Nov 18 2015 Cjacker <cjacker@foxmail.com> - 1.1.1-2
+- Update
+
 * Mon Oct 26 2015 Cjacker <cjacker@foxmail.com> - 1.0.2-4
 - Update to 1.1.0, support pointer acceleration profiles.
 
