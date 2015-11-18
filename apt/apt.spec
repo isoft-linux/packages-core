@@ -10,7 +10,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 25.%{snapver}
+Release: 26.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -52,7 +52,8 @@ Patch6: apt-0.5.15lorg3.95-lua-5.3.patch
 
 #isoftapp patches, only applied to static build.
 #use own config files and data dir.
-Patch10: apt-isoftapp-use-own-conf-method-data-dir.patch
+# merged into Patch11 by fujiang.
+#Patch10: apt-isoftapp-use-own-conf-method-data-dir.patch
 # iSOFT App skeleton implemented by fujiang and Leslie Zhai
 Patch11: 0001-isoft-app-skeleton.patch
 
@@ -157,7 +158,6 @@ popd
 #cp original apt to apt-<version>-isoftapp, and apply our isoftapp customized pactch
 cp -r %{name}-%{srcver} %{name}-%{srcver}-isoftapp
 pushd %{name}-%{srcver}-isoftapp
-%patch10 -p1
 %patch11 -p1 -b .isoftapp
 popd
 
@@ -362,6 +362,9 @@ popd #end of isoftapp
 
 
 %changelog
+* Wed Nov 18 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Fix isoftapp install/remove issue by fujiang.
+
 * Sun Nov 08 2015 Cjacker <cjacker@foxmail.com> - 0.5.15lorg3.95-25.git522
 - Seperate isoftapp package, use own config files
 

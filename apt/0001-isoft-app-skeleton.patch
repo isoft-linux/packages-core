@@ -1,3 +1,283 @@
+diff --git a/apt-pkg/algorithms.cc b/apt-pkg/algorithms.cc
+index 1b8b73f..0af0c94 100644
+--- a/apt-pkg/algorithms.cc
++++ b/apt-pkg/algorithms.cc
+@@ -739,6 +739,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
+       clog << "  Re-Instated " << Pkg.Name() << endl;
+    return true;
+ }
++#include <stdio.h>
+ 									/*}}}*/
+ // ProblemResolver::Resolve - Run the resolution pass			/*{{{*/
+ // ---------------------------------------------------------------------
+@@ -830,7 +831,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	     (Flags[I->ID] & PreInstalled) != 0 &&
+ 	     (Flags[I->ID] & Protected) == 0 &&
+ 	     (Flags[I->ID] & ReInstateTried) == 0)
+-	 {
++         {
+ 	    if (Debug == true)
+ 	       clog << " Try to Re-Instate " << I.Name() << endl;
+ 	    unsigned long OldBreaks = Cache.BrokenCount();
+@@ -841,8 +842,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	    if (Cache[I].InstBroken() == true || 
+ 		OldBreaks < Cache.BrokenCount())
+ 	    {
+-	       if (OldVer == 0)
+-		  Cache.MarkDelete(I);
++               if (OldVer == 0){
++                  Cache.MarkDelete(I);}
+ 	       else
+ 		  Cache.MarkKeep(I);
+ 	    }	    
+@@ -868,7 +869,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	 enum {OrRemove,OrKeep} OrOp = OrRemove;
+ 	 for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList();
+ 	      D.end() == false || InOr == true;)
+-	 {
++         {
+ 	    // Compute a single dependency element (glob or)
+ 	    if (Start == End)
+ 	    {
+@@ -881,7 +882,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 		     {
+ 			if (Debug == true)
+ 			   clog << "  Or group remove for " << I.Name() << endl;
+-			Cache.MarkDelete(I);
++                        Cache.MarkDelete(I);
+ 			Change = true;
+ 		     }		     
+ 		  }		  
+@@ -922,6 +923,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	    if (Debug == true)
+ 	       clog << "Package " << I.Name() << " has broken dep on " << Start.TargetPkg().Name() << endl;
+ 
++
+ 	    /* Look across the version list. If there are no possible
+ 	       targets then we keep the package and bail. This is necessary
+ 	       if a package has a dep on another package that cant be found */
+@@ -941,7 +943,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	       Change = true;
+ 	       Cache.MarkKeep(I);		  
+ 	       break;
+-	    }
++            }
+ 	    
+ 	    bool Done = false;
+ 	    for (pkgCache::Version **V = VList; *V != 0; V++)
+@@ -953,6 +955,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 		  clog << "  Considering " << Pkg.Name() << ' ' << (int)Scores[Pkg->ID] <<
+ 		  " as a solution to " << I.Name() << ' ' << (int)Scores[I->ID] << endl;
+ 
++
+ 	       /* Try to fix the package under consideration rather than
+ 	          fiddle with the VList package */
+ 	       if (Scores[I->ID] <= Scores[Pkg->ID] ||
+@@ -978,6 +981,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 		     then installing it will be necessary */
+ 		  bool Installed = Cache[I].Install();
+ 		  Cache.MarkKeep(I);
++
+ 		  if (Cache[I].InstBroken() == false)
+ 		  {
+ 		     // Unwind operation will be keep now
+@@ -1000,7 +1004,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 			{
+ 			   if (Debug == true)
+ 			      clog << "  Removing " << I.Name() << " rather than change " << Start.TargetPkg().Name() << endl;
+-			   Cache.MarkDelete(I);
++                           Cache.MarkDelete(I);
+ 			   if (Counter > 1)
+ 			   {
+ 			      if (Scores[Pkg->ID] > Scores[I->ID])
+@@ -1070,7 +1074,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	    {
+ 	       bool Installed = Cache[I].Install();
+ 	       Cache.MarkKeep(I);
+-	       if (Cache[I].InstBroken() == false)
++               if (Cache[I].InstBroken() == false)
+ 	       {
+ 		  // Unwind operation will be keep now
+ 		  if (OrOp == OrRemove)
+@@ -1087,8 +1091,10 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 	       {
+ 		  if (Debug == true)
+ 		     clog << "  Removing " << I.Name() << " because I can't find " << Start.TargetPkg().Name() << endl;
+-		  if (InOr == false)
+-		     Cache.MarkDelete(I);
++                  if (InOr == false) {
++
++                     Cache.MarkDelete(I);
++                  }
+ 	       }
+ 
+ 	       Change = true;
+@@ -1116,7 +1122,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+ 		  {
+ 		     if (Debug == true)
+ 			clog << "  Fixing " << I.Name() << " via remove of " << J->Pkg.Name() << endl;
+-		     Cache.MarkDelete(J->Pkg);
++                     Cache.MarkDelete(J->Pkg);printf("\ntrace:%s,%d,mark[%s]\n",__FUNCTION__,__LINE__,J->Pkg.Name());
+ 		  }
+ 	       }
+ 	       else
+@@ -1155,6 +1161,141 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+    
+    return true;
+ }
++
++static int g_max_deep = 0;
++bool pkgProblemResolver::markInstallAll(const char *pkgName)
++{
++    if (!pkgName || pkgName[0] ==0) {
++        return false;
++    }
++
++    if (g_max_deep++ > 5) return true;
++
++    char pkg1[256]=""; // abc.so.10-->pkg1=abc
++    char pkg2[256]=""; // abc(x86_64)-->pkg2=abc
++    const char *p = strchr(pkgName,'.');
++    if (p) {
++        snprintf(pkg1,p - pkgName +1,"%s",pkgName);
++    }
++    p = strchr(pkgName,'(');
++    if (p) {
++        snprintf(pkg2,p - pkgName +1,"%s",pkgName);
++    }
++
++    if (pkg1[0] != 0) {
++        markInstallAll(pkg1);
++    }
++    if (pkg2[0] != 0) {
++        markInstallAll(pkg2);
++    }
++
++    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
++        if (strcmp(I.Name(),pkgName) == 0) {
++            Cache.MarkInstall(I,false);
++        }
++        pkgCache::DepIterator Dep = I.RevDependsList();
++        for (; Dep.end() == false; Dep++) {
++            if (strcmp(Dep.ParentPkg().Name(),pkgName) == 0) {
++#ifdef APT_RPM_DEBUG 
++               printf("\ntrace:%s,%d,[%s]-->[%s],inst()[%s]\n",__FUNCTION__,__LINE__,Dep.ParentPkg().Name(),I.Name(),Cache[I].Install()?"install":"not inst");
++#endif
++                Cache.MarkInstall(I,false);
++                markInstallAll(I.Name()); //...
++                if (g_max_deep++ > 5) break;
++            }
++        }
++    }
++
++
++    return false;
++
++}
++
++
++bool pkgProblemResolver::markDeleteAll(const char *pkgName,int *deep)
++{
++    if (!pkgName || pkgName[0] ==0) {
++        return false;
++    }
++    if( strlen(pkgName) < 2) {
++        return false;
++    }
++
++    *deep++;
++
++    char pkg1[256]=""; // abc.so.10-->pkg1=abc
++    char pkg2[256]=""; // abc(x86_64)-->pkg2=abc
++    const char *p = strchr(pkgName,'.');
++    if (p) {
++        snprintf(pkg1,p - pkgName +1,"%s",pkgName);
++    }
++    p = strchr(pkgName,'(');
++    if (p) {
++        snprintf(pkg2,p - pkgName +1,"%s",pkgName);
++    }
++
++    if (pkg1[0] != 0) {
++        markDeleteAll(pkg1,deep);
++    }
++    if (pkg2[0] != 0) {
++        markDeleteAll(pkg2,deep);
++    }
++
++    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
++        int len = strlen(pkgName);
++        // pkgName is unragular.
++        if (strncmp(I.Name(),pkgName,len) == 0) {
++            if (I.Name()[len] == '(') {
++                continue;
++            }
++            Cache.MarkDelete(I);
++            pkgCache::DepIterator Dep = I.RevDependsList();
++            for (; Dep.end() == false; Dep++) {
++#ifdef APT_RPM_DEBUG 
++               printf("\ntrace:%s,%d,[%s]-->[%s]\n",__FUNCTION__,__LINE__,Dep.ParentPkg().Name(),I.Name());
++#endif
++                markDeleteAll(Dep.ParentPkg().Name(),deep);
++            }
++        }
++    }
++
++    return false;
++}
++
++
++bool pkgProblemResolver::ResolveAll(const char *pkgName,char action)
++{
++
++    if (action == 'd') {
++        // no.1
++        for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
++            if (strcmp(I.Name(),pkgName) == 0) {
++                Cache.MarkDelete(I);
++            }
++        }
++
++        // no.2
++        int deep = 0;
++        markDeleteAll(pkgName,&deep);
++        return true;
++    } else if (action == 'i') {
++        for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
++            if (strcmp(I.Name(),pkgName) == 0) {
++#ifdef APT_RPM_DEBUG 
++               printf("\ntrace:%s,%d,pkg[%s]set install\n",__FUNCTION__,__LINE__,pkgName);
++#endif
++                Cache.MarkInstall(I,false);
++                markInstallAll(I.Name());
++                return true;
++            }
++        }
++
++        return true;
++    }
++
++    return true;
++}
++
+ 									/*}}}*/
+ // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
+ // ---------------------------------------------------------------------
+diff --git a/apt-pkg/algorithms.h b/apt-pkg/algorithms.h
+index be554d8..d75abee 100644
+--- a/apt-pkg/algorithms.h
++++ b/apt-pkg/algorithms.h
+@@ -111,6 +111,10 @@ class pkgProblemResolver
+    
+    // Try to intelligently resolve problems by installing and removing packages   
+    bool Resolve(bool BrokenFix = false);
++
++   bool ResolveAll(const char *pkgName,char action);
++   bool markDeleteAll(const char *pkgName,int *deep);
++   bool markInstallAll(const char *pkgName);
+    
+    // Try to resolve problems only by using keep
+    bool ResolveByKeep();
 diff --git a/apt-pkg/cachefile.cc b/apt-pkg/cachefile.cc
 index 6b13d81..c58bb44 100644
 --- a/apt-pkg/cachefile.cc
@@ -47,6 +327,78 @@ index 036df2e..4131739 100644
  };
  
  #endif
+diff --git a/apt-pkg/contrib/configuration.cc b/apt-pkg/contrib/configuration.cc
+index 251ae17..0249e58 100644
+--- a/apt-pkg/contrib/configuration.cc
++++ b/apt-pkg/contrib/configuration.cc
+@@ -35,6 +35,7 @@ using namespace std;
+ 									/*}}}*/
+ 
+ Configuration *_config = new Configuration;
++Configuration *_configApp = new Configuration;
+ 
+ // Configuration::Configuration - Constructor				/*{{{*/
+ // ---------------------------------------------------------------------
+diff --git a/apt-pkg/contrib/configuration.h b/apt-pkg/contrib/configuration.h
+index 10863d5..4132ee4 100644
+--- a/apt-pkg/contrib/configuration.h
++++ b/apt-pkg/contrib/configuration.h
+@@ -102,6 +102,7 @@ class Configuration
+ };
+ 
+ extern Configuration *_config;
++extern Configuration *_configApp;
+ 
+ bool ReadConfigFile(Configuration &Conf,string FName,bool AsSectional = false,
+ 		    unsigned Depth = 0);
+diff --git a/apt-pkg/contrib/mmap.cc b/apt-pkg/contrib/mmap.cc
+index 6e4f1c0..ca5fa6a 100644
+--- a/apt-pkg/contrib/mmap.cc
++++ b/apt-pkg/contrib/mmap.cc
+@@ -25,6 +25,7 @@
+ #include <apt-pkg/error.h>
+ 
+ #include <apti18n.h>
++#include <stdio.h>
+ 
+ #include <cstring>
+ #include <sys/mman.h>
+@@ -65,7 +66,9 @@ MMap::~MMap()
+ bool MMap::Map(FileFd &Fd)
+ {
+    iSize = Fd.Size();
+-   
++#ifdef APT_RPM_DEBUG
++  printf("\ntrace:%s,%d,size[%d]\n",__FUNCTION__,__LINE__,iSize); 
++#endif
+    // Set the permissions.
+    int Prot = PROT_READ;
+    int Map = MAP_SHARED;
+@@ -157,7 +160,9 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,size_t WorkSpace) :
+       char C = 0;
+       Fd->Write(&C,sizeof(C));
+    }
+-   
++#if APT_RPM_DEBUG
++   printf("\ntrace:%s,%d,\n",__FUNCTION__,__LINE__);
++#endif
+    Map(F);
+    iSize = EndOfFile;
+ }
+diff --git a/apt-pkg/contrib/progress.cc b/apt-pkg/contrib/progress.cc
+index 2628981..22db60f 100644
+--- a/apt-pkg/contrib/progress.cc
++++ b/apt-pkg/contrib/progress.cc
+@@ -281,6 +281,9 @@ void InstHashProgress::Update()
+           (*PackageData)["release"] + "." +
+ 	  (*PackageData)["arch"]; 
+    }
++#ifdef APT_RPM_DEBUG
++printf("\ntrace:%s,%d,s[%s]\n",__FUNCTION__,__LINE__,s.c_str());
++#endif
+    const int namemax = 40;
+    cout << "\r";
+    cout << setw(namemax) << s.substr(0, namemax) << " ";
 diff --git a/apt-pkg/depcache.cc b/apt-pkg/depcache.cc
 index 95415ca..2970aa7 100644
 --- a/apt-pkg/depcache.cc
@@ -61,6 +413,89 @@ index 95415ca..2970aa7 100644
  	       if (VS.CheckDep(PkgState[Pkg->ID].InstVerIter(*this).VerStr(),
  				       Dep) == true)
  		  return true;
+diff --git a/apt-pkg/init.cc b/apt-pkg/init.cc
+index 89a2d54..186243d 100644
+--- a/apt-pkg/init.cc
++++ b/apt-pkg/init.cc
+@@ -37,7 +37,7 @@ const char *pkgOS = COMMON_OS;
+ /* Directories are specified in such a way that the FindDir function will
+    understand them. That is, if they don't start with a / then their parent
+    is prepended, this allows a fair degree of flexability. */
+-bool pkgInitConfig(Configuration &Cnf)
++bool pkgInitConfig(Configuration &Cnf,bool useIsoftApp)
+ {
+    // General APT things
+    if (strcmp(COMMON_OS,"linux") == 0 ||
+@@ -50,7 +50,7 @@ bool pkgInitConfig(Configuration &Cnf)
+    Cnf.Set("Dir","/");
+    
+    // State   
+-   Cnf.Set("Dir::State","var/lib/apt/");
++   Cnf.Set("Dir::State",useIsoftApp?"var/lib/isoftapp/":"var/lib/apt/");
+    
+    struct stat St;   
+    if (stat(Cnf.FindDir("Dir::State").c_str(),&St) != 0)
+@@ -61,27 +61,31 @@ bool pkgInitConfig(Configuration &Cnf)
+    Cnf.Set("Dir::State::cdroms","cdroms.list");
+    
+    // Cache
+-   Cnf.Set("Dir::Cache","var/cache/apt/");
++   Cnf.Set("Dir::Cache",useIsoftApp?"var/cache/isoftapp/":"var/cache/apt/");
+    Cnf.Set("Dir::Cache::archives","archives/");
+    Cnf.Set("Dir::Cache::srcpkgcache","srcpkgcache.bin");
+    Cnf.Set("Dir::Cache::pkgcache","pkgcache.bin");
+    
+    // Configuration
+-   Cnf.Set("Dir::Etc","etc/apt/");
++   Cnf.Set("Dir::Etc",useIsoftApp?"etc/isoftapp/":"etc/apt");
+    Cnf.Set("Dir::Etc::sourcelist","sources.list");
+    // CNC:2003-03-03
+    Cnf.Set("Dir::Etc::sourceparts","sources.list.d");
+    Cnf.Set("Dir::Etc::vendorlist","vendors.list");
+    Cnf.Set("Dir::Etc::vendorparts","vendors.list.d");
+-   Cnf.Set("Dir::Etc::main","apt.conf");
+-   Cnf.Set("Dir::Etc::parts","apt.conf.d");
++   Cnf.Set("Dir::Etc::main",useIsoftApp?"isoftapp.conf":"apt.conf");
++   Cnf.Set("Dir::Etc::parts",useIsoftApp?"isoftapp.conf.d":"apt.conf.d");
+    Cnf.Set("Dir::Etc::preferences","preferences");
+-   Cnf.Set("Dir::Bin::methods",LIBDIR "/apt/methods");
+-	      
++   if (useIsoftApp) {
++       Cnf.Set("Dir::Bin::methods",LIBDIR "/isoftapp/methods");
++   } else {
++       Cnf.Set("Dir::Bin::methods",LIBDIR "/apt/methods");
++   }
++
+    bool Res = true;
+    
+    // Read an alternate config file
+-   const char *Cfg = getenv("APT_CONFIG");
++   const char *Cfg = getenv(useIsoftApp?"ISOFTAPP_CONFIG":"ISOFTAPP_CONFIG");
+    if (Cfg != 0 && FileExists(Cfg) == true)
+       Res &= ReadConfigFile(Cnf,Cfg);
+    
+@@ -94,7 +98,7 @@ bool pkgInitConfig(Configuration &Cnf)
+    string FName = Cnf.FindFile("Dir::Etc::main");
+    if (FileExists(FName) == true)
+       Res &= ReadConfigFile(Cnf,FName);
+-   
++
+    if (Res == false)
+       return false;
+    
+diff --git a/apt-pkg/init.h b/apt-pkg/init.h
+index 9252caa..6976b81 100644
+--- a/apt-pkg/init.h
++++ b/apt-pkg/init.h
+@@ -26,7 +26,7 @@ extern const char *pkgLibVersion;
+ extern const char *pkgOS;
+ extern const char *pkgCPU;
+ 
+-bool pkgInitConfig(Configuration &Cnf);
++bool pkgInitConfig(Configuration &Cnf,bool useIsoftApp);
+ bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys);
+ 
+ #ifdef APT_COMPATIBILITY
 diff --git a/apt-pkg/packagemanager.cc b/apt-pkg/packagemanager.cc
 index e0e4f8a..ca40485 100644
 --- a/apt-pkg/packagemanager.cc
@@ -75,6 +510,31 @@ index e0e4f8a..ca40485 100644
     InstProgress *Prog;
     pkgPackageManager::OrderResult res;
     if (_config->FindB("RPM::Interactive",true)) {
+diff --git a/apt-pkg/pkgcache.cc b/apt-pkg/pkgcache.cc
+index d65a0c7..9af3fe7 100644
+--- a/apt-pkg/pkgcache.cc
++++ b/apt-pkg/pkgcache.cc
+@@ -426,7 +426,6 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
+ 	 if (Res != 0)
+ 	    *End++ = I.OwnerVer();
+       }
+-      
+       // Do it again and write it into the array
+       if (Res == 0)
+       {
+diff --git a/apt-pkg/pkgcachegen.cc b/apt-pkg/pkgcachegen.cc
+index 1516a11..9a26ff1 100644
+--- a/apt-pkg/pkgcachegen.cc
++++ b/apt-pkg/pkgcachegen.cc
+@@ -787,7 +798,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+    Progress.OverallProgress(0,1,1,_("Reading Package Lists"));
+    
+    // Cache is OK, Fin.
+-   if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
++   if (0&&CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
+    {
+       Progress.OverallProgress(1,1,1,_("Reading Package Lists"));
+       return true;
 diff --git a/apt-pkg/pkgsystem.h b/apt-pkg/pkgsystem.h
 index 2ac0893..b4b2e80 100644
 --- a/apt-pkg/pkgsystem.h
@@ -90,21 +550,23 @@ index 2ac0893..b4b2e80 100644
  
     // CNC:2002-07-06
 diff --git a/apt-pkg/rpm/rpmhandler.cc b/apt-pkg/rpm/rpmhandler.cc
-index 0b600d3..9adbfe2 100644
+index 0b600d3..41475a9 100644
 --- a/apt-pkg/rpm/rpmhandler.cc
 +++ b/apt-pkg/rpm/rpmhandler.cc
-@@ -62,6 +62,10 @@ bool HideZeroEpoch;
+@@ -62,6 +62,12 @@ bool HideZeroEpoch;
  
  static rpmds rpmlibProv = NULL;
  
 +#define ISOFTAPP_DIR "/var/lib/isoft-app"
 +#define SYSAPP_DIR "/var/lib/rpm"
 +extern bool g_useIsoftApp;
++string g_dbpath_str_true ;
++string g_dbpath_str_false;
 +
  string RPMHandler::EVR() const
  {
     string e = Epoch();
-@@ -545,9 +549,17 @@ string RPMDirHandler::HashType() const
+@@ -545,9 +551,17 @@ string RPMDirHandler::HashType() const
     return "MD5-Hash";
  }
  
@@ -123,7 +585,7 @@ index 0b600d3..9adbfe2 100644
     RpmIter = NULL;
     string Dir = _config->Find("RPM::RootDir", "/");
     
-@@ -566,7 +578,14 @@ RPMDBHandler::RPMDBHandler(bool WriteLock)
+@@ -566,7 +580,14 @@ RPMDBHandler::RPMDBHandler(bool WriteLock)
  
     Handler = rpmtsCreate();
     rpmtsSetVSFlags(Handler, (rpmVSFlags_e)-1);
@@ -139,7 +601,15 @@ index 0b600d3..9adbfe2 100644
  
     RpmIter = raptInitIterator(Handler, RPMDBI_PACKAGES, NULL, 0);
     if (RpmIter == NULL) {
-@@ -630,6 +649,8 @@ string RPMDBHandler::DataPath(bool DirectoryOnly)
+@@ -627,14 +648,26 @@ RPMDBHandler::~RPMDBHandler()
+ 
+ string RPMDBHandler::DataPath(bool DirectoryOnly)
+ {
++    if (g_useIsoftApp) {
++        rpmtsSetMacro(ISOFTAPP_DIR);
++    } else {
++        rpmtsSetMacro(SYSAPP_DIR);
++    }
     string File = "Packages";
     char *tmp = (char *) rpmExpand("%{_dbpath}", NULL);
     string DBPath(_config->Find("RPM::RootDir")+tmp);
@@ -148,7 +618,19 @@ index 0b600d3..9adbfe2 100644
     free(tmp);
  
     if (DirectoryOnly == true)
-@@ -943,6 +964,9 @@ string RPMRepomdHandler::SourceRpm() const
+-       return DBPath;
+-   else
++        g_dbpath_str_true = DBPath;
++    else
++        g_dbpath_str_false = DBPath+"/"+File;
++
++    if (DirectoryOnly == true)
++           return DBPath;
++    else
+        return DBPath+"/"+File;
+ }
+ 
+@@ -943,6 +976,9 @@ string RPMRepomdHandler::SourceRpm() const
  
  bool RPMRepomdHandler::PRCO(unsigned int Type, vector<Dependency*> &Deps) const
  {
@@ -158,7 +640,7 @@ index 0b600d3..9adbfe2 100644
     xmlNode *format = XmlFindNode(NodeP, "format");
     xmlNode *prco = NULL;
  
-@@ -1401,6 +1425,9 @@ string RPMSqliteHandler::HashType() const
+@@ -1401,6 +1437,9 @@ string RPMSqliteHandler::HashType() const
  
  bool RPMSqliteHandler::PRCO(unsigned int Type, vector<Dependency*> &Deps) const
  {
@@ -168,20 +650,50 @@ index 0b600d3..9adbfe2 100644
     SqliteQuery *prco = NULL;
     switch (Type) {
        case pkgCache::Dep::Depends:
-diff --git a/apt-pkg/rpm/rpmhandler.h b/apt-pkg/rpm/rpmhandler.h
-index 6014a1c..264864b 100644
---- a/apt-pkg/rpm/rpmhandler.h
-+++ b/apt-pkg/rpm/rpmhandler.h
-@@ -225,7 +225,8 @@ class RPMDBHandler : public RPMHdrHandler
+--- a/apt-pkg/rpm/rpmhandler.h	2011-04-14 02:27:40.000000000 +0800
++++ b/apt-pkg/rpm/rpmhandler.h	2015-11-18 14:11:37.960625502 +0800
+@@ -214,7 +214,7 @@
+ 
+    public:
+ 
+-   static string DataPath(bool DirectoryOnly=true);
++   string DataPath(bool DirectoryOnly=true);
+    virtual bool Skip();
+    virtual bool Jump(off_t Offset);
+    virtual void Rewind();
+@@ -226,7 +226,7 @@
     // used by rpmSystem::DistroVer()
     bool JumpByName(string PkgName, bool Provides=false);
  
 -   RPMDBHandler(bool WriteLock=false);
-+   //RPMDBHandler(bool WriteLock=false);
 +   RPMDBHandler(bool WriteLock=false,bool useIsoftApp=false);
     virtual ~RPMDBHandler();
  };
+
+diff --git a/apt-pkg/rpm/rpmindexfile.cc b/apt-pkg/rpm/rpmindexfile.cc
+index 1dd1244..8b6d7b6 100644
+--- a/apt-pkg/rpm/rpmindexfile.cc
++++ b/apt-pkg/rpm/rpmindexfile.cc
+@@ -34,6 +34,9 @@
  
+ #include <sys/stat.h>
+ 
++extern string g_dbpath_str_true ;
++extern string g_dbpath_str_false;
++
+ vector<pkgRepository *> RepList;
+ 
+ /* 
+@@ -883,7 +886,8 @@ bool rpmDatabaseIndex::Merge(pkgCacheGenerator &Gen,OpProgress &Prog) const
+       return _error->Error(_("Problem opening RPM database"));
+    
+    Prog.SubProgress(0,"RPM Database");
+-   if (Gen.SelectFile(Handler->DataPath(false),string(),*this,pkgCache::Flag::NotSource) == false)
++   //if (Gen.SelectFile(Handler->DataPath(false),string(),*this,pkgCache::Flag::NotSource) == false)
++   if (Gen.SelectFile(g_dbpath_str_false,string(),*this,pkgCache::Flag::NotSource) == false)
+       return _error->Error(_("Problem with SelectFile RPM Database"));
+ 
+    // Store the IMS information
 diff --git a/apt-pkg/rpm/rpmlistparser.cc b/apt-pkg/rpm/rpmlistparser.cc
 index 749c91e..ed327a3 100644
 --- a/apt-pkg/rpm/rpmlistparser.cc
@@ -202,8 +714,22 @@ index 749c91e..ed327a3 100644
     pkgCache::PkgIterator FromPkgI = Owner->GetCache().FindPkg(Name);
  
     // Should always be false
+diff --git a/apt-pkg/rpm/rpmpackagedata.cc b/apt-pkg/rpm/rpmpackagedata.cc
+index 4a002c9..6ff4012 100644
+--- a/apt-pkg/rpm/rpmpackagedata.cc
++++ b/apt-pkg/rpm/rpmpackagedata.cc
+@@ -327,7 +327,8 @@ bool RPMPackageData::IsDupPackage(const string &Name)
+ 
+ RPMPackageData *RPMPackageData::Singleton()
+ {
+-   static RPMPackageData *data = NULL;
++   //static RPMPackageData *data = NULL;
++   RPMPackageData *data = NULL;
+    if (!data)
+       data = new RPMPackageData();
+    return data;
 diff --git a/apt-pkg/rpm/rpmpm.cc b/apt-pkg/rpm/rpmpm.cc
-index 1271ea4..1814fba 100644
+index 1271ea4..41af51e 100644
 --- a/apt-pkg/rpm/rpmpm.cc
 +++ b/apt-pkg/rpm/rpmpm.cc
 @@ -398,7 +398,7 @@ bool pkgRPMExtPM::ExecRPM(Item::RPMOps op, vector<const char*> &files)
@@ -271,11 +797,42 @@ index 1271ea4..1814fba 100644
     probs = rpmtsProblems(TS);
  
     if (rc > 0) {
+diff --git a/apt-pkg/rpm/rpmrecords.cc b/apt-pkg/rpm/rpmrecords.cc
+index 553bf46..f82ea99 100644
+--- a/apt-pkg/rpm/rpmrecords.cc
++++ b/apt-pkg/rpm/rpmrecords.cc
+@@ -24,13 +24,17 @@
+ 
+ using namespace std;
+ 
++extern string g_dbpath_str_true ;
++extern string g_dbpath_str_false;
++
+ // RecordParser::rpmRecordParser - Constructor				/*{{{*/
+ // ---------------------------------------------------------------------
+ /* */
+ rpmRecordParser::rpmRecordParser(string File, pkgCache &Cache)
+    : Handler(0), Buffer(0), BufSize(0), BufUsed(0)
+ {
+-   if (File == RPMDBHandler::DataPath(false)) {
++   //if (File == RPMDBHandler::DataPath(false)) {
++   if (File == g_dbpath_str_false ) {
+       IsDatabase = true;
+       Handler = rpmSys.GetDBHandler();
+    } else {
 diff --git a/apt-pkg/rpm/rpmsystem.cc b/apt-pkg/rpm/rpmsystem.cc
-index 86d0f17..0397103 100644
+index 86d0f17..ab44696 100644
 --- a/apt-pkg/rpm/rpmsystem.cc
 +++ b/apt-pkg/rpm/rpmsystem.cc
-@@ -64,8 +64,10 @@ rpmSystem::~rpmSystem()
+@@ -39,6 +39,7 @@
+ #include <time.h>
+ 									/*}}}*/
+ extern int _rpmds_nopromote;
++extern string g_dbpath_str_false;
+ 
+ rpmSystem rpmSys;
+ 
+@@ -64,8 +65,10 @@ rpmSystem::~rpmSystem()
  
  RPMDBHandler *rpmSystem::GetDBHandler()
  {
@@ -288,7 +845,7 @@ index 86d0f17..0397103 100644
     return RpmDB;
  }
  
-@@ -82,15 +84,20 @@ bool rpmSystem::LockRead()
+@@ -82,15 +85,22 @@ bool rpmSystem::LockRead()
  // System::Lock - Get the lock						/*{{{*/
  // ---------------------------------------------------------------------
  /* this will open the rpm database through rpmlib, which will lock the db */
@@ -296,9 +853,12 @@ index 86d0f17..0397103 100644
 +//bool rpmSystem::Lock()
 +bool rpmSystem::Lock(bool useIsoft)
  {
+-   if (RpmDB != NULL && RpmDB->HasWriteLock() == false)
 +   m_IsoftApp = useIsoft;
 +
-    if (RpmDB != NULL && RpmDB->HasWriteLock() == false)
++
++   //if (RpmDB != NULL && RpmDB->HasWriteLock() == false)
++   if (useIsoft || (RpmDB != NULL && RpmDB->HasWriteLock() == false))
     {
        delete RpmDB;
        RpmDB = NULL;
@@ -312,6 +872,25 @@ index 86d0f17..0397103 100644
     if (_error->PendingError() == true)
        return false;
     LockCount++;
+@@ -106,7 +116,7 @@ bool rpmSystem::UnLock(bool NoErrors)
+       return false;
+    if (LockCount < 1)
+       return _error->Error("Not locked");
+-   if (--LockCount == 0)
++   if (--LockCount >= 0)
+    {
+       delete RpmDB;
+       RpmDB = NULL;
+@@ -185,7 +195,8 @@ signed rpmSystem::Score(Configuration const &Cnf)
+ {
+    signed Score = 0;
+ 
+-   if (FileExists(RPMDBHandler::DataPath(false)))
++   //if (FileExists(RPMDBHandler::DataPath(false)))
++   if (FileExists(g_dbpath_str_false))
+       Score += 10;
+    if (FileExists(Cnf.FindFile("Dir::Bin::rpm","/bin/rpm")) == true)
+       Score += 10;
 diff --git a/apt-pkg/rpm/rpmsystem.h b/apt-pkg/rpm/rpmsystem.h
 index 53629be..66f62fb 100644
 --- a/apt-pkg/rpm/rpmsystem.h
@@ -334,21 +913,156 @@ index 53629be..66f62fb 100644
     virtual bool UnLock(bool NoErrors = false);
     virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const;
     virtual bool Initialize(Configuration &Cnf);
+diff --git a/apt-pkg/sourcelist.cc b/apt-pkg/sourcelist.cc
+index 71b1ee6..0549dc1 100644
+--- a/apt-pkg/sourcelist.cc
++++ b/apt-pkg/sourcelist.cc
+@@ -276,6 +276,9 @@ bool pkgSourceList::ReadMainList()
+       Res &= ReadAppend(Main);   
+ 
+    string Parts = _config->FindDir("Dir::Etc::sourceparts");
++#ifdef APT_RPM_DEBUG
++   printf("\ntrace:%s,%d,Parts file[%s]\n",__FUNCTION__,__LINE__,Parts.c_str());
++#endif
+    if (FileExists(Parts) == true)
+       Res &= ReadSourceDir(Parts);
+    
+diff --git a/autogen.sh b/autogen.sh
+new file mode 100755
+index 0000000..26f0618
+--- /dev/null
++++ b/autogen.sh
+@@ -0,0 +1,58 @@
++#!/bin/sh
++
++ECHO_C=
++ECHO_N=
++case `echo -n x` in
++-n*)
++  case `echo 'x\c'` in
++  *c*) ;;
++  *)   ECHO_C='\c';;
++  esac;;
++*)
++  ECHO_N='-n';;
++esac
++
++# some terminal codes ...
++boldface="`tput bold 2>/dev/null`"
++normal="`tput sgr0 2>/dev/null`"
++printbold() {
++    echo $ECHO_N "$boldface" $ECHO_C
++    echo "$@"
++    echo $ECHO_N "$normal" $ECHO_C
++}    
++
++printbold Running libtoolize...
++libtoolize --force --copy
++printbold Running intltoolize...
++intltoolize --force --copy --automake
++printbold Running aclocal...
++aclocal -I m4
++printbold Running autoconf...
++autoconf
++printbold Running autoheader...
++autoheader
++
++if [ -f COPYING ]; then
++	cp -pf COPYING COPYING.autogen_bak
++fi
++if [ -f INSTALL ]; then
++	cp -pf INSTALL INSTALL.autogen_bak
++fi
++
++printbold Running automake...
++automake --gnu --add-missing --force --copy
++
++if [ -f COPYING.autogen_bak ]; then
++	cmp COPYING COPYING.autogen_bak > /dev/null || cp -pf COPYING.autogen_bak COPYING
++	rm -f COPYING.autogen_bak
++fi
++if [ -f INSTALL.autogen_bak ]; then
++	cmp INSTALL INSTALL.autogen_bak > /dev/null || cp -pf INSTALL.autogen_bak INSTALL
++	rm -f INSTALL.autogen_bak
++fi
++
++conf_flags="--prefix=/usr"
++
++printbold Running ./configure $conf_flags "$@" ...
++./configure $conf_flags "$@" \
++&& echo Now type \`make\' to compile isoft-apt
+diff --git a/cmdline/apt-cache.cc b/cmdline/apt-cache.cc
+index 3cd22fc..319f907 100644
+--- a/cmdline/apt-cache.cc
++++ b/cmdline/apt-cache.cc
+@@ -1255,6 +1255,7 @@ int main(int argc,const char *argv[])
+ 
+    // Parse the command line and initialize the package library
+    CommandLine CmdL(Args,_config);
++   /*
+    if (pkgInitConfig(*_config) == false ||
+        CmdL.Parse(argc,argv) == false ||
+        pkgInitSystem(*_config,_system) == false)
+@@ -1262,6 +1263,7 @@ int main(int argc,const char *argv[])
+       _error->DumpErrors();
+       return 100;
+    }
++   */
+ 
+    // See if the help should be shown
+    if (_config->FindB("help") == true ||
+diff --git a/cmdline/apt-cdrom.cc b/cmdline/apt-cdrom.cc
+index 3388aa2..29fe53f 100644
+--- a/cmdline/apt-cdrom.cc
++++ b/cmdline/apt-cdrom.cc
+@@ -878,6 +878,7 @@ int main(int argc,const char *argv[])
+ 
+    // Parse the command line and initialize the package library
+    CommandLine CmdL(Args,_config);
++   /*
+    if (pkgInitConfig(*_config) == false ||
+        CmdL.Parse(argc,argv) == false ||
+        pkgInitSystem(*_config,_system) == false)
+@@ -885,6 +886,7 @@ int main(int argc,const char *argv[])
+       _error->DumpErrors();
+       return 100;
+    }
++   */
+ 
+    // See if the help should be shown
+    if (_config->FindB("help") == true || _config->FindB("version") == true ||
+diff --git a/cmdline/apt-config.cc b/cmdline/apt-config.cc
+index 04febfa..ff9aba6 100644
+--- a/cmdline/apt-config.cc
++++ b/cmdline/apt-config.cc
+@@ -109,6 +109,7 @@ int main(int argc,const char *argv[])
+ 
+    // Parse the command line and initialize the package library
+    CommandLine CmdL(Args,_config);
++   /*
+    if (pkgInitConfig(*_config) == false ||
+        CmdL.Parse(argc,argv) == false ||
+        pkgInitSystem(*_config,_system) == false)
+@@ -116,6 +117,7 @@ int main(int argc,const char *argv[])
+       _error->DumpErrors();
+       return 100;
+    }
++   */
+ 
+    // See if the help should be shown
+    if (_config->FindB("help") == true ||
 diff --git a/cmdline/apt-get.cc b/cmdline/apt-get.cc
-index b755f49..5647966 100644
+index b755f49..48d2081 100644
 --- a/cmdline/apt-get.cc
 +++ b/cmdline/apt-get.cc
-@@ -68,6 +68,9 @@
-     
- 									/*}}}*/
+@@ -76,13 +76,13 @@ ostream c2out(0);
+ ofstream devnull("/dev/null");
+ unsigned int ScreenWidth = 80;
  
-+/********** use isoftapp or not ************/
-+#define USEISOFTAPP
-+
- using namespace std;
- 
- ostream c0out(0);
-@@ -83,6 +86,7 @@ unsigned int ScreenWidth = 80;
+-
+ // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
+ // ---------------------------------------------------------------------
+ /* */
  class CacheFile : public cmdCacheFile
  {
     public:
@@ -356,9 +1070,16 @@ index b755f49..5647966 100644
     bool CheckDeps(bool AllowBroken = false);
     bool BuildCaches(bool WithLock = true)
     {
-@@ -109,7 +113,8 @@ class CacheFile : public cmdCacheFile
+@@ -104,15 +104,19 @@ class CacheFile : public cmdCacheFile
+    {
+       // CNC:2004-03-07 - dont take lock if in download mode
+       if (_config->FindB("APT::Get::Print-URIs") == true ||
+-	  _config->FindB("APT::Get::Download-only") == true)
++          _config->FindB("APT::Get::Download-only") == true)
+ 	 return Open(false);
        else
- 	 return Open(true);
+-	 return Open(true);
++         return Open(true);
     }
 -   CacheFile() : cmdCacheFile() {}
 +   //CacheFile() : cmdCacheFile() {}
@@ -366,7 +1087,133 @@ index b755f49..5647966 100644
  };
  									/*}}}*/
  
-@@ -724,6 +729,9 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
++CacheFile *g_cache2 = NULL;
++pkgProblemResolver *g_Fix2 =NULL;
++
+ // CNC:2003-03-19
+ #ifdef APT_WITH_LUA
+ class AptGetLuaCache : public LuaCacheControl
+@@ -186,7 +190,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
+    if (DCache->DelCount() != 0 || DCache->InstCount() != 0)
+       return _error->Error("Internal Error, non-zero counts");
+ #endif
+-   
++
+    // Apply corrections for half-installed packages
+    if (pkgApplyStatus(*DCache) == false)
+       return false;
+@@ -250,7 +254,39 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+    if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
+       ShowUpgraded(c1out,Cache);
+    ShowDel(c1out,Cache);
++#if 0
+    ShowNew(c1out,Cache);
++#else
++   // to check pkgs in g_cache2 if installed or not
++   int done = 0;
++   string List2;
++   string VersionsList2;
++   for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++   {
++      pkgCache::PkgIterator I(Cache,Cache.List[J]);
++      if (Cache[I].NewInstall() == true ) {
++
++          /* to find is installed or not in cache2.*/
++          pkgCache::PkgIterator Pkg2 = (*g_cache2)->FindPkg(I.Name());
++          pkgDepCache::StateCache &State2 = (*g_cache2)[Pkg2];
++          (*g_cache2)->MarkInstall(Pkg2,false);
++
++          if (State2.NewInstall() ) {
++              List2 += string(I.Name()) + " ";
++              VersionsList2 += string(Cache[I].CandVersion) + "\n";
++              done ++;
++          }
++
++
++
++      }
++   }
++
++   if (done >0) {
++
++       ShowList(c1out,_("The following NEW packages will be installed:"),List2,VersionsList2);
++   }
++#endif
+    if (ShwKept == true)
+       ShowKept(c1out,Cache);
+    Fail |= !ShowHold(c1out,Cache);
+@@ -259,14 +295,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+         Essential = !ShowEssential(c1out,Cache);
+    Fail |= Essential;
+    Stats(c1out,Cache);
+-   
++
+    // Sanity check
+    if (Cache->BrokenCount() != 0)
+    {
+-      ShowBroken(c1out,Cache,false);
+-      return _error->Error("Internal Error, InstallPackages was called with broken packages!");
++      //ShowBroken(c1out,Cache,false);
++      //return _error->Error("Internal Error, InstallPackages was called with broken packages!");
+    }
+-
+    if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
+        Cache->BadCount() == 0)
+       return true;
+@@ -274,7 +309,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+    // No remove flag
+    if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
+       return _error->Error(_("Packages need to be removed but Remove is disabled."));
+-       
++
+    // Run the simulator ..
+    if (_config->FindB("APT::Get::Simulate") == true)
+    {
+@@ -361,6 +396,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+ 	 return _error->Error(_("You don't have enough free space in %s."),
+ 			      OutputDir.c_str());
+    }
++
+    
+    // Fail safe check
+    if (_config->FindI("quiet",0) >= 2 ||
+@@ -389,7 +425,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+    }
+    else
+    {      
+-      // Prompt to continue
++       // Prompt to continue
++       // TODO: TEST: set Fail=true
+       if (Ask == true || Fail == true)
+       {            
+ 	 if (_config->FindB("APT::Get::Trivial-Only",false) == true)
+@@ -408,7 +445,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+ 	 }	 
+       }      
+    }
+-   
++
+    // Just print out the uris an exit if the --print-uris flag was used
+    if (_config->FindB("APT::Get::Print-URIs") == true)
+    {
+@@ -551,6 +588,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+       if (PM->GetArchives(&Fetcher,&List,&Recs) == false)
+ 	 return false;
+    }   
++
+ }
+ 									/*}}}*/
+ // CNC:2003-12-02
+@@ -595,7 +633,7 @@ bool DownloadPackages(vector<string> &URLLst)
+ // ---------------------------------------------------------------------
+ /* This used to be inlined in DoInstall, but with the advent of regex package
+    name matching it was split out.. */
+-bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
++bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,pkgDepCache &Cache2,bool use2Cache,
+ 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
+ 		  unsigned int &ExpectedInst,bool AllowFail = true)
+ {
+@@ -724,8 +762,12 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     
     // Check if there is something at all to install
     pkgDepCache::StateCache &State = Cache[Pkg];
@@ -375,468 +1222,97 @@ index b755f49..5647966 100644
 +#endif
     if (Remove == true && Pkg->CurrentVer == 0)
     {
++
        Fix.Clear(Pkg);
-@@ -1074,12 +1082,459 @@ bool DoUpgrade(CommandLine &CmdL)
+       Fix.Protect(Pkg);
+       Fix.Remove(Pkg);
+@@ -805,7 +847,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+    if (Remove == true)
+    {
+       Fix.Remove(Pkg);
+-      Cache.MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
++      //Cache.MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
+       return true;
+    }
+    
+@@ -830,6 +872,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+    }   
+    else
+       ExpectedInst++;
++
+    
+    // Install it with autoinstalling enabled.
+    if (State.InstBroken() == true && BrokenFix == false)
+@@ -1073,29 +1116,65 @@ bool DoUpgrade(CommandLine &CmdL)
+    
     return InstallPackages(Cache,true);
  }
- 									/*}}}*/
-+/*
-+* 1.create new cache by /var/lib/isoft-app
-+* 2.do the same thing like DoInstall()
-+*/
-+bool tryNewCache(const char *pkgName,CommandLine &CmdL)
-+{
-+    CacheFile Cache(true);
-+
-+    if (Cache.OpenForInstall() == false ||
-+        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
-+       return false;
-+
-+   // #############################begin xxxxxx#######################################
-+
-+   // Enter the special broken fixing mode if the user specified arguments
-+   bool BrokenFix = false;
-+   if (Cache->BrokenCount() != 0)
-+      BrokenFix = true;
-+   
-+   unsigned int ExpectedInst = 0;
-+   unsigned int Packages = 0;
-+   pkgProblemResolver Fix(Cache);
-+   
-+   bool DefRemove = false;
-+   if (strcasecmp(CmdL.FileList[0],"remove") == 0)
-+      DefRemove = true;
-+   // CNC:2004-03-22
-+   else if (strcasecmp(CmdL.FileList[0],"reinstall") == 0)
-+      _config->Set("APT::Get::ReInstall", true);
-+
-+   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-+   {
-+      // Duplicate the string
-+      size_t Length = strlen(*I);
-+      char S[300];
-+      if (Length >= sizeof(S))
-+	 continue;
-+      strcpy(S,*I);
-+
-+      // CNC:2003-03-15
-+      char OrigS[300];
-+      strcpy(OrigS,S);
-+
-+      // See if we are removing and special indicators..
-+      bool Remove = DefRemove;
-+      char *VerTag = 0;
-+      bool VerIsRel = false;
-+      // CNC:2003-11-05
-+      int VerOp = 0;
-+      while (Cache->FindPkg(S).end() == true)
-+      {
-+	 // Handle an optional end tag indicating what to do
-+	 if (Length >= 1 && S[Length - 1] == '-')
-+	 {
-+	    Remove = true;
-+	    S[--Length] = 0;
-+	    continue;
-+	 }
-+	 
-+	 if (Length >= 1 && S[Length - 1] == '+')
-+	 {
-+	    Remove = false;
-+	    S[--Length] = 0;
-+	    continue;
-+	 }
-+	 
-+	 // CNC:2003-11-05
-+	 char *sep = strpbrk(S,"=><");
-+	 if (sep)
-+	 {
-+	    char *p;
-+	    int eq = 0, gt = 0, lt = 0;
-+
-+	    VerIsRel = false;
-+	    for (p = sep; *p && strchr("=><",*p); ++p)
-+	       switch (*p)
-+	       {
-+		  case '=': eq = 1; break;
-+		  case '>': gt = 1; break;
-+		  case '<': lt = 1; break;
-+	       }
-+	    if (eq)
-+	    {
-+	       if (lt && gt)
-+		  return _error->Error(_("Couldn't parse name '%s'"),S);
-+	       else if (lt)
-+		  VerOp = pkgCache::Dep::LessEq;
-+	       else if (gt)
-+		  VerOp = pkgCache::Dep::GreaterEq;
-+	       else
-+		  VerOp = pkgCache::Dep::Equals;
-+	    }
-+	    else
-+	    {
-+	       if (lt && gt)
-+		  VerOp = pkgCache::Dep::NotEquals;
-+	       else if (lt)
-+		  VerOp = pkgCache::Dep::Less;
-+	       else if (gt)
-+		  VerOp = pkgCache::Dep::Greater;
-+	       else
-+		  return _error->Error(_("Couldn't parse name '%s'"),S);
-+	    }
-+	    *sep = '\0';
-+	    /* S may be overwritten later, for example, if it contains
-+	     * a file name that will be resolved to a package.
-+	     * So we point VerTag to the same offset in OrigS. */
-+	    VerTag = (p - S) + OrigS;
-+	 }
-+	 
-+	 // CNC:2003-11-21 - Try to handle unknown file items.
-+	 if (S[0] == '/')
-+	 {
-+	    pkgRecords Recs(Cache);
-+	    if (_error->PendingError() == true)
-+	       return false;
-+	    pkgCache::PkgIterator Pkg = (*Cache).PkgBegin();
-+	    for (; Pkg.end() == false; Pkg++)
-+	    {
-+	       // Should we try on all versions?
-+	       pkgCache::VerIterator Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
-+	       if (Ver.end() == false)
-+	       {
-+		  pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-+		  if (Parse.HasFile(S)) {
-+		     strcpy(S, Pkg.Name());
-+		     ioprintf(c1out,_("Selecting %s for '%s'\n"),
-+			      Pkg.Name(),OrigS);
-+		     // Confirm the translation.
-+		     ExpectedInst += 1000;
-+		     break;
-+		  }
-+	       }
-+	    }
-+	 }
-+
-+	 char *Slash = strchr(S,'/');
-+	 if (Slash != 0)
-+	 {
-+	    VerIsRel = true;
-+	    *Slash = 0;
-+	    VerTag = Slash + 1;
-+	 }
-+	 
-+	 break;
-+      }
-+      
-+      // Locate the package
-+      pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
-+      Packages++;
-+      if (Pkg.end() == true)
-+      {
-+	 // Check if the name is a regex
-+	 const char *I;
-+	 for (I = S; *I != 0; I++)
-+	    if (*I == '?' || *I == '*' || *I == '|' ||
-+	        *I == '[' || *I == '^' || *I == '$')
-+	       break;
-+
-+	 // CNC:2003-05-15
-+	 if (*I == 0) {
-+#ifdef APT_WITH_LUA
-+	    vector<string> VS;
-+	    _lua->SetDepCache(Cache);
-+	    _lua->SetDontFix();
-+	    _lua->SetGlobal("argument", OrigS);
-+	    _lua->SetGlobal("translated", VS);
-+	    _lua->RunScripts("Scripts::AptGet::Install::TranslateArg");
-+	    const char *name = _lua->GetGlobalStr("translated");
-+	    if (name != NULL) {
-+	       VS.push_back(name);
-+	    } else {
-+	       VS = _lua->GetGlobalStrList("translated");
-+	    }
-+	    _lua->ResetGlobals();
-+	    _lua->ResetCaches();
-+
-+	    // Translations must always be confirmed
-+	    ExpectedInst += 1000;
-+
-+	    // Run over the matches
-+	    bool Hit = false;
-+	    for (vector<string>::const_iterator I = VS.begin();
-+	         I != VS.end(); I++) {
-+
-+	       Pkg = Cache->FindPkg(*I);
-+	       if (Pkg.end() == true)
-+		  continue;
-+
-+	       ioprintf(c1out,_("Selecting %s for '%s'\n"),
-+			Pkg.Name(),OrigS);
-+	    
-+	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
-+				   ExpectedInst,true);
-+	    }
-+	 
-+	    if (Hit == true)
-+	       continue;
-+#endif
-+	    return _error->Error(_("Couldn't find package %s"),S);
-+	 }
-+
-+	 // Regexs must always be confirmed
-+	 ExpectedInst += 1000;
-+	 
-+	 // Compile the regex pattern
-+	 regex_t Pattern;
-+	 int Res;
-+	 if ((Res = regcomp(&Pattern,S,REG_EXTENDED | REG_ICASE |
-+		     REG_NOSUB)) != 0)
-+	 {
-+	    char Error[300];	    
-+	    regerror(Res,&Pattern,Error,sizeof(Error));
-+	    return _error->Error(_("Regex compilation error - %s"),Error);
-+	 }
-+	 
-+	 // Run over the matches
-+	 bool Hit = false;
-+	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-+	 {
-+	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
-+	       continue;
-+	    
-+	    // CNC:2003-11-23
-+	    ioprintf(c1out,_("Selecting %s for '%s'\n"),
-+		     Pkg.Name(),S);
-+	    
-+	    if (VerTag != 0)
-+	       // CNC:2003-11-05
-+	       if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
-+		  return false;
-+	    
-+	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
-+				ExpectedInst,false);
-+	 }
-+	 regfree(&Pattern);
-+	 
-+	 if (Hit == false)
-+	    return _error->Error(_("Couldn't find package %s"),S);
-+      }
-+      else
-+      {
-+#ifdef APT_RPM_DEBUG
-+         std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << " " << Pkg.Name() << " " << Pkg->CurrentVer << std::endl;
-+#endif
-+         // FIXME: why CurrentVer is zero?! TryToInstall will consider it 
-+         // (CurrentVer == 0) is not installed package! so just use rpm command 
-+         // dirtly...
-+         if (Remove) {
-+            std::string cmd = std::string("rpm --isoftapp -e ") + Pkg.Name();
-+            system(cmd.c_str());
-+            return true;
-+         }
-+	 if (VerTag != 0)
-+	    // CNC:2003-11-05
-+	    if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
-+	       return false;
-+	 if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
-+	    return false;
-+      }      
-+   }
-+
-+// CNC:2003-03-19
-+#ifdef APT_WITH_LUA
-+   _lua->SetDepCache(Cache);
-+   _lua->SetDontFix();
-+   _lua->RunScripts("Scripts::AptGet::Install::PreResolve");
-+   _lua->ResetCaches();
-+#endif
-+
-+   // CNC:2002-08-01
-+   if (_config->FindB("APT::Remove-Depends",false) == true)
-+      Fix.RemoveDepends();
-+
-+   /* If we are in the Broken fixing mode we do not attempt to fix the
-+      problems. This is if the user invoked install without -f and gave
-+      packages */
-+   if (BrokenFix == true && Cache->BrokenCount() != 0)
-+   {
-+      c1out << _("You might want to run `apt-get --fix-broken install' to correct these:") << endl;
-+      ShowBroken(c1out,Cache,false);
-+
-+      return _error->Error(_("Unmet dependencies. Try 'apt-get --fix-broken install' with no packages (or specify a solution)."));
-+   }
-+   
-+   // Call the scored problem resolver
-+   Fix.InstallProtect();
-+   if (Fix.Resolve(true) == false)
-+      _error->Discard();
-+
-+// CNC:2003-03-19
-+#ifdef APT_WITH_LUA
-+   if (Cache->BrokenCount() == 0) {
-+      _lua->SetDepCache(Cache);
-+      _lua->SetProblemResolver(&Fix);
-+      _lua->RunScripts("Scripts::AptGet::Install::PostResolve");
-+      _lua->ResetCaches();
-+   }
-+#endif
-+
-+   // Now we check the state of the packages,
-+   if (Cache->BrokenCount() != 0)
-+   {
-+      c1out << 
-+       _("Some packages could not be installed. This may mean that you have\n" 
-+	 "requested an impossible situation or that some of the repositories\n"
-+	 "in use are in an inconsistent state at the moment.") << endl;
-+      if (Packages == 1)
-+      {
-+	 c1out << endl;
-+	 c1out << 
-+	  _("Since you only requested a single operation it is extremely likely that\n"
-+	    "the package is simply not installable and a bug report against\n" 
-+	    "that package should be filed.") << endl;
-+      }
-+
-+      c1out << _("The following information may help to resolve the situation:") << endl;
-+      c1out << endl;
-+      ShowBroken(c1out,Cache,false);
-+
-+      return _error->Error(_("Broken packages"));
-+
-+   }   
-+   
-+   /* Print out a list of packages that are going to be installed extra
-+      to what the user asked */
-+   if (Cache->InstCount() != ExpectedInst)
-+   {
-+      string List;
-+      string VersionsList;
-+      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-+      {
-+	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
-+	 if ((*Cache)[I].Install() == false)
-+	    continue;
-+
-+	 // CNC:2004-06-15
-+	 const char **K;
-+	 for (K = CmdL.FileList + 1; *K != 0; K++)
-+	    if (strcmp(*K,I.Name()) == 0)
-+		break;
-+	 
-+	 if (*K == 0) {
-+	    List += string(I.Name()) + " ";
-+        VersionsList += string(Cache[I].CandVersion) + "\n";
-+     }
-+      }
-+      
-+      ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
-+   }
-+
-+   /* Print out a list of suggested and recommended packages */
-+   {
-+      string SuggestsList, RecommendsList, List;
-+      string SuggestsVersions, RecommendsVersions;
-+      for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
-+      {
-+	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
-+
-+	 /* Just look at the ones we want to install */
-+	 if ((*Cache)[I].Install() == false)
-+	   continue;
-+
-+	 for (pkgCache::VerIterator V = I.VersionList(); V.end() == false; V++)
-+	   {
-+	     for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
-+	       {
-+		 pkgCache::DepIterator Start;
-+		 pkgCache::DepIterator End;
-+		 D.GlobOr(Start,End);
-+
-+		 /* 
-+		  * If this is a virtual package, we need to check the list of
-+		  * packages that provide it and see if any of those are
-+		  * installed
-+		  */
-+		 pkgCache::PrvIterator Prv = Start.TargetPkg().ProvidesList();
-+		 bool providedBySomething = false;
-+		 for (; Prv.end() != true; Prv++)
-+		    if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false) {
-+		       providedBySomething = true;
-+		       break;
-+		    }
-+
-+		 if (providedBySomething) continue;
-+            
-+		 do
-+		   {
-+		     if (Start->Type == pkgCache::Dep::Suggests) {
-+
-+		       /* A suggests relations, let's see if we have it 
-+			  installed already */
-+
-+		       string target = string(Start.TargetPkg().Name()) + " ";
-+		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
-+			 break;
-+		       /* Does another package suggest it as well?  If so,
-+			  don't print it twice */
-+		       if (int(SuggestsList.find(target)) > -1)
-+			 break; 
-+		       SuggestsList += target;
-+		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-+		     }
-+		     
-+		     if (Start->Type == pkgCache::Dep::Recommends) {
-+
-+		       /* A recommends relation, let's see if we have it
-+			  installed already */
-+
-+		       string target = string(Start.TargetPkg().Name()) + " ";
-+		       if ((*Start.TargetPkg()).SelectedState == pkgCache::State::Install || Cache[Start.TargetPkg()].Install())
-+			 break;
-+		       
-+		       /* Does another package recommend it as well?  If so,
-+			  don't print it twice */
-+
-+		       if (int(RecommendsList.find(target)) > -1)
-+			 break;
-+		       RecommendsList += target;
-+		       SuggestsVersions += string(Cache[Start.TargetPkg()].CandVersion) + "\n";
-+		     }
-+	      if (Start == End)
-+		break;
-+	      Start++;
-+	    } while (1);
-+	       }
-+	   }
-+      }
-+      ShowList(c1out,_("Suggested packages:"),SuggestsList,SuggestsVersions);
-+      ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
-+
-+   }
-+
-+   // CNC:2003-03-06
-+   if (CheckOnly(Cache) == true)
-+      return true;
-+
-+   // See if we need to prompt
-+   if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
-+      return InstallPackages(Cache,false,false);
-+   
-+   return InstallPackages(Cache,false);   
-+}
-+   // #############################end xxxxxx#######################################
-+
+-									/*}}}*/
 +
  // DoInstall - Install packages from the command line			/*{{{*/
  // ---------------------------------------------------------------------
  /* Install named packages */
  bool DoInstall(CommandLine &CmdL)
  {
++#if 1
++    // beginitx
++    CacheFile Cache;
++   if (Cache.OpenForInstall() == false ||
++       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
++      return false;
++#ifdef APT_RPM_DEBUG
++   printf("\n%s,%d,trace cache1 b[%d]i[%d]\n",__FUNCTION__,__LINE__,Cache->BrokenCount(),Cache->InstCount());
++#endif
++   CacheFile Cache2(true);
++
++   if (Cache2.OpenForInstall() == false ||
++       Cache2.CheckDeps(CmdL.FileSize() != 1) == false)
++      return false;
++#ifdef APT_RPM_DEBUG
++    printf("\n%s,%d,trace cache2 b[%d]i[%d]fs[%d]\n",__FUNCTION__,__LINE__,Cache2->BrokenCount(),Cache2->InstCount(),CmdL.FileSize());
++#endif
++    g_cache2 = &Cache2;
++
++#else
     CacheFile Cache;
-+   char pkgName[512]="";
++
     if (Cache.OpenForInstall() == false || 
         Cache.CheckDeps(CmdL.FileSize() != 1) == false)
        return false;
-@@ -1112,6 +1567,8 @@ bool DoInstall(CommandLine &CmdL)
+-   
++#endif
++
++   char pkgName[512]="";
++
+    // Enter the special broken fixing mode if the user specified arguments
+    bool BrokenFix = false;
+    if (Cache->BrokenCount() != 0)
+       BrokenFix = true;
++
++   if (Cache2->BrokenCount() != 0)
++      BrokenFix = true;
+    
+    unsigned int ExpectedInst = 0;
+    unsigned int Packages = 0;
+    pkgProblemResolver Fix(Cache);
++   pkgProblemResolver Fix2(Cache2);
++   g_Fix2 = &Fix2;
+    
+    bool DefRemove = false;
+-   if (strcasecmp(CmdL.FileList[0],"remove") == 0)
++   bool removeAll = false;
++   bool install = false;
++   if (strcasecmp(CmdL.FileList[0],"remove") == 0) {
++      removeAll = true;
+       DefRemove = true;
++   }
++   if (strcasecmp(CmdL.FileList[0],"install") == 0) {
++      install = true;
++   }
+    // CNC:2004-03-22
+    else if (strcasecmp(CmdL.FileList[0],"reinstall") == 0)
+       _config->Set("APT::Get::ReInstall", true);
+@@ -1112,6 +1191,8 @@ bool DoInstall(CommandLine &CmdL)
        // CNC:2003-03-15
        char OrigS[300];
        strcpy(OrigS,S);
@@ -845,46 +1321,343 @@ index b755f49..5647966 100644
        
        // See if we are removing and special indicators..
        bool Remove = DefRemove;
-@@ -1312,6 +1769,17 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1183,14 +1264,14 @@ bool DoInstall(CommandLine &CmdL)
+ 	 // CNC:2003-11-21 - Try to handle unknown file items.
+ 	 if (S[0] == '/')
+ 	 {
+-	    pkgRecords Recs(Cache);
++            pkgRecords Recs(Cache);
+ 	    if (_error->PendingError() == true)
+ 	       return false;
+-	    pkgCache::PkgIterator Pkg = (*Cache).PkgBegin();
++            pkgCache::PkgIterator Pkg = (*Cache).PkgBegin();
+ 	    for (; Pkg.end() == false; Pkg++)
+ 	    {
+ 	       // Should we try on all versions?
+-	       pkgCache::VerIterator Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
++               pkgCache::VerIterator Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+ 	       if (Ver.end() == false)
+ 	       {
+ 		  pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
+@@ -1262,7 +1343,7 @@ bool DoInstall(CommandLine &CmdL)
+ 	       ioprintf(c1out,_("Selecting %s for '%s'\n"),
+ 			Pkg.Name(),OrigS);
+ 	    
+-	       Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
++               Hit |= TryToInstall(Pkg,Cache,Cache,false,Fix,Remove,BrokenFix,
+ 				   ExpectedInst,true);
+ 	    }
+ 	 
+@@ -1288,7 +1369,7 @@ bool DoInstall(CommandLine &CmdL)
+ 	 
+ 	 // Run over the matches
+ 	 bool Hit = false;
+-	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
++         for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+ 	 {
+ 	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+ 	       continue;
+@@ -1299,10 +1380,10 @@ bool DoInstall(CommandLine &CmdL)
+ 	    
+ 	    if (VerTag != 0)
+ 	       // CNC:2003-11-05
+-	       if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
++               if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
+ 		  return false;
+ 	    
+-	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
++            Hit |= TryToInstall(Pkg,Cache,Cache2,false,Fix,Remove,BrokenFix,
+ 				ExpectedInst,false);
+ 	 }
+ 	 regfree(&Pattern);
+@@ -1312,12 +1393,15 @@ bool DoInstall(CommandLine &CmdL)
        }
        else
        {
-+#ifdef APT_RPM_DEBUG
-+         std::cout << "DEBUG: " << __FILE__ << " " << __PRETTY_FUNCTION__ << " " << __LINE__ << " " << Pkg.Name() << " " << Pkg->CurrentVer << std::endl;
+-	 if (VerTag != 0)
+-	    // CNC:2003-11-05
+-	    if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
+-	       return false;
+-	 if (TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,ExpectedInst) == false)
+-	    return false;
++
++         if (VerTag != 0)
++            // CNC:2003-11-05
++            if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
++               return false;
++         pkgCache::PkgIterator Pkg2 = Cache2->FindPkg(Pkg.Name());
++         if (TryToInstall(Pkg2,Cache2,Cache2,true,Fix2,Remove,BrokenFix,ExpectedInst) == false)
++            return false;
++
+       }      
+    }
+ 
+@@ -1333,6 +1417,14 @@ bool DoInstall(CommandLine &CmdL)
+    if (_config->FindB("APT::Remove-Depends",false) == true)
+       Fix.RemoveDepends();
+ 
++   // new cache
++   if (DefRemove) {
++       if (_configApp->FindB("APT::Remove-Depends",false) == true) {
++          Fix2.RemoveDepends();
++       } else {
++       }
++   }
++
+    /* If we are in the Broken fixing mode we do not attempt to fix the
+       problems. This is if the user invoked install without -f and gave
+       packages */
+@@ -1343,12 +1435,23 @@ bool DoInstall(CommandLine &CmdL)
+ 
+       return _error->Error(_("Unmet dependencies. Try 'apt-get --fix-broken install' with no packages (or specify a solution)."));
+    }
+-   
+    // Call the scored problem resolver
++#if 0
+    Fix.InstallProtect();
+    if (Fix.Resolve(true) == false)
+       _error->Discard();
+-
 +#endif
-+         // FIXME: why CurrentVer is zero?! TryToInstall will consider it 
-+         // (CurrentVer == 0) is not installed package! so just use rpm command 
-+         // dirtly...
-+         if (Remove) {
-+            std::string cmd = std::string("rpm --isoftapp -e ") + Pkg.Name();
-+            system(cmd.c_str());
-+            return true;
-+         }
- 	 if (VerTag != 0)
- 	    // CNC:2003-11-05
- 	    if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
-@@ -1378,7 +1846,17 @@ bool DoInstall(CommandLine &CmdL)
++#if 1
++   Fix2.InstallProtect();
++   if (removeAll) {
++    if (Fix2.ResolveAll(pkgName,'d') == false)
++      _error->Discard();
++   }
++   if (install) {
++       if (Fix2.ResolveAll(pkgName,'i') == false)
++         _error->Discard();
++   }
++#endif
+ // CNC:2003-03-19
+ #ifdef APT_WITH_LUA
+    if (Cache->BrokenCount() == 0) {
+@@ -1378,12 +1481,50 @@ bool DoInstall(CommandLine &CmdL)
        c1out << _("The following information may help to resolve the situation:") << endl;
        c1out << endl;
        ShowBroken(c1out,Cache,false);
 +
-+      // TODO: try to check isoftapp
-+      #ifdef USEISOFTAPP 
-+      Cache.Close();
-+      c1out << endl;
-+      c1out << _("Try to check isoft app db:") << endl;
-+      c1out << endl;
-+      return tryNewCache(pkgName,CmdL);
-+      #else
        return _error->Error(_("Broken packages"));
-+      #endif
++
     }   
-    
+-   
++
++    if (Cache->InstCount() != ExpectedInst) {
++        string List;
++        string VersionsList;
++        int done = 0;
++        for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++        {
++            pkgCache::PkgIterator I(Cache,Cache.List[J]);
++            if ((*Cache)[I].Install() == false)
++               continue;
++
++            // CNC:2004-06-15
++            const char **K2;
++            for (K2 = CmdL.FileList + 1; *K2 != 0; K2++)
++               if (strcmp(*K2,I.Name()) == 0)
++                   break;
++
++            if (*K2 == 0) {
++                /* to find is installed or not in cache2.*/
++                pkgCache::PkgIterator Pkg2 = Cache2->FindPkg(I.Name());
++                pkgDepCache::StateCache &State2 = Cache2[Pkg2];
++
++                Cache2->MarkInstall(Pkg2,false);
++
++                ioprintf(c1out,_("%s is already the newest version!\n"),
++                         Pkg2.Name());
++
++                done ++;
++
++            }
++        }
++        if (done > 0) {
++            ExpectedInst = Cache2->InstCount();
++        }
++
++   }
++
     /* Print out a list of packages that are going to be installed extra
+       to what the user asked */
+-   if (Cache->InstCount() != ExpectedInst)
++   if (Cache2->InstCount() != ExpectedInst)
+    {
+       string List;
+       string VersionsList;
+@@ -1495,10 +1636,11 @@ bool DoInstall(CommandLine &CmdL)
+       return true;
+ 
+    // See if we need to prompt
+-   if (Cache->InstCount() == ExpectedInst && Cache->DelCount() == 0)
+-      return InstallPackages(Cache,false,false);
+-   
+-   return InstallPackages(Cache,false);   
++   if (Cache2->InstCount() == ExpectedInst && Cache2->DelCount() == 0 && Cache2->InstCount() !=0) {
++      return InstallPackages(Cache2,false,false);
++   }
++
++   return InstallPackages(Cache2,false);
+ }
+ 									/*}}}*/
+ // DoDistUpgrade - Automatic smart upgrader				/*{{{*/
+@@ -1903,7 +2045,7 @@ bool DoBuildDep(CommandLine &CmdL)
+              */
+             if (IV.end() == false && 
+                 Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+-               TryToInstall(Pkg,Cache,Fix,true,false,ExpectedInst);
++                TryToInstall(Pkg,Cache,Cache,false,Fix,true,false,ExpectedInst);
+          }
+ 	 else // BuildDep || BuildDepIndep
+          {
+@@ -2038,7 +2180,7 @@ bool DoBuildDep(CommandLine &CmdL)
+             if (_config->FindB("Debug::BuildDeps",false) == true)
+                cout << "  Trying to install " << (*D).Package << endl;
+ 
+-            if (TryToInstall(Pkg,Cache,Fix,false,false,ExpectedInst) == true)
++            if (TryToInstall(Pkg,Cache,Cache,false,Fix,false,false,ExpectedInst) == true)
+             {
+                // We successfully installed something; skip remaining alternatives
+                skipAlternatives = hasAlternatives;
+@@ -2318,7 +2460,8 @@ int main(int argc,const char *argv[])
+ 
+    // Parse the command line and initialize the package library
+    CommandLine CmdL(Args,_config);
+-   if (pkgInitConfig(*_config) == false ||
++   CommandLine CmdLApp(Args,_configApp);
++   if (pkgInitConfig(*_config,false) == false ||
+        CmdL.Parse(argc,argv) == false ||
+        pkgInitSystem(*_config,_system) == false)
+    {
+@@ -2329,6 +2472,18 @@ int main(int argc,const char *argv[])
+       return 100;
+    }
+ 
++   if (pkgInitConfig(*_configApp,true) == false ||
++       CmdLApp.Parse(argc,argv) == false ||
++       pkgInitSystem(*_configApp,_system) == false)
++   {
++      if (_configApp->FindB("version") == true)
++         ShowHelp(CmdLApp);
++
++      _error->DumpErrors();
++      return 100;
++   }
++
++
+    // See if the help should be shown
+    if (_config->FindB("help") == true ||
+        _config->FindB("version") == true ||
+@@ -2337,6 +2492,14 @@ int main(int argc,const char *argv[])
+       ShowHelp(CmdL);
+       return 0;
+    }
++   // See if the help should be shown
++   if (_configApp->FindB("help") == true ||
++       _configApp->FindB("version") == true ||
++       CmdLApp.FileSize() == 0)
++   {
++      ShowHelp(CmdLApp);
++      return 0;
++   }
+    
+    // CNC:2003-11-21
+    if (CmdL.FileSize() > 1)
+@@ -2362,10 +2525,38 @@ int main(int argc,const char *argv[])
+ 	 _config->Set("APT::Arguments::", *I);
+    }
+ 
++   // CNC:2003-11-21
++   if (CmdLApp.FileSize() > 1)
++   {
++      // CNC:2003-11-23
++      vector<string> URLLst;
++      for (const char **I = CmdLApp.FileList + 1; *I != 0; I++)
++      {
++         if (strstr(*I, "://") != NULL)
++         {
++            URLLst.push_back(*I);
++            *I = strrchr(*I, '/')+1;
++         }
++      }
++
++      if (URLLst.empty() == false && DownloadPackages(URLLst) == false)
++      {
++            _error->DumpErrors();
++            return 100;
++      }
++
++      for (const char **I = CmdLApp.FileList + 1; *I != 0; I++)
++         _configApp->Set("APT::Arguments::", *I);
++   }
++
+    // Deal with stdout not being a tty
+    if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
+       _config->Set("quiet","1");
+ 
++   // Deal with stdout not being a tty
++   if (ttyname(STDOUT_FILENO) == 0 && _configApp->FindI("quiet",0) < 1)
++      _configApp->Set("quiet","1");
++
+    // Setup the output streams
+    c0out.rdbuf(cout.rdbuf());
+    c1out.rdbuf(cout.rdbuf());
+@@ -2375,6 +2566,11 @@ int main(int argc,const char *argv[])
+    if (_config->FindI("quiet",0) > 1)
+       c1out.rdbuf(devnull.rdbuf());
+ 
++   if (_configApp->FindI("quiet",0) > 0)
++      c0out.rdbuf(devnull.rdbuf());
++   if (_configApp->FindI("quiet",0) > 1)
++      c1out.rdbuf(devnull.rdbuf());
++
+    // Setup the signals
+    signal(SIGPIPE,SIG_IGN);
+    signal(SIGWINCH,SigWinch);
+@@ -2411,6 +2607,9 @@ int main(int argc,const char *argv[])
+    // Match the operation
+    CmdL.DispatchArg(Cmds);
+ 
++   /// ??????????? 重复安装
++   //CmdLApp.DispatchArg(Cmds);
++
+    // Print any errors or warnings found during parsing
+    if (_error->empty() == false)
+    {
+diff --git a/cmdline/apt-shell.cc b/cmdline/apt-shell.cc
+index 1508d84..734eb14 100644
+--- a/cmdline/apt-shell.cc
++++ b/cmdline/apt-shell.cc
+@@ -2650,6 +2650,7 @@ int main(int argc,const char *argv[])
+ 
+    // Parse the command line and initialize the package library
+    CommandLine CmdL(CommandArgs(""),_config);
++   /*
+    if (pkgInitConfig(*_config) == false ||
+        CmdL.Parse(argc,argv) == false ||
+        pkgInitSystem(*_config,_system) == false)
+@@ -2660,6 +2661,7 @@ int main(int argc,const char *argv[])
+       _error->DumpErrors();
+       return 100;
+    }
++   */
+ 
+    // Deal with stdout not being a tty
+    if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
 diff --git a/cmdline/cmdline.cc b/cmdline/cmdline.cc
-index 59bf011..fc60ed7 100644
+index 59bf011..1552b4d 100644
 --- a/cmdline/cmdline.cc
 +++ b/cmdline/cmdline.cc
+@@ -172,7 +172,7 @@ void SigWinch(int)
+ // CacheFile::NameComp - QSort compare by name                          /*{{{*/
+ // ---------------------------------------------------------------------
+ /* */
+-pkgCache *cmdCacheFile::SortCache = 0;
++//pkgCache *cmdCacheFile::SortCache = 0;
+ int cmdCacheFile::NameComp(const void *a,const void *b)
+ {
+    if (*(pkgCache::Package **)a == 0 || *(pkgCache::Package **)b == 0)
 @@ -189,7 +189,7 @@ int cmdCacheFile::NameComp(const void *a,const void *b)
  /* */
  void cmdCacheFile::Sort()
@@ -894,7 +1667,15 @@ index 59bf011..fc60ed7 100644
     List = new pkgCache::Package *[Cache->Head().PackageCount];
     memset(List,0,sizeof(*List)*Cache->Head().PackageCount);
     pkgCache::PkgIterator I = Cache->PkgBegin();
-@@ -204,6 +204,7 @@ cmdCacheFile::~cmdCacheFile()
+@@ -197,13 +197,14 @@ void cmdCacheFile::Sort()
+       List[I->ID] = I;
+ 
+    SortCache = *this;
+-   qsort(List,Cache->Head().PackageCount,sizeof(*List),NameComp);
++   //qsort(List,Cache->Head().PackageCount,sizeof(*List),NameComp);
+ }
+ 
+ cmdCacheFile::~cmdCacheFile()
  {
     if (List) {
        delete [] List;
@@ -903,10 +1684,19 @@ index 59bf011..fc60ed7 100644
  }
  
 diff --git a/cmdline/cmdline.h b/cmdline/cmdline.h
-index 4bacf8c..5c662ee 100644
+index 4bacf8c..9e4498e 100644
 --- a/cmdline/cmdline.h
 +++ b/cmdline/cmdline.h
-@@ -36,7 +36,8 @@ class cmdCacheFile : public pkgCacheFile
+@@ -29,14 +29,15 @@ const char *op2str(int op);
+ 
+ class cmdCacheFile : public pkgCacheFile
+ {
+-   static pkgCache *SortCache;
+-   static int NameComp(const void *a,const void *b);
++   pkgCache *SortCache;
++   int NameComp(const void *a,const void *b);
+ 
+    public:
     pkgCache::Package **List;
     void Sort();
  
@@ -916,3 +1706,73 @@ index 4bacf8c..5c662ee 100644
     virtual ~cmdCacheFile();
  };
  
+diff --git a/configure.ac b/configure.ac
+index ec699b6..864a042 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,7 +1,7 @@
+ dnl Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ(2.59)
+-AC_INIT([apt],[0.5.15lorg3.95],[apt-rpm@lists.laiskiainen.org])
++AC_INIT([isoftapp],[0.5.15lorg3.95],[apt-rpm@lists.laiskiainen.org])
+ dnl Check the archs, we want the target type.
+ AC_CONFIG_AUX_DIR([buildlib])
+ AC_CONFIG_MACRO_DIR([m4])
+@@ -23,6 +23,15 @@ AC_PROG_CPP
+ 
+ AC_PROG_LIBTOOL
+ 
++AC_ARG_ENABLE(debug,
++              [AS_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
++                              [turn on debugging [default=no]])],,
++              [enable_debug=no])
++
++if test "x$enable_debug" = "xyes"; then
++  test "$cppflags_set" = set || CPPFLAGS="$CPPFLAGS -g -DAPT_RPM_DEBUG"
++fi
++
+ dnl Checks for sockets
+ SAVE_LIBS="$LIBS"
+ LIBS=""
+@@ -236,7 +245,6 @@ dnl AC_PATH_PROG(DEBIANDOC_TEXT,debiandoc2text)
+ AC_PATH_PROG([GPG],[gpg],[/usr/bin/gpg])
+ 
+ AM_GNU_GETTEXT_VERSION([0.14.5])
+-AM_GNU_GETTEXT([external])
+ 
+ dnl ah_NUM_PROCS
+ dnl rc_GLIBC_VER
+@@ -253,7 +261,6 @@ AC_CONFIG_FILES([
+ 	  tools/Makefile
+ 	  doc/Makefile
+ 	  test/Makefile
+-	  po/Makefile.in
+ 	  ])
+ AC_CONFIG_LINKS([include/apti18n.h:buildlib/gettext.h])
+ 
+diff --git a/methods/Makefile.am b/methods/Makefile.am
+index 151a3e5..1c54859 100644
+--- a/methods/Makefile.am
++++ b/methods/Makefile.am
+@@ -1,6 +1,6 @@
+ AM_CPPFLAGS = -DGPG=\"@GPG@\"
+ 
+-methodsdir=${libdir}/apt/methods
++methodsdir=${libdir}/isoftapp/methods
+ methods_PROGRAMS = cdrom copy file ftp gpg gzip bzip2 http rsh ssh
+ 
+ LDADD = ../apt-pkg/libapt-pkg.la
+diff --git a/test/scratch.cc b/test/scratch.cc
+index 5256e3f..b06e28d 100644
+--- a/test/scratch.cc
++++ b/test/scratch.cc
+@@ -8,7 +8,7 @@ using namespace std;
+ 
+ int main(int argc,char *argv[])
+ {
+-   pkgInitConfig(*_config);
++   //pkgInitConfig(*_config);
+    pkgInitSystem(*_config,_system);
+ 
+    // do something... 
