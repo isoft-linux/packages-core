@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 25
+Release: 26
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -408,6 +408,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 18 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Keep quite please Berkeley DB.
+
 * Tue Nov 17 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Public openDatabase and rpmdbClose for isoft-package-installer.
 
