@@ -7,6 +7,8 @@ Source0: http://www.freedesktop.org/software/libinput/libinput-%{version}.tar.xz
 
 BuildRequires: libevdev-devel
 BuildRequires: mtdev-devel
+#for libudev
+BuildRequires: systemd-devel
 
 %description
 libinput is a library to handle input devices in Wayland compositors and to provide a generic X.Org input driver. It provides device detection, device handling, input device event processing and abstraction so minimize the amount of custom input code compositors need to provide the common set of functionality that users expect.
