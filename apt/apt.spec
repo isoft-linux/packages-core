@@ -10,7 +10,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 26.%{snapver}
+Release: 27.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -364,6 +364,7 @@ popd #end of isoftapp
 %changelog
 * Wed Nov 18 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix isoftapp install/remove issue by fujiang.
+- Fix isoftapp conf sources.list issue by fujiang.
 
 * Sun Nov 08 2015 Cjacker <cjacker@foxmail.com> - 0.5.15lorg3.95-25.git522
 - Seperate isoftapp package, use own config files
