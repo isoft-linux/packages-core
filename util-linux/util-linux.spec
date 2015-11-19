@@ -1,7 +1,7 @@
 Summary: A collection of basic system utilities
 Name: util-linux
 Version: 2.27.1
-Release: 1 
+Release: 2 
 License: GPLv2 and GPLv2+ and LGPLv2+ and BSD with advertising and Public Domain
 URL: http://en.wikipedia.org/wiki/Util-linux
 
@@ -734,6 +734,10 @@ fi
 
 
 %changelog
+* Thu Nov 19 2015 Cjacker <cjacker@foxmail.com> - 2.27.1-2
+- Update to 2.27.1, match systemd requires
+- Now util-linux and systemd not use /etc/mtab anymore.
+
 * Fri Oct 23 2015 cjacker - 2.27-7
 - Rebuild for new 4.0 release
 
