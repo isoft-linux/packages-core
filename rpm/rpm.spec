@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 27
+Release: 28
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -410,6 +410,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Nov 19 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Enable %_isoftapp macro by default.
+- Fix rpmdbNextIteratorISoftApp forget to close db issue.
 
 * Wed Nov 18 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Keep quite please Berkeley DB.

@@ -784,7 +784,7 @@ index 4adb3d1..1228666 100644
  }
  #endif
 diff --git a/lib/rpmdb.c b/lib/rpmdb.c
-index 6499efc..63977b1 100644
+index 6499efc..5638b84 100644
 --- a/lib/rpmdb.c
 +++ b/lib/rpmdb.c
 @@ -549,7 +549,7 @@ static rpmdb newRpmdb(const char * root, const char * home,
@@ -836,7 +836,7 @@ index 6499efc..63977b1 100644
  /**
   * Attempt partial matches on name[-version[-release]][.arch] strings.
   * @param db		rpmdb handle
-@@ -1619,6 +1645,111 @@ top:
+@@ -1619,6 +1645,115 @@ top:
      return mi->mi_h;
  }
  
@@ -859,8 +859,8 @@ index 6499efc..63977b1 100644
 +    openDatabase("/", dbpath ? dbpath : "/var/lib/rpm", &osdb, O_RDONLY, 0644, 0);
 +    /* TODO: open osdb instead of mi->mi_db */
 +    if (pkgdbOpen(osdb, 0, &dbi)) {
-+	    printf("ERROR: %s, line %d, %s: fail to open pkgdb\n", 
-+               __FILE__, __LINE__, __func__);
++	    printf("ERROR: %s, line %d, %s: fail to open pkgdb %s\n", 
++               __FILE__, __LINE__, __func__, dbpath ? dbpath : "/var/lib/rpm");
 +        goto exit;
 +    }
 +
@@ -942,6 +942,10 @@ index 6499efc..63977b1 100644
 +    return mi->mi_h;
 +
 +exit:
++    if (osdb) {
++        rpmdbClose(osdb);
++        osdb = NULL;
++    }
 +    return NULL;
 +}
 +
