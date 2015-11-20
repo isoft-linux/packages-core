@@ -6,10 +6,10 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   42.git
+Release:   43.git
 URL:       http://www.x.org
 License:   MIT
-Source0:   %{tarball}-666f25b.tar.xz
+Source0:   %{tarball}-f6e9316.tar.xz
 Patch0:     intel-gcc-pr65873.patch
 
 BuildRequires: autoconf automake libtool
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Fri Nov 20 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-43.git
+- f6e9316
+
 * Thu Nov 19 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-42.git
 - Update
 
