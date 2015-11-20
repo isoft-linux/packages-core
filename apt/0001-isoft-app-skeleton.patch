@@ -414,7 +414,7 @@ index 95415ca..2970aa7 100644
  				       Dep) == true)
  		  return true;
 diff --git a/apt-pkg/init.cc b/apt-pkg/init.cc
-index 89a2d54..186243d 100644
+index 89a2d54..7993c85 100644
 --- a/apt-pkg/init.cc
 +++ b/apt-pkg/init.cc
 @@ -37,7 +37,7 @@ const char *pkgOS = COMMON_OS;
@@ -650,8 +650,9 @@ index 0b600d3..41475a9 100644
     SqliteQuery *prco = NULL;
     switch (Type) {
        case pkgCache::Dep::Depends:
---- a/apt-pkg/rpm/rpmhandler.h	2011-04-14 02:27:40.000000000 +0800
-+++ b/apt-pkg/rpm/rpmhandler.h	2015-11-18 14:11:37.960625502 +0800
+diff -Naur apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.h /data/project/isoft/isoft-apt/apt-pkg/rpm/rpmhandler.h 
+--- apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.h  2011-04-14 02:27:40.000000000 +0800
++++ /data/project/isoft/isoft-apt/apt-pkg/rpm/rpmhandler.h      2015-11-20 10:40:49.906394155 +0800
 @@ -214,7 +214,7 @@
  
     public:
@@ -927,70 +928,6 @@ index 71b1ee6..0549dc1 100644
     if (FileExists(Parts) == true)
        Res &= ReadSourceDir(Parts);
     
-diff --git a/autogen.sh b/autogen.sh
-new file mode 100755
-index 0000000..26f0618
---- /dev/null
-+++ b/autogen.sh
-@@ -0,0 +1,58 @@
-+#!/bin/sh
-+
-+ECHO_C=
-+ECHO_N=
-+case `echo -n x` in
-+-n*)
-+  case `echo 'x\c'` in
-+  *c*) ;;
-+  *)   ECHO_C='\c';;
-+  esac;;
-+*)
-+  ECHO_N='-n';;
-+esac
-+
-+# some terminal codes ...
-+boldface="`tput bold 2>/dev/null`"
-+normal="`tput sgr0 2>/dev/null`"
-+printbold() {
-+    echo $ECHO_N "$boldface" $ECHO_C
-+    echo "$@"
-+    echo $ECHO_N "$normal" $ECHO_C
-+}    
-+
-+printbold Running libtoolize...
-+libtoolize --force --copy
-+printbold Running intltoolize...
-+intltoolize --force --copy --automake
-+printbold Running aclocal...
-+aclocal -I m4
-+printbold Running autoconf...
-+autoconf
-+printbold Running autoheader...
-+autoheader
-+
-+if [ -f COPYING ]; then
-+	cp -pf COPYING COPYING.autogen_bak
-+fi
-+if [ -f INSTALL ]; then
-+	cp -pf INSTALL INSTALL.autogen_bak
-+fi
-+
-+printbold Running automake...
-+automake --gnu --add-missing --force --copy
-+
-+if [ -f COPYING.autogen_bak ]; then
-+	cmp COPYING COPYING.autogen_bak > /dev/null || cp -pf COPYING.autogen_bak COPYING
-+	rm -f COPYING.autogen_bak
-+fi
-+if [ -f INSTALL.autogen_bak ]; then
-+	cmp INSTALL INSTALL.autogen_bak > /dev/null || cp -pf INSTALL.autogen_bak INSTALL
-+	rm -f INSTALL.autogen_bak
-+fi
-+
-+conf_flags="--prefix=/usr"
-+
-+printbold Running ./configure $conf_flags "$@" ...
-+./configure $conf_flags "$@" \
-+&& echo Now type \`make\' to compile isoft-apt
 diff --git a/cmdline/apt-cache.cc b/cmdline/apt-cache.cc
 index 3cd22fc..319f907 100644
 --- a/cmdline/apt-cache.cc
@@ -1052,10 +989,21 @@ index 04febfa..ff9aba6 100644
     // See if the help should be shown
     if (_config->FindB("help") == true ||
 diff --git a/cmdline/apt-get.cc b/cmdline/apt-get.cc
-index b755f49..48d2081 100644
+index b755f49..53bd9e3 100644
 --- a/cmdline/apt-get.cc
 +++ b/cmdline/apt-get.cc
-@@ -76,13 +76,13 @@ ostream c2out(0);
+@@ -65,7 +65,9 @@
+ 
+ // CNC:2003-03-18
+ #include <apt-pkg/luaiface.h>
+-    
++
++#include <rpm/rpmdb.h>
++#include <fcntl.h>
+ 									/*}}}*/
+ 
+ using namespace std;
+@@ -76,13 +78,13 @@ ostream c2out(0);
  ofstream devnull("/dev/null");
  unsigned int ScreenWidth = 80;
  
@@ -1070,7 +1018,7 @@ index b755f49..48d2081 100644
     bool CheckDeps(bool AllowBroken = false);
     bool BuildCaches(bool WithLock = true)
     {
-@@ -104,15 +104,19 @@ class CacheFile : public cmdCacheFile
+@@ -104,15 +106,19 @@ class CacheFile : public cmdCacheFile
     {
        // CNC:2004-03-07 - dont take lock if in download mode
        if (_config->FindB("APT::Get::Print-URIs") == true ||
@@ -1093,7 +1041,7 @@ index b755f49..48d2081 100644
  // CNC:2003-03-19
  #ifdef APT_WITH_LUA
  class AptGetLuaCache : public LuaCacheControl
-@@ -186,7 +190,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
+@@ -186,7 +192,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
     if (DCache->DelCount() != 0 || DCache->InstCount() != 0)
        return _error->Error("Internal Error, non-zero counts");
  #endif
@@ -1102,7 +1050,7 @@ index b755f49..48d2081 100644
     // Apply corrections for half-installed packages
     if (pkgApplyStatus(*DCache) == false)
        return false;
-@@ -250,7 +254,39 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -250,7 +256,39 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
     if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
        ShowUpgraded(c1out,Cache);
     ShowDel(c1out,Cache);
@@ -1142,7 +1090,7 @@ index b755f49..48d2081 100644
     if (ShwKept == true)
        ShowKept(c1out,Cache);
     Fail |= !ShowHold(c1out,Cache);
-@@ -259,14 +295,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -259,14 +297,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
          Essential = !ShowEssential(c1out,Cache);
     Fail |= Essential;
     Stats(c1out,Cache);
@@ -1160,7 +1108,7 @@ index b755f49..48d2081 100644
     if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
         Cache->BadCount() == 0)
        return true;
-@@ -274,7 +309,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -274,7 +311,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
     // No remove flag
     if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
        return _error->Error(_("Packages need to be removed but Remove is disabled."));
@@ -1169,7 +1117,7 @@ index b755f49..48d2081 100644
     // Run the simulator ..
     if (_config->FindB("APT::Get::Simulate") == true)
     {
-@@ -361,6 +396,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -361,6 +398,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
  	 return _error->Error(_("You don't have enough free space in %s."),
  			      OutputDir.c_str());
     }
@@ -1177,7 +1125,7 @@ index b755f49..48d2081 100644
     
     // Fail safe check
     if (_config->FindI("quiet",0) >= 2 ||
-@@ -389,7 +425,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -389,7 +427,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
     }
     else
     {      
@@ -1187,7 +1135,7 @@ index b755f49..48d2081 100644
        if (Ask == true || Fail == true)
        {            
  	 if (_config->FindB("APT::Get::Trivial-Only",false) == true)
-@@ -408,7 +445,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -408,7 +447,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
  	 }	 
        }      
     }
@@ -1196,7 +1144,7 @@ index b755f49..48d2081 100644
     // Just print out the uris an exit if the --print-uris flag was used
     if (_config->FindB("APT::Get::Print-URIs") == true)
     {
-@@ -551,6 +588,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -551,6 +590,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
        if (PM->GetArchives(&Fetcher,&List,&Recs) == false)
  	 return false;
     }   
@@ -1204,7 +1152,7 @@ index b755f49..48d2081 100644
  }
  									/*}}}*/
  // CNC:2003-12-02
-@@ -595,7 +633,7 @@ bool DownloadPackages(vector<string> &URLLst)
+@@ -595,7 +635,7 @@ bool DownloadPackages(vector<string> &URLLst)
  // ---------------------------------------------------------------------
  /* This used to be inlined in DoInstall, but with the advent of regex package
     name matching it was split out.. */
@@ -1213,7 +1161,7 @@ index b755f49..48d2081 100644
  		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
  		  unsigned int &ExpectedInst,bool AllowFail = true)
  {
-@@ -724,8 +762,12 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+@@ -724,8 +764,12 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     
     // Check if there is something at all to install
     pkgDepCache::StateCache &State = Cache[Pkg];
@@ -1226,7 +1174,7 @@ index b755f49..48d2081 100644
        Fix.Clear(Pkg);
        Fix.Protect(Pkg);
        Fix.Remove(Pkg);
-@@ -805,7 +847,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+@@ -805,7 +849,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     if (Remove == true)
     {
        Fix.Remove(Pkg);
@@ -1235,7 +1183,7 @@ index b755f49..48d2081 100644
        return true;
     }
     
-@@ -830,6 +872,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+@@ -830,6 +874,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     }   
     else
        ExpectedInst++;
@@ -1243,7 +1191,7 @@ index b755f49..48d2081 100644
     
     // Install it with autoinstalling enabled.
     if (State.InstBroken() == true && BrokenFix == false)
-@@ -1073,29 +1116,65 @@ bool DoUpgrade(CommandLine &CmdL)
+@@ -1073,29 +1118,89 @@ bool DoUpgrade(CommandLine &CmdL)
     
     return InstallPackages(Cache,true);
  }
@@ -1254,6 +1202,30 @@ index b755f49..48d2081 100644
  /* Install named packages */
  bool DoInstall(CommandLine &CmdL)
  {
++   int i = 0;
++   for (i = 0; CmdL.FileList[i]; i++) {
++      if (i > 1) {
++         std::cout << "SORRY: isoftapp ONLY support single one package " 
++            << CmdL.FileList[0] << " at present! so " << CmdL.FileList[0] 
++            << " " << CmdL.FileList[1] << " at first." << std::endl;
++      }
++   }
++   if (strcasecmp(CmdL.FileList[0], "remove") == 0 || 
++       strcasecmp(CmdL.FileList[0], "install") == 0) {
++      rpmdb osdb = NULL;
++      int rc = 0;
++      openDatabase("/", "/var/lib/rpm", &osdb, O_RDONLY, 0644, 0);
++      if (osdb) {
++         for (i = 1; CmdL.FileList[i]; i++)
++            rc += rpmdbCountPackages(osdb, CmdL.FileList[1]);
++         rpmdbClose(osdb);
++         osdb = NULL;
++      }
++      if (rc != 0) {
++         std::cerr << "ERROR: You can NOT remove nor install System Component!" << std::endl;
++         return false;
++      }
++   }
 +#if 1
 +    // beginitx
 +    CacheFile Cache;
@@ -1312,7 +1284,7 @@ index b755f49..48d2081 100644
     // CNC:2004-03-22
     else if (strcasecmp(CmdL.FileList[0],"reinstall") == 0)
        _config->Set("APT::Get::ReInstall", true);
-@@ -1112,6 +1191,8 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1112,6 +1217,8 @@ bool DoInstall(CommandLine &CmdL)
        // CNC:2003-03-15
        char OrigS[300];
        strcpy(OrigS,S);
@@ -1321,7 +1293,7 @@ index b755f49..48d2081 100644
        
        // See if we are removing and special indicators..
        bool Remove = DefRemove;
-@@ -1183,14 +1264,14 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1183,14 +1290,14 @@ bool DoInstall(CommandLine &CmdL)
  	 // CNC:2003-11-21 - Try to handle unknown file items.
  	 if (S[0] == '/')
  	 {
@@ -1339,7 +1311,7 @@ index b755f49..48d2081 100644
  	       if (Ver.end() == false)
  	       {
  		  pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-@@ -1262,7 +1343,7 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1262,7 +1369,7 @@ bool DoInstall(CommandLine &CmdL)
  	       ioprintf(c1out,_("Selecting %s for '%s'\n"),
  			Pkg.Name(),OrigS);
  	    
@@ -1348,7 +1320,7 @@ index b755f49..48d2081 100644
  				   ExpectedInst,true);
  	    }
  	 
-@@ -1288,7 +1369,7 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1288,7 +1395,7 @@ bool DoInstall(CommandLine &CmdL)
  	 
  	 // Run over the matches
  	 bool Hit = false;
@@ -1357,7 +1329,7 @@ index b755f49..48d2081 100644
  	 {
  	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
  	       continue;
-@@ -1299,10 +1380,10 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1299,10 +1406,10 @@ bool DoInstall(CommandLine &CmdL)
  	    
  	    if (VerTag != 0)
  	       // CNC:2003-11-05
@@ -1370,7 +1342,7 @@ index b755f49..48d2081 100644
  				ExpectedInst,false);
  	 }
  	 regfree(&Pattern);
-@@ -1312,12 +1393,15 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1312,12 +1419,15 @@ bool DoInstall(CommandLine &CmdL)
        }
        else
        {
@@ -1392,7 +1364,7 @@ index b755f49..48d2081 100644
        }      
     }
  
-@@ -1333,6 +1417,14 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1333,6 +1443,14 @@ bool DoInstall(CommandLine &CmdL)
     if (_config->FindB("APT::Remove-Depends",false) == true)
        Fix.RemoveDepends();
  
@@ -1407,7 +1379,7 @@ index b755f49..48d2081 100644
     /* If we are in the Broken fixing mode we do not attempt to fix the
        problems. This is if the user invoked install without -f and gave
        packages */
-@@ -1343,12 +1435,23 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1343,12 +1461,25 @@ bool DoInstall(CommandLine &CmdL)
  
        return _error->Error(_("Unmet dependencies. Try 'apt-get --fix-broken install' with no packages (or specify a solution)."));
     }
@@ -1420,20 +1392,22 @@ index b755f49..48d2081 100644
 -
 +#endif
 +#if 1
++   // TODO: only support single one package install/remove at present
++   // but it will support pkgName in the future!
 +   Fix2.InstallProtect();
 +   if (removeAll) {
-+    if (Fix2.ResolveAll(pkgName,'d') == false)
++    if (Fix2.ResolveAll(CmdL.FileList[1],'d') == false)
 +      _error->Discard();
 +   }
 +   if (install) {
-+       if (Fix2.ResolveAll(pkgName,'i') == false)
++       if (Fix2.ResolveAll(CmdL.FileList[1],'i') == false)
 +         _error->Discard();
 +   }
 +#endif
  // CNC:2003-03-19
  #ifdef APT_WITH_LUA
     if (Cache->BrokenCount() == 0) {
-@@ -1378,12 +1481,50 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1378,12 +1509,50 @@ bool DoInstall(CommandLine &CmdL)
        c1out << _("The following information may help to resolve the situation:") << endl;
        c1out << endl;
        ShowBroken(c1out,Cache,false);
@@ -1486,7 +1460,7 @@ index b755f49..48d2081 100644
     {
        string List;
        string VersionsList;
-@@ -1495,10 +1636,11 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1495,10 +1664,11 @@ bool DoInstall(CommandLine &CmdL)
        return true;
  
     // See if we need to prompt
@@ -1502,7 +1476,7 @@ index b755f49..48d2081 100644
  }
  									/*}}}*/
  // DoDistUpgrade - Automatic smart upgrader				/*{{{*/
-@@ -1903,7 +2045,7 @@ bool DoBuildDep(CommandLine &CmdL)
+@@ -1903,7 +2073,7 @@ bool DoBuildDep(CommandLine &CmdL)
               */
              if (IV.end() == false && 
                  Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
@@ -1511,7 +1485,7 @@ index b755f49..48d2081 100644
           }
  	 else // BuildDep || BuildDepIndep
           {
-@@ -2038,7 +2180,7 @@ bool DoBuildDep(CommandLine &CmdL)
+@@ -2038,7 +2208,7 @@ bool DoBuildDep(CommandLine &CmdL)
              if (_config->FindB("Debug::BuildDeps",false) == true)
                 cout << "  Trying to install " << (*D).Package << endl;
  
@@ -1520,7 +1494,7 @@ index b755f49..48d2081 100644
              {
                 // We successfully installed something; skip remaining alternatives
                 skipAlternatives = hasAlternatives;
-@@ -2318,7 +2460,8 @@ int main(int argc,const char *argv[])
+@@ -2318,7 +2488,8 @@ int main(int argc,const char *argv[])
  
     // Parse the command line and initialize the package library
     CommandLine CmdL(Args,_config);
@@ -1530,7 +1504,7 @@ index b755f49..48d2081 100644
         CmdL.Parse(argc,argv) == false ||
         pkgInitSystem(*_config,_system) == false)
     {
-@@ -2329,6 +2472,18 @@ int main(int argc,const char *argv[])
+@@ -2329,6 +2500,18 @@ int main(int argc,const char *argv[])
        return 100;
     }
  
@@ -1549,7 +1523,7 @@ index b755f49..48d2081 100644
     // See if the help should be shown
     if (_config->FindB("help") == true ||
         _config->FindB("version") == true ||
-@@ -2337,6 +2492,14 @@ int main(int argc,const char *argv[])
+@@ -2337,6 +2520,14 @@ int main(int argc,const char *argv[])
        ShowHelp(CmdL);
        return 0;
     }
@@ -1564,7 +1538,7 @@ index b755f49..48d2081 100644
     
     // CNC:2003-11-21
     if (CmdL.FileSize() > 1)
-@@ -2362,10 +2525,38 @@ int main(int argc,const char *argv[])
+@@ -2362,10 +2553,38 @@ int main(int argc,const char *argv[])
  	 _config->Set("APT::Arguments::", *I);
     }
  
@@ -1603,7 +1577,7 @@ index b755f49..48d2081 100644
     // Setup the output streams
     c0out.rdbuf(cout.rdbuf());
     c1out.rdbuf(cout.rdbuf());
-@@ -2375,6 +2566,11 @@ int main(int argc,const char *argv[])
+@@ -2375,6 +2594,11 @@ int main(int argc,const char *argv[])
     if (_config->FindI("quiet",0) > 1)
        c1out.rdbuf(devnull.rdbuf());
  
@@ -1615,7 +1589,7 @@ index b755f49..48d2081 100644
     // Setup the signals
     signal(SIGPIPE,SIG_IGN);
     signal(SIGWINCH,SigWinch);
-@@ -2411,6 +2607,9 @@ int main(int argc,const char *argv[])
+@@ -2411,6 +2635,9 @@ int main(int argc,const char *argv[])
     // Match the operation
     CmdL.DispatchArg(Cmds);
  
@@ -1719,7 +1693,7 @@ index ec699b6..864a042 100644
  dnl Check the archs, we want the target type.
  AC_CONFIG_AUX_DIR([buildlib])
  AC_CONFIG_MACRO_DIR([m4])
-
+ 
 diff --git a/methods/Makefile.am b/methods/Makefile.am
 index 151a3e5..1c54859 100644
 --- a/methods/Makefile.am
