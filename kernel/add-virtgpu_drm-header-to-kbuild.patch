@@ -1,7 +1,0 @@
---- linux-4.3.0.x86_64n/include/uapi/drm/Kbuild	2015-11-02 08:05:25.000000000 +0800
-+++ linux-4.3.0.x86_64/include/uapi/drm/Kbuild	2015-11-15 13:39:04.188341476 +0800
-@@ -17,3 +17,4 @@
- header-y += via_drm.h
- header-y += vmwgfx_drm.h
- header-y += msm_drm.h
-+header-y += virtgpu_drm.h

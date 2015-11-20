@@ -6,7 +6,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        8.git 
+Release:        11
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 #Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
@@ -55,7 +55,7 @@ BuildRequires:  autoconf
 BuildRequires:  libtool
 
 #for test-path-util fsck.minix
-BuildRequires:  util-linux
+BuildRequires:  util-linux >= 2.27.1
 
 %if %enable_terminal
 BuildRequires:  libxkbcommon-devel
@@ -70,6 +70,10 @@ Requires(pre):  /usr/bin/getent
 Requires(pre):  /usr/sbin/groupadd
 Requires:       dbus
 Requires:       %{name}-libs = %{version}-%{release}
+
+#systemd 228 do not use /etc/mtab anymore, if this file exist and not a link, it will failed.
+#we still provide this link, but systemd requires util-linux >= 2.27.1 to work without this link.
+Requires: util-linux >= 2.27.1
 
 Provides:       /bin/systemctl
 Provides:       /sbin/shutdown
@@ -507,6 +511,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Thu Nov 19 2015 Cjacker <cjacker@foxmail.com> - 228-11
+- Update, and add requires to util-linux >= 2.27.1
+
 * Tue Nov 17 2015 Cjacker <cjacker@foxmail.com> - 228-8.git
 - Update, and enable dkms service by default
 

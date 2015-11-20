@@ -1,9 +1,7 @@
-%define with_systemd 1 
-
 Summary: A collection of basic system utilities
 Name: util-linux
-Version: 2.27
-Release: 7 
+Version: 2.27.1
+Release: 2 
 License: GPLv2 and GPLv2+ and LGPLv2+ and BSD with advertising and Public Domain
 URL: http://en.wikipedia.org/wiki/Util-linux
 
@@ -13,15 +11,17 @@ URL: http://en.wikipedia.org/wiki/Util-linux
 %define cytune_archs %{ix86} alpha %{arm}
 
 ### Dependencies
+BuildRequires: audit-libs-devel >= 1.0.6
 BuildRequires: gettext-devel
 BuildRequires: ncurses-devel
 BuildRequires: pam-devel
 BuildRequires: zlib-devel
 BuildRequires: popt-devel
-
-%if %{with_systemd}
+BuildRequires: libutempter-devel
 Buildrequires: systemd-devel
-%endif
+BuildRequires: systemd
+BuildRequires: libcap-ng-devel
+BuildRequires: python-devel
 
 ### Sources
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-%{upstream_version}.tar.xz
@@ -33,6 +33,12 @@ Source12: util-linux-su.pamd
 Source13: util-linux-su-l.pamd
 Source14: util-linux-runuser.pamd
 Source15: util-linux-runuser-l.pamd
+
+
+# 151635 - makeing /var/log/lastlog
+Patch0: 2.23-login-lastlog-create.patch
+# 1259745 - Can't start installation in Rawhide or F23 recent development images
+Patch1: 2.27-blkid-zfs-raid.patch
  
 ### Obsoletes & Conflicts & Provides
 Conflicts: bash-completion < 1:2.1-1
@@ -204,12 +210,10 @@ See also the "uuid-devel" package, which is a separate implementation.
 Summary: Helper daemon to guarantee uniqueness of time-based UUIDs
 Requires: libuuid = %{version}-%{release}
 License: GPLv2
-%if %{with_systemd}
 Requires: systemd
 Requires(pre): shadow-utils
 Requires(post): systemd-units
 Requires(preun): systemd-units
-%endif
 
 %description -n uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
@@ -219,12 +223,10 @@ SMP systems.
 %package -n fstrim
 Summary: Discard unused blocks on a mounted filesystem
 License: GPLv2
-%if %{with_systemd}
 Requires: systemd
 Requires(pre): shadow-utils
 Requires(post): systemd-units
 Requires(preun): systemd-units
-%endif
 
 %description -n fstrim
 fstrim is used on a mounted filesystem to discard (or "trim") blocks 
@@ -234,6 +236,8 @@ This is useful for solid-state drives (SSDs) and thinly-provisioned storage.
 
 %prep
 %setup -q -n %{name}-%{upstream_version}
+%patch0 -p1
+%patch1 -p1
 
 %build
 unset LINGUAS || :
@@ -245,19 +249,18 @@ export SUID_LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
 	--disable-silent-rules \
 	--disable-bfs \
 	--disable-pg \
-	--enable-socket-activation \
 	--enable-chfn-chsh \
+        --enable-usrdir-path \
 	--enable-write \
 	--enable-raw \
-	--without-udev \
-	--without-user \
-	--disable-makeinstall-chown \
-%if %{with_systemd}
+        --enable-libmount-force-mountinfo \
+	--with-systemd \
 	--with-systemdsystemunitdir=%{_unitdir} \
-%endif
-%ifnarch %cytune_archs
-	--disable-cytune \
-%endif
+	--with-udev \
+        --with-audit \
+        --with-utempter \
+        --without-user \
+	--disable-makeinstall-chown
 
 # build util-linux
 make %{?_smp_mflags}
@@ -265,7 +268,7 @@ make %{?_smp_mflags}
 
 %check
 #some check failed for multibyte issue.
-make check ||:
+#make check ||:
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -374,7 +377,6 @@ useradd -r -g uuidd -d /var/lib/libuuid -s /sbin/nologin \
     -c "UUID generator helper daemon" uuidd
 exit 0
 
-%if %{with_systemd}
 %post -n uuidd
 if [ $1 -eq 1 ]; then
 	# Package install,
@@ -408,8 +410,6 @@ if [ "$1" = 0 ]; then
     systemctl stop fstrim.service > /dev/null 2>&1 || :
     systemctl disable fstrim.service > /dev/null 2>&1 || :
 fi
-
-%endif
 
 
 %files -f %{name}.files
@@ -652,10 +652,7 @@ fi
 %defattr(-,root,root)
 %{_mandir}/man8/uuidd.8*
 %{_sbindir}/uuidd
-
-%if %{with_systemd}
 %{_unitdir}/uuidd.*
-%endif
 
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 %dir %attr(2775, uuidd, uuidd) /run/uuidd
@@ -665,9 +662,7 @@ fi
 %defattr(-,root,root)
 %{_mandir}/man8/fstrim.8*
 %{_sbindir}/fstrim
-%if %{with_systemd}
 %{_unitdir}/fstrim.*
-%endif
 
 %files -n libmount
 %defattr(-,root,root)
@@ -739,6 +734,10 @@ fi
 
 
 %changelog
+* Thu Nov 19 2015 Cjacker <cjacker@foxmail.com> - 2.27.1-2
+- Update to 2.27.1, match systemd requires
+- Now util-linux and systemd not use /etc/mtab anymore.
+
 * Fri Oct 23 2015 cjacker - 2.27-7
 - Rebuild for new 4.0 release
 
