@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        46%{?dist}
+Release:        47%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -545,6 +545,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Fri Nov 20 2015 sulit <sulitsrc@gmail.com> - 1:2.02-47
+- update grub fonts
+
 * Tue Nov 17 2015 sulit <sulitsrc@gmail.com> - 1:2.02-46
 - fix grub-mkconfig logical error
 
