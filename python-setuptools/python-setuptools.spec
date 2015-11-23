@@ -1,6 +1,4 @@
-#shiped in python3.5
-
-%global with_python3 0 
+%global with_python3 1 
 %global with_check 0 
 
 %global build_wheel 0 
@@ -16,7 +14,7 @@
 %endif
 
 Name:           python-setuptools
-Version:        18.0.1
+Version:        18.5
 Release:        3%{?dist}
 Summary:        Easily build and distribute Python packages
 
