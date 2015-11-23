@@ -30,7 +30,7 @@
 Summary: An interpreted, interactive, object-oriented programming language 
 Name:    python3
 Version: 3.5.0
-Release: 3 
+Release: 4 
 License: BSD
 Source0:  %{realname}-%{version}.tar.xz
 
@@ -121,8 +121,6 @@ Provides: /bin/python3
 Provides: /bin/python%{main_ver}
 Provides: /usr/bin/python%{main_ver}
 Provides: /usr/bin/python%{main_ver}m
-Provides: python3-setuptools
-Obsoletes: python3-setuptools <= 18.0.1
  
 %description
 Python is an interpreted, interactive, object-oriented programming
@@ -312,6 +310,9 @@ EXTRATESTOPTS="$EXTRATESTOPTS" make test
 
 
 %changelog
+* Mon Nov 23 2015 Cjacker <cjacker@foxmail.com> - 3.5.0-4
+- Rebuild
+
 * Fri Nov 06 2015 Cjacker <cjacker@foxmail.com> - 3.5.0-3
 - Rebuild
 
