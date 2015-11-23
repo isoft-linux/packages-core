@@ -1,0 +1,29 @@
+From 7cd495a88807698b4ebaf9c1fb3db6edf31dd7e6 Mon Sep 17 00:00:00 2001
+From: Eric Anholt <eric@anholt.net>
+Date: Thu, 15 Oct 2015 13:25:12 -0700
+Subject: glamor: Make glamor_get_name_from_bo static.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+
+diff --git a/glamor/glamor_egl.c b/glamor/glamor_egl.c
+index fde7688..e68af18 100644
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -369,9 +369,7 @@ glamor_egl_create_textured_pixmap_from_gbm_bo(PixmapPtr pixmap,
+ }
+ 
+ #ifdef GLAMOR_HAS_GBM
+-void glamor_get_name_from_bo(int gbm_fd, struct gbm_bo *bo, int *name);
+-
+-void
++static void
+ glamor_get_name_from_bo(int gbm_fd, struct gbm_bo *bo, int *name)
+ {
+     union gbm_bo_handle handle;
+-- 
+cgit v0.10.2
+

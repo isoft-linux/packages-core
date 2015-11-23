@@ -1,0 +1,66 @@
+From 9a5972801f7789833062e5711e77483b643eef92 Mon Sep 17 00:00:00 2001
+From: Eric Anholt <eric@anholt.net>
+Date: Thu, 5 Nov 2015 16:35:56 -0800
+Subject: glamor: Fix segfault in fallback picture uploading.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If the source/mask pixmap is a pixmap that doesn't have an FBO
+attached, and it doesn't match the Render operation's size, then we'll
+composite it to a CPU temporary (not sure why).  We would take the
+PictFormatShort from the source Picture, make a pixmap of that depth,
+and try to look up the PictFormat description from the depth and the
+PictFormatShort.  However, the screen's PictFormats are only attached
+to the screen's visuals' depths.  So, with an x2r10g10b10 short format
+(depth 30), we wouldn't find the screen's PictFormat for it
+(associated with depth 32).
+
+Instead of trying to look up from the screen, just use the pFormat
+that came from our source picture.  The only time we need to look up a
+PictFormat when we're doing non-shader gradients, which we put in
+a8r8g8b8.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+
+diff --git a/glamor/glamor_render.c b/glamor/glamor_render.c
+index c3a8f17..d8574ec 100644
+--- a/glamor/glamor_render.c
++++ b/glamor/glamor_render.c
+@@ -1279,12 +1279,17 @@ glamor_convert_gradient_picture(ScreenPtr screen,
+     PixmapPtr pixmap;
+     PicturePtr dst = NULL;
+     int error;
++    PictFormatPtr pFormat;
+     PictFormatShort format;
+ 
+-    if (!source->pDrawable)
++    if (source->pDrawable) {
++        pFormat = source->pFormat;
++        format = pFormat->format;
++    } else {
+         format = PICT_a8r8g8b8;
+-    else
+-        format = source->format;
++        pFormat = PictureMatchFormat(screen, 32, format);
++    }
++
+ #ifdef GLAMOR_GRADIENT_SHADER
+     if (!source->pDrawable) {
+         if (source->pSourcePict->type == SourcePictTypeLinear) {
+@@ -1320,10 +1325,7 @@ glamor_convert_gradient_picture(ScreenPtr screen,
+         return NULL;
+ 
+     dst = CreatePicture(0,
+-                        &pixmap->drawable,
+-                        PictureMatchFormat(screen,
+-                                           PIXMAN_FORMAT_DEPTH(format),
+-                                           format), 0, 0, serverClient, &error);
++                        &pixmap->drawable, pFormat, 0, 0, serverClient, &error);
+     glamor_destroy_pixmap(pixmap);
+     if (!dst)
+         return NULL;
+-- 
+cgit v0.10.2
+

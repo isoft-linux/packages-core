@@ -1,0 +1,54 @@
+From f80758f32a7b922baf8fbf3ac6d8c9aae5fea1c4 Mon Sep 17 00:00:00 2001
+From: Eric Anholt <eric@anholt.net>
+Date: Thu, 18 Jun 2015 11:15:40 -0700
+Subject: glamor: Use the GBM function for getting an FD from a GBM BO.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+We were rolling ioctl calls ourselves, when there's a nice interface
+for it.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+
+diff --git a/glamor/glamor_egl.c b/glamor/glamor_egl.c
+index 761874f..6580141 100644
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -368,22 +368,7 @@ glamor_egl_create_textured_pixmap_from_gbm_bo(PixmapPtr pixmap, void *bo)
+ }
+ 
+ #ifdef GLAMOR_HAS_GBM
+-int glamor_get_fd_from_bo(int gbm_fd, struct gbm_bo *bo, int *fd);
+ void glamor_get_name_from_bo(int gbm_fd, struct gbm_bo *bo, int *name);
+-int
+-glamor_get_fd_from_bo(int gbm_fd, struct gbm_bo *bo, int *fd)
+-{
+-    union gbm_bo_handle handle;
+-    struct drm_prime_handle args;
+-
+-    handle = gbm_bo_get_handle(bo);
+-    args.handle = handle.u32;
+-    args.flags = DRM_CLOEXEC;
+-    if (ioctl(gbm_fd, DRM_IOCTL_PRIME_HANDLE_TO_FD, &args))
+-        return FALSE;
+-    *fd = args.fd;
+-    return TRUE;
+-}
+ 
+ void
+ glamor_get_name_from_bo(int gbm_fd, struct gbm_bo *bo, int *name)
+@@ -495,8 +480,7 @@ glamor_egl_dri3_fd_name_from_tex(ScreenPtr screen,
+             glamor_get_name_from_bo(glamor_egl->fd, bo, &fd);
+     }
+     else {
+-        if (glamor_get_fd_from_bo(glamor_egl->fd, bo, &fd)) {
+-        }
++        fd = gbm_bo_get_fd(bo);
+     }
+     *stride = pixmap->devKind;
+     *size = pixmap->devKind * gbm_bo_get_height(bo);
+-- 
+cgit v0.10.2
+

@@ -1,0 +1,56 @@
+From e91fd30049ba9ebfb6ee8aded74eebe006af3f57 Mon Sep 17 00:00:00 2001
+From: Eric Anholt <eric@anholt.net>
+Date: Sun, 18 Oct 2015 21:34:45 -0700
+Subject: glamor: Unexport glamor_destroy_textured_pixmap().
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is just a bit of the DestroyPixmap chain.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+
+diff --git a/glamor/glamor.c b/glamor/glamor.c
+index e69f83d..4cd98c4 100644
+--- a/glamor/glamor.c
++++ b/glamor/glamor.c
+@@ -202,8 +202,8 @@ glamor_create_pixmap(ScreenPtr screen, int w, int h, int depth,
+     return pixmap;
+ }
+ 
+-void
+-glamor_destroy_textured_pixmap(PixmapPtr pixmap)
++Bool
++glamor_destroy_pixmap(PixmapPtr pixmap)
+ {
+     if (pixmap->refcnt == 1) {
+ #if GLAMOR_HAS_GBM
+@@ -211,12 +211,7 @@ glamor_destroy_textured_pixmap(PixmapPtr pixmap)
+ #endif
+         glamor_pixmap_destroy_fbo(pixmap);
+     }
+-}
+ 
+-Bool
+-glamor_destroy_pixmap(PixmapPtr pixmap)
+-{
+-    glamor_destroy_textured_pixmap(pixmap);
+     return fbDestroyPixmap(pixmap);
+ }
+ 
+diff --git a/glamor/glamor.h b/glamor/glamor.h
+index 54fec1d..6d135df 100644
+--- a/glamor/glamor.h
++++ b/glamor/glamor.h
+@@ -110,7 +110,6 @@ extern _X_EXPORT void glamor_set_pixmap_texture(PixmapPtr pixmap,
+ 
+ extern _X_EXPORT void glamor_set_pixmap_type(PixmapPtr pixmap,
+                                              glamor_pixmap_type_t type);
+-extern _X_EXPORT void glamor_destroy_textured_pixmap(PixmapPtr pixmap);
+ extern _X_EXPORT void glamor_block_handler(ScreenPtr screen);
+ 
+ extern _X_EXPORT PixmapPtr glamor_create_pixmap(ScreenPtr screen, int w, int h,
+-- 
+cgit v0.10.2
+

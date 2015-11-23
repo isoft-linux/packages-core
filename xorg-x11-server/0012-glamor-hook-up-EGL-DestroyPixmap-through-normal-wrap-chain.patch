@@ -1,0 +1,163 @@
+From ff2850424c99652506d0d6bc43506b4c16bf2ad5 Mon Sep 17 00:00:00 2001
+From: Eric Anholt <eric@anholt.net>
+Date: Sun, 18 Oct 2015 19:26:14 -0700
+Subject: glamor: Hook up EGL DestroyPixmap through the normal wrap chain.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+One less layering violation (EGL should call glamor, if anything, not
+the other way around).
+
+v2: Move glamor.c's DestroyPixmap wrapping up above the
+    glamor_egl_screen_init() call, since glamor.c's DestroyPixmap
+    needs to be the bottom of the stack (it calls fb directly and
+    doesn't wrap).  Caught by Michel.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+
+diff --git a/glamor/glamor.c b/glamor/glamor.c
+index 4cd98c4..116d10c 100644
+--- a/glamor/glamor.c
++++ b/glamor/glamor.c
+@@ -206,9 +206,6 @@ Bool
+ glamor_destroy_pixmap(PixmapPtr pixmap)
+ {
+     if (pixmap->refcnt == 1) {
+-#if GLAMOR_HAS_GBM
+-        glamor_egl_destroy_pixmap_image(pixmap);
+-#endif
+         glamor_pixmap_destroy_fbo(pixmap);
+     }
+ 
+@@ -461,6 +458,9 @@ glamor_init(ScreenPtr screen, unsigned int flags)
+     glamor_priv->saved_procs.close_screen = screen->CloseScreen;
+     screen->CloseScreen = glamor_close_screen;
+ 
++    glamor_priv->saved_procs.destroy_pixmap = screen->DestroyPixmap;
++    screen->DestroyPixmap = glamor_destroy_pixmap;
++
+     /* If we are using egl screen, call egl screen init to
+      * register correct close screen function. */
+     if (flags & GLAMOR_USE_EGL_SCREEN) {
+@@ -615,9 +615,6 @@ glamor_init(ScreenPtr screen, unsigned int flags)
+     glamor_priv->saved_procs.create_pixmap = screen->CreatePixmap;
+     screen->CreatePixmap = glamor_create_pixmap;
+ 
+-    glamor_priv->saved_procs.destroy_pixmap = screen->DestroyPixmap;
+-    screen->DestroyPixmap = glamor_destroy_pixmap;
+-
+     glamor_priv->saved_procs.get_spans = screen->GetSpans;
+     screen->GetSpans = glamor_get_spans;
+ 
+diff --git a/glamor/glamor.h b/glamor/glamor.h
+index 6d135df..4459fa4 100644
+--- a/glamor/glamor.h
++++ b/glamor/glamor.h
+@@ -147,8 +147,6 @@ extern _X_EXPORT int glamor_egl_dri3_fd_name_from_tex(ScreenPtr, PixmapPtr,
+                                                       unsigned int, Bool,
+                                                       CARD16 *, CARD32 *);
+ 
+-extern void glamor_egl_destroy_pixmap_image(PixmapPtr pixmap);
+-
+ extern _X_EXPORT void *glamor_egl_get_gbm_device(ScreenPtr screen);
+ 
+ /* @glamor_supports_pixmap_import_export: Returns whether
+diff --git a/glamor/glamor_egl.c b/glamor/glamor_egl.c
+index 24d5586..761874f 100644
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -78,6 +78,7 @@ struct glamor_egl_screen_private {
+     int dri3_capable;
+ 
+     CloseScreenProcPtr saved_close_screen;
++    DestroyPixmapProcPtr saved_destroy_pixmap;
+     xf86FreeScreenProc *saved_free_screen;
+ };
+ 
+@@ -598,20 +599,29 @@ glamor_pixmap_from_fd(ScreenPtr screen,
+ #endif
+ }
+ 
+-void
+-glamor_egl_destroy_pixmap_image(PixmapPtr pixmap)
++static Bool
++glamor_egl_destroy_pixmap(PixmapPtr pixmap)
+ {
+-    struct glamor_pixmap_private *pixmap_priv =
+-        glamor_get_pixmap_private(pixmap);
++    ScreenPtr screen = pixmap->drawable.pScreen;
++    ScrnInfoPtr scrn = xf86ScreenToScrn(screen);
++    struct glamor_egl_screen_private *glamor_egl =
++        glamor_egl_get_screen_private(scrn);
++    Bool ret;
+ 
+-    if (pixmap_priv->image) {
+-        ScrnInfoPtr scrn = xf86ScreenToScrn(pixmap->drawable.pScreen);
+-        struct glamor_egl_screen_private *glamor_egl =
+-            glamor_egl_get_screen_private(scrn);
++    if (pixmap->refcnt == 1) {
++        struct glamor_pixmap_private *pixmap_priv =
++            glamor_get_pixmap_private(pixmap);
+ 
+-        eglDestroyImageKHR(glamor_egl->display, pixmap_priv->image);
+-        pixmap_priv->image = NULL;
++        if (pixmap_priv->image)
++            eglDestroyImageKHR(glamor_egl->display, pixmap_priv->image);
+     }
++
++    screen->DestroyPixmap = glamor_egl->saved_destroy_pixmap;
++    ret = screen->DestroyPixmap(pixmap);
++    glamor_egl->saved_destroy_pixmap = screen->DestroyPixmap;
++    screen->DestroyPixmap = glamor_egl_destroy_pixmap;
++
++    return ret;
+ }
+ 
+ _X_EXPORT void
+@@ -723,6 +733,9 @@ glamor_egl_screen_init(ScreenPtr screen, struct glamor_context *glamor_ctx)
+     glamor_egl->saved_close_screen = screen->CloseScreen;
+     screen->CloseScreen = glamor_egl_close_screen;
+ 
++    glamor_egl->saved_destroy_pixmap = screen->DestroyPixmap;
++    screen->DestroyPixmap = glamor_egl_destroy_pixmap;
++
+     glamor_ctx->ctx = glamor_egl->context;
+     glamor_ctx->display = glamor_egl->display;
+ 
+diff --git a/glamor/glamor_egl_stubs.c b/glamor/glamor_egl_stubs.c
+index c11e6d5..35944c8 100644
+--- a/glamor/glamor_egl_stubs.c
++++ b/glamor/glamor_egl_stubs.c
+@@ -35,11 +35,6 @@ glamor_egl_screen_init(ScreenPtr screen, struct glamor_context *glamor_ctx)
+ {
+ }
+ 
+-void
+-glamor_egl_destroy_pixmap_image(PixmapPtr pixmap)
+-{
+-}
+-
+ int
+ glamor_egl_dri3_fd_name_from_tex(ScreenPtr screen,
+                                  PixmapPtr pixmap,
+diff --git a/hw/xwayland/xwayland-glamor.c b/hw/xwayland/xwayland-glamor.c
+index ece7dbe..dedefdc 100644
+--- a/hw/xwayland/xwayland-glamor.c
++++ b/hw/xwayland/xwayland-glamor.c
+@@ -400,11 +400,6 @@ xwl_screen_init_glamor(struct xwl_screen *xwl_screen,
+     return TRUE;
+ }
+ 
+-void
+-glamor_egl_destroy_pixmap_image(PixmapPtr pixmap)
+-{
+-}
+-
+ int
+ glamor_egl_dri3_fd_name_from_tex(ScreenPtr screen,
+                                  PixmapPtr pixmap,
+-- 
+cgit v0.10.2
+
