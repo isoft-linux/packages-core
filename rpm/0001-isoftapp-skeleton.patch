@@ -422,7 +422,7 @@ index fc413a9..0e6863c 100644
 +    return rc;
 +}
 diff --git a/lib/query.c b/lib/query.c
-index d0274d0..489c930 100644
+index d0274d0..1420744 100644
 --- a/lib/query.c
 +++ b/lib/query.c
 @@ -298,6 +298,23 @@ static int rpmcliShowMatches(QVA_t qva, rpmts ts, rpmdbMatchIterator mi)
@@ -485,7 +485,7 @@ index d0274d0..489c930 100644
  int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
  {
      int ec = 0;
-@@ -565,6 +611,42 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
+@@ -565,6 +611,41 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv)
      return ec;
  }
  
@@ -497,7 +497,6 @@ index d0274d0..489c930 100644
 +    case RPMQV_ALL: {
 +        rpmdbMatchIterator mi = initFilterIteratorISoftApp(ts, argv);
 +	    ec = rpmcliShowMatchesISoftApp(qva, ts, mi);
-+	    rpmdbFreeIterator(mi);
 +	    break;
 +    }
 +    case RPMQV_RPM: {
@@ -528,7 +527,7 @@ index d0274d0..489c930 100644
  int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
  {
      rpmVSFlags vsflags, ovsflags;
-@@ -607,3 +689,48 @@ int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
+@@ -607,3 +688,48 @@ int rpmcliQuery(rpmts ts, QVA_t qva, char * const * argv)
  
      return ec;
  }
