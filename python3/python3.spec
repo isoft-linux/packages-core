@@ -122,8 +122,6 @@ Provides: /bin/python%{main_ver}
 Provides: /usr/bin/python%{main_ver}
 Provides: /usr/bin/python%{main_ver}m
 
-Provides: python3-setuptools
- 
 %description
 Python is an interpreted, interactive, object-oriented programming
 language often compared to Tcl, Perl, Scheme or Java. Python includes

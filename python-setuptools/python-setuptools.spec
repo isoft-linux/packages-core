@@ -1,4 +1,4 @@
-%global with_python3 1 
+%global with_python3 0
 %global with_check 0 
 
 %global build_wheel 0 
@@ -15,7 +15,7 @@
 
 Name:           python-setuptools
 Version:        18.5
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Easily build and distribute Python packages
 
 License:        Python or ZPLv2.0
@@ -189,6 +189,9 @@ popd
 %endif # with_python3
 
 %changelog
+* Mon Nov 23 2015 Cjacker <cjacker@foxmail.com> - 18.5-4
+- Rebuild, disable python3 version
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 18.0.1-3
 - Rebuild with python 3.5
 
