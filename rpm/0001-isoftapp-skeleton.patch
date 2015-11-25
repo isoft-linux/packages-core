@@ -43,7 +43,7 @@ index 04b039c..552d848 100644
 +    return buildSpec(buildArgs, spec, buildArgs->buildAmount, fileName);
  }
 diff --git a/build/pack.c b/build/pack.c
-index 213d85e..0698565 100644
+index 213d85e..800e5cd 100644
 --- a/build/pack.c
 +++ b/build/pack.c
 @@ -543,7 +543,7 @@ static rpmRC checkPackages(char *pkgcheck)
@@ -55,12 +55,13 @@ index 213d85e..0698565 100644
  {
      rpmRC rc;
      const char *errorString;
-@@ -612,7 +612,8 @@ rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating)
+@@ -612,7 +612,9 @@ rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating)
  
  	rc = writeRPM(pkg, NULL, fn, NULL);
  	if (rc == RPMRC_OK) {
 -	    /* Do check each written package if enabled */
-+	    snprintf(fileName, PATH_MAX - 1, "%s", fn);
++	    if (fileName)
++            snprintf(fileName, PATH_MAX - 1, "%s", fn);
 +        /* Do check each written package if enabled */
  	    char *pkgcheck = rpmExpand("%{?_build_pkgcheck} ", fn, NULL);
  	    if (pkgcheck[0] != ' ') {
