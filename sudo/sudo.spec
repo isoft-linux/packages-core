@@ -1,7 +1,7 @@
 Summary: Allows restricted root access for specified users
 Name: sudo
 Version: 1.8.15
-Release: 2
+Release: 3
 License: ISC
 URL: http://www.courtesan.com/sudo/
 Source0: http://www.courtesan.com/sudo/dist/sudo-%{version}.tar.gz
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/sudo/libsudo_util.so
 
 %changelog
+* Wed Nov 25 2015 xiaotian.wu@i-soft.com.cn - 1.8.15-3
+- %wheel groups use nopassword.
+
 * Fri Oct 23 2015 cjacker - 1.8.10-2
 - Rebuild for new 4.0 release
 
