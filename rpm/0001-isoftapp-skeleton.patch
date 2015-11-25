@@ -1,5 +1,72 @@
+diff --git a/build/build.c b/build/build.c
+index 04b039c..552d848 100644
+--- a/build/build.c
++++ b/build/build.c
+@@ -203,7 +203,7 @@ exit:
+     return rc;
+ }
+ 
+-static rpmRC buildSpec(BTA_t buildArgs, rpmSpec spec, int what)
++static rpmRC buildSpec(BTA_t buildArgs, rpmSpec spec, int what, char *fileName)
+ {
+     rpmRC rc = RPMRC_OK;
+     int test = (what & RPMBUILD_NOBUILD);
+@@ -219,7 +219,8 @@ static rpmRC buildSpec(BTA_t buildArgs, rpmSpec spec, int what)
+ 	for (x = 0; x < spec->BACount; x++) {
+ 	    if ((rc = buildSpec(buildArgs, spec->BASpecs[x],
+ 				(what & ~RPMBUILD_RMSOURCE) |
+-				(x ? 0 : (what & RPMBUILD_PACKAGESOURCE))))) {
++				(x ? 0 : (what & RPMBUILD_PACKAGESOURCE)), 
++                fileName))) {
+ 		goto exit;
+ 	    }
+ 	}
+@@ -265,7 +266,7 @@ static rpmRC buildSpec(BTA_t buildArgs, rpmSpec spec, int what)
+ 		return rc;
+ 
+ 	if (((what & RPMBUILD_PACKAGEBINARY) && !test) &&
+-	    (rc = packageBinaries(spec, cookie, (didBuild == 0))))
++	    (rc = packageBinaries(spec, cookie, (didBuild == 0), fileName)))
+ 		goto exit;
+ 	
+ 	if ((what & RPMBUILD_CLEAN) &&
+@@ -299,5 +300,10 @@ exit:
+ rpmRC rpmSpecBuild(rpmSpec spec, BTA_t buildArgs)
+ {
+     /* buildSpec() can recurse with different buildAmount, pass it separately */
+-    return buildSpec(buildArgs, spec, buildArgs->buildAmount);
++    return buildSpec(buildArgs, spec, buildArgs->buildAmount, NULL);
++}
++
++rpmRC rpmSpecBuildISoftApp(rpmSpec spec, BTA_t buildArgs, char *fileName) 
++{
++    return buildSpec(buildArgs, spec, buildArgs->buildAmount, fileName);
+ }
+diff --git a/build/pack.c b/build/pack.c
+index 213d85e..0698565 100644
+--- a/build/pack.c
++++ b/build/pack.c
+@@ -543,7 +543,7 @@ static rpmRC checkPackages(char *pkgcheck)
+     return RPMRC_OK;
+ }
+ 
+-rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating)
++rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating, char *fileName)
+ {
+     rpmRC rc;
+     const char *errorString;
+@@ -612,7 +612,8 @@ rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating)
+ 
+ 	rc = writeRPM(pkg, NULL, fn, NULL);
+ 	if (rc == RPMRC_OK) {
+-	    /* Do check each written package if enabled */
++	    snprintf(fileName, PATH_MAX - 1, "%s", fn);
++        /* Do check each written package if enabled */
+ 	    char *pkgcheck = rpmExpand("%{?_build_pkgcheck} ", fn, NULL);
+ 	    if (pkgcheck[0] != ' ') {
+ 		rc = checkPackages(pkgcheck);
 diff --git a/build/rpmbuild.h b/build/rpmbuild.h
-index 4777f58..b921d5e 100644
+index 4777f58..8fa3b88 100644
 --- a/build/rpmbuild.h
 +++ b/build/rpmbuild.h
 @@ -94,6 +94,14 @@ Header rpmSpecSourceHeader(rpmSpec spec);
@@ -17,6 +84,39 @@ index 4777f58..b921d5e 100644
   * Retrieve build dependency set from spec.
   * @param spec		parsed spec control structure
   * @param tag		dependency tag
+@@ -109,6 +117,15 @@ rpmds rpmSpecDS(rpmSpec spec, rpmTagVal tag);
+  */
+ rpmRC rpmSpecBuild(rpmSpec spec, BTA_t buildArgs);
+ 
++/** \ingroup rpmbuild
++ * Spec build stages state machine driver.
++ * @param spec		spec file control structure
++ * @param buildArgs	build arguments
++ * @param fileName  wrote to binary rpm fileName reference
++ * @return		RPMRC_OK on success
++ */
++rpmRC rpmSpecBuildISoftApp(rpmSpec spec, BTA_t buildArgs, char *fileName);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/build/rpmbuild_internal.h b/build/rpmbuild_internal.h
+index 7dd577f..e26a39e 100644
+--- a/build/rpmbuild_internal.h
++++ b/build/rpmbuild_internal.h
+@@ -407,10 +407,11 @@ rpmRC processSourceFiles(rpmSpec spec, rpmBuildPkgFlags pkgFlags);
+  * @param spec		spec file control structure
+  * @param cookie	build identifier "cookie" or NULL
+  * @param cheating	was build shortcircuited?
++ * @param fileName  wrote to binary rpm fileName reference
+  * @return		RPMRC_OK on success
+  */
+ RPM_GNUC_INTERNAL
+-rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating);
++rpmRC packageBinaries(rpmSpec spec, const char *cookie, int cheating, char *fileName);
+ 
+ /** \ingroup rpmbuild
+  * Generate source package.
 diff --git a/build/spec.c b/build/spec.c
 index 7cb264a..d6dc509 100644
 --- a/build/spec.c
