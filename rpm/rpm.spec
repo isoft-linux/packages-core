@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 32
+Release: 33
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -411,6 +411,8 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Nov 25 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Add rpmSpecBuildISoftApp for converting src rpm to bin rpm.
 - Fix fileName is NULL issue for packageBinaries.
+- Rollback because it does not need to rpmbuild --isoftapp --rebuild scr.rpm 
+  for isoft-package-installer.
 
 * Mon Nov 23 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix closing already-closed cursor issue.
