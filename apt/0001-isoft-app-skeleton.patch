@@ -1,5 +1,5 @@
 diff --git a/apt-pkg/algorithms.cc b/apt-pkg/algorithms.cc
-index 1b8b73f..0af0c94 100644
+index 1b8b73f..ca03bd1 100644
 --- a/apt-pkg/algorithms.cc
 +++ b/apt-pkg/algorithms.cc
 @@ -739,6 +739,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
@@ -121,55 +121,220 @@ index 1b8b73f..0af0c94 100644
  		  }
  	       }
  	       else
-@@ -1155,6 +1161,141 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
+@@ -1155,6 +1161,369 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
     
     return true;
  }
++static pkgDepCache *g_Cache =NULL;
++static pkgDepCache *g_CacheIsoft = NULL;
++bool CheckPkgInCachex(pkgDepCache &Cache,const char *pkgName,bool reCheck)
++{
++     bool result = false;
++    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin();
++         Pkg.end() == false; Pkg++)
++    {
++        if (strcmp(Pkg.Name(),pkgName) !=0)
++            continue;
++#if 0
++        //if(strcmp(pkgName,"librevenge") ==0)
++        printf("\ntrace:%s,%d,will check[%s]c[%x]s[%x]verlist[%x]||np[%x]revdep[%x],povlist[%x].count[%d][%s]\n",__FUNCTION__,__LINE__,
++                       pkgName,Pkg->CurrentVer,Pkg->Section,Pkg->VersionList,
++                       Pkg->NextPackage,Pkg->RevDepends,Pkg->ProvidesList,Cache.Head().PackageCount,reCheck?"re":"not re");
++#endif//
++        // only check in isoft
++        if (!reCheck) {
++            if (Pkg->CurrentVer != 0) {
++                return true;
++            } else {
++                return false;
++            }
++        }
++        // to check in sys
++        // no.1 cur && pre, maybe in sys
++        if (Pkg->RevDepends != 0 && Pkg->ProvidesList != 0) {
++            result = true;
++            const char *p = strstr(pkgName,"(");
++            if (p == NULL) {
++                if (Pkg->VersionList == 0) {
++                    return true;
++                } else if (Pkg->CurrentVer != 0) {
++                    return true;
++                } else {
++                    return false;
++                }
++            } else {
++                bool find = false;
++                char newPkg[512]="";
++                snprintf(newPkg,p-pkgName +1,"%s",pkgName);
++                //printf("\ntrace:%s,%d,will check new pkg[%s].\n",__FUNCTION__,__LINE__,newPkg);
 +
-+static int g_max_deep = 0;
++                for (pkgCache::PkgIterator PkgSys = Cache.PkgBegin();
++                     PkgSys.end() == false; PkgSys++)
++                {
++                    if (strcmp(PkgSys.Name(),newPkg) !=0)
++                        continue;
++#if 0
++                    //if(strcmp(pkgName,"librevenge") ==0)
++                    printf("\ntrace:%s,%d,will check[%s]c[%x]s[%x]verlist[%x]||np[%x]revdep[%x],povlist[%x].\n",__FUNCTION__,__LINE__,
++                                   newPkg,PkgSys->CurrentVer,PkgSys->Section,PkgSys->VersionList,
++                                   PkgSys->NextPackage,PkgSys->RevDepends,PkgSys->ProvidesList);
++#endif
++                    if (PkgSys->CurrentVer == 0) {
++                        //printf("\ntrace:%s,%d.pkg[%s] not installed\n",__FUNCTION__,__LINE__,newPkg);
++                        return false;
++                    }if (PkgSys->RevDepends != 0 && PkgSys->ProvidesList != 0) {
++                        return true;
++                    } else if (PkgSys->RevDepends == 0) {
++                        return false;
++                    } else {
++                        printf("\ntrace:%s,%d,pkg[%s],never go here!\n",__FUNCTION__,__LINE__,newPkg);
++                        return false;
++                    }
++                }
++                // can not find newpkg in sys, just return;
++                if (!find) {
++                    return true;
++                }
++
++            }
++        } else if (Pkg->RevDepends == 0) {
++            return false;
++        } else {
++            printf("\ntrace:%s,%d,pkg[%s],never go here!\n",__FUNCTION__,__LINE__,pkgName);
++            return false;
++        }
++    }
++
++    //printf("\ntrace:%s,%d,end.can not find pkg[%s]\n",__FUNCTION__,__LINE__,pkgName);
++
++    return result;
++}
++bool getPkgInstallStatex(pkgDepCache &Cache,pkgDepCache &CacheIsoft,const char *pkgName)
++{
++    //char pkgName[512]="";
++    //strcpy(pkgName,"/sbin/ldconfig");
++    bool isInIsoft = CheckPkgInCachex(CacheIsoft,pkgName,false);
++    // pkg is in isoft, return;
++    if (isInIsoft) {
++        //printf("\ntrace:%s,%d,find pkg[%s] in isoft,installed.\n",__FUNCTION__,__LINE__,pkgName);
++        return isInIsoft;
++    }
++
++    // return the result:true--in sys; false--not installed.
++    isInIsoft = CheckPkgInCachex(Cache,pkgName,true);
++    if(isInIsoft) {
++        //printf("\ntrace:%s,%d,find pkg[%s] in sys,installed.\n",__FUNCTION__,__LINE__,pkgName);
++    } else {
++        //printf("\ntrace:%s,%d,can find pkg[%s] in sys,not installed.\n",__FUNCTION__,__LINE__,pkgName);
++    }
++
++    return isInIsoft;
++
++}
++/*
++* todo: pkgName-->list;
++* if pkgname in list, return;
++* else go on.
++*/
++const int g_pkgNamesNum = 1000;
++char g_pkgNames[g_pkgNamesNum][256];
++bool pkgInList(const char *pkgName)
++{
++    int i = 0;
++    bool find = false;
++
++    if (!pkgName || pkgName[0] ==0) {
++        return false;
++    }
++
++    for (i= 0;i<g_pkgNamesNum;i++) {
++        if(g_pkgNames[i][0]==0) {
++            break;
++        } else if (strcmp(g_pkgNames[i],pkgName) == 0) {
++            find = true;
++            break;
++        }
++    }
++
++    if (!find) {
++        if (i >= g_pkgNamesNum) {
++            printf("\ntrace:%s,%d,[%d] > max.never go here!\n",__FUNCTION__,__LINE__,i);
++            return find;
++        }
++        snprintf(g_pkgNames[i],255,"%s",pkgName);
++    }
++    return find;
++
++}
++
 +bool pkgProblemResolver::markInstallAll(const char *pkgName)
 +{
 +    if (!pkgName || pkgName[0] ==0) {
 +        return false;
 +    }
-+
-+    if (g_max_deep++ > 5) return true;
-+
-+    char pkg1[256]=""; // abc.so.10-->pkg1=abc
-+    char pkg2[256]=""; // abc(x86_64)-->pkg2=abc
-+    const char *p = strchr(pkgName,'.');
-+    if (p) {
-+        snprintf(pkg1,p - pkgName +1,"%s",pkgName);
++    if (pkgInList(pkgName)) {
++        //printf("\ntrace:%s,%d,pkg[%s] is marked.\n",__FUNCTION__,__LINE__,pkgName);
++        return true;
 +    }
-+    p = strchr(pkgName,'(');
-+    if (p) {
-+        snprintf(pkg2,p - pkgName +1,"%s",pkgName);
-+    }
-+
-+    if (pkg1[0] != 0) {
-+        markInstallAll(pkg1);
-+    }
-+    if (pkg2[0] != 0) {
-+        markInstallAll(pkg2);
-+    }
++    bool isInstalled = false;
++    bool isOwner = false;
++    char ownerName[512]="";
++    //printf("\ntrace:%s,%d,->[%s]g_max_deep[%d]\n",__FUNCTION__,__LINE__,pkgName,g_max_deep);
 +
 +    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
 +        if (strcmp(I.Name(),pkgName) == 0) {
 +            Cache.MarkInstall(I,false);
 +        }
++
 +        pkgCache::DepIterator Dep = I.RevDependsList();
 +        for (; Dep.end() == false; Dep++) {
 +            if (strcmp(Dep.ParentPkg().Name(),pkgName) == 0) {
-+#ifdef APT_RPM_DEBUG 
-+               printf("\ntrace:%s,%d,[%s]-->[%s],inst()[%s]\n",__FUNCTION__,__LINE__,Dep.ParentPkg().Name(),I.Name(),Cache[I].Install()?"install":"not inst");
-+#endif
++
++                isOwner = false;
++                ownerName[0]=0;
++                for (pkgCache::PrvIterator P = I.ProvidesList(); P.end() == false; P++)
++                {
++                    pkgCache::PkgIterator PPkg = P.OwnerPkg();
++                    //printf("\ntrace:%s,%d,pkg name[%s]-->p[%s]\n",__FUNCTION__,__LINE__,I.Name(),PPkg.Name());
++                    isOwner = true;
++                    memset(ownerName,0,sizeof(ownerName));
++                    snprintf(ownerName,sizeof(ownerName),"%s",PPkg.Name());
++
++                }
++
++                //printf("\ntrace:%s,%d,pkg name[%s]-->p[%s],ownername[%s]\n",__FUNCTION__,__LINE__,I.Name(),pkgName,ownerName);
++
++                isInstalled = false;
++                if (g_Cache && g_CacheIsoft) {
++                    if (isOwner)
++                        isInstalled = getPkgInstallStatex(*g_Cache,*g_CacheIsoft,ownerName);
++                    else
++                        isInstalled = getPkgInstallStatex(*g_Cache,*g_CacheIsoft,I.Name());
++                }
++
++
++               if (isInstalled) {
++                   continue;
++               }
++               // to find I by owner name
++               if (isOwner&& strcmp(ownerName,I.Name())!= 0) {
++                   for (pkgCache::PkgIterator J = Cache.PkgBegin(); J.end() == false; J++) {
++                       if (strcmp(J.Name(),ownerName) == 0) {
++                           Cache.MarkInstall(J,false);
++                           markInstallAll(ownerName);
++                       }
++                   }
++               }
++
++               //printf("\ntrace:%s,%d,[%s]-->[%s]or[%s],state[%s]deep[%d]\n",__FUNCTION__,__LINE__,
++               //       Dep.ParentPkg().Name(),I.Name(),ownerName,isInstalled?"installed":"not installed",g_max_deep);
++
 +                Cache.MarkInstall(I,false);
-+                markInstallAll(I.Name()); //...
-+                if (g_max_deep++ > 5) break;
++                markInstallAll(I.Name());
++
 +            }
 +        }
 +    }
-+
 +
 +    return false;
 +
@@ -181,46 +346,103 @@ index 1b8b73f..0af0c94 100644
 +    if (!pkgName || pkgName[0] ==0) {
 +        return false;
 +    }
-+    if( strlen(pkgName) < 2) {
-+        return false;
++
++    if (pkgInList(pkgName)) {
++        //printf("\ntrace:%s,%d,pkg[%s] is marked.\n",__FUNCTION__,__LINE__,pkgName);
++        return true;
 +    }
 +
-+    *deep++;
-+
-+    char pkg1[256]=""; // abc.so.10-->pkg1=abc
-+    char pkg2[256]=""; // abc(x86_64)-->pkg2=abc
-+    const char *p = strchr(pkgName,'.');
-+    if (p) {
-+        snprintf(pkg1,p - pkgName +1,"%s",pkgName);
-+    }
-+    p = strchr(pkgName,'(');
-+    if (p) {
-+        snprintf(pkg2,p - pkgName +1,"%s",pkgName);
-+    }
-+
-+    if (pkg1[0] != 0) {
-+        markDeleteAll(pkg1,deep);
-+    }
-+    if (pkg2[0] != 0) {
-+        markDeleteAll(pkg2,deep);
-+    }
++    bool isOwner = false;
++    char ownerName[256] = "";
 +
 +    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
++#if 1
++        //printf("\ntrace:%s,%d,pkg name[%s]\n",__FUNCTION__,__LINE__,I.Name());
++        isOwner = false;
++        ownerName[0]=0;
++        for (pkgCache::PrvIterator P = I.ProvidesList(); P.end() == false; P++)
++        {
++            pkgCache::PkgIterator PPkg = P.OwnerPkg();
++            //printf("\ntrace:%s,%d,pkg name[%s]-->p[%s]\n",__FUNCTION__,__LINE__,I.Name(),PPkg.Name());
++            isOwner = true;
++            memset(ownerName,0,sizeof(ownerName));
++            snprintf(ownerName,sizeof(ownerName),"%s",PPkg.Name());
++            if(strcmp(ownerName,pkgName) == 0)
++                break;
++
++        }
++        // owner name(or i name)  vs pkg name
++        if ( (ownerName[0] == 0 && strcmp(I.Name(),pkgName) == 0) ||
++             (ownerName[0]!=0 && strcmp(ownerName,pkgName) == 0) ) {
++
++            //printf("\ntrace:%s,%d,pkg name[%s]-->p[%s],ownername[%s]\n",__FUNCTION__,__LINE__,I.Name(),pkgName,ownerName);
++
++            Cache.MarkDelete(I);
++            pkgCache::DepIterator Dep = I.RevDependsList();
++            for (; Dep.end() == false; Dep++) {
++
++                bool done = false;
++
++                // use revdep owner name
++                for (pkgCache::PkgIterator J = Cache.PkgBegin(); J.end() == false; J++) {
++                    // find J
++                    if (strcmp(J.Name(),Dep.ParentPkg().Name()) == 0) {
++                        isOwner = false;
++                        ownerName[0]=0;
++                        // find revdep owner name in J
++                        for (pkgCache::PrvIterator P = J.ProvidesList(); P.end() == false; P++)
++                        {
++                            pkgCache::PkgIterator PPkg = P.OwnerPkg();
++                            //printf("\ntrace:%s,%d,pkg name[%s]-->p[%s]\n",__FUNCTION__,__LINE__,J.Name(),PPkg.Name());
++                            isOwner = true;
++                            memset(ownerName,0,sizeof(ownerName));
++                            snprintf(ownerName,sizeof(ownerName),"%s",PPkg.Name());
++                        }
++
++                        //printf("\ntrace:%s,%d,[%s]or[%s]-->[%s]\n",__FUNCTION__,__LINE__,
++                        //              Dep.ParentPkg().Name(),ownerName,J.Name());
++                        if (isOwner)
++                            markDeleteAll(ownerName,deep);
++                        else
++                            markDeleteAll(Dep.ParentPkg().Name(),deep);
++
++                        done = true;
++                    }
++                }
++
++                if (!done) {
++
++                    printf("\ntrace:%s,%d,[%s]-->[%s]\n",__FUNCTION__,__LINE__,
++                              Dep.ParentPkg().Name(),I.Name());
++                    markDeleteAll(Dep.ParentPkg().Name(),deep);
++                }
++            }
++        }
++
++#else
 +        int len = strlen(pkgName);
 +        // pkgName is unragular.
-+        if (strncmp(I.Name(),pkgName,len) == 0) {
++        if (strncmp(I.Name(),pkgName,len) == 0) { // I.name => ownername-->get J -->J.RevDependsList();
++        //if (strcmp(I.Name(),pkgName) == 0) {
 +            if (I.Name()[len] == '(') {
 +                continue;
 +            }
 +            Cache.MarkDelete(I);
 +            pkgCache::DepIterator Dep = I.RevDependsList();
 +            for (; Dep.end() == false; Dep++) {
-+#ifdef APT_RPM_DEBUG 
-+               printf("\ntrace:%s,%d,[%s]-->[%s]\n",__FUNCTION__,__LINE__,Dep.ParentPkg().Name(),I.Name());
-+#endif
++                printf("\ntrace:%s,%d,[%s]-->[%s]\n",__FUNCTION__,__LINE__,
++                                  Dep.ParentPkg().Name(),I.Name());
 +                markDeleteAll(Dep.ParentPkg().Name(),deep);
 +            }
 +        }
++
++/*
++trace:markDeleteAll,1473,[python3-crypto]-->[libtomcrypt-1.17.so.0()(64bit)]
++trace:markDeleteAll,1473,[python3-dns]-->[python3-crypto]
++trace:markDeleteAll,1473,[python-crypto]-->[libtomcrypt-1.17.so.0()(64bit)]
++trace:markDeleteAll,1473,[python-dns]-->[python-crypto]
++*/
++#endif
 +    }
 +
 +    return false;
@@ -230,6 +452,15 @@ index 1b8b73f..0af0c94 100644
 +bool pkgProblemResolver::ResolveAll(const char *pkgName,char action)
 +{
 +
++    if (action == 's') {
++        memset(&g_pkgNames,0,g_pkgNamesNum*256);
++        g_Cache = &Cache;
++        return true;
++    }
++    if (action == 'a') {
++        g_CacheIsoft = &Cache;
++        return true;
++    }
 +    if (action == 'd') {
 +        // no.1
 +        for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
@@ -245,9 +476,6 @@ index 1b8b73f..0af0c94 100644
 +    } else if (action == 'i') {
 +        for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++) {
 +            if (strcmp(I.Name(),pkgName) == 0) {
-+#ifdef APT_RPM_DEBUG 
-+               printf("\ntrace:%s,%d,pkg[%s]set install\n",__FUNCTION__,__LINE__,pkgName);
-+#endif
 +                Cache.MarkInstall(I,false);
 +                markInstallAll(I.Name());
 +                return true;
@@ -400,7 +628,7 @@ index 2628981..22db60f 100644
     cout << "\r";
     cout << setw(namemax) << s.substr(0, namemax) << " ";
 diff --git a/apt-pkg/depcache.cc b/apt-pkg/depcache.cc
-index 95415ca..2970aa7 100644
+index 95415ca..f178240 100644
 --- a/apt-pkg/depcache.cc
 +++ b/apt-pkg/depcache.cc
 @@ -230,7 +230,8 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
@@ -413,6 +641,105 @@ index 95415ca..2970aa7 100644
  	       if (VS.CheckDep(PkgState[Pkg->ID].InstVerIter(*this).VerStr(),
  				       Dep) == true)
  		  return true;
+@@ -734,16 +735,23 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge)
+ // DepCache::MarkInstall - Put the package in the install state		/*{{{*/
+ // ---------------------------------------------------------------------
+ /* */
+-void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
++#include <stdio.h>
++bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
+ 			      unsigned long Depth)
+ {
+-   if (Depth > 100)
+-      return;
++      //printf("\ntrace:%s,%d,pkgname[%s]\n",__FUNCTION__,__LINE__,Pkg.Name());
++   if (Depth > 100) {
++      printf("\ntrace:%s,%d,\n",__FUNCTION__,__LINE__);
++      return false;
++   }
+    
+    // Simplifies other routines.
+-   if (Pkg.end() == true)
+-      return;
+-   
++   if (Pkg.end() == true) {
++      printf("\ntrace:%s,%d,\n",__FUNCTION__,__LINE__);
++      return false;
++   }
++  //trace:MarkInstall,758,b[not b],mode[1]==[2]?? can[f5b17710]==[f590c000]??
++  //trace:MarkInstall,758,b[not b],mode[1]==[2]?? can[0]==[f590c000]?? 
+    /* Check that it is not already marked for install and that it can be 
+       installed */
+    StateCache &P = PkgState[Pkg->ID];
+@@ -753,16 +761,28 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
+    {
+       if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
+ 	 MarkKeep(Pkg);
+-      return;
++#if 0
++      //trace:MarkInstall,762,1[not P.InstBroken()],2[1]==[2]? ver[0]==[0]??
++      printf("trace:%s,%d,pkg[%s]\t1[%s],2[%x]==[%x]? ver[%x]==[%x]??\n",__FUNCTION__,__LINE__,Pkg.Name(),
++	 P.InstBroken()?"P.InstBroken()":"not P.InstBroken()",
++	 P.Mode,ModeInstall,
++	 P.CandidateVer,(Version *)Pkg.CurrentVer());
++#endif
++      //printf("\ntrace:%s,%d,pkg[%s] is not install.\n",__FUNCTION__,__LINE__,Pkg.Name());
++      return false;
+    }
+ 
+    // See if there is even any possible instalation candidate
+-   if (P.CandidateVer == 0)
+-      return;
++   if (P.CandidateVer == 0) {
++      printf("\ntrace:%s,%d,\n",__FUNCTION__,__LINE__);
++      return false;
++   }
+    
+    // We dont even try to install virtual packages..
+-   if (Pkg->VersionList == 0)
+-      return;
++   if (Pkg->VersionList == 0) {
++      printf("\ntrace:%s,%d,\n",__FUNCTION__,__LINE__);
++      return false;
++   }
+    
+    /* Target the candidate version and remove the autoflag. We reset the
+       autoflag below if this was called recursively. Otherwise the user
+@@ -780,8 +800,9 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
+    Update(Pkg);
+    AddSizes(Pkg);
+    
+-   if (AutoInst == false)
+-      return;
++   if (AutoInst == false) {//printf("\ntrace:%s,%d,\n",__FUNCTION__,__LINE__);
++      return false;
++   }
+ 
+    DepIterator Dep = P.InstVerIter(*this).DependsList();
+    for (; Dep.end() != true;)
+@@ -884,6 +905,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
+ 	 continue;
+       }      
+    }
++      //printf("\ntrace:%s,%d,pkgname[%s] is set install.\n",__FUNCTION__,__LINE__,Pkg.Name());
++   return true;
+ }
+ 									/*}}}*/
+ // DepCache::SetReInstall - Set the reinstallation flag			/*{{{*/
+diff --git a/apt-pkg/depcache.h b/apt-pkg/depcache.h
+index c720928..658f37f 100644
+--- a/apt-pkg/depcache.h
++++ b/apt-pkg/depcache.h
+@@ -191,7 +191,8 @@ class pkgDepCache : protected pkgCache::Namespace
+    // Manipulators
+    void MarkKeep(PkgIterator const &Pkg,bool Soft = false);
+    void MarkDelete(PkgIterator const &Pkg,bool Purge = false);
+-   void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
++   //void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
++   bool MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
+ 		    unsigned long Depth = 0);
+    void SetReInstall(PkgIterator const &Pkg,bool To);
+    void SetCandidateVersion(VerIterator TargetVer);
 diff --git a/apt-pkg/init.cc b/apt-pkg/init.cc
 index 89a2d54..7993c85 100644
 --- a/apt-pkg/init.cc
@@ -511,10 +838,24 @@ index e0e4f8a..ca40485 100644
     pkgPackageManager::OrderResult res;
     if (_config->FindB("RPM::Interactive",true)) {
 diff --git a/apt-pkg/pkgcache.cc b/apt-pkg/pkgcache.cc
-index d65a0c7..9af3fe7 100644
+index d65a0c7..ee2e0ea 100644
 --- a/apt-pkg/pkgcache.cc
 +++ b/apt-pkg/pkgcache.cc
-@@ -426,7 +426,6 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
+@@ -175,6 +175,13 @@ unsigned long pkgCache::sHash(const char *Str) const
+ #endif
+ 
+ 									/*}}}*/
++#if 0
++int pkgCache::PkgIterator::SetInstallState(int State)
++{
++   PkgP->PkgState = State;
++   return 0;
++}
++#endif
+ // Cache::FindPkg - Locate a package by name				/*{{{*/
+ // ---------------------------------------------------------------------
+ /* Returns 0 on error, pointer to the package otherwise */
+@@ -426,7 +433,6 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets()
  	 if (Res != 0)
  	    *End++ = I.OwnerVer();
        }
@@ -522,19 +863,71 @@ index d65a0c7..9af3fe7 100644
        // Do it again and write it into the array
        if (Res == 0)
        {
-diff --git a/apt-pkg/pkgcachegen.cc b/apt-pkg/pkgcachegen.cc
-index 1516a11..9a26ff1 100644
---- a/apt-pkg/pkgcachegen.cc
-+++ b/apt-pkg/pkgcachegen.cc
-@@ -787,7 +798,7 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+diff --git a/apt-pkg/pkgcache.h b/apt-pkg/pkgcache.h
+index e897245..bff325b 100644
+--- a/apt-pkg/pkgcache.h
++++ b/apt-pkg/pkgcache.h
+@@ -126,7 +126,7 @@ class pkgCache
+    inline bool Sync() {return Map.Sync();}
+    inline MMap &GetMap() {return Map;}
+    inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();}
+-      
++
+    // String hashing function (512 range)
+    inline unsigned long Hash(const string & S) const {return sHash(S);}
+    inline unsigned long Hash(const char *S) const {return sHash(S);}
+@@ -213,7 +213,7 @@ struct pkgCache::Package
+    map_ptrloc VersionList;       // Version
+    map_ptrloc CurrentVer;        // Version
+    map_ptrloc Section;           // StringTable (StringItem)
+-      
++
+    // Linked list 
+    map_ptrloc NextPackage;       // Package
+    map_ptrloc RevDepends;        // Dependency
+diff -Naur a/apt-pkg/pkgcachegen.cc b/apt-pkg/pkgcachegen.cc 
+--- a/apt-pkg/pkgcachegen.cc      2011-04-07 21:18:59.000000000 +0800
++++ b/apt-pkg/pkgcachegen.cc        2015-11-26 17:15:14.998452468 +0800
+@@ -768,7 +779,7 @@
+    unsigned long EndOfSource = Files.size();
+    if (_system->AddStatusFiles(Files) == false)
+       return false;
+-   
++
+    // Decide if we can write to the files..
+    string CacheFile = _config->FindFile("Dir::Cache::pkgcache");
+    string SrcCacheFile = _config->FindFile("Dir::Cache::srcpkgcache");
+@@ -779,20 +790,21 @@
+       Writeable = access(flNotFile(CacheFile).c_str(),W_OK) == 0;
+    else
+       if (SrcCacheFile.empty() == false)
+-	 Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
+-   
+-   if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
+-      return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
+-   
++         Writeable = access(flNotFile(SrcCacheFile).c_str(),W_OK) == 0;
++
++   // sudo ./apt-pkg:Writeable:true;
++   //if (Writeable == false && AllowMem == false && CacheFile.empty() == false)
++   //   return _error->Error(_("Unable to write to %s"),flNotFile(CacheFile).c_str());
++
     Progress.OverallProgress(0,1,1,_("Reading Package Lists"));
-    
+-   
++
     // Cache is OK, Fin.
 -   if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
 +   if (0&&CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
     {
        Progress.OverallProgress(1,1,1,_("Reading Package Lists"));
        return true;
+    }
+-   
++
+    // CNC:2002-07-03
+ #if DYING
+    if (_system->PreProcess(Files.begin(),Files.end(),Progress) == false) 
+
 diff --git a/apt-pkg/pkgsystem.h b/apt-pkg/pkgsystem.h
 index 2ac0893..b4b2e80 100644
 --- a/apt-pkg/pkgsystem.h
@@ -650,9 +1043,9 @@ index 0b600d3..41475a9 100644
     SqliteQuery *prco = NULL;
     switch (Type) {
        case pkgCache::Dep::Depends:
-diff -Naur apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.h /data/project/isoft/isoft-apt/apt-pkg/rpm/rpmhandler.h 
---- apt-0.5.15lorg3.95.git522/apt-pkg/rpm/rpmhandler.h  2011-04-14 02:27:40.000000000 +0800
-+++ /data/project/isoft/isoft-apt/apt-pkg/rpm/rpmhandler.h      2015-11-20 10:40:49.906394155 +0800
+diff -Naur a/apt-pkg/rpm/rpmhandler.h b/apt-pkg/rpm/rpmhandler.h 
+--- a/apt-pkg/rpm/rpmhandler.h    2011-04-14 02:27:40.000000000 +0800
++++ b/apt-pkg/rpm/rpmhandler.h      2015-11-25 17:00:15.166866506 +0800
 @@ -214,7 +214,7 @@
  
     public:
@@ -989,7 +1382,7 @@ index 04febfa..ff9aba6 100644
     // See if the help should be shown
     if (_config->FindB("help") == true ||
 diff --git a/cmdline/apt-get.cc b/cmdline/apt-get.cc
-index b755f49..53bd9e3 100644
+index b755f49..1e72654 100644
 --- a/cmdline/apt-get.cc
 +++ b/cmdline/apt-get.cc
 @@ -65,7 +65,9 @@
@@ -1003,7 +1396,7 @@ index b755f49..53bd9e3 100644
  									/*}}}*/
  
  using namespace std;
-@@ -76,13 +78,13 @@ ostream c2out(0);
+@@ -76,14 +78,15 @@ ostream c2out(0);
  ofstream devnull("/dev/null");
  unsigned int ScreenWidth = 80;
  
@@ -1016,9 +1409,11 @@ index b755f49..53bd9e3 100644
     public:
 +   bool m_useIsoft = false;
     bool CheckDeps(bool AllowBroken = false);
++   bool CheckDepsCheck(pkgDepCache &Cache,pkgDepCache &CacheSys);
     bool BuildCaches(bool WithLock = true)
     {
-@@ -104,15 +106,19 @@ class CacheFile : public cmdCacheFile
+       OpTextProgress Prog(*_config);
+@@ -104,14 +107,17 @@ class CacheFile : public cmdCacheFile
     {
        // CNC:2004-03-07 - dont take lock if in download mode
        if (_config->FindB("APT::Get::Print-URIs") == true ||
@@ -1034,14 +1429,74 @@ index b755f49..53bd9e3 100644
 +   CacheFile(bool useIsoft = false) : cmdCacheFile(useIsoft) {m_useIsoft = useIsoft;}
  };
  									/*}}}*/
- 
-+CacheFile *g_cache2 = NULL;
++CacheFile *g_cache2 = NULL; // app cache
 +pkgProblemResolver *g_Fix2 =NULL;
-+
+ 
  // CNC:2003-03-19
  #ifdef APT_WITH_LUA
- class AptGetLuaCache : public LuaCacheControl
-@@ -186,7 +192,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
+@@ -169,7 +175,61 @@ bool CheckOnly(CacheFile &Cache)
+    return true;
+ }
+ 									/*}}}*/
++/*
++* just like bool CacheFile::CheckDeps(bool AllowBroken)
++* added: to check pkg in sys db(cache)
++*/
++bool CacheFile::CheckDepsCheck(pkgDepCache &Cache,pkgDepCache &CacheSys)
++{
++    printf("\ntrace:%s,%d.\n",__FUNCTION__,__LINE__);
++    if (_error->PendingError() == true)
++       return false;
++
++    // CNC:2003-03-19 - Might be changed by some extension.
++    #if 0
++       // Check that the system is OK
++       if (DCache->DelCount() != 0 || DCache->InstCount() != 0)
++          return _error->Error("Internal Error, non-zero counts");
++    #endif
++
++       // Apply corrections for half-installed packages
++       if (pkgApplyStatus(*DCache) == false)
++          return false;
++
++       // Nothing is broken
++       if (DCache->BrokenCount() == 0) //|| AllowBroken == true)
++          return true;
++
++       // Attempt to fix broken things
++       // TODO: fix-broken
++       if (0&&_config->FindB("APT::Get::Fix-Broken",false) == true)
++       {
++          c1out << _("Correcting dependencies...") << flush;
++          if (pkgFixBroken(*DCache) == false || DCache->BrokenCount() != 0)
++          {
++             c1out << _(" failed.") << endl;
++             ShowBroken(c1out,*this,true);
++
++             return _error->Error(_("Unable to correct dependencies"));
++          }
++          if (pkgMinimizeUpgrade(*DCache) == false)
++             return _error->Error(_("Unable to minimize the upgrade set"));
++
++          c1out << _(" Done") << endl;
++       }
++       else
++       {
++          //c1out << _("You might want to run `apt-get --fix-broken install' to correct these.") << endl;
++          //ShowBroken(c1out,*this,true);
++
++          ShowBrokenCheck(c1out,*this,true,CacheSys);
++
++          return _error->Error(_("Unmet dependencies. Try using --fix-broken."));
++       }
++
++    return true;
+ 
++}
+ 
+ // CacheFile::CheckDeps - Open the cache file				/*{{{*/
+ // ---------------------------------------------------------------------
+@@ -186,7 +246,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
     if (DCache->DelCount() != 0 || DCache->InstCount() != 0)
        return _error->Error("Internal Error, non-zero counts");
  #endif
@@ -1050,7 +1505,7 @@ index b755f49..53bd9e3 100644
     // Apply corrections for half-installed packages
     if (pkgApplyStatus(*DCache) == false)
        return false;
-@@ -250,7 +256,39 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -250,7 +310,39 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
     if (_config->FindB("APT::Get::Show-Upgraded",true) == true)
        ShowUpgraded(c1out,Cache);
     ShowDel(c1out,Cache);
@@ -1090,7 +1545,7 @@ index b755f49..53bd9e3 100644
     if (ShwKept == true)
        ShowKept(c1out,Cache);
     Fail |= !ShowHold(c1out,Cache);
-@@ -259,14 +297,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -259,14 +351,13 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
          Essential = !ShowEssential(c1out,Cache);
     Fail |= Essential;
     Stats(c1out,Cache);
@@ -1108,7 +1563,7 @@ index b755f49..53bd9e3 100644
     if (Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
         Cache->BadCount() == 0)
        return true;
-@@ -274,7 +311,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -274,7 +365,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
     // No remove flag
     if (Cache->DelCount() != 0 && _config->FindB("APT::Get::Remove",true) == false)
        return _error->Error(_("Packages need to be removed but Remove is disabled."));
@@ -1117,7 +1572,7 @@ index b755f49..53bd9e3 100644
     // Run the simulator ..
     if (_config->FindB("APT::Get::Simulate") == true)
     {
-@@ -361,6 +398,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -361,6 +452,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
  	 return _error->Error(_("You don't have enough free space in %s."),
  			      OutputDir.c_str());
     }
@@ -1125,7 +1580,7 @@ index b755f49..53bd9e3 100644
     
     // Fail safe check
     if (_config->FindI("quiet",0) >= 2 ||
-@@ -389,7 +427,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -389,7 +481,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
     }
     else
     {      
@@ -1135,7 +1590,7 @@ index b755f49..53bd9e3 100644
        if (Ask == true || Fail == true)
        {            
  	 if (_config->FindB("APT::Get::Trivial-Only",false) == true)
-@@ -408,7 +447,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -408,7 +501,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
  	 }	 
        }      
     }
@@ -1144,7 +1599,7 @@ index b755f49..53bd9e3 100644
     // Just print out the uris an exit if the --print-uris flag was used
     if (_config->FindB("APT::Get::Print-URIs") == true)
     {
-@@ -551,6 +590,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+@@ -551,6 +644,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
        if (PM->GetArchives(&Fetcher,&List,&Recs) == false)
  	 return false;
     }   
@@ -1152,7 +1607,7 @@ index b755f49..53bd9e3 100644
  }
  									/*}}}*/
  // CNC:2003-12-02
-@@ -595,7 +635,7 @@ bool DownloadPackages(vector<string> &URLLst)
+@@ -595,7 +689,7 @@ bool DownloadPackages(vector<string> &URLLst)
  // ---------------------------------------------------------------------
  /* This used to be inlined in DoInstall, but with the advent of regex package
     name matching it was split out.. */
@@ -1161,7 +1616,15 @@ index b755f49..53bd9e3 100644
  		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
  		  unsigned int &ExpectedInst,bool AllowFail = true)
  {
-@@ -724,8 +764,12 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+@@ -606,6 +700,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+       for (pkgCache::PrvIterator Prv = Pkg.ProvidesList();
+ 	   Prv.end() == false; Prv++)
+       {
++          //printf("\nhere:[%x][%x][%x]\n",Prv,&Prv,*Prv);
+ 	 pkgCache::PkgIterator PrvPkg = Prv.OwnerPkg();
+ 	 // Check if it's a different version of a package already
+ 	 // considered as a good solution.
+@@ -724,8 +819,12 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     
     // Check if there is something at all to install
     pkgDepCache::StateCache &State = Cache[Pkg];
@@ -1174,7 +1637,7 @@ index b755f49..53bd9e3 100644
        Fix.Clear(Pkg);
        Fix.Protect(Pkg);
        Fix.Remove(Pkg);
-@@ -805,7 +849,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+@@ -805,10 +904,10 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     if (Remove == true)
     {
        Fix.Remove(Pkg);
@@ -1182,8 +1645,12 @@ index b755f49..53bd9e3 100644
 +      //Cache.MarkDelete(Pkg,_config->FindB("APT::Get::Purge",false));
        return true;
     }
-    
-@@ -830,6 +874,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
+-   
++
+    // Install it
+    Cache.MarkInstall(Pkg,false);
+    if (State.Install() == false)
+@@ -830,6 +929,7 @@ bool TryToInstall(pkgCache::PkgIterator Pkg,pkgDepCache &Cache,
     }   
     else
        ExpectedInst++;
@@ -1191,7 +1658,7 @@ index b755f49..53bd9e3 100644
     
     // Install it with autoinstalling enabled.
     if (State.InstBroken() == true && BrokenFix == false)
-@@ -1073,29 +1118,89 @@ bool DoUpgrade(CommandLine &CmdL)
+@@ -1073,29 +1173,87 @@ bool DoUpgrade(CommandLine &CmdL)
     
     return InstallPackages(Cache,true);
  }
@@ -1202,6 +1669,7 @@ index b755f49..53bd9e3 100644
  /* Install named packages */
  bool DoInstall(CommandLine &CmdL)
  {
++#if 0
 +   int i = 0;
 +   for (i = 0; CmdL.FileList[i]; i++) {
 +      if (i > 1) {
@@ -1226,23 +1694,20 @@ index b755f49..53bd9e3 100644
 +         return false;
 +      }
 +   }
++#endif
 +#if 1
 +    // beginitx
 +    CacheFile Cache;
 +   if (Cache.OpenForInstall() == false ||
 +       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
 +      return false;
-+#ifdef APT_RPM_DEBUG
-+   printf("\n%s,%d,trace cache1 b[%d]i[%d]\n",__FUNCTION__,__LINE__,Cache->BrokenCount(),Cache->InstCount());
-+#endif
++
 +   CacheFile Cache2(true);
 +
 +   if (Cache2.OpenForInstall() == false ||
 +       Cache2.CheckDeps(CmdL.FileSize() != 1) == false)
 +      return false;
-+#ifdef APT_RPM_DEBUG
-+    printf("\n%s,%d,trace cache2 b[%d]i[%d]fs[%d]\n",__FUNCTION__,__LINE__,Cache2->BrokenCount(),Cache2->InstCount(),CmdL.FileSize());
-+#endif
++
 +    g_cache2 = &Cache2;
 +
 +#else
@@ -1284,34 +1749,63 @@ index b755f49..53bd9e3 100644
     // CNC:2004-03-22
     else if (strcasecmp(CmdL.FileList[0],"reinstall") == 0)
        _config->Set("APT::Get::ReInstall", true);
-@@ -1112,6 +1217,8 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1112,6 +1270,10 @@ bool DoInstall(CommandLine &CmdL)
        // CNC:2003-03-15
        char OrigS[300];
        strcpy(OrigS,S);
 +
 +      snprintf(pkgName,sizeof(pkgName), "%s",S);
++
++      printf("\ntrace:%s,%d,find pkg[%s].\n",__FUNCTION__,__LINE__,pkgName);
        
        // See if we are removing and special indicators..
        bool Remove = DefRemove;
-@@ -1183,14 +1290,14 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1119,7 +1281,7 @@ bool DoInstall(CommandLine &CmdL)
+       bool VerIsRel = false;
+       // CNC:2003-11-05
+       int VerOp = 0;
+-      while (Cache->FindPkg(S).end() == true)
++      while (Cache2->FindPkg(S).end() == true)
+       {
+ 	 // Handle an optional end tag indicating what to do
+ 	 if (Length >= 1 && S[Length - 1] == '-')
+@@ -1183,14 +1345,14 @@ bool DoInstall(CommandLine &CmdL)
  	 // CNC:2003-11-21 - Try to handle unknown file items.
  	 if (S[0] == '/')
  	 {
 -	    pkgRecords Recs(Cache);
-+            pkgRecords Recs(Cache);
++            pkgRecords Recs(Cache2);
  	    if (_error->PendingError() == true)
  	       return false;
 -	    pkgCache::PkgIterator Pkg = (*Cache).PkgBegin();
-+            pkgCache::PkgIterator Pkg = (*Cache).PkgBegin();
++            pkgCache::PkgIterator Pkg = (*Cache2).PkgBegin();
  	    for (; Pkg.end() == false; Pkg++)
  	    {
  	       // Should we try on all versions?
 -	       pkgCache::VerIterator Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
-+               pkgCache::VerIterator Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
++               pkgCache::VerIterator Ver = (*Cache2)[Pkg].CandidateVerIter(*Cache2);
  	       if (Ver.end() == false)
  	       {
  		  pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-@@ -1262,7 +1369,7 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1218,7 +1380,7 @@ bool DoInstall(CommandLine &CmdL)
+       }
+       
+       // Locate the package
+-      pkgCache::PkgIterator Pkg = Cache->FindPkg(S);
++      pkgCache::PkgIterator Pkg = Cache2->FindPkg(S);
+       Packages++;
+       if (Pkg.end() == true)
+       {
+@@ -1228,7 +1390,7 @@ bool DoInstall(CommandLine &CmdL)
+ 	    if (*I == '?' || *I == '*' || *I == '|' ||
+ 	        *I == '[' || *I == '^' || *I == '$')
+ 	       break;
+-
++        printf("\ntrace:%s,%d,*I[%x].\n",__FUNCTION__,__LINE__,*I);
+ 	 // CNC:2003-05-15
+ 	 if (*I == 0) {
+ #ifdef APT_WITH_LUA
+@@ -1262,14 +1424,16 @@ bool DoInstall(CommandLine &CmdL)
  	       ioprintf(c1out,_("Selecting %s for '%s'\n"),
  			Pkg.Name(),OrigS);
  	    
@@ -1320,29 +1814,46 @@ index b755f49..53bd9e3 100644
  				   ExpectedInst,true);
  	    }
  	 
-@@ -1288,7 +1395,7 @@ bool DoInstall(CommandLine &CmdL)
+ 	    if (Hit == true)
+ 	       continue;
+ #endif
+-	    return _error->Error(_("Couldn't find package %s"),S);
++            //return _error->Error(_("Couldn't find package %s"),S);
++            ioprintf(c1out,_("Couldn't find package %s\n"),S);
++            continue;
+ 	 }
+ 
+ 	 // Regexs must always be confirmed
+@@ -1288,9 +1452,9 @@ bool DoInstall(CommandLine &CmdL)
  	 
  	 // Run over the matches
  	 bool Hit = false;
 -	 for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
-+         for (Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
++         for (Pkg = Cache2->PkgBegin(); Pkg.end() == false; Pkg++)
  	 {
- 	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
+-	    if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
++            if (regexec(&Pattern,Pkg.Name(),0,0,0) != 0)
  	       continue;
-@@ -1299,10 +1406,10 @@ bool DoInstall(CommandLine &CmdL)
+ 	    
+ 	    // CNC:2003-11-23
+@@ -1299,28 +1463,48 @@ bool DoInstall(CommandLine &CmdL)
  	    
  	    if (VerTag != 0)
  	       // CNC:2003-11-05
 -	       if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
 +               if (TryToChangeVer(Pkg,Cache,VerOp,VerTag,VerIsRel) == false)
  		  return false;
- 	    
+-	    
 -	    Hit |= TryToInstall(Pkg,Cache,Fix,Remove,BrokenFix,
++
 +            Hit |= TryToInstall(Pkg,Cache,Cache2,false,Fix,Remove,BrokenFix,
  				ExpectedInst,false);
  	 }
  	 regfree(&Pattern);
-@@ -1312,12 +1419,15 @@ bool DoInstall(CommandLine &CmdL)
+ 	 
+ 	 if (Hit == false)
+-	    return _error->Error(_("Couldn't find package %s"),S);
++            return _error->Error(_("Couldn't find package %s."),S);
        }
        else
        {
@@ -1362,9 +1873,29 @@ index b755f49..53bd9e3 100644
 +            return false;
 +
        }      
++
++#if 1 // move here:
++      Fix.ResolveAll(pkgName,'s');
++      Fix2.ResolveAll(pkgName,'a');
++      Fix2.InstallProtect();
++      if (removeAll) {
++       if (Fix2.ResolveAll(pkgName,'d') == false)
++         _error->Discard();
++      }
++      if (install) {
++          if (Fix2.ResolveAll(pkgName,'i') == false)
++            _error->Discard();
++      }
++#endif
++
     }
  
-@@ -1333,6 +1443,14 @@ bool DoInstall(CommandLine &CmdL)
++   //return false; //test 20151126
++
+ // CNC:2003-03-19
+ #ifdef APT_WITH_LUA
+    _lua->SetDepCache(Cache);
+@@ -1333,6 +1517,14 @@ bool DoInstall(CommandLine &CmdL)
     if (_config->FindB("APT::Remove-Depends",false) == true)
        Fix.RemoveDepends();
  
@@ -1379,7 +1910,7 @@ index b755f49..53bd9e3 100644
     /* If we are in the Broken fixing mode we do not attempt to fix the
        problems. This is if the user invoked install without -f and gave
        packages */
-@@ -1343,12 +1461,25 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1343,12 +1535,32 @@ bool DoInstall(CommandLine &CmdL)
  
        return _error->Error(_("Unmet dependencies. Try 'apt-get --fix-broken install' with no packages (or specify a solution)."));
     }
@@ -1389,25 +1920,31 @@ index b755f49..53bd9e3 100644
     Fix.InstallProtect();
     if (Fix.Resolve(true) == false)
        _error->Discard();
--
 +#endif
-+#if 1
-+   // TODO: only support single one package install/remove at present
-+   // but it will support pkgName in the future!
-+   Fix2.InstallProtect();
-+   if (removeAll) {
-+    if (Fix2.ResolveAll(CmdL.FileList[1],'d') == false)
-+      _error->Discard();
-+   }
-+   if (install) {
-+       if (Fix2.ResolveAll(CmdL.FileList[1],'i') == false)
-+         _error->Discard();
-+   }
++#if 0
++    ShowBroken2(Cache,Cache2,pkgName,Cache);
++    return true;
++#endif
++#if 0 // move the following up...
+ 
++
++    Fix.ResolveAll(pkgName,'s');
++    Fix2.ResolveAll(pkgName,'a');
++    Fix2.InstallProtect();
++    if (removeAll) {
++     if (Fix2.ResolveAll(pkgName,'d') == false)
++       _error->Discard();
++    }
++    if (install) {
++        if (Fix2.ResolveAll(pkgName,'i') == false)
++          _error->Discard();
++    }
++
 +#endif
  // CNC:2003-03-19
  #ifdef APT_WITH_LUA
     if (Cache->BrokenCount() == 0) {
-@@ -1378,12 +1509,50 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1378,12 +1590,50 @@ bool DoInstall(CommandLine &CmdL)
        c1out << _("The following information may help to resolve the situation:") << endl;
        c1out << endl;
        ShowBroken(c1out,Cache,false);
@@ -1460,7 +1997,7 @@ index b755f49..53bd9e3 100644
     {
        string List;
        string VersionsList;
-@@ -1495,10 +1664,11 @@ bool DoInstall(CommandLine &CmdL)
+@@ -1495,10 +1745,11 @@ bool DoInstall(CommandLine &CmdL)
        return true;
  
     // See if we need to prompt
@@ -1476,7 +2013,38 @@ index b755f49..53bd9e3 100644
  }
  									/*}}}*/
  // DoDistUpgrade - Automatic smart upgrader				/*{{{*/
-@@ -1903,7 +2073,7 @@ bool DoBuildDep(CommandLine &CmdL)
+@@ -1569,11 +1820,28 @@ bool DoAutoClean(CommandLine &CmdL)
+    for debugging */
+ bool DoCheck(CommandLine &CmdL)
+ {
+-   CacheFile Cache;
++   CacheFile Cache(false);
+    Cache.Open();
++
++#if 0
+    Cache.CheckDeps();
+-   
++   if (PkgInSys("libtomcrypt",Cache) ) {
++         printf("\ntrace:%s,%d,pkg[libtomcrypt] has been installed in sys.\n",__FUNCTION__,__LINE__);
++   }
++
++   system("rpm --isoftapp -Va");
++   //CacheFile Cache;
++   //Cache.Open();
++   //Cache.CheckDeps();
+    return true;
++#endif
++
++   CacheFile Cache2(true);
++   Cache2.Open();
++   ShowBrokenNew(c1out,Cache2,Cache);
++
++   return true;
++
+ }
+ 									/*}}}*/
+ // DoSource - Fetch a source archive					/*{{{*/
+@@ -1903,7 +2171,7 @@ bool DoBuildDep(CommandLine &CmdL)
               */
              if (IV.end() == false && 
                  Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
@@ -1485,7 +2053,7 @@ index b755f49..53bd9e3 100644
           }
  	 else // BuildDep || BuildDepIndep
           {
-@@ -2038,7 +2208,7 @@ bool DoBuildDep(CommandLine &CmdL)
+@@ -2038,7 +2306,7 @@ bool DoBuildDep(CommandLine &CmdL)
              if (_config->FindB("Debug::BuildDeps",false) == true)
                 cout << "  Trying to install " << (*D).Package << endl;
  
@@ -1494,7 +2062,7 @@ index b755f49..53bd9e3 100644
              {
                 // We successfully installed something; skip remaining alternatives
                 skipAlternatives = hasAlternatives;
-@@ -2318,7 +2488,8 @@ int main(int argc,const char *argv[])
+@@ -2318,7 +2586,8 @@ int main(int argc,const char *argv[])
  
     // Parse the command line and initialize the package library
     CommandLine CmdL(Args,_config);
@@ -1504,7 +2072,7 @@ index b755f49..53bd9e3 100644
         CmdL.Parse(argc,argv) == false ||
         pkgInitSystem(*_config,_system) == false)
     {
-@@ -2329,6 +2500,18 @@ int main(int argc,const char *argv[])
+@@ -2329,6 +2598,18 @@ int main(int argc,const char *argv[])
        return 100;
     }
  
@@ -1523,7 +2091,7 @@ index b755f49..53bd9e3 100644
     // See if the help should be shown
     if (_config->FindB("help") == true ||
         _config->FindB("version") == true ||
-@@ -2337,6 +2520,14 @@ int main(int argc,const char *argv[])
+@@ -2337,6 +2618,14 @@ int main(int argc,const char *argv[])
        ShowHelp(CmdL);
        return 0;
     }
@@ -1538,7 +2106,7 @@ index b755f49..53bd9e3 100644
     
     // CNC:2003-11-21
     if (CmdL.FileSize() > 1)
-@@ -2362,10 +2553,38 @@ int main(int argc,const char *argv[])
+@@ -2362,10 +2651,38 @@ int main(int argc,const char *argv[])
  	 _config->Set("APT::Arguments::", *I);
     }
  
@@ -1577,7 +2145,7 @@ index b755f49..53bd9e3 100644
     // Setup the output streams
     c0out.rdbuf(cout.rdbuf());
     c1out.rdbuf(cout.rdbuf());
-@@ -2375,6 +2594,11 @@ int main(int argc,const char *argv[])
+@@ -2375,6 +2692,11 @@ int main(int argc,const char *argv[])
     if (_config->FindI("quiet",0) > 1)
        c1out.rdbuf(devnull.rdbuf());
  
@@ -1589,7 +2157,7 @@ index b755f49..53bd9e3 100644
     // Setup the signals
     signal(SIGPIPE,SIG_IGN);
     signal(SIGWINCH,SigWinch);
-@@ -2411,6 +2635,9 @@ int main(int argc,const char *argv[])
+@@ -2411,6 +2733,9 @@ int main(int argc,const char *argv[])
     // Match the operation
     CmdL.DispatchArg(Cmds);
  
@@ -1620,7 +2188,7 @@ index 1508d84..734eb14 100644
     // Deal with stdout not being a tty
     if (ttyname(STDOUT_FILENO) == 0 && _config->FindI("quiet",0) < 1)
 diff --git a/cmdline/cmdline.cc b/cmdline/cmdline.cc
-index 59bf011..1552b4d 100644
+index 59bf011..a2fb742 100644
 --- a/cmdline/cmdline.cc
 +++ b/cmdline/cmdline.cc
 @@ -172,7 +172,7 @@ void SigWinch(int)
@@ -1641,7 +2209,7 @@ index 59bf011..1552b4d 100644
     List = new pkgCache::Package *[Cache->Head().PackageCount];
     memset(List,0,sizeof(*List)*Cache->Head().PackageCount);
     pkgCache::PkgIterator I = Cache->PkgBegin();
-@@ -197,13 +197,14 @@ void cmdCacheFile::Sort()
+@@ -197,16 +197,654 @@ void cmdCacheFile::Sort()
        List[I->ID] = I;
  
     SortCache = *this;
@@ -1657,8 +2225,677 @@ index 59bf011..1552b4d 100644
     }
  }
  
++bool PkgInSys(const char *pkgName,pkgDepCache &CacheSys)
++{
++    pkgCache::PkgIterator Pkg = CacheSys.FindPkg(pkgName);
++    if (Pkg.end()) {
++        printf("\ntrace:%s,%d,[%s].\n",__FUNCTION__,__LINE__,"the end");
++        return false;
++    }
++    pkgDepCache::StateCache &State = CacheSys[Pkg];
++    //printf("\ntrace:%s,%d,end?[%s]State.Install()[%s].\n",__FUNCTION__,__LINE__,Pkg.end()?"end":"not end",State.Install()?"install":"not install");
++    if (CacheSys.MarkInstall(Pkg,true)) {
++        //return true;
++    }
++    //printf("\ntrace:%s,%d,pkgName[%s]State.Install()[%s].\n",__FUNCTION__,__LINE__,pkgName,State.Install()?"install":"not install");
++    return !State.Install();
++
++}
++
++/*
++*
++* 算法：
++1.先搜索isoft:
++    1.1 Pkg->CurrentVer 为0, 则isoft库没有安装此包，转到2.--------->或者/并且 povlist？？？？？todo...
++    1.2 Pkg->CurrentVer 不为0，安装了此包，不处理？
++2.再搜索sys:
++    2.1 Pkg->RevDepends 不为0,并且 Pkg->ProvidesList 不为0：
++    {
++        2.1.1 去掉包的左括号获取新包名，如果新包名和原来包名一致，说明sys安装了此包，通过.
++        2.1.2 新包名和原包名不一直，以此新包名，在系统库中搜索，
++        {
++            2.1.2.1 如果搜索不到，说明sys安装了此包，通过.
++            2.1.2.2 如果搜索到了，Pkg->RevDepends 不为0,并且 Pkg->ProvidesList 不为0，说明安装了此包，通过。
++        }
++    }
++*/
++bool CheckPkgInCache(pkgDepCache &Cache,const char *pkgName,bool reCheck)
++{
++    bool result = false;
++    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin();
++         Pkg.end() == false; Pkg++)
++    {
++        if (strcmp(Pkg.Name(),pkgName) !=0)
++            continue;
++#if 0
++        printf("\ntrace:%s,%d,will check[%s]c[%x]s[%x]verlist[%x]||np[%x]revdep[%x],povlist[%x].count[%d]\n",__FUNCTION__,__LINE__,
++                       pkgName,Pkg->CurrentVer,Pkg->Section,Pkg->VersionList,
++                       Pkg->NextPackage,Pkg->RevDepends,Pkg->ProvidesList,Cache.Head().PackageCount);
++#endif
++        // only check in isoft
++        if (!reCheck) {
++            if (Pkg->CurrentVer != 0) {
++                return true;
++            } else {
++                return false;
++            }
++        }
++//trace:CheckPkgInCache,254,will check[vim]c[b9c8]s[19d190]verlist[b9c8]||np[0]revdep[30176],povlist[25a1b].count[20504]
++        // to check in sys
++        // no.1 cur && pre, maybe in sys
++        if (Pkg->RevDepends != 0 && Pkg->ProvidesList != 0) {
++            result = true;
++            const char *p = strstr(pkgName,"(");
++            if (p == NULL) {
++                if (Pkg->VersionList == 0) {
++                    return true;
++                } else if (Pkg->CurrentVer != 0) {
++                    return true;
++                } else {
++                    return false;
++                }
++            } else {
++                bool find = false;
++                char newPkg[512]="";
++                snprintf(newPkg,p-pkgName +1,"%s",pkgName);
++                //printf("\ntrace:%s,%d,will check new pkg[%s].\n",__FUNCTION__,__LINE__,newPkg);
++
++                for (pkgCache::PkgIterator PkgSys = Cache.PkgBegin();
++                     PkgSys.end() == false; PkgSys++)
++                {
++                    if (strcmp(PkgSys.Name(),newPkg) !=0)
++                        continue;
++#if 0
++                    printf("\ntrace:%s,%d,will check[%s]c[%x]s[%x]verlist[%x]||np[%x]revdep[%x],povlist[%x].\n",__FUNCTION__,__LINE__,
++                                   newPkg,PkgSys->CurrentVer,PkgSys->Section,PkgSys->VersionList,
++                                   PkgSys->NextPackage,PkgSys->RevDepends,PkgSys->ProvidesList);
++#endif
++                    if (PkgSys->RevDepends != 0 && PkgSys->ProvidesList != 0) {
++                        return true;
++                    } else if (PkgSys->RevDepends == 0) {
++                        return false;
++                    } else {
++                        printf("\ntrace:%s,%d,pkg[%s],never go here!\n",__FUNCTION__,__LINE__,newPkg);
++                        return false;
++                    }
++                }
++                // can not find newpkg in sys, just return;
++                if (!find) {
++                    return true;
++                }
++
++            }
++        } else if (Pkg->RevDepends == 0) {
++            return false;
++        } else {
++            printf("\ntrace:%s,%d,pkg[%s],never go here!\n",__FUNCTION__,__LINE__,pkgName);
++            return false;
++        }
++    }
++
++    //printf("\ntrace:%s,%d,end.can not find pkg[%s]\n",__FUNCTION__,__LINE__,pkgName);
++
++    return result;
++}
++
++
++bool getPkgInstallState(cmdCacheFile &Cache,cmdCacheFile &CacheIsoft,const char *pkgName)
++{
++
++    //char pkgName[512]="";
++    //strcpy(pkgName,"/sbin/ldconfig");
++    bool isInIsoft = CheckPkgInCache(CacheIsoft,pkgName,false);
++    // pkg is in isoft, return;
++    if (isInIsoft) {
++        //printf("\ntrace:%s,%d,find pkg[%s] in isoft,installed.\n",__FUNCTION__,__LINE__,pkgName);
++        return isInIsoft;
++    }
++
++    // return the result:true--in sys; false--not installed.
++    isInIsoft = CheckPkgInCache(Cache,pkgName,true);
++    if(isInIsoft) {
++        //printf("\ntrace:%s,%d,find pkg[%s] in sys,installed.\n",__FUNCTION__,__LINE__,pkgName);
++    } else {
++        //printf("\ntrace:%s,%d,can find pkg[%s] in sys,not installed.\n",__FUNCTION__,__LINE__,pkgName);
++    }
++
++    return isInIsoft;
++}
++
++bool CheckPkgInCachex(pkgDepCache &Cache,const char *pkgName,bool reCheck)
++{
++     bool result = false;
++    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin();
++         Pkg.end() == false; Pkg++)
++    {
++        if (strcmp(Pkg.Name(),pkgName) !=0)
++            continue;
++#if 0
++        //if(strcmp(pkgName,"librevenge") ==0)
++        printf("\ntrace:%s,%d,will check[%s]c[%x]s[%x]verlist[%x]||np[%x]revdep[%x],povlist[%x].count[%d][%s]\n",__FUNCTION__,__LINE__,
++                       pkgName,Pkg->CurrentVer,Pkg->Section,Pkg->VersionList,
++                       Pkg->NextPackage,Pkg->RevDepends,Pkg->ProvidesList,Cache.Head().PackageCount,reCheck?"re":"not re");
++#endif//
++        // only check in isoft
++        if (!reCheck) {
++            if (Pkg->CurrentVer != 0) {
++                return true;
++            } else {
++                return false;
++            }
++        }
++        // to check in sys
++        // no.1 cur && pre, maybe in sys
++        if (Pkg->RevDepends != 0 && Pkg->ProvidesList != 0) {
++            result = true;
++            const char *p = strstr(pkgName,"(");
++            if (p == NULL) {
++                if (Pkg->VersionList == 0) {
++                    return true;
++                } else if (Pkg->CurrentVer != 0) {
++                    return true;
++                } else {
++                    return false;
++                }
++            } else {
++                bool find = false;
++                char newPkg[512]="";
++                snprintf(newPkg,p-pkgName +1,"%s",pkgName);
++                //printf("\ntrace:%s,%d,will check new pkg[%s].\n",__FUNCTION__,__LINE__,newPkg);
++
++                for (pkgCache::PkgIterator PkgSys = Cache.PkgBegin();
++                     PkgSys.end() == false; PkgSys++)
++                {
++                    if (strcmp(PkgSys.Name(),newPkg) !=0)
++                        continue;
++#if 0
++                    //if(strcmp(pkgName,"librevenge") ==0)
++                    printf("\ntrace:%s,%d,will check[%s]c[%x]s[%x]verlist[%x]||np[%x]revdep[%x],povlist[%x].\n",__FUNCTION__,__LINE__,
++                                   newPkg,PkgSys->CurrentVer,PkgSys->Section,PkgSys->VersionList,
++                                   PkgSys->NextPackage,PkgSys->RevDepends,PkgSys->ProvidesList);
++#endif
++                    if (PkgSys->CurrentVer == 0) {
++                        //printf("\ntrace:%s,%d.pkg[%s] not installed\n",__FUNCTION__,__LINE__,newPkg);
++                        return false;
++                    }if (PkgSys->RevDepends != 0 && PkgSys->ProvidesList != 0) {
++                        return true;
++                    } else if (PkgSys->RevDepends == 0) {
++                        return false;
++                    } else {
++                        printf("\ntrace:%s,%d,pkg[%s],never go here!\n",__FUNCTION__,__LINE__,newPkg);
++                        return false;
++                    }
++                }
++                // can not find newpkg in sys, just return;
++                if (!find) {
++                    return true;
++                }
++
++            }
++        } else if (Pkg->RevDepends == 0) {
++            return false;
++        } else {
++            printf("\ntrace:%s,%d,pkg[%s],never go here!\n",__FUNCTION__,__LINE__,pkgName);
++            return false;
++        }
++    }
++
++    //printf("\ntrace:%s,%d,end.can not find pkg[%s]\n",__FUNCTION__,__LINE__,pkgName);
++
++    return result;
++}
++bool getPkgInstallStatex(pkgDepCache &Cache,pkgDepCache &CacheIsoft,const char *pkgName)
++{
++    //char pkgName[512]="";
++    //strcpy(pkgName,"/sbin/ldconfig");
++    bool isInIsoft = CheckPkgInCachex(CacheIsoft,pkgName,false);
++    // pkg is in isoft, return;
++    if (isInIsoft) {
++        //printf("\ntrace:%s,%d,find pkg[%s] in isoft,installed.\n",__FUNCTION__,__LINE__,pkgName);
++        return isInIsoft;
++    }
++
++    // return the result:true--in sys; false--not installed.
++    isInIsoft = CheckPkgInCachex(Cache,pkgName,true);
++    if(isInIsoft) {
++        //printf("\ntrace:%s,%d,find pkg[%s] in sys,installed.\n",__FUNCTION__,__LINE__,pkgName);
++    } else {
++        //printf("\ntrace:%s,%d,can find pkg[%s] in sys,not installed.\n",__FUNCTION__,__LINE__,pkgName);
++    }
++
++    return isInIsoft;
++
++}
++
++/*
++* just like ShowBroken()
++* added: pkg which is broken will be checked in sys cache(CacheSys),to find out is it installed or not.
++*/
++void ShowBrokenCheck(ostream &out,cmdCacheFile &Cache,bool Now,pkgDepCache &CacheSys)
++{
++    return ;// test
++    bool OnlyPrintOnePkg = true;
++    //no.1 out << _("The following packages have unmet dependencies:") << endl;
++    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++    {
++       pkgCache::PkgIterator I(Cache,Cache.List[J]);
++       if (Now == true)
++       {
++          if (Cache[I].NowBroken() == false)
++             continue;
++       }
++       else
++       {
++          if (Cache[I].InstBroken() == false)
++             continue;
++       }
++
++       // Print out each package and the failed dependencies
++       // no.2 out <<"  " <<  I.Name() << ":";
++       OnlyPrintOnePkg = true; // will be set to true when pkg changed.
++       size_t Indent = strlen(I.Name()) + 3;
++       bool First = true;
++       pkgCache::VerIterator Ver;
++
++       if (Now == true)
++          Ver = I.CurrentVer();
++       else
++          Ver = Cache[I].InstVerIter(Cache);
++
++       if (Ver.end() == true)
++       {
++          out << endl;
++          continue;
++       }
++
++       // no.1 & no.2 will be do only once.
++       bool OnlyPrintOne = true;
++
++       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
++       {
++          // Compute a single dependency element (glob or)
++          pkgCache::DepIterator Start;
++          pkgCache::DepIterator End;
++          D.GlobOr(Start,End);
++
++          // CNC:2003-02-22 - IsImportantDep() currently calls IsCritical(), so
++          //		     these two are currently doing the same thing. Check
++          //		     comments in IsImportantDep() definition.
++ #if 0
++          if (Cache->IsImportantDep(End) == false)
++             continue;
++ #else
++          if (End.IsCritical() == false)
++             continue;
++ #endif
++
++          if (Now == true)
++          {
++             if ((Cache[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
++                continue;
++          }
++          else
++          {
++             if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
++                continue;
++          }
++
++          bool FirstOr = true;
++          while (1)
++          {
++              /* the following are added --begin--*/
++              // to check if this pkg is installed or not in sys cache
++              if (PkgInSys("libtomcrypt(x86-64)",CacheSys) ) {
++                  //if(strstr(Start.TargetPkg().Name(),"libtomcrypt"))
++                    printf("\ntrace:%s,%d,pkg[%s] has been installed in sys.\n",__FUNCTION__,__LINE__,Start.TargetPkg().Name());
++
++                  return;
++
++                  if (Start == End)
++                     break;
++
++                  Start++;
++
++                  continue;
++              } else {
++                    printf("\ntrace:%s,%d,pkg[%s] .....\n",__FUNCTION__,__LINE__,Start.TargetPkg().Name());
++              }
++
++
++              if (OnlyPrintOne) {
++                  OnlyPrintOne = false;
++                  out << _("The following packages have unmet dependencies:") << endl;
++              }
++              if (OnlyPrintOnePkg) {
++                  OnlyPrintOnePkg = false;
++                  out <<"  " <<  I.Name() << ":";
++              }
++              /* the following are added --end--*/
++
++
++             if (First == false)
++                for (unsigned J = 0; J != Indent; J++)
++                   out << ' ';
++             First = false;
++
++             if (FirstOr == false)
++             {
++                for (size_t J = 0; J != strlen(End.DepType()) + 3; J++)
++                   out << ' ';
++             }
++             else
++                out << ' ' << End.DepType() << ": ";
++             FirstOr = false;
++
++             out << Start.TargetPkg().Name();
++
++             // Show a quick summary of the version requirements
++             if (Start.TargetVer() != 0)
++                out << " (" << Start.CompType() << " " << Start.TargetVer() << ")";
++
++             /* Show a summary of the target package if possible. In the case
++                of virtual packages we show nothing */
++             pkgCache::PkgIterator Targ = Start.TargetPkg();
++             if (Targ->ProvidesList == 0)
++             {
++                out << ' ';
++                pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
++                if (Now == true)
++                   Ver = Targ.CurrentVer();
++
++                if (Ver.end() == false)
++                {
++                   if (Now == true)
++                      ioprintf(out,_("but %s is installed"),Ver.VerStr());
++                   else
++                      ioprintf(out,_("but %s is to be installed"),Ver.VerStr());
++                }
++                else
++                {
++                   if (Cache[Targ].CandidateVerIter(Cache).end() == true)
++                   {
++                      if (Targ->ProvidesList == 0)
++                         out << _("but it is not installable");
++                      else
++                         out << _("but it is a virtual package");
++                   }
++                   else
++                      out << (Now?_("but it is not installed"):_("but it is not going to be installed"));
++                }
++             }
++
++             if (Start != End)
++                out << _(" or");
++             out << endl;
++
++             if (Start == End)
++                break;
++             Start++;
++          }
++       }
++    }
++    return;
++}
++
++void ShowBrokenCheck3(cmdCacheFile &Cache,cmdCacheFile &Cache2)
++{
++
++    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++    {
++       pkgCache::PkgIterator I(Cache,Cache.List[J]);
++
++       pkgCache::VerIterator Ver;
++
++       if(strstr(I.Name(),"librevenge") ==NULL)
++           continue;
++
++       printf("\ntrace:%s,%d,pkg name[%s]\n",__FUNCTION__,__LINE__,I.Name());
++
++
++       for (pkgCache::PrvIterator P = I.ProvidesList(); P.end() == false; P++)
++       {
++           pkgCache::PkgIterator PPkg = P.OwnerPkg();
++           printf("\ntrace:%s,%d,pkg name[%s]-->p[%s]\n",__FUNCTION__,__LINE__,I.Name(),PPkg.Name());
++
++       }
++
++
++    }
++
++    return;
++}
++
++void ShowBrokenNew(ostream &out,cmdCacheFile &Cache,cmdCacheFile &CacheSys)
++{
++    bool Now = true; //default is true
++    bool firstPrint = true;
++    char printStr[16]="";
++    char baseStr[]="Checking";
++    int  printStrLen = 0;
++    time_t currtime = time(NULL);
++
++    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++    {
++        if (firstPrint) {
++            time_t now = time(NULL);
++            if ((now - currtime ) > 1) {
++                printStrLen ++;
++                if(printStrLen > 6) {
++                    printStrLen = 1;
++                    memset(printStr,0,sizeof(printStr));
++                }
++                memset(printStr,' ',sizeof(printStr)-1);
++                memset(printStr,'.',printStrLen);
++                //printf("\r%s%s",baseStr,printStr);
++                out << "\r" << baseStr << printStr;
++                fflush(stdout);
++            }
++        }
++
++       pkgCache::PkgIterator I(Cache,Cache.List[J]);
++
++       if (Now == true)
++       {
++          if (Cache[I].NowBroken() == false)
++             continue;
++       }
++       else
++       {
++          if (Cache[I].InstBroken() == false)
++             continue;
++       }
++
++       // Print out each package and the failed dependencies
++
++       int displayName = -1; // -1--init;1--ok;0--not;
++
++       size_t Indent = strlen(I.Name()) + 3;
++       bool First = true;
++       pkgCache::VerIterator Ver;
++
++       if (Now == true)
++          Ver = I.CurrentVer();
++       else
++          Ver = Cache[I].InstVerIter(Cache);
++
++       if (Ver.end() == true)
++       {
++          out << endl;
++          continue;
++       }
++       //bool FirstOr = true;
++
++       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
++       {
++          // Compute a single dependency element (glob or)
++          pkgCache::DepIterator Start;
++          pkgCache::DepIterator End;
++          D.GlobOr(Start,End);
++
++          // CNC:2003-02-22 - IsImportantDep() currently calls IsCritical(), so
++          //		     these two are currently doing the same thing. Check
++          //		     comments in IsImportantDep() definition.
++ #if 0
++          if (Cache->IsImportantDep(End) == false)
++             continue;
++ #else
++          if (End.IsCritical() == false)
++             continue;
++ #endif
++
++          if (Now == true)
++          {
++             if ((Cache[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
++                continue;
++          }
++          else
++          {
++             if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
++                continue;
++          }
++
++          bool FirstOr = true;
++          while (1)
++          {
++              if(getPkgInstallStatex(CacheSys,Cache,Start.TargetPkg().Name())) {
++
++                  //out << "ok:" << Start.TargetPkg().Name();
++                  if (Start == End)
++                     break;
++                  Start++;
++                  continue;
++              } else {
++                  if (displayName ==  -1) {
++                    displayName = 1;
++                  } else {
++                      displayName = 0;
++                  }
++              }
++
++             if (displayName == 1) {
++                 //c1out << _("You might want to run `apt-get --fix-broken install' to correct these.") << endl;
++
++                 if (firstPrint) {
++                     out << endl << _("The following packages have unmet dependencies:") << endl;
++                     firstPrint = false;
++                 }
++                  out <<"  " <<  I.Name() << ":";
++
++                  displayName = 0;
++             }
++
++             if (displayName == 0) {
++
++             if (First == false)
++                for (unsigned J = 0; J != Indent; J++)
++                   out << ' ';
++             First = false;
++
++             if (FirstOr == false)
++             {
++                for (size_t J = 0; J != strlen(End.DepType()) + 3; J++)
++                   out << ' ';
++             }
++             else
++                out << ' ' << End.DepType() << ": ";
++             FirstOr = false;
++
++             out << Start.TargetPkg().Name();
++
++             // Show a quick summary of the version requirements
++             if (Start.TargetVer() != 0)
++                out << " (" << Start.CompType() << " " << Start.TargetVer() << ")";
++
++             out << ' ';
++
++             out << _("but it is not installable");
++
++             /* Show a summary of the target package if possible. In the case
++                of virtual packages we show nothing */
++             pkgCache::PkgIterator Targ = Start.TargetPkg();
++             if (Targ->ProvidesList == 0)
++             {
++                out << ' ';
++                pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
++                if (Now == true)
++                   Ver = Targ.CurrentVer();
++
++                if (Ver.end() == false)
++                {
++                   if (Now == true)
++                      ioprintf(out,_("but %s is installed"),Ver.VerStr());
++                   else
++                      ioprintf(out,_("but %s is to be installed"),Ver.VerStr());
++                }
++                else
++                {
++                   if (Cache[Targ].CandidateVerIter(Cache).end() == true)
++                   {
++                      if (Targ->ProvidesList == 0)
++                         out << _("but it is not installable");
++                      else
++                         out << _("but it is a virtual package");
++                   }
++                   else
++                      out << (Now?_("but it is not installed"):_("but it is not going to be installed"));
++                }
++             }
++
++             if (Start != End)
++                out << _(" or");
++             out << endl;
++
++             if (Start == End)
++                break;
++             Start++;
++
++             } // if (displayName == 1) {
++          } // while(1)
++       } // for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
++
++    } // for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
++
++
++    out << _("Done.") << endl;
++
++    return ;//_error->Error(_("Unmet dependencies. Try using --fix-broken."));
++
++}
++
+ // ShowBroken - Debugging aide						/*{{{*/
+ // ---------------------------------------------------------------------
+ /* This prints out the names of all the packages that are broken along
+@@ -281,7 +919,7 @@ void ShowBroken(ostream &out,cmdCacheFile &Cache,bool Now,pkgDepCache::State *St
+ 	 {
+ 	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+ 	       continue;
+-	 }
++         }
+ 	 
+ 	 bool FirstOr = true;
+ 	 while (1)
+@@ -300,7 +938,7 @@ void ShowBroken(ostream &out,cmdCacheFile &Cache,bool Now,pkgDepCache::State *St
+ 	       out << ' ' << End.DepType() << ": ";
+ 	    FirstOr = false;
+ 	    
+-	    out << Start.TargetPkg().Name();
++            out << Start.TargetPkg().Name();
+ 	 
+ 	    // Show a quick summary of the version requirements
+ 	    if (Start.TargetVer() != 0)
+@@ -341,8 +979,8 @@ void ShowBroken(ostream &out,cmdCacheFile &Cache,bool Now,pkgDepCache::State *St
+ 	       out << _(" or");
+ 	    out << endl;
+ 	    
+-	    if (Start == End)
+-	       break;
++            if (Start == End)
++               break;
+ 	    Start++;
+ 	 }	 
+       }	    
 diff --git a/cmdline/cmdline.h b/cmdline/cmdline.h
-index 4bacf8c..9e4498e 100644
+index 4bacf8c..c1e1233 100644
 --- a/cmdline/cmdline.h
 +++ b/cmdline/cmdline.h
 @@ -29,14 +29,15 @@ const char *op2str(int op);
@@ -1680,6 +2917,18 @@ index 4bacf8c..9e4498e 100644
     virtual ~cmdCacheFile();
  };
  
+@@ -93,5 +94,10 @@ bool cmdSearchFile(CommandLine &CmdL, pkgCache &Cache);
+ bool cmdFileList(CommandLine &CmdL, pkgCache &Cache);
+ bool cmdChangeLog(CommandLine &CmdL, pkgCache &Cache);
+ 
+-
++bool PkgInSys(const char *pkgName,pkgDepCache &CacheSys);
++void ShowBrokenCheck(ostream &out,cmdCacheFile &Cache,bool Now,
++                pkgDepCache &CacheSys);
++void ShowBrokenNew(ostream &out,cmdCacheFile &Cache,cmdCacheFile &CacheIsoft);
++bool getPkgInstallState(cmdCacheFile &Cache,cmdCacheFile &CacheIsoft,const char *pkgName);
++void ShowBrokenCheck3(cmdCacheFile &Cache,cmdCacheFile &Cache2);
+ // vim:sts=3:sw=3
 diff --git a/configure.ac b/configure.ac
 index ec699b6..864a042 100644
 --- a/configure.ac
@@ -1693,6 +2942,37 @@ index ec699b6..864a042 100644
  dnl Check the archs, we want the target type.
  AC_CONFIG_AUX_DIR([buildlib])
  AC_CONFIG_MACRO_DIR([m4])
+@@ -23,6 +23,15 @@ AC_PROG_CPP
+ 
+ AC_PROG_LIBTOOL
+ 
++AC_ARG_ENABLE(debug,
++              [AS_HELP_STRING([--enable-debug=@<:@no/yes@:>@],
++                              [turn on debugging [default=no]])],,
++              [enable_debug=no])
++
++if test "x$enable_debug" = "xyes"; then
++  test "$cppflags_set" = set || CPPFLAGS="$CPPFLAGS -g -DAPT_RPM_DEBUG"
++fi
++
+ dnl Checks for sockets
+ SAVE_LIBS="$LIBS"
+ LIBS=""
+@@ -236,7 +245,6 @@ dnl AC_PATH_PROG(DEBIANDOC_TEXT,debiandoc2text)
+ AC_PATH_PROG([GPG],[gpg],[/usr/bin/gpg])
+ 
+ AM_GNU_GETTEXT_VERSION([0.14.5])
+-AM_GNU_GETTEXT([external])
+ 
+ dnl ah_NUM_PROCS
+ dnl rc_GLIBC_VER
+@@ -253,7 +261,6 @@ AC_CONFIG_FILES([
+ 	  tools/Makefile
+ 	  doc/Makefile
+ 	  test/Makefile
+-	  po/Makefile.in
+ 	  ])
+ AC_CONFIG_LINKS([include/apti18n.h:buildlib/gettext.h])
  
 diff --git a/methods/Makefile.am b/methods/Makefile.am
 index 151a3e5..1c54859 100644

@@ -10,7 +10,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 28.%{snapver}
+Release: 29.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -362,6 +362,9 @@ popd #end of isoftapp
 
 
 %changelog
+* Thu Nov 26 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Fix only support single one package issue by fujiang.
+
 * Fri Nov 20 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix install/remove system component issue.
 - Only support single one package install/remove at present.
