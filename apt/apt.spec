@@ -364,6 +364,7 @@ popd #end of isoftapp
 %changelog
 * Thu Nov 26 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix only support single one package issue by fujiang.
+- Private some function forbit multidefine issue.
 
 * Fri Nov 20 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix install/remove system component issue.
