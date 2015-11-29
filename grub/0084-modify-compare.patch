@@ -1,0 +1,25 @@
+From b44db8c8b8a1e9b5eb797ca9d621dab84a42dbe5 Mon Sep 17 00:00:00 2001
+From: sulit <sulitsrc@gmail.com>
+Date: Sun, 29 Nov 2015 10:25:47 +0800
+Subject: [PATCH 84/84] modify $? compare
+
+---
+ util/grub-mkconfig.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/util/grub-mkconfig.in b/util/grub-mkconfig.in
+index 85c1066..ebc3e4a 100644
+--- a/util/grub-mkconfig.in
++++ b/util/grub-mkconfig.in
+@@ -154,7 +154,7 @@ fi
+ probe_othersystem=$(mktemp)
+ ${grub_mkconfig_dir}/30* &> $probe_othersystem
+ grep Found $probe_othersystem &> /dev/null && grep menuentry $probe_othersystem &> /dev/null
+-if [ ! $? ]; then
++if [ $? -ne 0 ]; then
+         if [ -z "$GRUB_TIMEOUT" ]; then
+                 GRUB_TIMEOUT=0
+         fi
+-- 
+2.6.3
+

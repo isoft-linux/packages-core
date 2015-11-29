@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        47%{?dist}
+Release:        48%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -142,6 +142,7 @@ Patch0073: 0073-Fix-race-in-EFI-validation.patch
 Patch0074: 0074-Mark-po-exclude.pot-as-binary-so-git-won-t-try-to-di.patch
 Patch0082: 0082-modify-grub-mkconfig-for-hiding-grub-menu-when-the-p.patch
 Patch0083: 0083-fixed-logical-error.patch
+Patch0084: 0084-modify-compare.patch
 
 #revert patch27/patch35/patch63
 #fix "GFXPAYLOAD=keep" not work issue.
@@ -545,6 +546,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Sun Nov 29 2015 sulit <sulitsrc@gmail.com> - 1:2.02-48
+- modify $? compare and fuck the $? compare
+
 * Fri Nov 20 2015 sulit <sulitsrc@gmail.com> - 1:2.02-47
 - update grub fonts
 
