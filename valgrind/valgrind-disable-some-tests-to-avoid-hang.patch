@@ -1,0 +1,237 @@
+diff -Nur valgrind-3.11.0/gdbserver_tests/Makefile.am valgrind-3.11.0n/gdbserver_tests/Makefile.am
+--- valgrind-3.11.0/gdbserver_tests/Makefile.am	2015-09-08 21:23:25.000000000 +0800
++++ valgrind-3.11.0n/gdbserver_tests/Makefile.am	2015-11-29 20:20:44.111313882 +0800
+@@ -92,11 +92,6 @@
+ 	mcsigpass.stdinB.gdb \
+ 	mcsigpass.stdoutB.exp \
+ 	mcsigpass.vgtest \
+-	mcvabits.stderrB.exp \
+-	mcvabits.stderr.exp \
+-	mcvabits.stdinB.gdb \
+-	mcvabits.stdoutB.exp \
+-	mcvabits.vgtest \
+ 	mcwatchpoints.stderrB.exp \
+ 	mcwatchpoints.stderr.exp \
+ 	mcwatchpoints.stdinB.gdb \
+@@ -107,11 +102,6 @@
+ 	mssnapshot.stdinB.gdb \
+ 	mssnapshot.stdoutB.exp \
+ 	mssnapshot.vgtest \
+-	nlcontrolc.stderrB.exp \
+-	nlcontrolc.stderr.exp \
+-	nlcontrolc.stdinB.gdb \
+-	nlcontrolc.stdoutB.exp \
+-	nlcontrolc.vgtest \
+ 	nlfork_chain.stderr.exp \
+ 	nlfork_chain.stdout.exp \
+ 	nlfork_chain.vgtest \
+diff -Nur valgrind-3.11.0/gdbserver_tests/Makefile.in valgrind-3.11.0n/gdbserver_tests/Makefile.in
+--- valgrind-3.11.0/gdbserver_tests/Makefile.in	2015-09-23 17:23:30.000000000 +0800
++++ valgrind-3.11.0n/gdbserver_tests/Makefile.in	2015-11-29 20:20:49.014314103 +0800
+@@ -718,11 +718,6 @@
+ 	mcsigpass.stdinB.gdb \
+ 	mcsigpass.stdoutB.exp \
+ 	mcsigpass.vgtest \
+-	mcvabits.stderrB.exp \
+-	mcvabits.stderr.exp \
+-	mcvabits.stdinB.gdb \
+-	mcvabits.stdoutB.exp \
+-	mcvabits.vgtest \
+ 	mcwatchpoints.stderrB.exp \
+ 	mcwatchpoints.stderr.exp \
+ 	mcwatchpoints.stdinB.gdb \
+@@ -733,11 +728,6 @@
+ 	mssnapshot.stdinB.gdb \
+ 	mssnapshot.stdoutB.exp \
+ 	mssnapshot.vgtest \
+-	nlcontrolc.stderrB.exp \
+-	nlcontrolc.stderr.exp \
+-	nlcontrolc.stdinB.gdb \
+-	nlcontrolc.stdoutB.exp \
+-	nlcontrolc.vgtest \
+ 	nlfork_chain.stderr.exp \
+ 	nlfork_chain.stdout.exp \
+ 	nlfork_chain.vgtest \
+diff -Nur valgrind-3.11.0/memcheck/tests/Makefile.am valgrind-3.11.0n/memcheck/tests/Makefile.am
+--- valgrind-3.11.0/memcheck/tests/Makefile.am	2015-11-29 20:19:48.883311385 +0800
++++ valgrind-3.11.0n/memcheck/tests/Makefile.am	2015-11-29 20:21:19.158315466 +0800
+@@ -107,7 +107,6 @@
+ 	deep-backtrace.vgtest deep-backtrace.stderr.exp \
+ 	demangle.stderr.exp demangle.vgtest \
+ 	describe-block.stderr.exp describe-block.vgtest \
+-	descr_belowsp.vgtest descr_belowsp.stderr.exp \
+ 	doublefree.stderr.exp doublefree.vgtest \
+ 	dw4.vgtest dw4.stderr.exp dw4.stderr.exp-solaris dw4.stdout.exp \
+ 	err_disable1.vgtest err_disable1.stderr.exp \
+@@ -319,7 +318,6 @@
+ 	clireq_nofill \
+ 	clo_redzone \
+ 	cond_ld_st \
+-	descr_belowsp \
+ 	leak_cpp_interior \
+ 	custom_alloc \
+ 	custom-overlap \
+@@ -427,7 +425,6 @@
+ bug340392_CFLAGS        = $(AM_CFLAGS) -O3
+ dw4_CFLAGS		= $(AM_CFLAGS) -gdwarf-4 -fdebug-types-section
+ 
+-descr_belowsp_LDADD     = -lpthread
+ err_disable3_LDADD 	= -lpthread
+ err_disable4_LDADD 	= -lpthread
+ err_disable4_CFLAGS	= $(AM_CFLAGS)
+diff -Nur valgrind-3.11.0/memcheck/tests/Makefile.in valgrind-3.11.0n/memcheck/tests/Makefile.in
+--- valgrind-3.11.0/memcheck/tests/Makefile.in	2015-11-29 20:19:48.886311385 +0800
++++ valgrind-3.11.0n/memcheck/tests/Makefile.in	2015-11-29 20:21:40.193316417 +0800
+@@ -140,7 +140,7 @@
+ 	bug287260$(EXEEXT) bug340392$(EXEEXT) calloc-overflow$(EXEEXT) \
+ 	client-msg$(EXEEXT) clientperm$(EXEEXT) clireq_nofill$(EXEEXT) \
+ 	clo_redzone$(EXEEXT) cond_ld_st$(EXEEXT) \
+-	descr_belowsp$(EXEEXT) leak_cpp_interior$(EXEEXT) \
++	leak_cpp_interior$(EXEEXT) \
+ 	custom_alloc$(EXEEXT) custom-overlap$(EXEEXT) \
+ 	demangle$(EXEEXT) deep-backtrace$(EXEEXT) \
+ 	describe-block$(EXEEXT) doublefree$(EXEEXT) \
+@@ -297,9 +297,6 @@
+ am_demangle_OBJECTS = demangle.$(OBJEXT)
+ demangle_OBJECTS = $(am_demangle_OBJECTS)
+ demangle_LDADD = $(LDADD)
+-descr_belowsp_SOURCES = descr_belowsp.c
+-descr_belowsp_OBJECTS = descr_belowsp.$(OBJEXT)
+-descr_belowsp_DEPENDENCIES =
+ describe_block_SOURCES = describe-block.c
+ describe_block_OBJECTS = describe-block.$(OBJEXT)
+ describe_block_LDADD = $(LDADD)
+@@ -809,7 +806,7 @@
+ 	bug287260.c bug340392.c calloc-overflow.c client-msg.c \
+ 	clientperm.c clireq_nofill.c clo_redzone.c cond_ld_st.c \
+ 	custom-overlap.c custom_alloc.c deep-backtrace.c \
+-	$(demangle_SOURCES) descr_belowsp.c describe-block.c \
++	$(demangle_SOURCES) describe-block.c \
+ 	doublefree.c dw4.c err_disable1.c err_disable2.c \
+ 	err_disable3.c err_disable4.c err_disable_arange1.c \
+ 	erringfds.c error_counts.c errs1.c execve1.c execve2.c \
+@@ -847,7 +844,7 @@
+ 	bug287260.c bug340392.c calloc-overflow.c client-msg.c \
+ 	clientperm.c clireq_nofill.c clo_redzone.c cond_ld_st.c \
+ 	custom-overlap.c custom_alloc.c deep-backtrace.c \
+-	$(demangle_SOURCES) descr_belowsp.c describe-block.c \
++	$(demangle_SOURCES) describe-block.c \
+ 	doublefree.c dw4.c err_disable1.c err_disable2.c \
+ 	err_disable3.c err_disable4.c err_disable_arange1.c \
+ 	erringfds.c error_counts.c errs1.c execve1.c execve2.c \
+@@ -1375,7 +1372,6 @@
+ 	deep-backtrace.vgtest deep-backtrace.stderr.exp \
+ 	demangle.stderr.exp demangle.vgtest \
+ 	describe-block.stderr.exp describe-block.vgtest \
+-	descr_belowsp.vgtest descr_belowsp.stderr.exp \
+ 	doublefree.stderr.exp doublefree.vgtest \
+ 	dw4.vgtest dw4.stderr.exp dw4.stderr.exp-solaris dw4.stdout.exp \
+ 	err_disable1.vgtest err_disable1.stderr.exp \
+@@ -1577,7 +1573,6 @@
+ demangle_SOURCES = demangle.cpp
+ bug340392_CFLAGS = $(AM_CFLAGS) -O3
+ dw4_CFLAGS = $(AM_CFLAGS) -gdwarf-4 -fdebug-types-section
+-descr_belowsp_LDADD = -lpthread
+ err_disable3_LDADD = -lpthread
+ err_disable4_LDADD = -lpthread
+ err_disable4_CFLAGS = $(AM_CFLAGS) $(am__append_25)
+@@ -1842,10 +1837,6 @@
+ 	@rm -f demangle$(EXEEXT)
+ 	$(AM_V_CXXLD)$(CXXLINK) $(demangle_OBJECTS) $(demangle_LDADD) $(LIBS)
+ 
+-descr_belowsp$(EXEEXT): $(descr_belowsp_OBJECTS) $(descr_belowsp_DEPENDENCIES) $(EXTRA_descr_belowsp_DEPENDENCIES) 
+-	@rm -f descr_belowsp$(EXEEXT)
+-	$(AM_V_CCLD)$(LINK) $(descr_belowsp_OBJECTS) $(descr_belowsp_LDADD) $(LIBS)
+-
+ describe-block$(EXEEXT): $(describe_block_OBJECTS) $(describe_block_DEPENDENCIES) $(EXTRA_describe_block_DEPENDENCIES) 
+ 	@rm -f describe-block$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(describe_block_OBJECTS) $(describe_block_LDADD) $(LIBS)
+@@ -2374,7 +2365,6 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/custom_alloc.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/deep-backtrace.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/demangle.Po@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/descr_belowsp.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/describe-block.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/doublefree.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dw4-dw4.Po@am__quote@
+diff -Nur valgrind-3.11.0/none/tests/linux/Makefile.am valgrind-3.11.0n/none/tests/linux/Makefile.am
+--- valgrind-3.11.0/none/tests/linux/Makefile.am	2015-09-08 21:23:30.000000000 +0800
++++ valgrind-3.11.0n/none/tests/linux/Makefile.am	2015-11-29 20:22:24.326318412 +0800
+@@ -14,7 +14,6 @@
+ 	mremap4.stderr.exp mremap4.vgtest \
+ 	mremap5.stderr.exp mremap5.vgtest \
+ 	mremap6.stderr.exp mremap6.vgtest \
+-	pthread-stack.stderr.exp pthread-stack.vgtest \
+ 	stack-overflow.stderr.exp stack-overflow.vgtest
+ 
+ check_PROGRAMS = \
+@@ -27,7 +26,6 @@
+ 	mremap4 \
+ 	mremap5 \
+ 	mremap6 \
+-	pthread-stack \
+ 	stack-overflow
+ 
+ 
+diff -Nur valgrind-3.11.0/none/tests/linux/Makefile.in valgrind-3.11.0n/none/tests/linux/Makefile.in
+--- valgrind-3.11.0/none/tests/linux/Makefile.in	2015-09-23 17:23:32.000000000 +0800
++++ valgrind-3.11.0n/none/tests/linux/Makefile.in	2015-11-29 20:22:19.468318193 +0800
+@@ -116,7 +116,7 @@
+ check_PROGRAMS = blockfault$(EXEEXT) brk-overflow1$(EXEEXT) \
+ 	brk-overflow2$(EXEEXT) mremap$(EXEEXT) mremap2$(EXEEXT) \
+ 	mremap3$(EXEEXT) mremap4$(EXEEXT) mremap5$(EXEEXT) \
+-	mremap6$(EXEEXT) pthread-stack$(EXEEXT) \
++	mremap6$(EXEEXT) \
+ 	stack-overflow$(EXEEXT)
+ subdir = none/tests/linux
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+@@ -154,9 +154,6 @@
+ mremap6_SOURCES = mremap6.c
+ mremap6_OBJECTS = mremap6.$(OBJEXT)
+ mremap6_LDADD = $(LDADD)
+-pthread_stack_SOURCES = pthread-stack.c
+-pthread_stack_OBJECTS = pthread-stack.$(OBJEXT)
+-pthread_stack_DEPENDENCIES =
+ stack_overflow_SOURCES = stack-overflow.c
+ stack_overflow_OBJECTS = stack_overflow-stack-overflow.$(OBJEXT)
+ stack_overflow_LDADD = $(LDADD)
+@@ -197,10 +194,10 @@
+ am__v_CCLD_1 = 
+ SOURCES = blockfault.c brk-overflow1.c brk-overflow2.c mremap.c \
+ 	mremap2.c mremap3.c mremap4.c mremap5.c mremap6.c \
+-	pthread-stack.c stack-overflow.c
++	stack-overflow.c
+ DIST_SOURCES = blockfault.c brk-overflow1.c brk-overflow2.c mremap.c \
+ 	mremap2.c mremap3.c mremap4.c mremap5.c mremap6.c \
+-	pthread-stack.c stack-overflow.c
++	stack-overflow.c
+ am__can_run_installinfo = \
+   case $$AM_UPDATE_INFO_DIR in \
+     n|no|NO) false;; \
+@@ -602,7 +599,6 @@
+ 	mremap4.stderr.exp mremap4.vgtest \
+ 	mremap5.stderr.exp mremap5.vgtest \
+ 	mremap6.stderr.exp mremap6.vgtest \
+-	pthread-stack.stderr.exp pthread-stack.vgtest \
+ 	stack-overflow.stderr.exp stack-overflow.vgtest
+ 
+ 
+@@ -686,10 +682,6 @@
+ 	@rm -f mremap6$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(mremap6_OBJECTS) $(mremap6_LDADD) $(LIBS)
+ 
+-pthread-stack$(EXEEXT): $(pthread_stack_OBJECTS) $(pthread_stack_DEPENDENCIES) $(EXTRA_pthread_stack_DEPENDENCIES) 
+-	@rm -f pthread-stack$(EXEEXT)
+-	$(AM_V_CCLD)$(LINK) $(pthread_stack_OBJECTS) $(pthread_stack_LDADD) $(LIBS)
+-
+ stack-overflow$(EXEEXT): $(stack_overflow_OBJECTS) $(stack_overflow_DEPENDENCIES) $(EXTRA_stack_overflow_DEPENDENCIES) 
+ 	@rm -f stack-overflow$(EXEEXT)
+ 	$(AM_V_CCLD)$(stack_overflow_LINK) $(stack_overflow_OBJECTS) $(stack_overflow_LDADD) $(LIBS)
+@@ -709,7 +701,6 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mremap4.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mremap5.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mremap6.Po@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pthread-stack.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stack_overflow-stack-overflow.Po@am__quote@
+ 
+ .c.o:
