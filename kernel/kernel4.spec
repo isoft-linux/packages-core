@@ -109,7 +109,8 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 
 #already upstream, should removed later
 #http://patchwork.ozlabs.org/patch/544307/
-Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
+# remove it from kernel4.4.0-rc3
+#Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
 
 #https://bugs.freedesktop.org/show_bug.cgi?id=92638
 #It should be removed later.
@@ -291,8 +292,6 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2000 -p1
 %patch2002 -p1
-
-%patch2003 -p1
 
 %patch2004 -p1
 
@@ -704,6 +703,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- remove patch2003
+
 * Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
 - update to kernel4.4 rc3
 
