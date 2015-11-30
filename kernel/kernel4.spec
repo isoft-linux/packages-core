@@ -25,7 +25,7 @@ Summary: The Linux kernel (the core of the Linux operating system)
 License: GPLv2
 Version: %{kversion}
 Release: %{release}
-ExclusiveArch: noarch x86_64
+ExclusiveArch: x86_64
 ExclusiveOS: Linux
 Provides: kernel-drm = 4.3.0
 Provides: kernel-%{_target_cpu} = %{kversion}-%{release}
@@ -703,6 +703,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- disable noarch
+
 * Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
 - remove patch2003
 
