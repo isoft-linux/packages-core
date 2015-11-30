@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 5
+%define release 8
 
 %define extraversion -%{release}
 
@@ -704,6 +704,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- update to kernel4.4 rc3
+
 * Wed Nov 18 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-5
 - Enable more drivers
 
