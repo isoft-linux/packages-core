@@ -20,6 +20,9 @@
 # Architectures we build tools/cpupower on
 %define cpupowerarchs %{ix86} x86_64
 
+# redefine _unitdir for independencing systemd
+%define _unitdir /usr/lib/systemd/system
+
 Name: kernel
 Summary: The Linux kernel (the core of the Linux operating system)
 License: GPLv2
@@ -704,6 +707,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- redefine %{_unitdir} for independecing systemd
+
 * Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
 - disable noarch
 
