@@ -47,6 +47,7 @@ BuildRequires: net-tools, hostname, bc
 BuildRequires: libelfutils-devel zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) bison flex xz-devel
 BuildRequires: audit-libs-devel
 BuildRequires: numactl-devel
+BuildRequires: openssl-devel
 
 %if %{with_debuginfo}
 BuildRequires: rpm-build, elfutils
