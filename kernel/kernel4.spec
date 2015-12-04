@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 8
+%define release 9
 
 %define extraversion -%{release}
 
@@ -707,6 +707,11 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 4.4.0-9
+- update amd.tar.gz
+- Add thermal protection support for Fiji
+- add display configeration changed function in hwmgr for Fiji
+
 * Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
 - redefine %{_unitdir} for independecing systemd
 
