@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 33
+Release: 34
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -63,6 +63,8 @@ Patch1500: rpm-macro-add-python3.patch
 Patch2000: 0001-isoftapp-skeleton.patch
 # Keep silent DB
 Patch2001: 0002-db-quite.patch
+# Add isoftapp Packages count support for fujiang
+Patch2002: 0003-isoftapp-packages-count.patch
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -190,6 +192,7 @@ programs that will manipulate RPM packages and databases.
 
 %patch2000 -p1
 %patch2001 -p1
+%patch2002 -p1
 
 ln -s db-%{bdbver} db
 
@@ -408,6 +411,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Dec 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Add isoftapp Packages count support.
+
 * Wed Nov 25 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Add rpmSpecBuildISoftApp for converting src rpm to bin rpm.
 - Fix fileName is NULL issue for packageBinaries.
