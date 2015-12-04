@@ -1,6 +1,6 @@
 Name:           repairdev
 Version:        0.3
-Release:        1
+Release:        3
 Summary:        fix hardware device for isoft linux
 
 License:        GPL
@@ -38,6 +38,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/repairdev
 
 %changelog
+* Fri Dec 04 2015 sulit <sulitsrc@gmali.com> - 0.3-3
+- add fix intel 8086-0102 the mouse invisible patch
+
 * Wed Nov 04 2015 Wu Xiaotian <xiaotian.wu@i-soft.com.cn> - 0.3-2
 - update to 0.3.
 
