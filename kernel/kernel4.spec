@@ -104,9 +104,6 @@ Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
 Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
 
-Patch615: 0001-iwlwifi-Add-new-PCI-IDs-for-the-8260-series.patch
-Patch616: RDS-fix-race-condition-when-sending-a-message-on-unb.patch
- 
 #http://patchwork.ozlabs.org/patch/522709/
 Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
 
@@ -121,6 +118,14 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 #https://bugs.freedesktop.org/show_bug.cgi?id=92638
 #It should be removed later.
 Patch2004: drm-i915-Ensure-associated-VMAs-are-inactive-when-contexts-are-destroyed.patch
+
+
+Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
+Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
+Patch2012: 0001-cgroup-make-css_set-pin-its-css-s-to-avoid-use-afer-.patch
+Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
+Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
+Patch2015: Input-aiptek-fix-crash-on-detecting-device-without-e.patch
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -293,13 +298,17 @@ cat %{SOURCE3000} |patch -p1
 %patch611 -p1
 %patch612 -p1
 
-%patch615 -p1
-%patch616 -p1
-
 %patch2000 -p1
 %patch2002 -p1
 
 %patch2004 -p1
+
+%patch2010 -p1
+%patch2011 -p1
+%patch2012 -p1
+%patch2013 -p1
+%patch2014 -p1
+%patch2015 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -713,6 +722,8 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 - update kernel to 4.4.0-rc4
 - update amd.tar.gz and add amd ACP
 - drop patch 609, because rc4 driver/scsi/sd.c has
+- drop patch #615, #616, already upstreamed.
+- add patch from 2010 to 2015, various fixes.
 - lots of modifications
 
 * Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 4.4.0-9
