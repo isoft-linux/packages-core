@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 9
+%define release 10
 
 %define extraversion -%{release}
 
@@ -83,6 +83,7 @@ Patch0: linux-tune-cdrom-default.patch
 Patch1: linux-add-amdgpu-powerplay-config.patch
 #amd added drm_pcie_get_max_link_width to drm.
 Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
+Patch3: backport-amdgpu-acp-asoc.patch
 #End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
@@ -256,6 +257,7 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   pushd vanilla
   cat %{PATCH1} |patch -p1
   cat %{PATCH2} |patch -p1
+  cat %{PATCH3} |patch -p1
   popd
   #end amdgpu
 else 
@@ -707,6 +709,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Dec 07 2015 sulit <sulitsrc@gmail.com> - 4.4.0-10
+- update kernel to 4.4.0-rc4
+- update amd.tar.gz and add amd ACP
+
 * Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 4.4.0-9
 - update amd.tar.gz
 - Add thermal protection support for Fiji
