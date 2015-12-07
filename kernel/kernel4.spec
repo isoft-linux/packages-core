@@ -99,7 +99,8 @@ Patch606: drm-i915-turn-off-wc-mmaps.patch
 Patch607: drm-i915-hush-check-crtc-state.patch
 
 Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
-Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
+# drop it from kernel-4.4.0-rc4
+# Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
 Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
 
@@ -289,7 +290,6 @@ cat %{SOURCE3000} |patch -p1
 %patch606 -p1
 %patch607 -p1
 %patch608 -p1
-%patch609 -p1
 %patch611 -p1
 %patch612 -p1
 
@@ -712,6 +712,8 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 * Mon Dec 07 2015 sulit <sulitsrc@gmail.com> - 4.4.0-10
 - update kernel to 4.4.0-rc4
 - update amd.tar.gz and add amd ACP
+- drop patch 609, because rc4 driver/scsi/sd.c has
+- lots of modifications
 
 * Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 4.4.0-9
 - update amd.tar.gz
