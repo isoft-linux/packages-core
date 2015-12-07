@@ -1,9 +1,12 @@
-%global firmware_release 59
+%define gitdate 20151207
+%define iwlwifi_gitdate 20151207
+
+%global firmware_release 60 
 
 %global _firmwarepath	/lib/firmware
 
 Name: linux-firmware
-Version: 20151117
+Version: %{gitdate}
 Release: %{firmware_release}.git%{?dist}.5
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
@@ -13,7 +16,7 @@ Source0: linux-firmware-%{version}.tar.xz
 
 #git repos hold the lastest iwlwifi ucode.
 #git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/linux-firmware.git
-Source1: %{name}-iwlwifi.tar.gz
+Source1: %{name}-iwlwifi-%{iwlwifi_gitdate}.tar.xz
 
 #A helper utility to scan kernel modules and find missing firmwares need to be supply.
 Source2: find-missing-firmware 
@@ -133,8 +136,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Tue Nov 17 2015 Cjacker <cjacker@foxmail.com> - 20151207-60.git.5
+- Update to 20151207
+- Update iwlwifi firmwares.
+
 * Tue Nov 17 2015 Cjacker <cjacker@foxmail.com> - 20151117-59.git.5
-- Include some missing firmwares
+- Add some missing firmwares
 
 * Tue Nov 17 2015 Cjacker <cjacker@foxmail.com> - 20151117-58.git.4
 - Update to 20151117, add amd stoney firmware, prepare for kernel 4.4
