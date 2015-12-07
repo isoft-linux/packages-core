@@ -3,12 +3,12 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 11.1.0
-Release: 65.llvm37.git
+Release: 66.llvm37.git
 License: MIT
 URL: http://www.mesa3d.org
 
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: mesa-fc276bd.tar.xz
+Source0: mesa-4d64459.tar.xz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
@@ -504,11 +504,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Dec 07 2015 sulit <sulitsrc@gmail.com> - 11.1.0-65.llvm37.git
-- update to git codes fc276bd
+* Mon Dec 07 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-66.llvm37.git
+- Rebuilt, bump release num.
 
-* Sun Dec 06 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-64.llvm37.git
-- Rebuild with llvm3.7
+* Sun Dec 06 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-65.llvm37.git
+- Rebuild with new llvm3.7 shared lib.
+
+* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 11.1.0-64.llvm37.git
+- rollback to git codes 4d64459
+
+* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 11.1.0-63.llvm37.git
+- update to git codes b715e6d
+- i965/nv50/radeon/r600 some fixes
+- some mesa updates
 
 * Tue Dec 01 2015 sulit - 11.1.0-62.llvm37.git
 - update to git 4d64459, 11.1.0-rc2 comes
