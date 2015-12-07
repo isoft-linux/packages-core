@@ -62,7 +62,7 @@
 %endif
 
 
-%define gcc_version 5.2.0 
+%define gcc_version 5.3.0 
 %define gcc_release 12
 %define _unpackaged_files_terminate_build 0
 
@@ -71,7 +71,7 @@
 Summary: Various compilers (C, C++, Objective-C, Java, ...)
 Name: gcc
 Version: %{gcc_version}
-Release: %{gcc_release}.1
+Release: %{gcc_release}.2
 License: GPLv3+ and GPLv2+ with exceptions
 Source0: gcc-%{version}.tar.bz2
 
@@ -294,51 +294,51 @@ sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in
 mkdir build
 pushd build
 ../configure \
-	--target=%{gcc_target_platform} \
-	--host=%{gcc_target_platform} \
-	--build=%{gcc_target_platform} \
-	--with-cpu=generic \
-	--prefix=%{_prefix} \
-	--enable-bootstrap \
-	--enable-shared \
-	--enable-threads=posix \
-    	--enable-checking=release \
+    --target=%{gcc_target_platform} \
+    --host=%{gcc_target_platform} \
+    --build=%{gcc_target_platform} \
+    --with-cpu=generic \
+    --prefix=%{_prefix} \
+    --enable-bootstrap \
+    --enable-shared \
+    --enable-threads=posix \
+    --enable-checking=release \
 %if %{build_objc}
-	--enable-languages=c,c++,lto,go,fortran,objc,obj-c++ \
+    --enable-languages=c,c++,lto,go,fortran,objc,obj-c++ \
 %else
-	--enable-languages=c,c++,lto,go,fortran \
+    --enable-languages=c,c++,lto,go,fortran \
 %endif
-    	--enable-plugin \
-    	--enable-initfini-array \
-    	--enable-gnu-unique-object \
-	--enable-linker-build-id \
-	--with-linker-hash-style=gnu \
-	--enable-__cxa_atexit \
-	--enable-gnu-indirect-function \
-	--enable-c99 \
-	--enable-long-long \
-    	--enable-libgomp \
-	--enable-lto \
-	--enable-libsanitizer \
+    --enable-plugin \
+    --enable-initfini-array \
+    --enable-gnu-unique-object \
+    --enable-linker-build-id \
+    --with-linker-hash-style=gnu \
+    --enable-__cxa_atexit \
+    --enable-gnu-indirect-function \
+    --enable-c99 \
+    --enable-long-long \
+    --enable-libgomp \
+    --enable-lto \
+    --enable-libsanitizer \
 %if %{build_libatomic}
-    	--enable-libatomic \
+    --enable-libatomic \
 %endif
 %if %{build_libquadmath}
-    	--enable-libquadmath \
+    --enable-libquadmath \
 %endif
 %if %{build_libitm}
-	--enable-libitm \
+    --enable-libitm \
 %endif
 %if %{build_libcilkrts}
-	--enable-libcilkrts \
+    --enable-libcilkrts \
 %endif
 %if %{build_libmpx}
-	--enable-libmpx \
+    --enable-libmpx \
 %endif
-    	--enable-symvers \
-    	--disable-libstdcxx-pch \
-	--disable-multilib \
-	--disable-libunwind-exceptions
+    --enable-symvers \
+    --disable-libstdcxx-pch \
+    --disable-multilib \
+    --disable-libunwind-exceptions
 
 make %{?_smp_mflags} BOOT_CFLAGS="$OPT_FLAGS" bootstrap
 popd
@@ -547,11 +547,12 @@ fi
 %dir %{_includedir}/c++
 %{_includedir}/c++/*
 %{_libdir}/libstdc++.a
+%{_libdir}/libstdc++fs.a
 %{_libdir}/libstdc++.so
 %{_libdir}/libsupc++.a
 %dir %{_datadir}/gcc-*/python/libstdcxx
 %{_datadir}/gcc-*/python/libstdcxx/*
-%{_datadir}/gdb/auto-load/usr/lib/libstdc++.so.*.py
+%{_datadir}/gdb/auto-load/usr/lib/libstdc++.so.*.py*
 
 %files -n libgomp 
 %{_libdir}/libgomp.so.*
@@ -698,7 +699,10 @@ fi
 
 
 %changelog
-* Fri Oct 23 2015 cjacker - 5.2.0-12.1
+* Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 5.3.0-12.2
+- Update
+
+* Fri Oct 23 2015 Cjacker <cjacker@foxmail.com> - 5.2.0-12.1
 - Rebuild for new 4.0 release
 
 * Fri Aug 07 2015 Cjacker <cjacker@foxmail.com>

@@ -1,8 +1,8 @@
 Name:	    openmp 
 Summary:    openmp support for clang
 Version:    3.7.1
-Release:    4.svn20151018
-License:    University of llinois/NCSA Open Source License 
+Release:    11.254869.svn
+License:    University of Illinois/NCSA Open Source License 
 URL:        http://llvm.org
 Source:     http://llvm.org/releases/3.7.0/openmp-%{version}.src.tar.xz
 BuildRequires: clang, compiler-wrapper, cmake, ninja-build
@@ -61,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/clang/*/include/*.h
 
 %changelog
+* Sun Dec 06 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-11.254869.svn
+- Update
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-4.svn20151018
 - Rebuild
 

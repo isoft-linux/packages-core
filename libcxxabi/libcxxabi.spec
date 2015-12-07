@@ -1,11 +1,12 @@
 #use internal libunwind instead install it to system to avoid conflicts with gnu libunwind.
+
 %global build_with_ninja 1
 
-Name:	    libcxxabi	
-Summary:    A new implementation of low level support for a standard C++ library.
-Version:    3.7.1
-Release:    5.svn20151018
-License:  University of llinois/NCSA Open Source License 
+Name: libcxxabi	
+Summary: A new implementation of low level support for a standard C++ library.
+Version: 3.7.1
+Release: 11.254869.svn
+License: University of Illinois/NCSA Open Source License 
 URL:        http://llvm.org
 
 Source0:    http://llvm.org/releases/3.7.0/libcxxabi-%{version}.src.tar.xz
@@ -46,8 +47,8 @@ pushd build-static
     -DCMAKE_CXX_COMPILER=clang++  \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
-    -DCMAKE_CXX_FLAGS="-I`pwd`/../../libcxxabi-3.7.1.src/include" \
-    -DCMAKE_C_FLAGS="-I`pwd`/../../libcxxabi-3.7.1.src/include" \
+    -DCMAKE_CXX_FLAGS="-I`pwd`/../../libcxxabi-%{version}.src/include" \
+    -DCMAKE_C_FLAGS="-I`pwd`/../../libcxxabi-%{version}.src/include" \
     -DLIBUNWIND_ENABLE_SHARED=OFF \
     ..
 %if %{build_with_ninja}
@@ -152,6 +153,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 
 %changelog
+* Sun Dec 06 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-11.254869.svn
+- Update
+
 * Tue Oct 27 2015 cjacker - 3.7.1-5.svn20151018
 - Remove requirement to libunwind, use internal static libunwind instead
 

@@ -73,17 +73,16 @@ syn keyword specMacroNameOther contained buildroot buildsubdir distribution dist
 syn match   specMacroNameOther contained '\<\(PATCH\|SOURCE\)\d*\>'
 
 "valid _macro names from /usr/lib/rpm/macros
-syn keyword specMacroNameLocal contained _arch _binary_payload _bindir _build _build_alias _build_cpu _builddir _build_os _buildshell _buildsubdir _build_vendor _bzip2bin _datadir _dbpath _dbpath_rebuild _defaultdocdir _docdir _excludedocs _exec_prefix _fixgroup _fixowner _fixperms _ftpport _ftpproxy _gpg_path _gzipbin _host _host_alias _host_cpu _host_os _host_vendor _httpport _httpproxy _includedir _infodir _install_langs _install_script_path _instchangelog _langpatt _lib _libdir _libexecdir _localstatedir _mandir _netsharedpath _oldincludedir _os _pgpbin _pgp_path _prefix _preScriptEnvironment _provides _rpmdir _rpmfilename _sbindir _sharedstatedir _signature _sourcedir _source_payload _specdir _srcrpmdir _sysconfdir _target _target_alias _target_cpu _target_os _target_platform _target_vendor _timecheck _tmppath _topdir _usr _usrsrc _var _vendor
-
-
+syn keyword specMacroNameLocal contained _arch _binary_payload _bindir _build _build_alias _build_cpu _builddir _build_os _buildshell _buildsubdir _build_vendor _bzip2bin _datadir _dbpath _dbpath_rebuild _defaultdocdir _docdir _excludedocs _exec_prefix _fixgroup _fixowner _fixperms _ftpport _ftpproxy _gpg_path _gzipbin _host _host_alias _host_cpu _host_os _host_vendor _httpport _httpproxy _includedir _infodir _install_langs _install_script_path _instchangelog _langpatt _lib _libdir _libexecdir _localstatedir _mandir _netsharedpath _oldincludedir _os _pgpbin _pgp_path _prefix _preScriptEnvironment _provides _rpmdir _rpmfilename _sbindir _sharedstatedir _signature _sourcedir _source_payload _specdir _srcrpmdir _sysconfdir _target _target_alias _target_cpu _target_os _target_platform _target_vendor _timecheck _tmppath _topdir _usr _usrsrc _var _vendor _unitdir _kf5_prefix _kf5_archdatadir _kf5_bindir _kf5_datadir _kf5_docdir _kf5_includedir _kf5_libdir _kf5_libexecdir _kf5_qtplugindir _kf5_plugindir _kf5_sysconfdir _kf5_mandir _kf5_qmldir _kde4_prefix _kde4_sysconfdir _kde4_libdir _kde4_libexecdir _kde4_datadir _kde4_sharedir _kde4_iconsdir _kde4_configdir _kde4_appsdir _kde4_docdir _kde4_bindir _kde4_sbindir _kde4_includedir _qt4_prefix _qt4_bindir _qt4_datadir _qt4_docdir _qt4_headerdir _qt4_libdir _qt4_plugindir _qt4_sysconfdir _qt4_translationdir _qt4_qmake _qt5_prefix _qt5_archdatadir _qt5_bindir _qt5_datadir _qt5_docdir _qt5_examplesdir _qt5_headerdir _qt5_importdir _qt5_libdir _qt5_libexecdir _qt5_plugindir _qt5_qmake _qt5_sysconfdir _qt5_settingsdir _qt5_translationdir 
+ 
 "------------------------------------------------------------------------------
 " here's is all the spec sections definitions: PreAmble, Description, Package,
 "   Scripts, Files and Changelog
 
 "One line macros - valid in all ScriptAreas
 "tip: remember do include new items on specScriptArea's skip section
-syn region specSectionMacroArea oneline matchgroup=specSectionMacro start='^%\(define\|patch\d*\|setup\|configure\|GNUconfigure\|find_lang\|makeinstall\|include\)\>' end='$' contains=specCommandOpts,specMacroIdentifier
-syn region specSectionMacroBracketArea oneline matchgroup=specSectionMacro start='^%{\(configure\|GNUconfigure\|find_lang\|makeinstall\)}' end='$' contains=specCommandOpts,specMacroIdentifier
+syn region specSectionMacroArea oneline matchgroup=specSectionMacro start='^%\(define\|patch\d*\|setup\|configure\|GNUconfigure\|find_lang\|makeinstall\|include\|cmake\|cmake_kf5\|cmake_kde4\|qmake_qt4\|qmake_qt5\)\>' end='$' contains=specCommandOpts,specMacroIdentifier
+syn region specSectionMacroBracketArea oneline matchgroup=specSectionMacro start='^%{\(configure\|GNUconfigure\|cmake\|cmake_kf5\|cmake_kde4\|qmake_qt4\|qmake_qt5\|find_lang\|makeinstall\)}' end='$' contains=specCommandOpts,specMacroIdentifier
 
 "%% Files Section %%
 "TODO %config valid parameters: missingok\|noreplace
@@ -113,7 +112,7 @@ syn region specDescriptionArea matchgroup=specSection start='^%description' end=
 syn region specPackageArea matchgroup=specSection start='^%package' end='^%'me=e-1 contains=specPackageOpts,specPreAmble,specComment
 
 "%% Scripts Section %%
-syn region specScriptArea matchgroup=specSection start='^%\(prep\|build\|install\|check\|clean\|pre\|postun\|preun\|post\)\>' skip='^%{\|^%\(define\|patch\d*\|configure\|GNUconfigure\|setup\|find_lang\|makeinstall\)\>' end='^%'me=e-1 contains=specSpecialVariables,specVariables,@specCommands,specVariables,shDo,shFor,shCaseEsac,specNoNumberHilite,specCommandOpts,shComment,shIf,specSpecialChar,specMacroIdentifier,specSectionMacroArea,specSectionMacroBracketArea,shOperator,shQuote1,shQuote2
+syn region specScriptArea matchgroup=specSection start='^%\(prep\|build\|install\|check\|clean\|pre\|postun\|preun\|post\|pretrans\|posttrans\)\>' skip='^%{\|^%\(define\|patch\d*\|configure\|GNUconfigure\|setup\|find_lang\|makeinstall\|cmake_kf5\|cmake_kde4\)\>' end='^%'me=e-1 contains=specSpecialVariables,specVariables,@specCommands,specVariables,shDo,shFor,shCaseEsac,specNoNumberHilite,specCommandOpts,shComment,shIf,specSpecialChar,specMacroIdentifier,specSectionMacroArea,specSectionMacroBracketArea,shOperator,shQuote1,shQuote2
 
 "%% Changelog Section %%
 syn region specChangelogArea matchgroup=specSection start='^%changelog' end='^%'me=e-1 contains=specEmail,specURL,specWeekday,specMonth,specNumber,specComment,specLicense

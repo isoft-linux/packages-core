@@ -5,14 +5,14 @@
 
 %define baseversion 7.4
 #should as same as Source1
-%define patchlevel 909 
+%define patchlevel 959 
 %define vimdir vim74
 
 Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 11
+Release: 2
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
@@ -22,6 +22,9 @@ Source1: vim-patches.tar.gz
 Source2: vimrc
 
 Source10: new-rpm-spec-syntax.vim
+
+#swift vim: https://github.com/keith/swift.vim
+Source11: swift.vim.tar.gz
  
 Source20: spec-template.new
  
@@ -62,7 +65,7 @@ still very popular.  VIM improves on vi by adding new features:
 multiple windows, multi-level undo, block highlighting and more.
 
 %prep
-%setup -q  -n %{vimdir} -a1
+%setup -q  -n %{vimdir} -a1 -a11
 
 for i in `ls vim-patches/7.4.*`
 do
@@ -150,6 +153,7 @@ make installmacros DESTDIR=$RPM_BUILD_ROOT
 mkdir -p %{buildroot}/%{_datadir}/%{name}/vimfiles/
 cp -f %{SOURCE20} %{buildroot}/%{_datadir}/%{name}/vimfiles/template.spec
 
+#default config files
 mkdir -p $RPM_BUILD_ROOT/etc
 install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/vimrc
 install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/virc
@@ -165,6 +169,18 @@ EOF
 chmod 0755 $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/vim.sh
 
 cd .. # from src
+
+#own this folders
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/ftdetect
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/ftplugin
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/indent
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/syntax
+
+#install swift vim files.
+install -m0644 swift.vim/ftdetect/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/ftdetect/
+install -m0644 swift.vim/ftplugin/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/ftplugin/
+install -m0644 swift.vim/indent/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/indent/
+install -m0644 swift.vim/syntax/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/syntax/
 
 #install the mini vi
 install -m0755 mini/vim $RPM_BUILD_ROOT%{_bindir}/vi
@@ -193,6 +209,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/vim/*
 
 %changelog
+* Fri Dec 04 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-2
+- Update to patchlevel 759
+
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 7.4.909-11
 - Build with python3
 

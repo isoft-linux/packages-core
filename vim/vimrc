@@ -11,6 +11,11 @@ set viminfo='20,\"50	" read/write a .viminfo file, don't store more
 set history=50		" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
 
+set softtabstop=4   " Sets the number of columns for a TAB
+set shiftwidth=4    " Indents will have a width of 4
+set tabstop=4   " size of a hard tabstop
+set expandtab   " always uses spaces instead of tab characters
+
 " Only do this part when compiled with support for autocommands
 if has("autocmd")
   augroup isoft 

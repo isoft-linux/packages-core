@@ -1,7 +1,4 @@
 abcb50aa8f74b554ccc4bc5d754d6375  cfe-3.7.1.src.tar.xz
 b18800b7e9bab8d2b0ff9489040aa43b  clang-tools-extra-3.7.1.src.tar.xz
 c12bbc476d47d0dccf185c61acdbf728  compiler-rt-3.7.1.src.tar.xz
-eb17cebddd2be7ba500eeab5adfcbf77  lld-3.7.1.src.tar.xz
-c2e4d6d63c9c4fc37bc75807dc6cbfee  lldb-3.7.1.src.tar.xz
 6462f26b090e33f494a27788ada20511  llvm-3.7.1.src.tar.xz
-797878be58f2896aba1f9969fd6794af  polly-3.7.1.src.tar.xz

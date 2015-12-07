@@ -1,106 +1,104 @@
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#Cjacker comment:
-#Never drop this spec and use others from other dists.
-#Until you realy know how llvm/clang works as a toolchain and WHAT I AM DOING!!!
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 #!!!!!!!!!!SVN!!!!!!!!!!
 #checkout trunk: svn co http://llvm.org/svn/llvm-project/<component>/trunk <component>
 #checkout branch: svn co http://llvm.org/svn/llvm-project/<component>/branches/release_XY <component>-XY.src 
 #!!!!!!!!!!!!!!!!!!!!!!!
 
-#link binaries and libraries to libcxx/libcxxabi
-%global rebuild_use_libcxx 0 
+#build as 'Release', otherwise delete this line.
+%define debug_package %{nil}
 
-#we had a try to drop libgcc/libstdc++ dependencies, and use libcxx/libcxxabi/libunwind as abi libraries.
-#That means llvm/clang can be used without libgcc/libstdc++
-#But not for production usage now, since it will break c++abi.
-#But still keep it and maintain it here.
-#By Cjacker
+#Release/RelWithDebInfo/Debug
+%define build_type "Release"
+%define llvm_targets "all"
+%define llvm_default_target_triple "x86_64-isoft-linux"
+%define clang_vendor "iSoft"
 
-%global rebuild_drop_libgcc 0 
-
-%global enable_rtti 1
-%global enable_exception 1
-
-#seems no enough memory to run all checks.
+#check required a large amount of memory to run.
 %global enable_check 0
 
-#control components build.
-%global build_lldb 1
-%global build_polly 0 
-%global build_test_suite 0 
-#lld need a static build LLVM
-%global build_lld 1 
-
-
-#all components version
-%define project_version 3.7.1
-
-%define llvm_ver %{project_version}
-%define cfe_ver %{project_version}
-%define compiler_rt_ver %{project_version}
-%define clang_tools_extra_ver %{project_version}
-%define lld_ver %{project_version}
-%define polly_ver %{project_version}
-%define lldb_ver %{project_version}
-%define test_suite_ver %{project_version}
+#build lldb or not. lldb provided by swift
+%define build_lldb 0
+%define build_lld 0
+%define build_polly 0
+%define build_test_suite 0
 
 Name: llvm
-Version: %{project_version}
-Release: 4.252402.svn
+Version: 3.7.1
+Release: 6.252402.svn 
+
 Summary: Low Level Virtual Machine (LLVM) with clang	
-License: University of llinois/NCSA Open Source License 
+License: University of Illinois/NCSA Open Source License 
 URL: http://llvm.org
 
-Source:      llvm-%{llvm_ver}.src.tar.xz
-Source1:     cfe-%{cfe_ver}.src.tar.xz
-Source2:     compiler-rt-%{compiler_rt_ver}.src.tar.xz
-Source3:     clang-tools-extra-%{clang_tools_extra_ver}.src.tar.xz
+#Essential components to construct minimal LLVM/Clang toolchain.
+Source0: llvm-%{version}.src.tar.xz
+Source1: cfe-%{version}.src.tar.xz
+Source2: compiler-rt-%{version}.src.tar.xz
+Source3: clang-tools-extra-%{version}.src.tar.xz
 
-Source10:    lldb-%{lldb_ver}.src.tar.xz
-Source11:    polly-%{polly_ver}.src.tar.xz
-Source12:    lld-%{lld_ver}.src.tar.xz
-
-%if %{build_test_suite}
-Source13:    test-suite-%{test_suite_ver}.src.tar.xz
+%if %{build_lldb}
+Source10: lldb-%{version}.src.tar.xz
 %endif
 
-Source20:    pollycc
-Source21:    polly++
+%if %{build_lld}
+Source11: lld-%{version}.src.tar.xz
+%endif
 
-#cmake build system need this patch
-#Patch0:      llvm-rtti-fix.patch
+%if %{build_polly}
+Source12: polly-%{version}.src.tar.xz
+%endif
 
-#if host clang use unwind instead of libgcc, this patch will be needed.
-Patch1:       llvm-remove-ehtable-support-when-with-nolibgcc.patch
+%if %{build_test_suite}
+Source13: test-suite-%{version}.src.tar.xz
+%endif
 
-#Add our own tripplet to clang search path.
-Patch10:      clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
-#We use 'lib' under x86_64
-Patch11:      clang-lib64-to-lib.patch
+#polly wrapper scripts
+Source20: pollycc
+Source21: polly++
 
-Patch12:      clang-fix-objc-exceptions-cflags.patch
+#Add our own gcc tripplet to clang search path.
+Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
 
-#the dso link behaviour change can not load implicit DSO when link.
-Patch13:      clang-add-c++abi-dso-when-stdlib-libc++.patch
+#We use 'lib' instead of 'lib64' under x86_64
+#The intepretor of genenrated ELF by clang contains PATH.
+#It's important.
+Patch1: clang-lib64-to-lib.patch
+# Backport LLVM_LINK_LLVM_DYLIB option
+Patch2: llvm-3.7.0-link-tools-against-libLLVM.patch
+# https://llvm.org/bugs/show_bug.cgi?id=24157
+Patch3: llvm-3.7.0-export-more-symbols.patch
 
-#this patch add "-fnolibgcc" flag to clang to disable libgcc dependency
-Patch14:      clang-use-unwind-with-fnolibgcc.patch
+#gcc abi_tag support
+Patch4: 0001-add-gcc-abi_tag-support.patch
+Patch5: 0002-Adapt-previous-Clang-trunk-patch-to-Clang-3.7.patch
+Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
+
+# https://llvm.org/bugs/show_bug.cgi?id=24046
+# Upstreamed - http://reviews.llvm.org/D13206
+Patch7: clang-tools-extra-3.7.0-install-clang-query.patch 
+# https://llvm.org/bugs/show_bug.cgi?id=24155
+Patch8: 0001-New-MSan-mapping-layout-llvm-part.patch
+Patch9: 0001-New-MSan-mapping-layout-compiler-rt-part.patch
+
+Patch10: fix-broken-include-path.patch
 
 #pp-trace in clang-tools-extra did not install properly.
-Patch15:      clang-extra-install-pp-trace.patch
+Patch11: clang-extra-install-pp-trace.patch
 
-#a typo of include path
-Patch19: fix-broken-include-path.patch
+Patch19: clang-fix-objc-exceptions-cflags.patch
 #https://llvm.org/bugs/show_bug.cgi?id=25021
 Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
 
-BuildRequires: clang
+# https://llvm.org/bugs/show_bug.cgi?id=24953
+Patch30: lldb-3.7.0-avoid-linking-to-libLLVM.patch
+
+BuildRequires: clang gcc-go
+BuildRequires: cmake, ninja-build
 BuildRequires: bison flex libtool-ltdl-devel
-BuildRequires: binutils-devel
-BuildRequires: ncurses-devel
-BuildRequires: zip
+BuildRequires: zip bzip2 coreutils grep gzip sed unzip findutils
+BuildRequires: chrpath
+#not used, doc disabled.
+BuildRequires: doxygen
+
 #for test
 BuildRequires: dejagnu tcl-devel
 
@@ -109,30 +107,23 @@ BuildRequires: glibc-headers
 BuildRequires: libffi-devel
 BuildRequires: libstdc++-devel
 BuildRequires: python-devel
-
-BuildRequires: doxygen
-
-%if %{rebuild_use_libcxx}
-BuildRequires: libcxx-devel
-Requires:   libcxx
-%endif
+BuildRequires: libtirpc-devel
+BuildRequires: valgrind-devel
+BuildRequires: binutils-devel
+BuildRequires: ncurses-devel
+BuildRequires: libxml2-devel
+BuildRequires: libedit-devel >= 3.0
 
 %if %{build_lldb}
 BuildRequires:swig
 %endif
 
-%if %{build_polly}
-BuildRequires: cloog-isl-shared-devel >= 0.18.1
-%endif
-
-BuildRequires: libxml2-devel
-
-BuildRequires: libedit-devel >= 3.0
-BuildRequires: cmake, ninja-build
-BuildRequires: chrpath
-
 %if %{build_lld}
 Requires: alternatives
+%endif
+
+%if %{build_polly}
+BuildRequires: cloog-isl-shared-devel >= 0.18.1
 %endif
 
 %description
@@ -148,7 +139,6 @@ Summary: LLVM shared libraries
 
 %description -n libllvm
 Shared libraries for the LLVM compiler infrastructure.
-
 
 %package -n libllvm-devel
 Summary: Libraries and header files for LLVM
@@ -167,15 +157,10 @@ Requires: libllvm-devel = %{version}-%{release}
 This package contains static libraries needed to develop new
 native programs that use the LLVM infrastructure.
 
-
 %package -n clang 
 Summary: A C language family frontend for LLVM
 Requires: llvm = %{version}-%{release} 
 Requires: libllvm = %{version}-%{release} 
-%if %{rebuild_use_libcxx}
-Requires: libcxx
-Requires: libcxx-devel
-%endif
 
 %description -n clang 
 The goal of the Clang project is to create a new C, C++, Objective C and Objective C++ front-end for the LLVM compiler. 
@@ -197,6 +182,7 @@ This package contains libraries for develop program with libclang.
 %package -n libclang-devel
 Summary: Header files for clang
 Requires: libclang = %{version}-%{release}
+
 %description -n libclang-devel
 This package contains header files for the Clang compiler.
 
@@ -207,12 +193,13 @@ Requires: libclang-devel = %{version}-%{release}
 %description -n libclang-static
 This package contains static libraries for develop program with Clang library.
 
-
+# start of build_lldb
+%if %{build_lldb}
 %package -n lldb
-Summary: LLDB is a next generation, high-performance debugger 
+Summary: LLDB is a next generation, high-performance debugger
 Requires: liblldb = %{version}-%{release}
 
-%description -n lldb 
+%description -n lldb
 LLDB is a next generation, high-performance debugger. It is built as a set of reusable components which highly leverage existing libraries in the larger LLVM Project, such as the Clang expression parser and LLVM disassembler.
 
 %package -n liblldb
@@ -223,7 +210,7 @@ Requires: libllvm = %{version}-%{release}
 This package contains libraries for develop program with liblldb.
 
 %package -n liblldb-devel
-Summary: Header files for lldb library. 
+Summary: Header files for lldb library.
 Requires: liblldb = %{version}-%{release}
 
 %description -n liblldb-devel
@@ -235,31 +222,10 @@ Requires: liblldb-devel = %{version}-%{release}
 
 %description -n liblldb-static
 This package contains static libraries for develop program with lldb library.
+%endif #end build_lldb
 
-
-%package -n polly 
-Summary: LLVM Framework for High-Level Loop and Data-Locality Optimizations
-Requires: clang = %{version}-%{release}
-Requires: cloog-isl >= 0.18.1
-Requires: gmp-devel
-
-%description -n polly 
-LLVM Framework for High-Level Loop and Data-Locality Optimizations
-
-%package -n libpolly-devel
-Summary: Header files for polly library.
-
-%description -n libpolly-devel
-This package contains header files for polly library.
-
-%package -n libpolly-static
-Summary: Static libraries for polly 
-Requires: libpolly-devel = %{version}-%{release}
-
-%description -n libpolly-static
-This package contains static libraries for develop program with polly library.
-
-
+# start of build_lld
+%if %{build_lld}
 %package -n lld
 Summary: The LLVM Linker
 
@@ -279,32 +245,32 @@ Requires: liblld-devel = %{version}-%{release}
 
 %description -n liblld-static
 This package contains static libraries for develop program with lld library.
+%endif #end build_lld
+
+#start of build_polly
+%if %{build_polly}
+%package -n polly
+Summary: LLVM Framework for High-Level Loop and Data-Locality Optimizations
+Requires: clang = %{version}-%{release}
+Requires: cloog-isl >= 0.18.1
+Requires: gmp-devel
+
+%description -n polly
+LLVM Framework for High-Level Loop and Data-Locality Optimizations
+
+%package -n libpolly-devel
+Summary: Header files for polly library.
+
+%description -n libpolly-devel
+This package contains header files for polly library.
+%endif #end build_polly
+
 
 %prep
-if [ ! -d llvm-%{version}/vanilla ]; then
-%setup -q -n llvm-%{version} -c
-  mv llvm-%{version}.src vanilla
-else
-  cd llvm-%{version}
-  if [ -d llvm-shared-%{version} ]; then
-     rm -rf deleteme-shared-%{version}
-     rm -rf deleteme-static-%{version}
-     mv llvm-shared-%{version} deleteme-shared-%{version} 
-     mv llvm-static-%{version} deleteme-static-%{version} 
-     rm -rf deleteme-shared-%{version}
-     rm -rf deleteme-static-%{version}
-  fi
-fi
-
-cp -rl vanilla llvm-shared-%{version}
-cp -rl vanilla llvm-static-%{version}
-
-#shared build will only build llvm library, keep other things build as static linkage.
-pushd llvm-static-%{version} 
+%setup -q -n llvm-%{version}.src
 mkdir -p tools/clang
-mkdir -p tools/clang/tools/extra
 mkdir -p projects/compiler-rt
-
+mkdir -p tools/clang/tools/extra
 tar xf %{SOURCE1} -C tools/clang --strip-components=1
 tar xf %{SOURCE2} -C projects/compiler-rt --strip-components=1
 tar xf %{SOURCE3} -C tools/clang/tools/extra --strip-components=1
@@ -312,16 +278,21 @@ tar xf %{SOURCE3} -C tools/clang/tools/extra --strip-components=1
 %if %{build_lldb}
 mkdir -p tools/lldb
 tar xf %{SOURCE10} -C tools/lldb --strip-components=1
-%endif
 
-%if %{build_polly}
-mkdir -p tools/polly
-tar xf %{SOURCE11} -C tools/polly --strip-components=1
+#always use python2, lldb python module only support python2 ABI now.
+find tools/lldb -name Makefile -exec sed -i 's/python-config/python2-config/' {} +
+sed -i 's|/usr/bin/env python|&2|' \
+    tools/lldb/scripts/Python/{build-swig-Python,finish-swig-Python-LLDB}.sh
 %endif
 
 %if %{build_lld}
 mkdir -p tools/lld
-tar xf %{SOURCE12} -C tools/lld --strip-components=1
+tar xf %{SOURCE11} -C tools/lld --strip-components=1
+%endif
+
+%if %{build_polly}
+mkdir -p tools/polly
+tar xf %{SOURCE12} -C tools/polly --strip-components=1
 %endif
 
 %if %{build_test_suite}
@@ -329,177 +300,136 @@ mkdir -p projects/test-suite
 tar xf %{SOURCE13} -C projects/test-suite --strip-components=1
 %endif
 
-#%patch0 -p1
-#register_frame is provided by libgcc
-#if we use libc++/libc++abi/libunwind and remove libgcc support, it should be disabled.
-%if %{rebuild_drop_libgcc}
-%patch1 -p1
-%endif
 
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p2
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1 -d tools/clang/tools/extra
+%patch8 -p1
+%patch9 -p1 -d projects/compiler-rt
 %patch10 -p1
 %patch11 -p1
 
-%patch12 -p1
-#############%patch13 -p1
-
-########%patch14 -p1
-
-%patch15 -p1
 %patch19 -p1
 %patch20 -p1
-popd
 
-
-pushd llvm-shared-%{version}
-%patch19 -p1
-%patch20 -p1
-popd
+%if %{build_lldb}
+%patch30 -p1 -d tools/lldb
+%endif 
 
 %build
 #we use clang/clang++ build llvm/clang
 export CC="clang"
 export CXX="clang++"
-mkdir -p llvm-shared-%{version}/build
-mkdir -p llvm-static-%{version}/build
 
-pushd llvm-static-%{version}/build 
-%cmake \
+mkdir -p %{_target_platform}
+pushd %{_target_platform}
+cmake \
     -G Ninja \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
-    -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-    -DCMAKE_CONFIGURATION_TYPES="RelWithDebInfo" \
-    -DCMAKE_C_FLAGS="-fPIC" \
-    %if %{rebuild_use_libcxx}
-    %if %{rebuild_drop_libgcc}
-    -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++ -fnolibgcc -fPIC" \
-    %else
-    -DCMAKE_CXX_FLAGS="-std=c++11 -stdlib=libc++ -fPIC" \
-    %endif #rebuild_drop_libgcc
-    %else
-    -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
-    %endif #rebuild_use_libcxx
-    %if %{enable_exception}
-    -DLLVM_ENABLE_EH=ON \
-    %endif
-    %if %{enable_rtti}
-    -DLLVM_ENABLE_RTTI=ON \
-    %endif
-    -DBUILD_SHARED_LIBS=OFF \
-    -DLLVM_ENABLE_PIC=ON \
-    -DLLVM_TARGETS_TO_BUILD="all" \
-    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-isoft-linux" \
-    -DCLANG_VENDOR="iSoft" ..
-time ninja
-popd
-
-
-#shared library will never use libcxx.
-pushd llvm-shared-%{version}/build
-%cmake \
-    -G Ninja \
-    -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_CXX_COMPILER=clang++ \
-    -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-    -DCMAKE_CONFIGURATION_TYPES="RelWithDebInfo" \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+    -DCMAKE_BUILD_TYPE="%{build_type}" \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
-    %if %{enable_exception}
     -DLLVM_ENABLE_EH=ON \
-    %endif
-    %if %{enable_rtti}
     -DLLVM_ENABLE_RTTI=ON \
-    %endif
-    -DBUILD_SHARED_LIBS=ON \
-    -DLLVM_ENABLE_PIC=ON \
-    -DLLVM_TARGETS_TO_BUILD="all" \
-    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-isoft-linux" \
-    -DCLANG_VENDOR="iSoft" ..
-time ninja
+    -DLLVM_BINUTILS_INCDIR:PATH=/usr/include \
+    -DFFI_INCLUDE_DIR:PATH="$(pkg-config --variable=includedir libffi)" \
+    -DFFI_LIBRARY_DIR:PATH="$(pkg-config --variable=libdir libffi)" \
+    -DLLVM_BUILD_LLVM_DYLIB:BOOL=ON \
+    -DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
+    -DLLVM_DYLIB_EXPORT_ALL=ON \
+    -DLLVM_TARGETS_TO_BUILD="%{llvm_targets}" \
+    -DLLVM_DEFAULT_TARGET_TRIPLE="%{llvm_default_target_triple}" \
+    -DCLANG_VENDOR="%{clang_vendor}" ..
+ninja
 popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
-pushd llvm-static-%{version}/build 
-%if %{build_lldb}
-  sed -i "s|set(CMAKE_INSTALL_PREFIX \"/usr\")|set(CMAKE_INSTALL_PREFIX \"$RPM_BUILD_ROOT/usr\")|" cmake_install.cmake
-  sed -i "s|file(INSTALL DESTINATION \"/usr|file(INSTALL DESTINATION \"$RPM_BUILD_ROOT/usr|" tools/lldb/scripts/Python/modules/readline/cmake_install.cmake
-  ninja install
-%else
-  DESTDIR=$RPM_BUILD_ROOT ninja install
-%endif
+pushd %{_target_platform}
+DESTDIR=%{buildroot} ninja install
 popd
 
-#yes, headers of shared build will replace static build. But It is OK!!!!!!!
-pushd llvm-shared-%{version}/build
-DESTDIR=$RPM_BUILD_ROOT ninja install
-popd
+#install clang-analyzer
+pushd tools/clang
+mkdir -p %{buildroot}%{_datadir}
+for TOOL in scan-{build,view}; do
+    cp -a tools/$TOOL %{buildroot}%{_datadir}/
+    ln -s %{_datadir}/$TOOL/$TOOL %{buildroot}%{_bindir}/$TOOL
+done
 
-#polly wrapper script
-%if %{build_polly}
-install -m0755 %{SOURCE20} $RPM_BUILD_ROOT/%{_bindir}/ 
-install -m0755 %{SOURCE21} $RPM_BUILD_ROOT/%{_bindir}/ 
-%endif
+# man page
+mkdir -p %{buildroot}%{_mandir}/man1
+mv %{buildroot}%{_datadir}/scan-build/scan-build.1 %{buildroot}%{_mandir}/man1/
 
+# scan-build looks for clang within the same directory
+ln -sf %{_bindir}/clang %{buildroot}%{_datadir}/scan-build/clang
+popd # end clang-analyzer installation
+
+
+# Symlink LLVMgold.so to /usr/lib/bfd-plugins
+# Bug:
+# sudo alternatives --set ld /usr/bin/ld.gold
+# echo 'main(){b(1);}' > a.c
+# echo 'b(int a){printf("%d\\n");}' > b.c
+# clang -flto b.c -c
+# clang -flto a.c -c
+# ar q b.a b.o
+# ranlib b.a
+# clang -flto a.o b.a
+mkdir -p %{buildroot}%{_libdir}/bfd-plugins
+ln -sf ../LLVMgold.so %{buildroot}%{_libdir}/bfd-plugins/LLVMgold.so
+
+#remove rpath.
 file %{buildroot}/%{_bindir}/* | awk -F: '$2~/ELF/{print $1}' | xargs -r chrpath -d
 file %{buildroot}/%{_libdir}/*.so | awk -F: '$2~/ELF/{print $1}' | xargs -r chrpath -d
 
-
 #it seems we need this
-pushd $RPM_BUILD_ROOT/%{_bindir}
+pushd %{buildroot}/%{_bindir}
 if [ ! -f llvm-ranlib ]; then
  ln -s llvm-ar llvm-ranlib
 fi
 popd
 
-# Get rid of erroneously installed files.
-#rm %{buildroot}%{_libdir}/*LLVMHello.*
-#
-#rm -rf $RPM_BUILD_ROOT/%{_libdir}/libgtest.so
-#rm -rf $RPM_BUILD_ROOT/%{_libdir}/libgtest_main.so
-#rm -rf $RPM_BUILD_ROOT/%{_libdir}/libgtest.a
-#rm -rf $RPM_BUILD_ROOT/%{_libdir}/libgtest_main.a
+#polly wrapper script
+%if %{build_polly}
+install -m0755 %{SOURCE20} $RPM_BUILD_ROOT/%{_bindir}/
+install -m0755 %{SOURCE21} $RPM_BUILD_ROOT/%{_bindir}/
+%endif
 
-rm -rf $RPM_BUILD_ROOT/usr/docs
+rm -rf %{buildroot}/usr/docs
+rm -rf %{buildroot}%{_bindir}/c-index-test
+rm -rf %{buildroot}%{_libdir}/LLVMHello.so
+rm -rf %{buildroot}%{_datadir}/clang/*.applescript
 
 %check
 %if %{enable_check}
-pushd llvm-static-%{version}/build
-%if %{rebuild_use_libcxx}
-echo "skip check"
-%else
-#Still had 115 cases failed.
-echo "Check started, it will cause a lot of times to finish!"
+pushd %{_target_platform}
 ninja check-all ||:
-%endif
 popd
-
-pushd llvm-shared-%{version}/build
-%if %{rebuild_use_libcxx}
-echo "skip check"
-%else
-echo "Check started, it will cause a lot of times to finish!"
-ninja check-all ||:
 %endif
-popd
-%endif #enable_check
-
-%clean
-#rm -rf $RPM_BUILD_ROOT
 
 %post -n libllvm -p /sbin/ldconfig
 %post -n libclang -p /sbin/ldconfig
-%post -n liblldb -p /sbin/ldconfig
-
 
 %postun -n libllvm -p /sbin/ldconfig
 %postun -n libclang -p /sbin/ldconfig
-%postun -n liblldb -p /sbin/ldconfig
 
+%if %{build_lldb}
+%post -n liblldb -p /sbin/ldconfig
+%postun -n liblldb -p /sbin/ldconfig
+%endif
 
 %if %{build_lld}
-%post -n lld 
+%post -n lld
 %{_sbindir}/alternatives --install %{_bindir}/ld ld \
   %{_bindir}/lld 30
 
@@ -509,7 +439,6 @@ if [ $1 = 0 ]; then
 fi
 exit 0
 %endif
-
 
 %files
 %defattr(-,root,root)
@@ -537,7 +466,6 @@ exit 0
 %{_bindir}/llvm-symbolizer
 %{_bindir}/llvm-tblgen
 %{_bindir}/llvm-profdata
-%{_bindir}/macho-dump
 %{_bindir}/opt
 %{_bindir}/llvm-c-test
 %{_bindir}/llvm-lto
@@ -545,19 +473,20 @@ exit 0
 %{_bindir}/llvm-cxxdump
 %{_bindir}/llvm-lib
 %{_bindir}/llvm-pdbdump
-#%{_bindir}/llvm-vtabledump
+%{_bindir}/macho-dump
 %{_bindir}/obj2yaml
 %{_bindir}/verify-uselistorder
 %{_bindir}/yaml2obj
-
-#these two so is not library but plugins.
+#plugins.
 %{_libdir}/BugpointPasses.so
-%{_libdir}/LLVMHello.so
+%{_libdir}/libLTO.so
+%{_libdir}/LLVMgold.so
+%{_libdir}/bfd-plugins/LLVMgold.so
 
 %files -n libllvm 
 %defattr(-,root,root)
 %{_libdir}/libLTO.so.*
-%{_libdir}/libLLVM*.so.*
+%{_libdir}/libLLVM*.so*
 
 %files -n libllvm-devel
 %defattr(-,root,root)
@@ -568,81 +497,73 @@ exit 0
 %{_includedir}/%{name}-c/*
 %dir %{_datadir}/llvm/cmake
 %{_datadir}/llvm/cmake/*
-%{_libdir}/libLTO.so
 %{_libdir}/libLLVM*.so
 
-%files -n libllvm-static 
+%files -n libllvm-static
 %defattr(-,root,root)
 %{_libdir}/libLLVM*.a
-#%{_libdir}/libgtest*.a
 
 %files -n clang
 %defattr(-,root,root)
 %{_bindir}/clang
 %{_bindir}/clang++
-%{_bindir}/clang-check
-%{_bindir}/clang-format
 %{_bindir}/clang-3*
 %{_bindir}/clang-cl
-%{_bindir}/clang-rename
-#%{_bindir}/clang-tblgen
 %dir %{_libdir}/clang
 %{_libdir}/clang/*
 
 %files -n clang-tools
 %defattr(-,root, root,-)
 %{_bindir}/clang-apply-replacements
+%{_bindir}/clang-check
+%{_bindir}/clang-format
 %{_bindir}/clang-modernize
+%{_bindir}/clang-rename
 %{_bindir}/clang-tidy
+%{_bindir}/clang-query
 %{_bindir}/git-clang-format
-#%{_libdir}/libmodernizeCore.so
-%{_datadir}/clang/clang-format-bbedit.applescript
-%{_datadir}/clang/clang-format-diff.py
-%{_datadir}/clang/clang-format-sublime.py
-%{_datadir}/clang/clang-format.el
-%{_datadir}/clang/clang-format.py
 %{_bindir}/pp-trace
-%{_libdir}/libclangApplyReplacements.a
-%{_libdir}/libclangQuery.a
-%{_libdir}/libclangTidyGoogleModule.a
-%{_libdir}/libclangTidy.a
-%{_libdir}/libclangTidyLLVMModule.a
-%{_libdir}/libmodernizeCore.a
+%dir %{_datadir}/clang/
+%{_datadir}/clang/*.py*
+%{_datadir}/clang/*.el
+
+#clang analyzer
+%{_bindir}/scan-build
+%{_bindir}/scan-view
+%dir %{_datadir}/scan-build
+%{_datadir}/scan-build/*
+%dir %{_datadir}/scan-view
+%{_datadir}/scan-view/*
+%{_mandir}/man1/*
 
 %files -n libclang
 %defattr(-,root,root)
-%{_libdir}/libclang*.so
 %{_libdir}/libclang.so.3*
 
 %files -n libclang-devel
 %defattr(-,root,root)
 %{_includedir}/clang
 %{_includedir}/clang-c
+%{_libdir}/libclang*.so
 
 %files -n libclang-static
 %defattr(-,root,root)
 %{_libdir}/libclang*.a
-#this files comes from clang-tools-extra
-%exclude %{_libdir}/libclangApplyReplacements.a
-%exclude %{_libdir}/libclangQuery.a
-%exclude %{_libdir}/libclangTidyGoogleModule.a
-%exclude %{_libdir}/libclangTidy.a
-%exclude %{_libdir}/libclangTidyLLVMModule.a
-%exclude %{_libdir}/libmodernizeCore.a
+%{_libdir}/libmodernizeCore.a
 
 #start of build_lldb
 %if %{build_lldb}
-%files -n lldb 
+%files -n lldb
 %defattr(-,root,root)
 %{_bindir}/lldb*
-%{_bindir}/argdumper
+%{_bindir}/*argdumper
 %{python_sitearch}/lldb
 %{python_sitearch}/readline.so
-#it's symbol link. to lib
-%{python_sitearch}/lib
 
 %files -n liblldb
 %defattr(-,root,root)
+#python module need it.
+#so it's not in devel package but here.
 %{_libdir}/liblldb.so
 %{_libdir}/liblldb.so.3*
 
@@ -653,27 +574,7 @@ exit 0
 %files -n liblldb-static
 %defattr(-,root,root)
 %{_libdir}/liblldb*.a
-%endif 
-#end of build_lldb
-
-
-#start of build_polly
-%if %{build_polly}
-%files -n polly
-%defattr(-,root,root)
-%{_bindir}/pollycc
-%{_bindir}/polly++
-%{_libdir}/LLVMPolly.so
-
-#%files -n libpolly-static
-#%defattr(-,root,root)
-#%{_libdir}/libpolly*.a
-
-%files -n libpolly-devel
-%defattr(-,root,root)
-%{_includedir}/polly
-%endif
-#end of build_polly
+%endif #end build_lldb
 
 #start of build_lld
 %if %{build_lld}
@@ -689,10 +590,7 @@ exit 0
 %{_libdir}/liblldELF.a
 %{_libdir}/liblldHexagonELFTarget.a
 %{_libdir}/liblldMachO.a
-#%{_libdir}/liblldNative.a
 %{_libdir}/liblldPECOFF.a
-#%{_libdir}/liblldPPCELFTarget.a
-#%{_libdir}/liblldPasses.a
 %{_libdir}/liblldReaderWriter.a
 %{_libdir}/liblldX86ELFTarget.a
 %{_libdir}/liblldX86_64ELFTarget.a
@@ -703,9 +601,34 @@ exit 0
 %{_libdir}/liblldARMELFTarget.a
 %{_libdir}/liblldCOFF.a
 %{_libdir}/liblldExampleSubTarget.a
-%endif
+%endif #end build_lld
+
+#start of polly
+%if %{build_polly}
+%files -n polly
+%defattr(-,root,root)
+%{_bindir}/pollycc
+%{_bindir}/polly++
+%{_libdir}/LLVMPolly.so
+
+%files -n libpolly-devel
+%defattr(-,root,root)
+%{_includedir}/polly
+%endif #end build_polly
+
+
 
 %changelog
+* Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-6.252402.svn
+- Clean spec, disable lld/lldb completely.
+- Use LLVM_BUILD_LLVM_DYLIB to build shared library.
+- Add gcc abi_tag patches(#4,#5,#6)
+
+* Fri Dec 04 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-5.252402.svn
+- Disable lldb/lld packages.
+- lldb provided by swift because it's need a modified lldb.
+- lld is rarely used.
+
 * Sat Nov 07 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-4.252402.svn
 - Update to svn 252402
 

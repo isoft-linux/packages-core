@@ -8,7 +8,7 @@ License: MIT
 URL: http://www.mesa3d.org
 
 #git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: mesa-4d64459.tar.xz
+Source0: mesa-0ef5c8a.tar.xz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
@@ -64,6 +64,7 @@ BuildRequires: libxcb-devel
 
 BuildRequires: nettle-devel
 
+BuildRequires: sed
 %if 0%{?with_opencl}
 BuildRequires: libclang-devel >= 3.0
 BuildRequires: libclc-devel libllvm-static libclang-static
@@ -249,6 +250,17 @@ Mesa OpenCL development package.
 
 %prep
 %setup -q -n %{name} 
+
+# Fix detection of libLLVM when built with CMake
+# It depend on LLVM shared lib name, If libLLVM.so.<version>, this is needed.
+# If libLLVM-<version>.so, this is not needed.
+if [ -f configure ]; then
+sed -i 's/LLVM_SO_NAME=.*/LLVM_SO_NAME=LLVM/' configure
+fi
+
+if [ -f configure.ac ]; then
+sed -i 's/LLVM_SO_NAME=.*/LLVM_SO_NAME=LLVM/' configure.ac
+fi
 
 %build
 #make sure mesa build with gcc/g++
@@ -492,15 +504,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 11.1.0-64.llvm37.git
-- rollback to git codes 4d64459
+* Sun Dec 06 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-64.llvm37.git
+- Rebuild with llvm3.7
 
-* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 11.1.0-63.llvm37.git
-- update to git codes b715e6d
-- i965/nv50/radeon/r600 some fixes
-- some mesa updates
-
-* Tue Dec 01 2015 sulit <sulitsrc@gmail.com> - 11.1.0-62.llvm37.git
+* Tue Dec 01 2015 sulit - 11.1.0-62.llvm37.git
 - update to git 4d64459, 11.1.0-rc2 comes
 - include various updates to i965 and various fixes to r600
 

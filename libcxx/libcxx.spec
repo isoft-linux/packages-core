@@ -3,16 +3,13 @@
 Summary:    A standard conformant and high-performance implementation of the C++ Standard Library
 Name:	    libcxx	
 Version:    3.7.1
-Release:    5.svn20151018 
+Release:    11.254869.svn
 URL:        http://llvm.org
-License: University of llinois/NCSA Open Source License 
+License: University of Illinois/NCSA Open Source License 
 
 Source0:    http://llvm.org/releases/3.7.0/libcxx-%{version}.src.tar.xz
 Source1:    http://llvm.org/releases/3.7.0/libcxxabi-%{version}.src.tar.xz
 Source2:    http://llvm.org/releases/3.7.0/libunwind-%{version}.src.tar.xz
-
-#it's really no need to link to gcc anymore
-Patch0: libcxx-remove-libgcc.patch
 
 BuildRequires: clang 
 BuildRequires: cmake
@@ -38,11 +35,7 @@ Headers and libbraries for libcxx
 %prep
 %setup -q -c -a1 -a2
 
-pushd libcxx-%{version}.src
-%patch0 -p1
-popd
-
-%Build
+%build
 pushd libcxx-%{version}.src
 #build shared library
 mkdir build-shared
@@ -58,6 +51,7 @@ pushd build-shared
     -DLIBCXX_CXX_ABI=libcxxabi \
     -DLIBCXX_CXX_ABI_INCLUDE_PATHS="`pwd`/../../libcxxabi-%{version}.src/include" \
     -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+    -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
     -DLIBCXX_ENABLE_SHARED=ON \
     ..
 
@@ -83,6 +77,7 @@ pushd build-static
     -DLIBCXX_CXX_ABI=libcxxabi \
     -DLIBCXX_CXX_ABI_INCLUDE_PATHS="`pwd`/../../libcxxabi-%{version}.src/include" \
     -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+    -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF \
     -DLIBCXX_ENABLE_SHARED=OFF \
     ..
 
@@ -130,6 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/c++/v1
 
 %changelog
+* Sun Dec 06 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-11.254869.svn
+- Update
+
 * Tue Oct 27 2015 cjacker - 3.7.1-5.svn20151018
 - Rebuild
 
