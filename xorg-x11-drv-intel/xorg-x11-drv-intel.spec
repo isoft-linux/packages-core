@@ -6,11 +6,12 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   45.git
+Release:   46.git
 URL:       http://www.x.org
 License:   MIT
 Source0:   %{tarball}-da9ad38.tar.xz
 Patch0:     intel-gcc-pr65873.patch
+Patch1:    intel-prefer-drmModeSetCursor2-in-uxa.patch
 
 BuildRequires: autoconf automake libtool
 BuildRequires: flex bison
@@ -46,6 +47,7 @@ X.Org X11 Intel video driver.
 %prep
 %setup -q -n xf86-video-intel
 %patch0 -p1
+%patch1 -p1
 
 %build
 ./autogen.sh
@@ -76,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-46.git
+- Add prefer drmModeSetCursor2 patch for uxa
+
 * Tue Dec 01 2015 sulit <sulitsrc@gmail.com> - 2.99.917-45.git
 - update to git codes da9ad38
 
