@@ -216,11 +216,6 @@ rm -f %{buildroot}%{_libdir}/*.la
 popd #end installation of common apt.
 
 
-#install own method copy.
-pushd methods
-make install DESTDIR=%{buildroot}
-popd
-
 %find_lang %{name}
 
 %post -p /sbin/ldconfig
