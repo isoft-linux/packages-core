@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 10
+%define release 11
 
 %define extraversion -%{release}
 
@@ -126,6 +126,9 @@ Patch2012: 0001-cgroup-make-css_set-pin-its-css-s-to-avoid-use-afer-.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
 Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
 Patch2015: Input-aiptek-fix-crash-on-detecting-device-without-e.patch
+
+# ignore i915 no acpi video bus found
+Patch3001: ignore_i915_no_acpi_video_bus_found.patch
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -309,6 +312,8 @@ cat %{SOURCE3000} |patch -p1
 %patch2013 -p1
 %patch2014 -p1
 %patch2015 -p1
+
+%patch3001 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -718,6 +723,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Dec 08 2015 sulit <sulitsrc@gmail.com> - 4.4.0-11
+- add ignore i915 no acpi video bus found patch
+
 * Mon Dec 07 2015 sulit <sulitsrc@gmail.com> - 4.4.0-10
 - update kernel to 4.4.0-rc4
 - update amd.tar.gz and add amd ACP
