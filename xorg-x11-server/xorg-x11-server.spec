@@ -14,7 +14,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.18.0
-Release:   4
+Release:   5
 URL:       http://www.x.org
 License:   MIT
 
@@ -67,6 +67,14 @@ Patch20013: 0014-glamor-use-real-types-for-glamor_egl-public-gbm-functions.patch
 Patch20014: 0015-glamor-simplify-DRI3-pixmap-from-fd-using-GBM.patch
 Patch20015: 0016-glamor-make-glamor_get_name_from_bo-static.patch
 Patch20016: 0017-glamor-delay-making-pixmaps-shareable-util-we-need-to.patch
+
+Patch20030: 0002-fix-minor-memory-leak.patch
+Patch20031: 0003-xwayland-fix-memleak-on-error-path-in-xwl_realize_window.patch
+Patch20032: 0004-xwayland-check-if-xwl_output-succeeded.patch
+Patch20033: 0005-xwayland-do-not-set-root-clip-when-rootless.patch
+Patch20034: 0006-xwayland-always-update-the-wl_pointer-cursor-on-pointer-focus.patch
+Patch20035: 0007-xwayland-update-screen-size-on-output-removal.patch
+Patch20036: 0008-x86emu-correctly-handle-0x66-prefix-for-some-instruction.patch
 
 
 BuildRequires: automake autoconf libtool pkgconfig
@@ -275,6 +283,14 @@ drivers, input drivers, or other X modules should install this package.
 %patch20015 -p1
 %patch20016 -p1
 
+%patch20030 -p1
+%patch20031 -p1
+%patch20032 -p1
+%patch20033 -p1
+%patch20034 -p1
+%patch20035 -p1
+%patch20036 -p1
+
 %build
 autoreconf -ivf
 export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
@@ -445,6 +461,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-5
+- Backport more patches
+
 * Sun Nov 22 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-4
 - Backport some patches from 1.19 git
 
