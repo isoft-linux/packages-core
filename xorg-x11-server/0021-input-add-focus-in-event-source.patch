@@ -1,0 +1,97 @@
+From 816015648ffe660ddaa0f7d4d192e555b723c372 Mon Sep 17 00:00:00 2001
+From: Daniel Stone <daniels@collabora.com>
+Date: Fri, 20 Nov 2015 15:37:30 +0000
+Subject: Input: Add focus-in event source
+
+Add a new event source type for keypress events synthesised from focus
+notifications (e.g. KeymapNotify from the parent server, when running
+nested). This is used to keep the keys-down array in sync with the host
+server's, without sending actual keypress events to clients.
+
+Signed-off-by: Daniel Stone <daniels@collabora.com>
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+diff --git a/Xi/exevents.c b/Xi/exevents.c
+index e728310..74e49ed 100644
+--- a/Xi/exevents.c
++++ b/Xi/exevents.c
+@@ -1760,6 +1760,10 @@ ProcessDeviceEvent(InternalEvent *ev, DeviceIntPtr device)
+ 
+     switch (event->type) {
+     case ET_KeyPress:
++        /* Don't deliver focus events (e.g. from KeymapNotify when running
++         * nested) to clients. */
++        if (event->source_type == EVENT_SOURCE_FOCUS)
++            return;
+         if (!grab && CheckDeviceGrabs(device, event, 0))
+             return;
+         break;
+diff --git a/dix/getevents.c b/dix/getevents.c
+index f04b415..4d06818 100644
+--- a/dix/getevents.c
++++ b/dix/getevents.c
+@@ -1101,6 +1101,11 @@ GetKeyboardEvents(InternalEvent *events, DeviceIntPtr pDev, int type,
+     }
+ #endif
+ 
++    if (type == KeymapNotify) {
++        source_type = EVENT_SOURCE_FOCUS;
++        type = KeyPress;
++    }
++
+     /* refuse events from disabled devices */
+     if (!pDev->enabled)
+         return 0;
+diff --git a/include/eventstr.h b/include/eventstr.h
+index 4fd846f..7446961 100644
+--- a/include/eventstr.h
++++ b/include/eventstr.h
+@@ -83,6 +83,7 @@ enum EventType {
+  */
+ enum DeviceEventSource {
+   EVENT_SOURCE_NORMAL = 0, /**< Default: from a user action (e.g. key press) */
++  EVENT_SOURCE_FOCUS, /**< Keys or buttons previously down on focus-in */
+ };
+ 
+ /**
+diff --git a/xkb/xkbActions.c b/xkb/xkbActions.c
+index ddd09ab..aeb702c 100644
+--- a/xkb/xkbActions.c
++++ b/xkb/xkbActions.c
+@@ -1206,6 +1206,32 @@ XkbActionGetFilter(DeviceIntPtr dev, DeviceEvent *event, KeyCode key,
+     XkbSrvInfoPtr xkbi = dev->key->xkbInfo;
+     XkbFilterPtr filter;
+ 
++    /* For focus events, we only want to run actions which update our state to
++     * (hopefully vaguely kinda) match that of the host server, rather than
++     * actually execute anything. For example, if we enter our VT with
++     * Ctrl+Alt+Backspace held down, we don't want to terminate our server
++     * immediately, but we _do_ want Ctrl+Alt to be latched down, so if
++     * Backspace is released and then pressed again, the server will terminate.
++     *
++     * This is pretty flaky, and we should in fact inherit the complete state
++     * from the host server. There are some state combinations that we cannot
++     * express by running the state machine over every key, e.g. if AltGr+Shift
++     * generates a different state to Shift+AltGr. */
++    if (event->source_type == EVENT_SOURCE_FOCUS) {
++        switch (act->type) {
++        case XkbSA_SetMods:
++        case XkbSA_SetGroup:
++        case XkbSA_LatchMods:
++        case XkbSA_LatchGroup:
++        case XkbSA_LockMods:
++        case XkbSA_LockGroup:
++            break;
++        default:
++            *sendEvent = 1;
++            return;
++        }
++    }
++
+     switch (act->type) {
+     case XkbSA_SetMods:
+     case XkbSA_SetGroup:
+-- 
+cgit v0.10.2
+

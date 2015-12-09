@@ -1,0 +1,59 @@
+From 21c1680e83865a52d88cf8c80fb236d212931e5c Mon Sep 17 00:00:00 2001
+From: Keith Packard <keithp@keithp.com>
+Date: Wed, 11 Nov 2015 22:02:08 -0800
+Subject: hw/kdrive: Use NotifyFd interface for kdrive/linux APM monitoring
+
+Replace the block/wakeup handlers with a NotifyFd callback
+
+Reviewed-by: Adam Jackson <ajax@redhat.com>
+Signed-off-by: Keith Packard <keithp@keithp.com>
+
+diff --git a/hw/kdrive/linux/linux.c b/hw/kdrive/linux/linux.c
+index 73a8169..a52bdef 100644
+--- a/hw/kdrive/linux/linux.c
++++ b/hw/kdrive/linux/linux.c
+@@ -169,19 +169,12 @@ LinuxSetSwitchMode(int mode)
+     }
+ }
+ 
+-static void
+-LinuxApmBlock(void *blockData, OSTimePtr pTimeout, void *pReadmask)
+-{
+-}
+-
+ static Bool LinuxApmRunning;
+ 
+ static void
+-LinuxApmWakeup(void *blockData, int result, void *pReadmask)
++LinuxApmNotify(int fd, int mask, void *blockData)
+ {
+-    fd_set *readmask = (fd_set *) pReadmask;
+-
+-    if (result > 0 && LinuxApmFd >= 0 && FD_ISSET(LinuxApmFd, readmask)) {
++    if (LinuxApmFd >= 0) {
+         apm_event_t event;
+         Bool running = LinuxApmRunning;
+         int cmd = APM_IOC_SUSPEND;
+@@ -242,8 +235,7 @@ LinuxEnable(void)
+     if (LinuxApmFd >= 0) {
+         LinuxApmRunning = TRUE;
+         fcntl(LinuxApmFd, F_SETFL, fcntl(LinuxApmFd, F_GETFL) | NOBLOCK);
+-        RegisterBlockAndWakeupHandlers(LinuxApmBlock, LinuxApmWakeup, 0);
+-        AddEnabledDevice(LinuxApmFd);
++        SetNotifyFd(LinuxApmFd, LinuxApmNotify, X_NOTIFY_READ, NULL);
+     }
+ 
+     /*
+@@ -273,8 +265,7 @@ LinuxDisable(void)
+     }
+     enabled = FALSE;
+     if (LinuxApmFd >= 0) {
+-        RemoveBlockAndWakeupHandlers(LinuxApmBlock, LinuxApmWakeup, 0);
+-        RemoveEnabledDevice(LinuxApmFd);
++        RemoveNotifyFd(LinuxApmFd);
+         close(LinuxApmFd);
+         LinuxApmFd = -1;
+     }
+-- 
+cgit v0.10.2
+

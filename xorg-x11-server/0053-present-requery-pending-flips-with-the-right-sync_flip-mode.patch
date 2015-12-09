@@ -1,0 +1,59 @@
+From b2d55338f6b8f43ebcb49994abad123a797248cf Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Sun, 8 Feb 2015 09:47:40 +0000
+Subject: present: Requery pending flips with the right sync_flip mode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When verifying whether a pending flip is still valid, we need to pass
+down the orignal sync_flip mode (e.g. if the driver only supports sync
+flips, verifying a async flip will falsely fail).
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+
+diff --git a/present/present.c b/present/present.c
+index beb01dc..7af6bb7 100644
+--- a/present/present.c
++++ b/present/present.c
+@@ -453,6 +453,7 @@ present_flip_notify(present_vblank_ptr vblank, uint64_t ust, uint64_t crtc_msc)
+     screen_priv->flip_window = vblank->window;
+     screen_priv->flip_serial = vblank->serial;
+     screen_priv->flip_pixmap = vblank->pixmap;
++    screen_priv->flip_sync = vblank->sync_flip;
+     screen_priv->flip_idle_fence = vblank->idle_fence;
+ 
+     vblank->pixmap = NULL;
+@@ -541,14 +542,14 @@ present_check_flip_window (WindowPtr window)
+          * Check current flip
+          */
+         if (window == screen_priv->flip_window) {
+-            if (!present_check_flip(screen_priv->flip_crtc, window, screen_priv->flip_pixmap, FALSE, NULL, 0, 0))
++            if (!present_check_flip(screen_priv->flip_crtc, window, screen_priv->flip_pixmap, screen_priv->flip_sync, NULL, 0, 0))
+                 present_unflip(screen);
+         }
+     }
+ 
+     /* Now check any queued vblanks */
+     xorg_list_for_each_entry(vblank, &window_priv->vblank, window_list) {
+-        if (vblank->queued && vblank->flip && !present_check_flip(vblank->crtc, window, vblank->pixmap, FALSE, NULL, 0, 0))
++        if (vblank->queued && vblank->flip && !present_check_flip(vblank->crtc, window, vblank->pixmap, vblank->sync_flip, NULL, 0, 0))
+             vblank->flip = FALSE;
+     }
+ }
+diff --git a/present/present_priv.h b/present/present_priv.h
+index 996292e..d007fdb 100644
+--- a/present/present_priv.h
++++ b/present/present_priv.h
+@@ -93,6 +93,7 @@ typedef struct present_screen_priv {
+     uint32_t                    flip_serial;
+     PixmapPtr                   flip_pixmap;
+     present_fence_ptr           flip_idle_fence;
++    Bool                        flip_sync;
+ 
+     present_screen_info_ptr     info;
+ } present_screen_priv_rec, *present_screen_priv_ptr;
+-- 
+cgit v0.10.2
+

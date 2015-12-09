@@ -1,0 +1,101 @@
+From 58354fcf472cefc35b9c19cf84bf079cadfa2e1d Mon Sep 17 00:00:00 2001
+From: Keith Packard <keithp@keithp.com>
+Date: Wed, 11 Nov 2015 22:02:10 -0800
+Subject: kdrive/ephyr: Use NotifyFd for XCB connection input [v2]
+
+Eliminates polling every 20ms for device input.
+
+v2: rename ephyrPoll to ephyrXcbNotify and fix the API so it can be
+    used directly for SetNotifyFd. Thanks to Daniel Martin
+    <consume.noise@gmail.com>
+
+Reviewed-by: Adam Jackson <ajax@redhat.com>
+Signed-off-by: Keith Packard <keithp@keithp.com>
+Cc: Daniel Martin <consume.noise@gmail.com>
+
+diff --git a/hw/kdrive/ephyr/ephyr.c b/hw/kdrive/ephyr/ephyr.c
+index cb1c16e..896bac5 100644
+--- a/hw/kdrive/ephyr/ephyr.c
++++ b/hw/kdrive/ephyr/ephyr.c
+@@ -1182,8 +1182,8 @@ ephyrProcessConfigureNotify(xcb_generic_event_t *xev)
+ #endif /* RANDR */
+ }
+ 
+-void
+-ephyrPoll(void)
++static void
++ephyrXcbNotify(int fd, int ready, void *data)
+ {
+     xcb_connection_t *conn = hostx_get_xcbconn();
+ 
+@@ -1334,6 +1334,7 @@ static Status
+ MouseEnable(KdPointerInfo * pi)
+ {
+     ((EphyrPointerPrivate *) pi->driverPrivate)->enabled = TRUE;
++    SetNotifyFd(hostx_get_fd(), ephyrXcbNotify, X_NOTIFY_READ, NULL);
+     return Success;
+ }
+ 
+@@ -1341,6 +1342,7 @@ static void
+ MouseDisable(KdPointerInfo * pi)
+ {
+     ((EphyrPointerPrivate *) pi->driverPrivate)->enabled = FALSE;
++    RemoveNotifyFd(hostx_get_fd());
+     return;
+ }
+ 
+diff --git a/hw/kdrive/ephyr/ephyr.h b/hw/kdrive/ephyr/ephyr.h
+index 18bfe11..f5015f6 100644
+--- a/hw/kdrive/ephyr/ephyr.h
++++ b/hw/kdrive/ephyr/ephyr.h
+@@ -168,9 +168,6 @@ Bool
+ Bool
+  ephyrCreateColormap(ColormapPtr pmap);
+ 
+-void
+- ephyrPoll(void);
+-
+ #ifdef RANDR
+ Bool
+  ephyrRandRGetInfo(ScreenPtr pScreen, Rotation * rotations);
+diff --git a/hw/kdrive/ephyr/hostx.c b/hw/kdrive/ephyr/hostx.c
+index 3991c51..49516bb 100644
+--- a/hw/kdrive/ephyr/hostx.c
++++ b/hw/kdrive/ephyr/hostx.c
+@@ -1113,6 +1113,12 @@ hostx_get_screen(void)
+ }
+ 
+ int
++hostx_get_fd(void)
++{
++    return xcb_get_file_descriptor(HostX.conn);
++}
++
++int
+ hostx_get_window(int a_screen_number)
+ {
+     EphyrScrPriv *scrpriv;
+diff --git a/hw/kdrive/ephyr/hostx.h b/hw/kdrive/ephyr/hostx.h
+index 9299e8d..d416dae 100644
+--- a/hw/kdrive/ephyr/hostx.h
++++ b/hw/kdrive/ephyr/hostx.h
+@@ -198,4 +198,6 @@ int hostx_has_dri(void);
+ int hostx_has_glx(void);
+ #endif                          /* XF86DRI */
+ 
++int hostx_get_fd(void);
++
+ #endif /*_XLIBS_STUFF_H_*/
+diff --git a/hw/kdrive/ephyr/os.c b/hw/kdrive/ephyr/os.c
+index 0dbcbb8..b481d0a 100644
+--- a/hw/kdrive/ephyr/os.c
++++ b/hw/kdrive/ephyr/os.c
+@@ -45,5 +45,4 @@ EphyrInit(void)
+ 
+ KdOsFuncs EphyrOsFuncs = {
+     .Init = EphyrInit,
+-    .pollEvents = ephyrPoll,
+ };
+-- 
+cgit v0.10.2
+
