@@ -1,0 +1,39 @@
+Binary files xf86-video-intel/.git/index and xf86-video-intel.fix/.git/index differ
+diff -Nur xf86-video-intel/src/intel_options.c xf86-video-intel.fix/src/intel_options.c
+--- xf86-video-intel/src/intel_options.c	2015-11-20 12:13:30.000000000 +0800
++++ xf86-video-intel.fix/src/intel_options.c	2015-12-08 22:24:33.441322204 +0800
+@@ -31,6 +31,7 @@
+ 	{OPTION_XVMC,		"XvMC",		OPTV_BOOLEAN,	{0},	1},
+ #endif
+ #ifdef USE_SNA
++	{OPTION_SWCURSOR,	"SWCursor",	OPTV_BOOLEAN,	{0},	0},
+ 	{OPTION_ZAPHOD,		"ZaphodHeads",	OPTV_STRING,	{0},	0},
+ 	{OPTION_VIRTUAL,	"VirtualHeads",	OPTV_INTEGER,	{0},	0},
+ 	{OPTION_TEAR_FREE,	"TearFree",	OPTV_BOOLEAN,	{0},	0},
+diff -Nur xf86-video-intel/src/intel_options.h xf86-video-intel.fix/src/intel_options.h
+--- xf86-video-intel/src/intel_options.h	2015-11-20 12:13:30.000000000 +0800
++++ xf86-video-intel.fix/src/intel_options.h	2015-12-08 22:24:43.091322032 +0800
+@@ -35,6 +35,7 @@
+ #define INTEL_XVMC 1
+ #endif
+ #ifdef USE_SNA
++	OPTION_SWCURSOR,
+ 	OPTION_ZAPHOD,
+ 	OPTION_VIRTUAL,
+ 	OPTION_TEAR_FREE,
+diff -Nur xf86-video-intel/src/sna/sna_display.c xf86-video-intel.fix/src/sna/sna_display.c
+--- xf86-video-intel/src/sna/sna_display.c	2015-12-01 18:11:52.000000000 +0800
++++ xf86-video-intel.fix/src/sna/sna_display.c	2015-12-08 22:29:52.575316489 +0800
+@@ -5981,8 +5981,12 @@
+ static Bool
+ sna_use_hw_cursor(ScreenPtr screen, CursorPtr cursor)
+ {
++        Bool swcursor = FALSE;
+ 	struct sna *sna = to_sna_from_screen(screen);
+ 
++        if(xf86GetOptValBool(sna->Options, OPTION_SWCURSOR, &swcursor))
++               if(swcursor) return FALSE;
++
+ 	DBG(("%s (%dx%d)?\n", __FUNCTION__,
+ 	     cursor->bits->width, cursor->bits->height));
+ 
