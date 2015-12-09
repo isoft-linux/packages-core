@@ -1,0 +1,29 @@
+diff --git a/lib/query.c b/lib/query.c
+index 1420744..9d751c0 100644
+--- a/lib/query.c
++++ b/lib/query.c
+@@ -546,7 +546,7 @@ static rpmdbMatchIterator initFilterIterator(rpmts ts, ARGV_const_t argv)
+     return mi;
+ }
+ 
+-static rpmdbMatchIterator initFilterIteratorISoftApp(rpmts ts, ARGV_const_t argv)
++rpmdbMatchIterator initFilterIteratorISoftApp(rpmts ts, ARGV_const_t argv)
+ {
+     rpmdbMatchIterator mi = rpmtsInitIteratorISoftApp(ts, RPMDBI_PACKAGES, NULL, 0);
+ 
+diff --git a/lib/rpmcli.h b/lib/rpmcli.h
+index 1228666..8a085f8 100644
+--- a/lib/rpmcli.h
++++ b/lib/rpmcli.h
+@@ -467,6 +467,11 @@ int rpmcliVerifySignatures(rpmts ts, ARGV_const_t argv);
+  */
+ int rpmcliVerifySignaturesISoftApp(rpmts ts, ARGV_const_t argv);
+ 
++/** \ingroup rpmcli
++ * Initialize filter iterator for isoftapp
++ */
++rpmdbMatchIterator initFilterIteratorISoftApp(rpmts ts, ARGV_const_t argv);
++
+ #ifdef __cplusplus
+ }
+ #endif

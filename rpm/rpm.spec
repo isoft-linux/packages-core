@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 34
+Release: 35
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -63,8 +63,8 @@ Patch1500: rpm-macro-add-python3.patch
 Patch2000: 0001-isoftapp-skeleton.patch
 # Keep silent DB
 Patch2001: 0002-db-quite.patch
-# Add isoftapp Packages count support for fujiang
-Patch2002: 0003-isoftapp-packages-count.patch
+# isoftapp need public initFilterIteratorISoftApp API for fujiang
+Patch2002: 0003-isoftapp-need-public-init-filter-iter.patch
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -411,6 +411,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Dec 09 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- isoftapp need public initFilterIteratorISoftApp API for fujiang.
+
 * Wed Dec 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Add isoftapp Packages count support.
 
