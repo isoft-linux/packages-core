@@ -1,6 +1,6 @@
 Summary: libevdev is a wrapper library for evdev devices. 
 Name: libevdev
-Version: 1.4.2
+Version: 1.4.5
 Release: 2
 License: GPL
 Source0: http://www.freedesktop.org/software/libevdev/%{name}-%{version}.tar.xz
@@ -51,6 +51,9 @@ rm -rf %{buildroot}
 %{_includedir}/*
 
 %changelog
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.4.5-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.4.2-2
 - Rebuild for new 4.0 release
 

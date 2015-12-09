@@ -14,7 +14,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.18.0
-Release:   5
+Release:   6
 URL:       http://www.x.org
 License:   MIT
 
@@ -68,13 +68,43 @@ Patch20014: 0015-glamor-simplify-DRI3-pixmap-from-fd-using-GBM.patch
 Patch20015: 0016-glamor-make-glamor_get_name_from_bo-static.patch
 Patch20016: 0017-glamor-delay-making-pixmaps-shareable-util-we-need-to.patch
 
-Patch20030: 0002-fix-minor-memory-leak.patch
-Patch20031: 0003-xwayland-fix-memleak-on-error-path-in-xwl_realize_window.patch
-Patch20032: 0004-xwayland-check-if-xwl_output-succeeded.patch
-Patch20033: 0005-xwayland-do-not-set-root-clip-when-rootless.patch
-Patch20034: 0006-xwayland-always-update-the-wl_pointer-cursor-on-pointer-focus.patch
-Patch20035: 0007-xwayland-update-screen-size-on-output-removal.patch
-Patch20036: 0008-x86emu-correctly-handle-0x66-prefix-for-some-instruction.patch
+Patch20017: 0018-fix-minor-memory-leak.patch
+Patch20018: 0019-Split-filter-execution-into-separate-function.patch
+Patch20019: 0020-input-add-deviceEventSource-enum.patch
+Patch20020: 0021-input-add-focus-in-event-source.patch
+Patch20021: 0022-xwayland-use-focusin-events-for-keyboard-enter.patch
+Patch20022: 0023-xnest-fix-needless-build-dependency-on-xcb-util-keysyms.patch
+Patch20023: 0024-dix-remove-redundant-ChangeWindowProperty.patch
+Patch20024: 0025-kdrive-fix-off-by-one.patch
+Patch20025: 0026-replace-sun-with__sun.patch
+Patch20026: 0027-xwayland-fix-memleak-on-error-path-in-xwl_realize_window.patch
+Patch20027: 0028-xwayland-check-if-xwl_output-succeeded.patch
+Patch20028: 0029-xwayland-do-not-set-root-clip-when-rootless.patch
+Patch20029: 0030-xwayland-always-update-the-wl_pointer-cursor-on-pointer-focus.patch
+Patch20030: 0031-xwayland-update-screen-size-on-output-removal.patch
+
+Patch20031: 0008-x86emu-correctly-handle-0x66-prefix-for-some-instruction.patch
+Patch20032: 0056-x86emu-squash-a-warning.patch
+Patch20033: 0009-remove-non-smart-scheduler-do-not-require-setitimer.patch
+Patch20034: 0010-render-use-ostimer-for-animated-cursor-timing.patch
+Patch20035: 0011-dix-move-initfonts-up-above-screen-initialization.patch
+
+Patch20040: 0040-os-add-nofityfd-interfaces.patch
+Patch20041: 0041-os-implement-support-for-notifyfd-X_NOTIFY_WRITE.patch
+Patch20042: 0042-config-use-NotifyFd-for-dbus-interface.patch
+Patch20043: 0043-config-use-NotifyFd-interface-for-udev.patch
+Patch20044: 0044-hw-kdrive-use-NotifyFd-interface-for-kdrive-linux-APM-monitoring.patch
+Patch20045: 0045-hw-kdrive-use-NotifyFd-for-kdrive-input-devices.patch
+Patch20046: 0046-kdrive-ephyr-use-NotifyFd-for-XCB-connection-input.patch
+Patch20047: 0047-modesettings-use-NotifyFd-for-drm-event-monitoring.patch
+Patch20048: 0048-hw-xwayland-use-NotifyFd-handler-to-monitor-wayland-socket.patch
+Patch20049: 0049-xext-xselinux-use-NotifyFd.patch
+Patch20050: 0050-os-xdmcp-replace-xdmcp-block-wakeup-handlers-with-timer-and-NotifyFd.patch
+Patch20051: 0051-os-use-NotifyFd-interface-for-listen-descriptors.patch
+Patch20052: 0052-modesetting-drop-platform_dev-pointer.patch
+Patch20053: 0053-present-requery-pending-flips-with-the-right-sync_flip-mode.patch
+Patch20054: 0054-present-when-cancelling-pending-sync-flip-requeue-it.patch
+Patch20055: 0055-present-do-not-replace-pixmaps-on-redirected-window-on-unflip.patch
 
 
 BuildRequires: automake autoconf libtool pkgconfig
@@ -282,15 +312,43 @@ drivers, input drivers, or other X modules should install this package.
 %patch20014 -p1
 %patch20015 -p1
 %patch20016 -p1
-
+%patch20017 -p1
+%patch20018 -p1
+%patch20019 -p1
+%patch20020 -p1
+%patch20021 -p1
+%patch20022 -p1
+%patch20023 -p1
+%patch20024 -p1
+%patch20025 -p1
+%patch20026 -p1
+%patch20027 -p1
+%patch20028 -p1
+%patch20029 -p1
 %patch20030 -p1
+
 %patch20031 -p1
 %patch20032 -p1
 %patch20033 -p1
 %patch20034 -p1
 %patch20035 -p1
-%patch20036 -p1
 
+%patch20040 -p1
+%patch20041 -p1
+%patch20042 -p1
+%patch20043 -p1
+%patch20044 -p1
+%patch20045 -p1
+%patch20046 -p1
+%patch20047 -p1
+%patch20048 -p1
+%patch20049 -p1
+%patch20050 -p1
+%patch20051 -p1
+%patch20052 -p1
+%patch20053 -p1
+%patch20054 -p1
+%patch20055 -p1
 %build
 autoreconf -ivf
 export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
@@ -461,6 +519,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-6
+- More patches
+
 * Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-5
 - Backport more patches
 
