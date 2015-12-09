@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 11
+%define release 12
 
 %define extraversion -%{release}
 
@@ -84,6 +84,7 @@ Patch1: linux-add-amdgpu-powerplay-config.patch
 #amd added drm_pcie_get_max_link_width to drm.
 Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
 Patch3: backport-amdgpu-acp-asoc.patch
+Patch4: amdgpu-fix-warning.patch
 #End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
@@ -115,10 +116,10 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 # remove it from kernel4.4.0-rc3
 #Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
 
-#https://bugs.freedesktop.org/show_bug.cgi?id=92638
-#It should be removed later.
-Patch2004: drm-i915-Ensure-associated-VMAs-are-inactive-when-contexts-are-destroyed.patch
-
+#Upstream backport, may removed later.
+Patch2004: 0001-drm-i915-fix-idle_frames-counter.patch
+Patch2005: 0002-drm-i915-remove-incorrect-warning-in-context-cleanup.patch
+Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch 
 
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
 Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
@@ -267,6 +268,7 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   cat %{PATCH1} |patch -p1
   cat %{PATCH2} |patch -p1
   cat %{PATCH3} |patch -p1
+  cat %{PATCH4} |patch -p1
   popd
   #end amdgpu
 else 
@@ -305,6 +307,8 @@ cat %{SOURCE3000} |patch -p1
 %patch2002 -p1
 
 %patch2004 -p1
+%patch2005 -p1
+%patch2006 -p1
 
 %patch2010 -p1
 %patch2011 -p1
@@ -723,6 +727,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-12
+- Backport some i915 fixes
+
 * Tue Dec 08 2015 sulit <sulitsrc@gmail.com> - 4.4.0-11
 - add ignore i915 no acpi video bus found patch
 
