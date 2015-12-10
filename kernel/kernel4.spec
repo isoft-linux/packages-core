@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 12
+%define release 13
 
 %define extraversion -%{release}
 
@@ -727,6 +727,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-13
+- Update to latest amdgpu powerplay and rebase acp patch
+
 * Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-12
 - Backport some i915 fixes
 
