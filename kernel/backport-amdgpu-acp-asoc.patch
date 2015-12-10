@@ -752,15 +752,6 @@ diff -Nur linux-4.4.0.x86_64/drivers/gpu/drm/amd/amdgpu/amdgpu.h linux-4.4.0.x86
  
  #include "gpu_scheduler.h"
  
-@@ -957,6 +958,8 @@
- 	struct amdgpu_vm_id	ids[AMDGPU_MAX_RINGS];
- 	/* for interval tree */
- 	spinlock_t		it_lock;
-+	/* protecting freed */
-+	spinlock_t		freed_lock;
- };
- 
- struct amdgpu_vm_manager {
 @@ -1919,6 +1922,13 @@
  
  
@@ -947,66 +938,6 @@ diff -Nur linux-4.4.0.x86_64/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.h linux-4.4.0
 +unsigned amdgpu_irq_create_mapping(struct amdgpu_device *adev, unsigned src_id);
 +
  #endif
-diff -Nur linux-4.4.0.x86_64/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c linux-4.4.0.x86_64n/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
---- linux-4.4.0.x86_64/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c	2015-12-05 10:39:08.000000000 +0800
-+++ linux-4.4.0.x86_64n/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c	2015-12-06 22:29:47.562955593 +0800
-@@ -885,17 +885,21 @@
- 	struct amdgpu_bo_va_mapping *mapping;
- 	int r;
- 
-+	spin_lock(&vm->freed_lock);
- 	while (!list_empty(&vm->freed)) {
- 		mapping = list_first_entry(&vm->freed,
- 			struct amdgpu_bo_va_mapping, list);
- 		list_del(&mapping->list);
--
-+		spin_unlock(&vm->freed_lock);
- 		r = amdgpu_vm_bo_update_mapping(adev, vm, mapping, 0, 0, NULL);
- 		kfree(mapping);
- 		if (r)
- 			return r;
- 
-+		spin_lock(&vm->freed_lock);
- 	}
-+	spin_unlock(&vm->freed_lock);
-+
- 	return 0;
- 
- }
-@@ -1150,10 +1154,13 @@
- 	spin_unlock(&vm->it_lock);
- 	trace_amdgpu_vm_bo_unmap(bo_va, mapping);
- 
--	if (valid)
-+	if (valid) {
-+		spin_lock(&vm->freed_lock);
- 		list_add(&mapping->list, &vm->freed);
--	else
-+		spin_unlock(&vm->freed_lock);
-+	} else {
- 		kfree(mapping);
-+	}
- 
- 	return 0;
- }
-@@ -1186,7 +1193,9 @@
- 		interval_tree_remove(&mapping->it, &vm->va);
- 		spin_unlock(&vm->it_lock);
- 		trace_amdgpu_vm_bo_unmap(bo_va, mapping);
-+		spin_lock(&vm->freed_lock);
- 		list_add(&mapping->list, &vm->freed);
-+		spin_unlock(&vm->freed_lock);
- 	}
- 	list_for_each_entry_safe(mapping, next, &bo_va->invalids, list) {
- 		list_del(&mapping->list);
-@@ -1247,6 +1256,7 @@
- 	INIT_LIST_HEAD(&vm->cleared);
- 	INIT_LIST_HEAD(&vm->freed);
- 	spin_lock_init(&vm->it_lock);
-+	spin_lock_init(&vm->freed_lock);
- 	pd_size = amdgpu_vm_directory_size(adev);
- 	pd_entries = amdgpu_vm_num_pdes(adev);
- 
 diff -Nur linux-4.4.0.x86_64/drivers/gpu/drm/amd/amdgpu/cik_ih.c linux-4.4.0.x86_64n/drivers/gpu/drm/amd/amdgpu/cik_ih.c
 --- linux-4.4.0.x86_64/drivers/gpu/drm/amd/amdgpu/cik_ih.c	2015-12-05 10:39:08.000000000 +0800
 +++ linux-4.4.0.x86_64n/drivers/gpu/drm/amd/amdgpu/cik_ih.c	2015-12-06 22:30:05.353955274 +0800
