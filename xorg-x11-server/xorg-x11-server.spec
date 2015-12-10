@@ -14,7 +14,7 @@
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
 Version:   1.18.0
-Release:   6
+Release:   7
 URL:       http://www.x.org
 License:   MIT
 
@@ -353,6 +353,7 @@ drivers, input drivers, or other X modules should install this package.
 autoreconf -ivf
 export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
 %configure \
+    --enable-ipv6 \
     --enable-xorg \
     --enable-kdrive \
     --enable-kdrive-evdev \
@@ -519,6 +520,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-7
+- Enable ipv6
+
 * Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-6
 - More patches
 
