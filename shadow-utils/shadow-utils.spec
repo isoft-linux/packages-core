@@ -39,6 +39,7 @@ Patch100: fix-groups-man-page-show-error.patch
 License: BSD and GPLv2+
 BuildRequires: libacl-devel libattr-devel
 BuildRequires: bison flex
+BuildRequires: pam-devel
 #BuildRequires: autoconf, automake, libtool, gettext-devel
 BuildRequires: gnome-doc-utils
 Requires: setup
@@ -287,6 +288,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Dec 11 2015 sulit <sulitsrc@gmail.com> - 2:4.2.1-4
 - fix groups man-page show error
+- add pam-devel buildrequire
 
 * Fri Oct 23 2015 cjacker - 2:4.2.1-3
 - Rebuild for new 4.0 release
