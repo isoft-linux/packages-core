@@ -23,10 +23,12 @@
 
 %define build_libcxx 1
 %define build_libcxxabi 1
+%define build_libunwind 1
 #libunwind shipped by llvm conflict with libunwind of GNU.
 #we enable static build only.
 #if disable libunwind build, libcxx Exception support will broken.
-%define build_libunwind 1
+%define build_static_libunwind 1
+
 %define build_openmp 1
 
 %define build_test_suite 0
@@ -476,7 +478,9 @@ cmake \
     -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
 %endif
 %if %{build_libunwind}
+%if %{build_static_libunwind}
     -DLIBUNWIND_ENABLE_SHARED=OFF \
+%endif
     -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
 %else
     -DLIBCXXABI_USE_LLVM_UNWINDER=OFF \
@@ -553,7 +557,9 @@ rm -rf %{buildroot}%{_libdir}/libgomp.so
 %endif
 
 %if %{build_libunwind}
+%if %{build_static_libunwind}
 rm -rf %{buildroot}%{_libdir}/libunwind.a
+%endif
 %endif
 
 %check
@@ -786,7 +792,9 @@ exit 0
 %{_libdir}/libc++abi.so.*
 %endif
 %if %{build_libunwind}
+%if "%{build_static_libunwind}" == "0"
 %{_libdir}/libunwind.so.*
+%endif
 %endif
 
 %files -n libcxx-devel
@@ -797,6 +805,7 @@ exit 0
 %{_libdir}/libc++abi.a
 %endif
 %if %{build_libunwind}
+%if "%{build_static_libunwind}" == "0"
 %{_libdir}/libunwind.so
 %endif
 %endif
