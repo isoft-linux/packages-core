@@ -24,14 +24,16 @@
 %define build_libcxx 1
 %define build_libcxxabi 1
 #libunwind shipped by llvm conflict with libunwind of GNU.
-%define build_libunwind 0 
+#we enable static build only.
+#if disable libunwind build, libcxx Exception support will broken.
+%define build_libunwind 1
 %define build_openmp 1
 
 %define build_test_suite 0
 
 Name: llvm
 Version: 3.7.1
-Release: 12.252402.svn 
+Release: 13.252402.svn 
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -474,6 +476,7 @@ cmake \
     -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
 %endif
 %if %{build_libunwind}
+    -DLIBUNWIND_ENABLE_SHARED=OFF \
     -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
 %else
     -DLIBCXXABI_USE_LLVM_UNWINDER=OFF \
@@ -547,6 +550,10 @@ rm -rf %{buildroot}%{_datadir}/clang/*.applescript
 #Acctually clang only need libomp.so not libgomp.so
 %if %{build_openmp}
 rm -rf %{buildroot}%{_libdir}/libgomp.so
+%endif
+
+%if %{build_libunwind}
+rm -rf %{buildroot}%{_libdir}/libunwind.a
 %endif
 
 %check
@@ -805,6 +812,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-13.252402.svn
+- Enable libunwind static build, otherwise libcxx exception handler will failed
+
 * Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-12.252402.svn
 - Add libcxx/libcxxabi/openmp/polly/lld
 
