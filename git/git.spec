@@ -1,6 +1,6 @@
 Name: 		git
-Version:    	2.6.3
-Release: 	3
+Version:    	2.6.4
+Release: 	2
 Summary:  	Core git tools
 License: 	GPLv2
 URL: 		http://kernel.org/pub/software/scm/git/
@@ -221,6 +221,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog
+* Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 2.6.4-2
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 2.6.3-3
 - My fault, forget add libcurl-devel, brokend http support
 
