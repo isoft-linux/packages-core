@@ -792,9 +792,9 @@ exit 0
 %{_libdir}/libc++abi.so.*
 %endif
 %if %{build_libunwind}
-%if "%{build_static_libunwind}" == "0"
+%if !%{build_static_libunwind}
 %{_libdir}/libunwind.so.*
-%endif #build_static_libunwind
+%endif #!build_static_libunwind
 %endif #build_libunwind
 
 %files -n libcxx-devel
@@ -805,9 +805,9 @@ exit 0
 %{_libdir}/libc++abi.a
 %endif
 %if %{build_libunwind}
-%if "%{build_static_libunwind}" == "0"
+%if !%{build_static_libunwind}
 %{_libdir}/libunwind.so
-%endif #build_static_libunwind
+%endif #!build_static_libunwind
 %endif #build_libunwind
 %endif
 #end build_libcxx
