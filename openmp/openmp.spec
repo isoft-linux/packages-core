@@ -9,7 +9,7 @@ BuildRequires: clang, compiler-wrapper, cmake, ninja-build
 BuildRequires: libcxx-devel libcxxabi-devel
 
 #for llvm-config
-BuildRequires: llvm-devel
+BuildRequires: libllvm-devel
 
 %description
 The OpenMP subproject of LLVM is intended to contain all of the components required to build an executing OpenMP program that are outside the compiler itself. Support for OpenMP 3.1 in Clang is in the process of being promoted into the Clang mainline, and can be found at OpenMP/Clang. 
