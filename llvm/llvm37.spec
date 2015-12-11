@@ -15,21 +15,38 @@
 #check required a large amount of memory to run.
 %global enable_check 0
 
-#build lldb or not. lldb provided by swift
+#disable lldb build, lldb provided by swift(swift ship a modified version, swift REPL depend on it)
 %define build_lldb 0
-%define build_lld 0
-%define build_polly 0
+
+%define build_lld 1 
+%define build_polly 1
+
+%define build_libcxx 1
+%define build_libcxxabi 1
+#libunwind shipped by llvm conflict with libunwind of GNU.
+%define build_libunwind 0 
+%define build_openmp 1
+
 %define build_test_suite 0
 
 Name: llvm
 Version: 3.7.1
-Release: 6.252402.svn 
+Release: 12.252402.svn 
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
 URL: http://llvm.org
 
 #Essential components to construct minimal LLVM/Clang toolchain.
+#branch37 rev 252402 is the last version NOT BUMP ABI to 3.7.1
+#svn co -r 252402 http://llvm.org/svn/llvm-project/llvm/branches/release_37 llvm 
+#svn co -r 252402 http://llvm.org/svn/llvm-project/cfe/branches/release_37 cfe
+#svn co -r 252402 http://llvm.org/svn/llvm-project/compiler-rt/branches/release_37 compiler-rt
+#svn co -r 252402 http://llvm.org/svn/llvm-project/clang-tools-extra/branches/release_37 clang-tools-extra
+#svn co -r 252402 http://llvm.org/svn/llvm-project/lld/branches/release_37 lld 
+#svn co -r 252402 http://llvm.org/svn/llvm-project/polly/branches/release_37 polly
+#but we use latest version of libcxx/libcxxabi/libunwind/openmp
+
 Source0: llvm-%{version}.src.tar.xz
 Source1: cfe-%{version}.src.tar.xz
 Source2: compiler-rt-%{version}.src.tar.xz
@@ -51,6 +68,22 @@ Source12: polly-%{version}.src.tar.xz
 Source13: test-suite-%{version}.src.tar.xz
 %endif
 
+%if %{build_libcxx}
+Source14: libcxx-%{version}.src.tar.xz
+%endif
+
+%if %{build_libcxxabi}
+Source15: libcxxabi-%{version}.src.tar.xz
+%endif
+
+%if %{build_libunwind}
+Source16: libunwind-%{version}.src.tar.xz
+%endif
+
+%if %{build_openmp}
+Source17: openmp-%{version}.src.tar.xz
+%endif
+
 #polly wrapper scripts
 Source20: pollycc
 Source21: polly++
@@ -62,6 +95,7 @@ Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
 #The intepretor of genenrated ELF by clang contains PATH.
 #It's important.
 Patch1: clang-lib64-to-lib.patch
+
 # Backport LLVM_LINK_LLVM_DYLIB option
 Patch2: llvm-3.7.0-link-tools-against-libLLVM.patch
 # https://llvm.org/bugs/show_bug.cgi?id=24157
@@ -74,7 +108,7 @@ Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
 
 # https://llvm.org/bugs/show_bug.cgi?id=24046
 # Upstreamed - http://reviews.llvm.org/D13206
-Patch7: clang-tools-extra-3.7.0-install-clang-query.patch 
+Patch7: clang-tools-extra-3.7.0-install-clang-query.patch
 # https://llvm.org/bugs/show_bug.cgi?id=24155
 Patch8: 0001-New-MSan-mapping-layout-llvm-part.patch
 Patch9: 0001-New-MSan-mapping-layout-compiler-rt-part.patch
@@ -91,6 +125,13 @@ Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
 # https://llvm.org/bugs/show_bug.cgi?id=24953
 Patch30: lldb-3.7.0-avoid-linking-to-libLLVM.patch
 
+#configure build system of llvm latest svn already enable openmp support.
+#this patch is for cmake build system
+Patch40: llvm37-enable-openmp-build.patch
+
+#use libomp instead of libgomp for clang -fopenmp, it's already enabled upstream in 3.8.x 
+Patch41: clang-use-libomp-as-default-openmp-runtime.patch
+
 BuildRequires: clang gcc-go
 BuildRequires: cmake, ninja-build
 BuildRequires: bison flex libtool-ltdl-devel
@@ -98,6 +139,8 @@ BuildRequires: zip bzip2 coreutils grep gzip sed unzip findutils
 BuildRequires: chrpath
 #not used, doc disabled.
 BuildRequires: doxygen
+
+BuildRequires: subversion
 
 #for test
 BuildRequires: dejagnu tcl-devel
@@ -123,7 +166,7 @@ Requires: alternatives
 %endif
 
 %if %{build_polly}
-BuildRequires: cloog-isl-shared-devel >= 0.18.1
+BuildRequires: isl-devel >= 0.14
 %endif
 
 %description
@@ -252,7 +295,6 @@ This package contains static libraries for develop program with lld library.
 %package -n polly
 Summary: LLVM Framework for High-Level Loop and Data-Locality Optimizations
 Requires: clang = %{version}-%{release}
-Requires: cloog-isl >= 0.18.1
 Requires: gmp-devel
 
 %description -n polly
@@ -263,8 +305,65 @@ Summary: Header files for polly library.
 
 %description -n libpolly-devel
 This package contains header files for polly library.
-%endif #end build_polly
 
+%package -n libpolly-static
+Summary: Static libraries for polly
+Requires: libpolly-devel = %{version}-%{release}
+
+%description -n libpolly-static
+This package contains static libraries for develop program with polly library.
+%endif
+#end build_polly
+
+#start of build_libcxx
+%if %{build_libcxx}
+%package -n libcxx
+Summary: A standard conformant and high-performance implementation of the C++ Standard Library
+Provides: libc++ = %{version}-%{release}
+%if %{build_libcxxabi}
+Provides: libcxxabi = %{version}-%{release}
+%endif
+
+#no matter build libcxxabi or not.
+#these packages should be marked as obsoletes.
+Obsoletes: libcxxabi < %{version}-%{release}
+
+%description -n libcxx
+The libc++ projects provide a standard conformant and high-performance implementation of the C++ Standard Library.
+
+%package -n libcxx-devel
+Summary: Headers and libraries for libcxx
+Requires: libcxx = %{version}-%{release}
+Provides: libc++-devel = %{version}-%{release}
+%if %{build_libcxxabi}
+Provides: libcxxabi-devel = %{version}-%{release}
+%endif
+
+#no matter build libcxxabi or not.
+#these packages should be marked as obsoletes.
+Obsoletes: libcxxabi-devel < %{version}-%{release}
+
+%description -n libcxx-devel
+Headers and libbraries for libcxx
+%endif
+#end build_libcxx
+
+# start build_openmp
+%if %{build_openmp}
+%package -n openmp 
+Summary: OpenMP runtime for use with the OpenMP implementation in Clang
+
+%description -n openmp 
+OpenMP runtime for use with the OpenMP implementation in Clang
+
+%package -n openmp-devel
+Summary: Headers and libraries for openmp.
+Requires: openmp = %{version}-%{release}
+
+%description -n openmp-devel
+Headers and libraries for openmp.
+%endif
+# end build_openmp
 
 %prep
 %setup -q -n llvm-%{version}.src
@@ -300,6 +399,26 @@ mkdir -p projects/test-suite
 tar xf %{SOURCE13} -C projects/test-suite --strip-components=1
 %endif
 
+%if %{build_libcxx}
+mkdir -p projects/libcxx
+tar xf %{SOURCE14} -C projects/libcxx --strip-components=1
+%endif
+
+%if %{build_libcxxabi}
+mkdir -p projects/libcxxabi
+tar xf %{SOURCE15} -C projects/libcxxabi --strip-components=1
+%endif
+
+%if %{build_libunwind}
+mkdir -p projects/libunwind
+tar xf %{SOURCE16} -C projects/libunwind --strip-components=1
+%endif
+
+%if %{build_openmp}
+mkdir -p projects/openmp
+tar xf %{SOURCE17} -C projects/openmp --strip-components=1
+%endif
+
 
 %patch0 -p1
 %patch1 -p1
@@ -321,6 +440,11 @@ tar xf %{SOURCE13} -C projects/test-suite --strip-components=1
 %patch30 -p1 -d tools/lldb
 %endif 
 
+%if %{build_openmp}
+%patch40 -p1
+%patch41 -p1 -d tools/clang
+%endif
+
 %build
 #we use clang/clang++ build llvm/clang
 export CC="clang"
@@ -333,7 +457,7 @@ cmake \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
     -DCMAKE_BUILD_TYPE:STRING=Release \
-    -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
     -DCMAKE_BUILD_TYPE="%{build_type}" \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
@@ -346,8 +470,17 @@ cmake \
     -DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
     -DLLVM_DYLIB_EXPORT_ALL=ON \
     -DLLVM_TARGETS_TO_BUILD="%{llvm_targets}" \
+%if %{build_libcxx}
+    -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
+%endif
+%if %{build_libunwind}
+    -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+%else
+    -DLIBCXXABI_USE_LLVM_UNWINDER=OFF \
+%endif
     -DLLVM_DEFAULT_TARGET_TRIPLE="%{llvm_default_target_triple}" \
     -DCLANG_VENDOR="%{clang_vendor}" ..
+
 ninja
 popd
 
@@ -410,6 +543,12 @@ rm -rf %{buildroot}%{_bindir}/c-index-test
 rm -rf %{buildroot}%{_libdir}/LLVMHello.so
 rm -rf %{buildroot}%{_datadir}/clang/*.applescript
 
+#avoid conflict with libgomp provided by gcc
+#Acctually clang only need libomp.so not libgomp.so
+%if %{build_openmp}
+rm -rf %{buildroot}%{_libdir}/libgomp.so
+%endif
+
 %check
 %if %{enable_check}
 pushd %{_target_platform}
@@ -438,6 +577,11 @@ if [ $1 = 0 ]; then
   %{_sbindir}/alternatives --remove ld %{_bindir}/lld
 fi
 exit 0
+%endif
+
+%if %{build_libcxx}
+%post -n libcxx -p /sbin/ldconfig
+%postun -n libcxx -p /sbin/ldconfig
 %endif
 
 %files
@@ -512,6 +656,11 @@ exit 0
 %dir %{_libdir}/clang
 %{_libdir}/clang/*
 
+#it's belong to openmp
+%if %{build_openmp}
+%exclude %{_libdir}/clang/*/include/omp.h
+%endif
+
 %files -n clang-tools
 %defattr(-,root, root,-)
 %{_bindir}/clang-apply-replacements
@@ -580,6 +729,8 @@ exit 0
 %if %{build_lld}
 %files -n lld
 %{_bindir}/lld
+# {_bindir}/ld.lld
+# {_bindir}/lld-link
 
 %files -n liblld-devel
 %{_includedir}/lld
@@ -614,11 +765,49 @@ exit 0
 %files -n libpolly-devel
 %defattr(-,root,root)
 %{_includedir}/polly
+
+%files -n libpolly-static
+%defattr(-,root,root)
+%{_libdir}/libPolly*.a
 %endif #end build_polly
 
+#start build_libcxx
+%if %{build_libcxx}
+%files -n libcxx
+%{_libdir}/libc++.so.*
+%if %{build_libcxxabi}
+%{_libdir}/libc++abi.so.*
+%endif
+%if %{build_libunwind}
+%{_libdir}/libunwind.so.*
+%endif
 
+%files -n libcxx-devel
+%{_includedir}/c++/v1
+%{_libdir}/libc++.so
+%if %{build_libcxxabi}
+%{_libdir}/libc++abi.so
+%{_libdir}/libc++abi.a
+%endif
+%if %{build_libunwind}
+%{_libdir}/libunwind.so
+%endif
+%endif
+#end build_libcxx
+
+#start build_openmp
+%files -n openmp 
+%{_libdir}/libiomp5.so
+%{_libdir}/libomp.so
+
+%files -n openmp-devel
+%{_libdir}/clang/*/include/omp.h
+#end build_openmp
 
 %changelog
+* Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-12.252402.svn
+- Add libcxx/libcxxabi/openmp/polly/lld
+
 * Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-6.252402.svn
 - Clean spec, disable lld/lldb completely.
 - Use LLVM_BUILD_LLVM_DYLIB to build shared library.
