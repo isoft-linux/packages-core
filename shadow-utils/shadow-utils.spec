@@ -1,7 +1,7 @@
 Summary: Utilities for managing accounts and shadow password files
 Name: shadow-utils
 Version: 4.2.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Epoch: 2
 URL: http://pkg-shadow.alioth.debian.org/
 Source0: http://pkg-shadow.alioth.debian.org/releases/shadow-%{version}.tar.xz
@@ -33,6 +33,8 @@ Patch19: shadow-4.2.1-date-parsing.patch
 Patch20: shadow-4.1.5.1-ingroup.patch
 Patch21: shadow-4.1.5.1-move-home.patch
 Patch22: shadow-4.2.1-audit-update.patch
+
+Patch100: fix-groups-man-page-show-error.patch
 
 License: BSD and GPLv2+
 BuildRequires: libacl-devel libattr-devel
@@ -79,6 +81,7 @@ pushd shadow-%{version}
 %patch20 -p1 -b .ingroup
 %patch21 -p1 -b .move-home
 #%patch22 -p1 -b .audit-update
+%patch100 -p1
 
 iconv -f ISO88591 -t utf-8  doc/HOWTO > doc/HOWTO.utf8
 cp -f doc/HOWTO.utf8 doc/HOWTO
@@ -282,6 +285,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/chgpasswd.8*
 
 %changelog
+* Fri Dec 11 2015 sulit <sulitsrc@gmail.com> - 2:4.2.1-4
+- fix groups man-page show error
+
 * Fri Oct 23 2015 cjacker - 2:4.2.1-3
 - Rebuild for new 4.0 release
 
