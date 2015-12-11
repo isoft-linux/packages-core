@@ -1,7 +1,7 @@
 Summary: GNUstep Objective-C Runtime
 Name: libobjc2 
 Version: 1.8.1
-Release: 2
+Release: 3
 URL: https://github.com/gnustep/libobjc2
 License: see COPYING
 
@@ -13,7 +13,7 @@ Patch2: libobjc2-fix-c++abi-diff-to-stdc++.patch
 #weak should have a signature W.
 Patch3: libobjc-property-should-have-W-with-Weak.patch
 
-BuildRequires: clang llvm libllvm-devel libllvm-static libclang-devel libclang-static libcxx-devel libcxxabi-devel
+BuildRequires: clang libcxx-devel
 BuildRequires: cmake
 Requires: clang
 
@@ -51,33 +51,32 @@ pushd build
 cmake \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_INSTALL_PREFIX=%{_prefix} \
     -DCMAKE_C_FLAGS="-fPIC -D_DEFAULT_SOURCE" \
-    -DCMAKE_CXX_FLAGS="-fPIC -stdlib=libc++ -lc++abi -D_DEFAULT_SOURCE" \
+    -DCMAKE_CXX_FLAGS="-fPIC -stdlib=libc++ -D_DEFAULT_SOURCE" \
     -DDEFAULT_ENABLE_LLVM=ON \
     -DLIB_INSTALL_PATH=%{_libdir} \
     -DBUILD_STATIC_LIBOBJC=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr ..
+    ..
+make
 popd
 
 %install
 pushd build
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%{buildroot}
 popd
-pushd $RPM_BUILD_ROOT/usr/lib
+pushd %{buildroot}%{_libdir}
 ln -s libobjc.so.4.6 libobjc.so.4
 ln -s libobjcxx.so.4.6 libobjcxx.so.4
 popd
 
-chmod 755 $RPM_BUILD_ROOT/usr/lib/*.so*
+chmod 755 %{buildroot}%{_libdir}/*.so*
 
 %check
 #PropertyIntrospectionTest2 will failed, patch4 fixed it.
 pushd build
 make test
 popd
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -92,7 +91,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/*.a
+
 %changelog
+* Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 1.8.1-3
+- Fix spec
+
 * Wed Nov 04 2015 Cjacker <cjacker@foxmail.com> - 1.8.1-2
 - Update to 1.8.1
 
