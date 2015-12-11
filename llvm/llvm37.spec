@@ -794,8 +794,8 @@ exit 0
 %if %{build_libunwind}
 %if "%{build_static_libunwind}" == "0"
 %{_libdir}/libunwind.so.*
-%endif
-%endif
+%endif #build_static_libunwind
+%endif #build_libunwind
 
 %files -n libcxx-devel
 %{_includedir}/c++/v1
@@ -807,7 +807,8 @@ exit 0
 %if %{build_libunwind}
 %if "%{build_static_libunwind}" == "0"
 %{_libdir}/libunwind.so
-%endif
+%endif #build_static_libunwind
+%endif #build_libunwind
 %endif
 #end build_libcxx
 
