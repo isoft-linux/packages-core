@@ -3,7 +3,7 @@
 
 Name: libclc
 Version: 0.2.0
-Release: 12.llvm37.svn20151205
+Release: 16.255421.svn
 Epoch: 2 
 Summary: An open source implementation of the OpenCL 1.1 library requirements
 License: BSD
@@ -71,6 +71,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Sat Dec 12 2015 Cjacker <cjacker@foxmail.com> - 2:0.2.0-16.255421.svn
+- Update and rebuild
+
 * Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 2:0.2.0-12.llvm37.svn20151205
 - Update
 
