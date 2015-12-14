@@ -123,10 +123,12 @@ Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch
 
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
 Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
-Patch2012: 0001-cgroup-make-css_set-pin-its-css-s-to-avoid-use-afer-.patch
+# remove it from kernel4.4.0-rc5
+#Patch2012: 0001-cgroup-make-css_set-pin-its-css-s-to-avoid-use-afer-.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
 Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
 Patch2015: Input-aiptek-fix-crash-on-detecting-device-without-e.patch
+Patch2016: alua_fix.patch
 
 # ignore i915 no acpi video bus found
 Patch3001: ignore_i915_no_acpi_video_bus_found.patch
@@ -312,10 +314,10 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2010 -p1
 %patch2011 -p1
-%patch2012 -p1
 %patch2013 -p1
 %patch2014 -p1
 %patch2015 -p1
+%patch2016 -p1
 
 %patch3001 -p1
 
@@ -729,7 +731,7 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 %changelog
 * Mon Dec 14 2015 sulit <sulitsrc@gmail.com> - 4.4.0-14
 - update to kernel 4.4.0-rc5, the config file has no
-- change
+- change, delete patch 2012 and add patch 2016
 
 * Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-13
 - Update to latest amdgpu powerplay and rebase acp patch
