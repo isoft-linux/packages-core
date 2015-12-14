@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 13
+%define release 14
 
 %define extraversion -%{release}
 
@@ -727,6 +727,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Dec 14 2015 sulit <sulitsrc@gmail.com> - 4.4.0-14
+- update to kernel 4.4.0-rc5, the config file has no
+- change
+
 * Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-13
 - Update to latest amdgpu powerplay and rebase acp patch
 
