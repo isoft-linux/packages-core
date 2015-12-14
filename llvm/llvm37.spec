@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.7.1
-Release: 16.255420.svn 
+Release: 18
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -822,6 +822,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-18
+- Update, remove svn tag from release, it's should be rc2 now
+
 * Sat Dec 12 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-16.255420.svn
 - Update to latest SVN rev of stable branch37
 
