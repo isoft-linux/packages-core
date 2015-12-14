@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.7.1
-Release: 18
+Release: 19
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -191,6 +191,8 @@ Shared libraries for the LLVM compiler infrastructure.
 Summary: Libraries and header files for LLVM
 Requires: libllvm = %{version}-%{release}
 Requires: libffi-devel
+Requires: ncurses-devel
+Requires: zlib-devel
 
 %description -n libllvm-devel
 This package contains library and header files needed to develop new
@@ -822,6 +824,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-19
+- Fix libllvm-devel requires
+
 * Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-18
 - Update, remove svn tag from release, it's should be rc2 now
 
