@@ -35,14 +35,14 @@
 
 Name: llvm
 Version: 3.7.1
-Release: 13.252402.svn 
+Release: 16.255420.svn 
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
 URL: http://llvm.org
 
 #Essential components to construct minimal LLVM/Clang toolchain.
-#branch37 rev 252402 is the last version NOT BUMP ABI to 3.7.1
+#NOTE: branch37 rev 252402 is the last version NOT BUMP ABI to 3.7.1
 #svn co -r 252402 http://llvm.org/svn/llvm-project/llvm/branches/release_37 llvm 
 #svn co -r 252402 http://llvm.org/svn/llvm-project/cfe/branches/release_37 cfe
 #svn co -r 252402 http://llvm.org/svn/llvm-project/compiler-rt/branches/release_37 compiler-rt
@@ -117,7 +117,7 @@ Patch7: clang-tools-extra-3.7.0-install-clang-query.patch
 Patch8: 0001-New-MSan-mapping-layout-llvm-part.patch
 Patch9: 0001-New-MSan-mapping-layout-compiler-rt-part.patch
 
-Patch10: fix-broken-include-path.patch
+#Patch10: fix-broken-include-path.patch
 
 #pp-trace in clang-tools-extra did not install properly.
 Patch11: clang-extra-install-pp-trace.patch
@@ -434,7 +434,7 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 %patch7 -p1 -d tools/clang/tools/extra
 %patch8 -p1
 %patch9 -p1 -d projects/compiler-rt
-%patch10 -p1
+#%patch10 -p1
 %patch11 -p1
 
 %patch19 -p1
@@ -792,9 +792,9 @@ exit 0
 %{_libdir}/libc++abi.so.*
 %endif
 %if %{build_libunwind}
-%if !%{build_static_libunwind}
+%if "%{build_static_libunwind}" == "0"
 %{_libdir}/libunwind.so.*
-%endif #!build_static_libunwind
+%endif #build_static_libunwind
 %endif #build_libunwind
 
 %files -n libcxx-devel
@@ -805,9 +805,9 @@ exit 0
 %{_libdir}/libc++abi.a
 %endif
 %if %{build_libunwind}
-%if !%{build_static_libunwind}
+%if "%{build_static_libunwind}" == "0"
 %{_libdir}/libunwind.so
-%endif #!build_static_libunwind
+%endif #build_static_libunwind
 %endif #build_libunwind
 %endif
 #end build_libcxx
@@ -822,6 +822,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Sat Dec 12 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-16.255420.svn
+- Update to latest SVN rev of stable branch37
+
 * Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-13.252402.svn
 - Enable libunwind static build, otherwise libcxx exception handler will failed
 
