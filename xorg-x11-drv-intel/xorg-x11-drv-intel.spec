@@ -6,10 +6,10 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   47.git
+Release:   48.git
 URL:       http://www.x.org
 License:   MIT
-Source0:   %{tarball}-da9ad38.tar.xz
+Source0:   %{tarball}-6c4ffba.tar.xz
 Patch0:     intel-gcc-pr65873.patch
 Patch1:    intel-prefer-drmModeSetCursor2-in-uxa.patch
 #this patch added a option 'SWCursor' 'true'/'false' to force to swcursor in sna.
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Sat Dec 12 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-48.git
+- Update
+
 * Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-47.git
 - Add SWCursor option to sna, DO NOT use it unless you known what you are doing
 
