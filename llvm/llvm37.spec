@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.7.1
-Release: 19
+Release: 20
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -91,6 +91,9 @@ Source17: openmp-%{version}.src.tar.xz
 #polly wrapper scripts
 Source20: pollycc
 Source21: polly++
+
+#emacs llvm-mode/tablegen-mode init file
+Source30: llvm-init.el
 
 #Add our own gcc tripplet to clang search path.
 Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
@@ -547,6 +550,19 @@ install -m0755 %{SOURCE20} $RPM_BUILD_ROOT/%{_bindir}/
 install -m0755 %{SOURCE21} $RPM_BUILD_ROOT/%{_bindir}/
 %endif
 
+#vim files for .ll IR and .tb tablegen, no matter vim exist or not, we installed them.
+mkdir -p %{buildroot}%{_datadir}/vim/vimfiles
+cp -r utils/vim/ftdetect %{buildroot}%{_datadir}/vim/vimfiles
+cp -r utils/vim/ftplugin %{buildroot}%{_datadir}/vim/vimfiles
+cp -r utils/vim/indent %{buildroot}%{_datadir}/vim/vimfiles
+cp -r utils/vim/syntax %{buildroot}%{_datadir}/vim/vimfiles
+
+#emacs files for .ll IR and .tb tablegen
+mkdir -p %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
+install -m 0644 utils/emacs/llvm-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
+install -m 0644 utils/emacs/tablegen-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
+install -m 0644 %{SOURCE30} %{_datadir}/emacs/site-lisp/site-start.d
+
 rm -rf %{buildroot}/usr/docs
 rm -rf %{buildroot}%{_bindir}/c-index-test
 rm -rf %{buildroot}%{_libdir}/LLVMHello.so
@@ -641,6 +657,16 @@ exit 0
 %{_libdir}/libLTO.so
 %{_libdir}/LLVMgold.so
 %{_libdir}/bfd-plugins/LLVMgold.so
+
+#vim files for .ll IR and .tb tablegen files.
+#but not own dirs, it's belong to vim.
+%{_datadir}/vim/vimfiles/*/*.vim
+
+#emacs files for .ll IR and .tb tablegen files.
+#but not own dirs, it's belong to vim.
+%{_datadir}/emacs/site-lisp/*.el
+%{_datadir}/emacs/site-lisp/site-start.d/*.el
+
 
 %files -n libllvm 
 %defattr(-,root,root)
@@ -824,6 +850,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Tue Dec 15 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-20
+- Install IR and tablegen files for vim and emacs
+
 * Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-19
 - Fix libllvm-devel requires
 
