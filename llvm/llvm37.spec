@@ -561,7 +561,7 @@ cp -r utils/vim/syntax %{buildroot}%{_datadir}/vim/vimfiles
 mkdir -p %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
 install -m 0644 utils/emacs/llvm-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
 install -m 0644 utils/emacs/tablegen-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
-install -m 0644 %{SOURCE30} %{_datadir}/emacs/site-lisp/site-start.d
+install -m 0644 %{SOURCE30} %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
 
 rm -rf %{buildroot}/usr/docs
 rm -rf %{buildroot}%{_bindir}/c-index-test
