@@ -12,7 +12,7 @@ Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 2
+Release: 3
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
@@ -176,6 +176,10 @@ mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/ftplugin
 mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/indent
 mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/syntax
 
+
+#/etc/vimrc.d support is enabled in /etc/vimrc
+mkdir -p %{buildroot}%{_sysconfdir}/vimrc.d
+
 #install swift vim files.
 install -m0644 swift.vim/ftdetect/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/ftdetect/
 install -m0644 swift.vim/ftplugin/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/ftplugin/
@@ -203,12 +207,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/profile.d/vim.sh
 %config(noreplace) %{_sysconfdir}/vimrc
 %config(noreplace) %{_sysconfdir}/virc
+
+#own this dir
+%{_sysconfdir}/vimrc.d
+
 %{_bindir}/*
 %{_mandir}/man1/*
 %dir %{_datadir}/vim
 %{_datadir}/vim/*
 
 %changelog
+* Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-3
+- Add /etc/vimrc.d support
+
 * Fri Dec 04 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-2
 - Update to patchlevel 759
 

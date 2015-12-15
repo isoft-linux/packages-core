@@ -67,3 +67,9 @@ endif
 " Don't wake up system with blinking cursor:
 " http://www.linuxpowertop.org/known.php
 let &guicursor = &guicursor . ",a:blinkon0"
+
+" support /etc/vimrc.d/*.vimrc
+for CONFIG in split(glob('/etc/vimrc.d/*.vimrc'), '\n')
+  exe 'source' CONFIG
+endfor
+
