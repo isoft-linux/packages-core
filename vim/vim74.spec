@@ -12,7 +12,7 @@ Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 3
+Release: 4
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
@@ -23,9 +23,6 @@ Source2: vimrc
 
 Source10: new-rpm-spec-syntax.vim
 
-#swift vim: https://github.com/keith/swift.vim
-Source11: swift.vim.tar.gz
- 
 Source20: spec-template.new
  
 %if %{withvimspell}
@@ -65,7 +62,7 @@ still very popular.  VIM improves on vi by adding new features:
 multiple windows, multi-level undo, block highlighting and more.
 
 %prep
-%setup -q  -n %{vimdir} -a1 -a11
+%setup -q  -n %{vimdir} -a1
 
 for i in `ls vim-patches/7.4.*`
 do
@@ -180,12 +177,6 @@ mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/syntax
 #/etc/vimrc.d support is enabled in /etc/vimrc
 mkdir -p %{buildroot}%{_sysconfdir}/vimrc.d
 
-#install swift vim files.
-install -m0644 swift.vim/ftdetect/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/ftdetect/
-install -m0644 swift.vim/ftplugin/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/ftplugin/
-install -m0644 swift.vim/indent/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/indent/
-install -m0644 swift.vim/syntax/swift.vim %{buildroot}%{_datadir}/%{name}/vimfiles/syntax/
-
 #install the mini vi
 install -m0755 mini/vim $RPM_BUILD_ROOT%{_bindir}/vi
 
@@ -217,6 +208,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/vim/*
 
 %changelog
+* Tue Dec 15 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-4
+- Remove swift.vim
+
 * Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-3
 - Add /etc/vimrc.d support
 
