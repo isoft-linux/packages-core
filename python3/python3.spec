@@ -29,8 +29,8 @@
 
 Summary: An interpreted, interactive, object-oriented programming language 
 Name:    python3
-Version: 3.5.0
-Release: 6 
+Version: 3.5.1
+Release: 2 
 License: BSD
 Source0:  %{realname}-%{version}.tar.xz
 
@@ -315,6 +315,9 @@ EXTRATESTOPTS="$EXTRATESTOPTS" make test ||:
 
 
 %changelog
+* Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 3.5.1-2
+- Update to 3.5.1
+
 * Mon Nov 23 2015 Cjacker <cjacker@foxmail.com> - 3.5.0-6
 - Make sure python3-pip/python3-setuptools provided in spec
 
