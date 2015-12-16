@@ -1,0 +1,10 @@
+60eb6e922b364ba63b2f37a1d117a94d  cfe-3.7.1.src.tar.xz
+8a0405d302e5068b6a70647759649a63  clang-tools-extra-3.7.1.src.tar.xz
+4f313819184bca37f27dcdaf37dd7102  compiler-rt-3.7.1.src.tar.xz
+ed8e00311cff0719bd0bf828496cea7c  libcxx-3.7.1.src.tar.xz
+bb4bc846f780d90c247b24bddf464b63  libcxxabi-3.7.1.src.tar.xz
+4fe36742383279d02612a1f8ca97aed4  libunwind-3.7.1.src.tar.xz
+9f85c525c9b1c0ebb117565edf820657  lld-3.7.1.src.tar.xz
+feb872b3cb3ad626f435c3736a5a2c7f  llvm-3.7.1.src.tar.xz
+9179879a4f47495226252afd83cee6a7  openmp-3.7.1.src.tar.xz
+1847a15af8cb2775197d379662abf4c5  polly-3.7.1.src.tar.xz
