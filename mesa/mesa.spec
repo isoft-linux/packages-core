@@ -250,7 +250,7 @@ Mesa OpenCL development package.
 
 
 %prep
-%setup -q -n %{name} 
+%setup -q -n %{name}-%{version} 
 
 # Fix detection of libLLVM when built with CMake
 # It depend on LLVM shared lib name, If libLLVM.so.<version>, this is needed.
