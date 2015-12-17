@@ -1,16 +1,15 @@
 #the package contains pkg-config files, but DO NOT let it depend on pkgconfig
 %global __requires_exclude pkg-config
 
-%global enable_terminal 1 
+%global enable_terminal 0 
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        228
-Release:        11
+Release:        12
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
-#Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
-Source0:        systemd-%{version}-f1f8a5a.tar.gz
+Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
@@ -18,6 +17,10 @@ Source7:        99-default-disable.preset
 # Prevent accidental removal of the systemd package
 Source10:        yum-protect-systemd.conf
 
+Patch0: 0002-lz4-fix-size-check-which-had-no-chance-of-working-on.patch
+Patch1: 0004-core-Do-not-bind-a-mount-unit-to-a-device-if-it-was-.patch
+
+ 
 BuildRequires:  glib2-devel
 BuildRequires:  pciutils-devel
 BuildRequires:  libcap-devel
@@ -57,9 +60,7 @@ BuildRequires:  libtool
 #for test-path-util fsck.minix
 BuildRequires:  util-linux >= 2.27.1
 
-%if %enable_terminal
 BuildRequires:  libxkbcommon-devel
-%endif
 
 Requires(post): coreutils
 Requires(post): gawk
@@ -141,6 +142,8 @@ glib-based applications using libudev functionality.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -150,7 +153,7 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
         --enable-myhostname \
         --enable-machined \
         --enable-networkd \
-	--enable-manpages \
+        --enable-manpages \
         --enable-resolved \
         --enable-libcurl \
         --enable-gnuefi \
@@ -172,9 +175,10 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
 %else
         --disable-terminal \
 %endif
+        --enable-xkbcommon \
         --enable-tests \
-	--with-ntp-servers="asia.pool.ntp.org 0.asia.pool.ntp.org 1.asia.pool.ntp.org 2.asia.pool.ntp.org 3.asia.pool.ntp.org 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org" \
-	--with-certificate-root=/etc/pki/tls \
+        --with-ntp-servers="asia.pool.ntp.org 0.asia.pool.ntp.org 1.asia.pool.ntp.org 2.asia.pool.ntp.org 3.asia.pool.ntp.org 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org" \
+        --with-certificate-root=/etc/pki/tls \
         --with-sysvinit-path=/etc/rc.d/init.d \
         --with-rc-local-script-path-start=/etc/rc.d/rc.local \
         --enable-introspection=no \
@@ -511,6 +515,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 228-12
+- Disable terminal
+
 * Thu Nov 19 2015 Cjacker <cjacker@foxmail.com> - 228-11
 - Update, and add requires to util-linux >= 2.27.1
 
