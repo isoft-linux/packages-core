@@ -852,6 +852,7 @@ exit 0
 %changelog
 * Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-22
 - Update libcxx/libcxxabi/unwind/openmp and rebuild for beta4 release
+- cfe/llvm/compiler-rt/clang-tools-extra keep unchanged
 
 * Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-21
 - Update libcxx/abi/unwind/openmp.
