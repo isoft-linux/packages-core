@@ -1,7 +1,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.66
-Release: 4.git
+Release: 5.git
 License: MIT
 URL: http://dri.sourceforge.net
 
@@ -151,6 +151,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-5.git
+- Regular update
+
 * Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 2.4.66-4.git
 - Update to git codes ,git update one line,
 - for adding <string.h> head file
