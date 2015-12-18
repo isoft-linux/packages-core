@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.7.1
-Release: 21
+Release: 22
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -850,6 +850,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-22
+- Update libcxx/libcxxabi/unwind/openmp and rebuild for beta4 release
+
 * Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-21
 - Update libcxx/abi/unwind/openmp.
 - cfe/llvm/compiler-rt/clang-tools-extra keeps untouched.
