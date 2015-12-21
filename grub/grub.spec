@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        48%{?dist}
+Release:        49%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -140,6 +140,8 @@ Patch0071: 0071-Make-exit-take-a-return-code.patch
 Patch0072: 0072-Add-some-__unused__-where-gcc-5.x-is-more-picky-abou.patch
 Patch0073: 0073-Fix-race-in-EFI-validation.patch
 Patch0074: 0074-Mark-po-exclude.pot-as-binary-so-git-won-t-try-to-di.patch
+Patch0076: 0076-Fix-security-issue-when-reading-username-and-passwor.patch
+Patch0077: 0077-01_users-Handle-GRUB_PASSWORD-better.patch
 Patch0082: 0082-modify-grub-mkconfig-for-hiding-grub-menu-when-the-p.patch
 Patch0083: 0083-fixed-logical-error.patch
 Patch0084: 0084-modify-compare.patch
@@ -546,6 +548,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Mon Dec 21 2015 sulit <sulitsrc@gmail.com>
+- Fix security issue when reading username and password
+  Related: CVE-2015-8370
+- Do a better job of handling GRUB2_PASSWORD
+
 * Sun Nov 29 2015 sulit <sulitsrc@gmail.com> - 1:2.02-48
 - modify $? compare and fuck the $? compare
 
