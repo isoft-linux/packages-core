@@ -20,7 +20,7 @@ URL: http://cgit.freedesktop.org/xorg/driver/xf86-video-amdgpu/
 License: MIT
 
 # git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-amdgpu
-Source0: %{tarball}-ea558e6.tar.gz
+Source0: %{tarball}-ea558e6.tar.xz
 
 BuildRequires: pkgconfig
 BuildRequires: autoconf automake libtool
