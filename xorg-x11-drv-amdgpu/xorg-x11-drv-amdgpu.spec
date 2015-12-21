@@ -15,12 +15,12 @@
 Summary: Xorg amdgpu video driver
 Name: xorg-x11-drv-amdgpu
 Version: 1.0.0 
-Release: 11.git
+Release: 12.git
 URL: http://cgit.freedesktop.org/xorg/driver/xf86-video-amdgpu/
 License: MIT
 
 # git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-amdgpu
-Source0: %{tarball}-43c2dc1.tar.gz
+Source0: %{tarball}-ea558e6.tar.gz
 
 BuildRequires: pkgconfig
 BuildRequires: autoconf automake libtool
@@ -66,6 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/X11/xorg.conf.d/10-amdgpu.conf
 
 %changelog
+* Mon Dec 21 2015 Cjacker <cjacker@foxmail.com> - 1.0.0-12.git
+- Regular update
+
 * Sun Nov 22 2015 Cjacker <cjacker@foxmail.com> - 0.0.01-11.git
 - Update
 
