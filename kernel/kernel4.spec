@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 14
+%define release 15
 
 %define extraversion -%{release}
 
@@ -118,20 +118,39 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 
 #Upstream backport, may removed later.
 Patch2004: 0001-drm-i915-fix-idle_frames-counter.patch
-Patch2005: 0002-drm-i915-remove-incorrect-warning-in-context-cleanup.patch
 Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch 
 
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
 Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
-# remove it from kernel4.4.0-rc5
-#Patch2012: 0001-cgroup-make-css_set-pin-its-css-s-to-avoid-use-afer-.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
 Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
-Patch2015: Input-aiptek-fix-crash-on-detecting-device-without-e.patch
 Patch2016: alua_fix.patch
+# Fix rfkill issues on ideapad Y700-17ISK
+Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
+# CVE-2015-7550 Race between read and revoke keys
+Patch2018: KEYS-Fix-race-between-read-and-revoke.patch
+
+# Add support for Yoga touch input
+Patch2050: 0001-device-property-always-check-for-fwnode-type.patch
+Patch2051: 0002-device-property-rename-helper-functions.patch
+Patch2052: 0003-device-property-refactor-built-in-properties-support.patch
+Patch2053: 0004-device-property-keep-single-value-inplace.patch
+Patch2054: 0005-device-property-helper-macros-for-property-entry-cre.patch
+Patch2055: 0006-device-property-improve-readability-of-macros.patch
+Patch2056: 0007-device-property-return-EINVAL-when-property-isn-t-fo.patch
+Patch2057: 0008-device-property-Fallback-to-secondary-fwnode-if-prim.patch
+Patch2058: 0009-device-property-Take-a-copy-of-the-property-set.patch
+Patch2059: 0010-driver-core-platform-Add-support-for-built-in-device.patch
+Patch2060: 0011-driver-core-Do-not-overwrite-secondary-fwnode-with-N.patch
+Patch2061: 0012-mfd-core-propagate-device-properties-to-sub-devices-.patch
+Patch2062: 0013-mfd-intel-lpss-Add-support-for-passing-device-proper.patch
+Patch2063: 0014-mfd-intel-lpss-Pass-SDA-hold-time-to-I2C-host-contro.patch
+Patch2064: 0015-mfd-intel-lpss-Pass-HSUART-configuration-via-propert.patch
+Patch2065: 0016-i2c-designware-Convert-to-use-unified-device-propert.patch
 
 # ignore i915 no acpi video bus found
 Patch3001: ignore_i915_no_acpi_video_bus_found.patch
+
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -309,15 +328,33 @@ cat %{SOURCE3000} |patch -p1
 %patch2002 -p1
 
 %patch2004 -p1
-%patch2005 -p1
 %patch2006 -p1
 
 %patch2010 -p1
 %patch2011 -p1
 %patch2013 -p1
 %patch2014 -p1
-%patch2015 -p1
 %patch2016 -p1
+%patch2017 -p1
+%patch2018 -p1
+
+
+%patch2050 -p1
+%patch2051 -p1
+%patch2052 -p1
+%patch2053 -p1
+%patch2054 -p1
+%patch2055 -p1
+%patch2056 -p1
+%patch2057 -p1
+%patch2058 -p1
+%patch2059 -p1
+%patch2060 -p1
+%patch2061 -p1
+%patch2062 -p1
+%patch2063 -p1
+%patch2064 -p1
+%patch2065 -p1
 
 %patch3001 -p1
 
@@ -729,6 +766,13 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Dec 21 2015 sulit <sulitsrc@gmail.com> - 4.4.0-15
+- update to 4.4.0 rc6
+- Fix rfkill issues on ideapad Y700-17ISK
+- CVE-2015-7550 Race between read and revoke keys
+- Add support for Yoga touch input
+- Remove Patch2005 and Patch2015
+
 * Mon Dec 14 2015 sulit <sulitsrc@gmail.com> - 4.4.0-14
 - update to kernel 4.4.0-rc5, the config file has no
 - change, delete patch 2012 and add patch 2016
