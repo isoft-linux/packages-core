@@ -1,12 +1,11 @@
 Name:           repairdev
 Version:        0.3
-Release:        3
+Release:        4
 Summary:        fix hardware device for isoft linux
 
 License:        GPL
 URL:            http://git.isoft.zhcn.cc/wuxiaotian/repairdev
 Source0:        http://pkgs.isoft.zhcn.cc/repo/pkgs/repairdev/%{name}-%{version}.tar.xz/9a40083669ea55f7b828ae1c408a93de/%{name}-%{version}.tar.xz
-Patch0:		intel-8086-0102-the_mouse_invisible.patch
 
 BuildRequires:  pciutils-devel
 Requires:       pciutils-libs
@@ -16,7 +15,6 @@ fix hardware device for isoft linux
 
 %prep
 %setup -q
-%patch0 -p1
 
 chmod +x pci.d/*.sh
 
@@ -38,6 +36,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/repairdev
 
 %changelog
+* Mon Dec 21 2015 sulit <sulitsrc@gmail.com> - 0.3-4
+- remove the mouse invisible patch, and hold it for the time being
+
 * Fri Dec 04 2015 sulit <sulitsrc@gmali.com> - 0.3-3
 - add fix intel 8086-0102 the mouse invisible patch
 
