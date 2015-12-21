@@ -6,7 +6,7 @@
 Summary: Graphical Boot Animation and Logger
 Name: plymouth
 Version: 0.8.9
-Release: 8
+Release: 9
 License: GPLv2+
 Source0: http://freedesktop.org/software/plymouth/releases/%{name}-%{version}.tar.bz2
 
@@ -212,6 +212,9 @@ fi
 
 
 %changelog
+* Mon Dec 21 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Change logo for isoft-splash.txz
+
 * Fri Nov 06 2015 sulit <sulitsrc@gmail.com> - 0.8.9-8
 - update isoft-splash.txz
 
