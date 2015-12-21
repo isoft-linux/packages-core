@@ -1,4 +1,4 @@
-%define osname iSoft Enterprise Desktop
+%define osname iSoft Desktop
 %define osid   iSoft 
 %define builtin_release_version 4.0 
 %define builtin_release_name Nvwa 
@@ -7,16 +7,16 @@
 %define real_release_name %{?release_name}%{!?release_name:%{builtin_release_name}}
 
 
-Summary: iSoft Enterprise Desktop release file
+Summary: iSoft Desktop release file
 Name: os-release
 Version: %{real_release_version}
-release: 2.2
+release: 3.2
 License: GPL
 
 #Fake a lsb provides for some comercial binary software.
 Provides: lsb > 4.0
 %description
-iSoft Enterprise Desktop release file
+iSoft Desktop release file
 
 %prep
 %build
@@ -61,6 +61,9 @@ echo "" >>$RPM_BUILD_ROOT/etc/issue.net
 /usr/lib/os-release
 
 %changelog
+* Mon Dec 21 2015 Cjacker <cjacker@foxmail.com> - 4.0-3.2
+- Rename to iSoft Desktop
+
 * Fri Oct 23 2015 cjacker - 4.0-2.2
 - Rebuild for new 4.0 release
 
