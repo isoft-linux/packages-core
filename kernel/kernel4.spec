@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 15
+%define release 16
 
 %define extraversion -%{release}
 
@@ -62,8 +62,8 @@ BuildRequires: pciutils-devel gettext ncurses-devel
 
 Source0: linux-%{kversion}.tar.xz
 
-#amdgpu with powerplay
-#git clone --depth 1 -b "amdgpu-powerplay" git://people.freedesktop.org/~agd5f/linux amdgpu
+#amdgpu with powerplay, now we use drm-next-4.5 branch
+#git clone --depth 1 -b "drm-next-4.5" git://people.freedesktop.org/~agd5f/linux
 #tar drivers/gpu/drm/amd.
 Source1: amd.tar.gz 
 
@@ -85,6 +85,8 @@ Patch1: linux-add-amdgpu-powerplay-config.patch
 Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
 Patch3: backport-amdgpu-acp-asoc.patch
 Patch4: amdgpu-fix-warning.patch
+#this commit disable amdgpu powerplay by default, we revert it.
+Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
 #End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
@@ -290,6 +292,7 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   cat %{PATCH2} |patch -p1
   cat %{PATCH3} |patch -p1
   cat %{PATCH4} |patch -p1
+  cat %{PATCH5} |patch -p1 -R
   popd
   #end amdgpu
 else 
@@ -766,6 +769,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Wed Dec 23 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-16
+- amdgpu switch to drm-next-4.5 channel
+
 * Mon Dec 21 2015 sulit <sulitsrc@gmail.com> - 4.4.0-15
 - update to 4.4.0 rc6
 - Fix rfkill issues on ideapad Y700-17ISK
