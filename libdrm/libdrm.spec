@@ -1,7 +1,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.66
-Release: 5.git
+Release: 6.git
 License: MIT
 URL: http://dri.sourceforge.net
 
@@ -151,6 +151,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Tue Dec 22 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-6.git
+- Git with nouveau nvif support, mesa 11.2.0git need this
+
 * Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-5.git
 - Regular update
 
