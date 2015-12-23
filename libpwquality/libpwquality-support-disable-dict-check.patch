@@ -1,0 +1,54 @@
+--- libpwquality-1.2.4/src/check.c	2014-08-06 21:15:54.000000000 +0800
++++ libpwquality-1.2.4n/src/check.c	2015-12-23 10:27:56.680272769 +0800
+@@ -668,14 +668,14 @@
+ 
+         if (score != 0)
+                 return score;
+-
+-        msg = FascistCheck(password, pwq->dict_path);
+-        if (msg) {
+-                if (auxerror)
+-                        *auxerror = (void *)msg;
+-                return PWQ_ERROR_CRACKLIB_CHECK;
++        if(strcmp(pwq->dict_path, "nodictcheck")) {
++                msg = FascistCheck(password, pwq->dict_path);
++                if (msg) {
++                        if (auxerror)
++                                *auxerror = (void *)msg;
++                        return PWQ_ERROR_CRACKLIB_CHECK;
++                }
+         }
+-
+         score = password_score(pwq, password);
+ 
+         return score;
+diff -Nur libpwquality-1.2.4/doc/man/pwquality.conf.5 libpwquality-1.2.4-no-dict/doc/man/pwquality.conf.5
+--- libpwquality-1.2.4/doc/man/pwquality.conf.5	2013-01-03 18:04:20.000000000 +0800
++++ libpwquality-1.2.4-no-dict/doc/man/pwquality.conf.5	2015-12-23 10:33:02.370286588 +0800
+@@ -110,6 +110,7 @@
+ \fBdictpath\fR
+ .RS 4
+ Path to the cracklib dictionaries. Default is to use the cracklib default.
++If 'nodictcheck' set, will skip cracklib dictionary check.
+ .RE
+ 
+ .PD
+diff -Nur libpwquality-1.2.4/src/pwquality.conf libpwquality-1.2.4-no-dict/src/pwquality.conf
+--- libpwquality-1.2.4/src/pwquality.conf	2011-12-07 03:16:48.000000000 +0800
++++ libpwquality-1.2.4-no-dict/src/pwquality.conf	2015-12-23 10:32:13.562284382 +0800
+@@ -8,7 +8,7 @@
+ # Minimum acceptable size for the new password (plus one if
+ # credits are not disabled which is the default). (See pam_cracklib manual.)
+ # Cannot be set to lower value than 6.
+-# minlen = 9
++minlen = 6 
+ #
+ # The maximum credit for having digits in the new password. If less than 0
+ # it is the minimum number of digits in the new password.
+@@ -47,4 +47,5 @@
+ # gecoscheck = 0
+ #
+ # Path to the cracklib dictionaries. Default is to use the cracklib default.
+-# dictpath =
++# if 'nodictcheck' set, will skip dictionary check.
++dictpath = nodictcheck
