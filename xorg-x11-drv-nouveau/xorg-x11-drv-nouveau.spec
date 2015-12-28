@@ -5,14 +5,16 @@
 
 Summary:   Xorg X11 nouveau video driver(s)
 Name:      xorg-x11-drv-nouveau
-Version:   1.0.11
-Release:   7.git 
+Version:   1.0.12
+Release:   1
+#Release:   8.git 
 URL:       http://www.x.org
 License:   MIT
 
 #Source0:   %{tarball}-%{version}.tar.bz2
+Source0:   http://xorg.freedesktop.org/archive/individual/driver/%{tarball}-%{version}.tar.bz2
 #git://anongit.freedesktop.org/nouveau/xf86-video-nouveau
-Source0: %{tarball}-6e6d8ac.tar.xz
+#Source0: %{tarball}-6e6d8ac.tar.xz
 Patch0: fix-glamor-build.patch
 
 BuildRequires: pkgconfig
@@ -30,7 +32,8 @@ Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
 X.Org X11 nouveau video driver.
 
 %prep
-%setup -q -n xf86-video-nouveau
+#%setup -q -n xf86-video-nouveau
+%setup -q -n %{tarball}-%{version}
 #%patch0 -p1
 
 %build
@@ -54,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/nouveau.4*
 
 %changelog
+* Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 1.0.12-1.git
+- update to 1.0.12
+
 * Wed Nov 18 2015 Cjacker <cjacker@foxmail.com> - 1.0.11-7.git
 - Update to 6e6d8ac
 
