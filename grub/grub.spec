@@ -279,7 +279,7 @@ ln -s grub-efi-%{tarversion} grub-%{tarversion}
 cd grub-%{tarversion}
 #replace zh_CN.po and zh_CN.gmo
 rm po/zh_CN.*
-tar Jxf %{SOURCE8} -C .
+tar zxf %{SOURCE8} -C .
 #put dejavu ttf font here.
 tar jxf %{SOURCE3} -C .
 rm -rf *.ttf
