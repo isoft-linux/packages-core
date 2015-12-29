@@ -1,13 +1,15 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.66
-Release: 6.git
+#Release: 6.git
+Release: 7
 License: MIT
 URL: http://dri.sourceforge.net
 
 #Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
 #http://anongit.freedesktop.org/git/mesa/drm.git
-Source0: libdrm.tar.gz
+#Source0: libdrm.tar.gz
 
 Source2: 91-drm-modeset.rules
 
@@ -50,7 +52,8 @@ Summary: Direct Rendering Manager utilities
 Utility programs for the kernel DRM interface.
 
 %prep
-%setup -q -n libdrm
+# %setup -q -n libdrm
+%setup -q -n %{name}-%{version}
 %patch3 -p1 -b .forceperms
 %patch4 -p1 -b .no-bc
 %patch5 -p1 -b .check
@@ -151,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 2.4.66-7
+- update to git tag 2.4.66, 2.4.66 comes
+
 * Tue Dec 22 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-6.git
 - Git with nouveau nvif support, mesa 11.2.0git need this
 

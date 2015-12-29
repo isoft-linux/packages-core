@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 16
+%define release 17
 
 %define extraversion -%{release}
 
@@ -769,6 +769,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 4.4.0-17
+- update to 4.4.0 rc7
+- config don't change
+
 * Wed Dec 23 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-16
 - amdgpu switch to drm-next-4.5 channel
 
