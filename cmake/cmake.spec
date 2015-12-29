@@ -1,6 +1,6 @@
 Name: cmake
 Version: 3.4.0
-Release: 2 
+Release: 3 
 Summary: Cross-platform make system
 
 License: BSD
@@ -18,6 +18,9 @@ BuildRequires:  jsoncpp-devel
 BuildRequires:  libarchive-devel
 BuildRequires:  python-sphinx
 BuildRequires:  xz-devel
+
+BuildRequires:  findutils
+
 Requires:       rpm
 
 
@@ -34,6 +37,7 @@ generation, code generation, and template instantiation.
 %setup -q -n cmake-%{version}
 %patch0 -p1
 
+find . -name *.orig|xargs rm -rf
 %build
 export CFLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS="$RPM_OPT_FLAGS"
@@ -79,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Tue Dec 29 2015 Cjacker <cjacker@foxmail.com> - 3.4.0-3
+- Remove orig files
+
 * Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 3.4.0-2
 - Update, drop python ver patch, already upstream
 
