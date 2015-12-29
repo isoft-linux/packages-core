@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        49%{?dist}
+Release:        50%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -60,7 +60,7 @@ Source6:	gitignore
 #isoft silence theme for grub
 Source7:	isoft-silence.tar.gz
 # po/zh_CN.{po, gmo}
-Source8:	po.tar.xz
+Source8:	po.tar.gz
 
 # generate with:
 # git diff grub-2.02-beta2..origin/master
@@ -248,7 +248,7 @@ provides isoft theme for the grub screen.
 cd grub-%{tarversion}
 #replace zh_CN.po and zh_CN.gmo
 rm po/zh_CN.*
-tar Jxf %{SOURCE8} -C .
+tar zxf %{SOURCE8} -C .
 #put dejavu ttf font here.
 tar jxf %{SOURCE3} -C .
 rm -rf *.ttf
@@ -548,6 +548,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Tue Dec 29 2015 xiaotian.wu@i-soft.com.cn - 1:2.02-50
+- update po for zh_CN.
+
 * Mon Dec 21 2015 sulit <sulitsrc@gmail.com>
 - Fix security issue when reading username and password
   Related: CVE-2015-8370
