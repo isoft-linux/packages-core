@@ -1,6 +1,6 @@
 Name:           repairdev
 Version:        0.3
-Release:        4
+Release:        5
 Summary:        fix hardware device for isoft linux
 
 License:        GPL
@@ -15,9 +15,7 @@ fix hardware device for isoft linux
 
 %prep
 %setup -q
-
-chmod +x pci.d/*.sh
-
+cp pci.d/8086-29d2.sh pci.d/8086-2e32.sh
 
 %build
 %configure
@@ -36,6 +34,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/repairdev
 
 %changelog
+* Wed Dec 30 2015 xiaotian.wu@i-soft.com.cn - 0.3-5
+- fix bug 13171.
+
 * Mon Dec 21 2015 sulit <sulitsrc@gmail.com> - 0.3-4
 - remove the mouse invisible patch, and hold it for the time being
 
