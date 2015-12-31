@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        50%{?dist}
+Release:        51%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -60,7 +60,7 @@ Source6:	gitignore
 #isoft silence theme for grub
 Source7:	isoft-silence.tar.gz
 # po/zh_CN.{po, gmo}
-Source8:	po.tar.gz
+Source8:	po-2.tar.gz
 
 # generate with:
 # git diff grub-2.02-beta2..origin/master
@@ -247,8 +247,8 @@ provides isoft theme for the grub screen.
 %setup -D -q -T -a 0 -n grub-%{tarversion}
 cd grub-%{tarversion}
 #replace zh_CN.po and zh_CN.gmo
-rm po/zh_CN.*
-tar zxf %{SOURCE8} -C .
+rm po/zh_CN.* po/ja.* po/zh_TW.*
+tar Jxf %{SOURCE8} -C .
 #put dejavu ttf font here.
 tar jxf %{SOURCE3} -C .
 rm -rf *.ttf
@@ -278,8 +278,8 @@ ln -s grub-efi-%{tarversion} grub-%{tarversion}
 %setup -D -q -T -a 0 -n grub-%{tarversion}
 cd grub-%{tarversion}
 #replace zh_CN.po and zh_CN.gmo
-rm po/zh_CN.*
-tar zxf %{SOURCE8} -C .
+rm po/zh_CN.* po/ja.* po/zh_TW.*
+tar Jxf %{SOURCE8} -C .
 #put dejavu ttf font here.
 tar jxf %{SOURCE3} -C .
 rm -rf *.ttf
@@ -548,6 +548,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Thu Dec 31 2015 xiaotian.wu@i-soft.com.cn - 1:2.02-51
+- update po for zh_TW, ja
+
 * Tue Dec 29 2015 xiaotian.wu@i-soft.com.cn - 1:2.02-50
 - update po for zh_CN.
 
