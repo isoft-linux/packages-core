@@ -60,7 +60,7 @@ Source6:	gitignore
 #isoft silence theme for grub
 Source7:	isoft-silence.tar.gz
 # po/zh_CN.{po, gmo}
-Source8:	po-2.tar.gz
+Source8:	po-2.tar.xz
 
 # generate with:
 # git diff grub-2.02-beta2..origin/master
