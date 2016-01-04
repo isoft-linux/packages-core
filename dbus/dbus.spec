@@ -16,8 +16,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.9.20
-Release: 3%{?dist}
+Version: 1.11.0
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 # The effective license of the majority of the package, including the shared
@@ -162,9 +162,6 @@ install -pm 644 -t %{buildroot}%{_pkgdocdir} \
 # Make sure that the documentation shows up in Devhelp.
 mkdir -p %{buildroot}%{_datadir}/gtk-doc/html
 ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
-
-# dbus.target was removed, in favor of dbus.socket, from systemd 21.
-rm -r %{buildroot}%{_unitdir}/dbus.target.wants
 
 # Shell wrapper for installed tests, modified from Debian package.
 cat > dbus-run-installed-tests <<EOF
@@ -324,6 +321,9 @@ popd
 
 
 %changelog
+* Thu Dec 31 2015 Cjacker <cjacker@foxmail.com> - 1:1.11.0-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1:1.9.20-3
 - Rebuild for new 4.0 release
 
