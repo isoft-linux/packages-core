@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 17
+%define release 18
 
 %define extraversion -%{release}
 
@@ -129,8 +129,6 @@ Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
 Patch2016: alua_fix.patch
 # Fix rfkill issues on ideapad Y700-17ISK
 Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
-# CVE-2015-7550 Race between read and revoke keys
-Patch2018: KEYS-Fix-race-between-read-and-revoke.patch
 
 # Add support for Yoga touch input
 Patch2050: 0001-device-property-always-check-for-fwnode-type.patch
@@ -339,8 +337,6 @@ cat %{SOURCE3000} |patch -p1
 %patch2014 -p1
 %patch2016 -p1
 %patch2017 -p1
-%patch2018 -p1
-
 
 %patch2050 -p1
 %patch2051 -p1
@@ -769,6 +765,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Jan 04 2016 sulit <sulitsrc@gmail.com> - 4.4.0-18
+- update to 4.4.0 rc8
+- remove patch2018
+
 * Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 4.4.0-17
 - update to 4.4.0 rc7
 - config don't change
