@@ -1,19 +1,16 @@
-Name: 		git
-Version:    	2.6.4
-Release: 	2
-Summary:  	Core git tools
-License: 	GPLv2
-URL: 		http://kernel.org/pub/software/scm/git/
-Source0: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
-Source1: 	http://kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
+Name: git
+Version: 2.7.0
+Release: 2 
+Summary: Core git tools
+License: GPLv2
+URL: http://kernel.org/pub/software/scm/git/
+Source0: http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
+Source1: http://kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
 
-Source10:       git@.service
-Source11:       git.socket
+Source10: git@.service
+Source11: git.socket
 
-Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# http://thread.gmane.org/gmane.comp.version-control.git/266145
-# could be removed when update/branch of Michael will be merged in upstream
-Patch4:         git-infinite-loop.patch
+Patch1: git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, expat-devel, gettext, pcre-devel
 BuildRequires:  libcurl-devel
@@ -71,7 +68,6 @@ Perl interface to Git.
 %prep
 %setup -q -n %{name}-%{version}
 %patch1 -p1
-%patch4 -p1
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS -D_DEFAULT_SOURCE"
@@ -221,6 +217,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog
+* Tue Jan 05 2016 Cjacker <cjacker@foxmail.com> - 2.7.0-2
+- Update
+
 * Fri Dec 11 2015 Cjacker <cjacker@foxmail.com> - 2.6.4-2
 - Update
 
