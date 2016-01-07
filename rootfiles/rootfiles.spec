@@ -47,7 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /root/.[A-Za-z]*
 %config(noreplace) /etc/skel/.Xresources
 %config(noreplace) /etc/skel/.zshrc
-%config(noreplace) /etc/skel/.viminfo
+/etc/skel/.viminfo
 
 %changelog
 * Thu Jan 07 2016 Cjacker <cjacker@foxmail.com> - 8.1-12.1
