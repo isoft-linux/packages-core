@@ -1,7 +1,7 @@
 Summary: A library for password generation and password quality checking
 Name: libpwquality
 Version: 1.2.4
-Release: 7%{?dist}
+Release: 8%{?dist}
 # The package is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 License: BSD or GPLv2+
@@ -143,6 +143,9 @@ rm -f $RPM_BUILD_ROOT%{_moduledir}/*.la
 %{python3_sitearch}/*.egg-info
 
 %changelog
+* Mon Jan 11 2016 Cjacker <cjacker@foxmail.com> - 1.2.4-8
+- Need set to 7 to minimum to 6
+
 * Wed Dec 23 2015 Cjacker <cjacker@foxmail.com> - 1.2.4-7
 - Support nodictcheck
 

@@ -41,7 +41,7 @@ diff -Nur libpwquality-1.2.4/src/pwquality.conf libpwquality-1.2.4-no-dict/src/p
  # credits are not disabled which is the default). (See pam_cracklib manual.)
  # Cannot be set to lower value than 6.
 -# minlen = 9
-+minlen = 6 
++minlen = 7 
  #
  # The maximum credit for having digits in the new password. If less than 0
  # it is the minimum number of digits in the new password.
