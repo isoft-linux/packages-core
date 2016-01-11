@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 18
+%define release 19
 
 %define extraversion -%{release}
 
@@ -121,6 +121,9 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 #Upstream backport, may removed later.
 Patch2004: 0001-drm-i915-fix-idle_frames-counter.patch
 Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch 
+Patch2007: drm-i915-shut-up-gen8-SDE-irq-dmesg-noise-again.patch
+Patch2008: drm-udl-Use-unlocked-gem-unreferencing.patch
+Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
 
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
 Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
@@ -330,6 +333,9 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2004 -p1
 %patch2006 -p1
+%patch2007 -p1
+%patch2008 -p1
+%patch2009 -p1
 
 %patch2010 -p1
 %patch2011 -p1
@@ -765,6 +771,13 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Jan 11 2016 sulit <sulitsrc@gmail.com> - 4.4.0-19
+- kernel4.4.0 comes
+- config don't change
+- add i915 ERROR shut up patch
+- add Check locking in drm_gem_object_unreference patch
+- add being capable wrt a process requires mapped uids/gids patch
+
 * Mon Jan 04 2016 sulit <sulitsrc@gmail.com> - 4.4.0-18
 - update to 4.4.0 rc8
 - remove patch2018
