@@ -1,7 +1,7 @@
 Summary: The basic required files for the root user's directory.
 Name: rootfiles
 Version: 8.1
-Release: 11.1 
+Release: 12.1 
 License: Public Domain
  
 Source0: dot-bashrc
@@ -35,6 +35,10 @@ mkdir -p $RPM_BUILD_ROOT/etc/skel
 install -m 644 %{SOURCE6} $RPM_BUILD_ROOT/etc/skel/.Xresources
 install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/skel/.zshrc
 
+#!HACK
+#Create an empty .viminfo to avoid 'sudo' creating a file with root user accidently.
+touch $RPM_BUILD_ROOT/etc/skel/.viminfo
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -43,8 +47,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /root/.[A-Za-z]*
 %config(noreplace) /etc/skel/.Xresources
 %config(noreplace) /etc/skel/.zshrc
+/etc/skel/.viminfo
 
 %changelog
+* Thu Jan 07 2016 Cjacker <cjacker@foxmail.com> - 8.1-12.1
+- Create an empty viminfo file
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 8.1-11.1
 - Modify dot-zshrc to add aliases and remove AUTOUPDATE option
 

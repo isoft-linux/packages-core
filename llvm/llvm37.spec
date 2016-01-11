@@ -35,22 +35,13 @@
 
 Name: llvm
 Version: 3.7.1
-Release: 23
+Release: 24
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
 URL: http://llvm.org
 
-#Essential components to construct minimal LLVM/Clang toolchain.
-#NOTE: branch37 rev 252402 is the last version NOT BUMP ABI to 3.7.1
-#svn co -r 252402 http://llvm.org/svn/llvm-project/llvm/branches/release_37 llvm 
-#svn co -r 252402 http://llvm.org/svn/llvm-project/cfe/branches/release_37 cfe
-#svn co -r 252402 http://llvm.org/svn/llvm-project/compiler-rt/branches/release_37 compiler-rt
-#svn co -r 252402 http://llvm.org/svn/llvm-project/clang-tools-extra/branches/release_37 clang-tools-extra
-#svn co -r 252402 http://llvm.org/svn/llvm-project/lld/branches/release_37 lld 
-#svn co -r 252402 http://llvm.org/svn/llvm-project/polly/branches/release_37 polly
-#but we use latest version of libcxx/libcxxabi/libunwind/openmp
-
+#note, libcxx/libcxxabi/libunwind/openmp is svn trunk 257014 
 Source0: llvm-%{version}.src.tar.xz
 Source1: cfe-%{version}.src.tar.xz
 Source2: compiler-rt-%{version}.src.tar.xz
@@ -850,6 +841,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Thu Jan 07 2016 Cjacker <cjacker@foxmail.com> - 3.7.1-24
+- Update to 3.7.1 official release, codes unchanged
+
 * Wed Dec 23 2015 Cjacker <cjacker@foxmail.com> - 3.7.1-23
 - Update libcxx/cxxabi/unwind/openmp to latest svn
 
