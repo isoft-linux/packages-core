@@ -27,6 +27,7 @@ BuildRequires: libXfixes-devel
 BuildRequires: libXinerama-devel
 BuildRequires: libXrandr-devel
 BuildRequires: libXrender-devel
+BuildRequires: libXScrnSaver-devel
 BuildRequires: libXtst-devel
 BuildRequires: libXvMC-devel
 BuildRequires: libXfont-devel
@@ -84,6 +85,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Jan 11 2016 sulit <sulitsrc@gmail.com> - 2.99.917-50.git
 - regular update
+- add libXScrnSaver-devel buildrequires
 
 * Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-49.git
 - Regular update
