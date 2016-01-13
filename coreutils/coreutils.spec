@@ -48,6 +48,7 @@ Provides: /bin/uname
 
 BuildRequires: libacl-devel
 BuildRequires: gettext
+BuildRequires: texinfo
 BuildRequires: libattr-devel
 BuildRequires: attr
 BuildRequires: libsmack-devel
@@ -162,6 +163,7 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Jan 13 2016 sulit <sulitsrc@gmail.com> - 8.24-3
 - add --enable-install-program=arch for configure
 - because some program need arch command, such as dracut
+- add buildrequires texinfo
 
 * Fri Oct 23 2015 cjacker - 8.24-2
 - Rebuild for new 4.0 release
