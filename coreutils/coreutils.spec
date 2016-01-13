@@ -139,7 +139,8 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %check
 #failed, test-getaddrinfo need network
 #failed, if smack enabled, two test about xattr will fail.
-make check||:
+# koji hang
+# make check||:
 
 %postun
 if [ -x /usr/bin/busybox ]; then
@@ -164,6 +165,7 @@ rm -rf $RPM_BUILD_ROOT
 - add --enable-install-program=arch for configure
 - because some program need arch command, such as dracut
 - add buildrequires texinfo
+- koji test hang, don't make test temporarily
 
 * Fri Oct 23 2015 cjacker - 8.24-2
 - Rebuild for new 4.0 release
