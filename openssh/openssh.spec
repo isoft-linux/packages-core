@@ -9,8 +9,8 @@
 %define libedit 1
 
 # Do not forget to bump pam_ssh_agent_auth release if you rewind the main package release to 1
-%define openssh_ver 7.1p1
-%define openssh_rel 4 
+%define openssh_ver 7.1p2
+%define openssh_rel 1 
 
 Summary: An open source implementation of SSH protocol versions 1 and 2
 Name: openssh
@@ -229,6 +229,10 @@ getent passwd sshd >/dev/null || \
 
 
 %changelog
+* Fri Jan 15 2016 xiaotian.wu@i-soft.com.cn - 7.1p2-1.1
+- new version.
+- fixed client bugs CVE-2016-0777 and CVE-2016-0778
+
 * Fri Oct 23 2015 cjacker - 7.1p1-4.1
 - Rebuild for new 4.0 release
 
