@@ -38,6 +38,7 @@ BuildRequires: pam-devel
 BuildRequires: openssl-devel
 
 BuildRequires: libedit-devel ncurses-devel
+BuildRequires: systemd
 
 %package clients
 Summary: An open source SSH client applications
