@@ -2,8 +2,8 @@
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 11.1.0
-Release: 68
+Version: 11.1.1
+Release: 1
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -505,6 +505,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jan 15 2016 sulit <sulitsrc@gmail.com> - 11.1.1-1
+- Mesa 11.1.1 official released
+
 * Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 11.1.0-68
 - Mesa 11.1.0 official released
 
