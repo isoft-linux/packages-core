@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.0
-%define release 22
+%define release 23
 
 %define extraversion -%{release}
 
@@ -771,6 +771,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Jan 18 2016 sulit <sulitsrc@gmail.com> - 4.4.0-23
+- modify efi config for kernel
+
 * Thu Jan 14 2016 sulit <sulitsrc@gmail.com> - 4.4.0-22
 - modify config file for efi boot, some ide pc boot
 - and disable ata output error
