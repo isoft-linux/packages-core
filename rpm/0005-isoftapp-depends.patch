@@ -1,0 +1,30 @@
+diff --git a/lib/depends.c b/lib/depends.c
+index 0e6863c..3937c88 100644
+--- a/lib/depends.c
++++ b/lib/depends.c
+@@ -629,8 +629,23 @@ static int rpmdbProvidesISoftApp(rpmts ts, depCache dcache, rpmds dep, const cha
+     printf("DEBUG: %s, %s, line %d: %s %s %s %d %d\n", 
+            __FILE__, __func__, __LINE__, dbpath, Name, DNEVR, count, provides);
+ #endif
+-    if (count == 0 && provides == 0)
+-        rc = 1;
++    if (count == 0 && provides == 0) {
++        if (dbpath == NULL) {
++            if (appdb) {
++                rpmdbClose(appdb);
++                appdb = NULL;
++            }
++            openDatabase(ts->rootDir, "/var/lib/rpm", &appdb, O_RDONLY, 0644, 0);
++            if (appdb == NULL) {
++                rc = 1;
++                goto cleanup;
++            }
++            count = rpmdbCountPackages(appdb, Name);
++            provides = rpmdbCountProvides(appdb, Name);
++            if (count == 0 && provides == 0)
++                rc = 1;
++        }
++    }
+ 
+ cleanup:
+     if (appdb) {

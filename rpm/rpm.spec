@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 36
+Release: 37
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -67,6 +67,8 @@ Patch2001: 0002-db-quite.patch
 Patch2002: 0003-isoftapp-need-public-init-filter-iter.patch
 # Add --os args
 Patch2003: 0004-add-os-args.patch
+# Fix isoftapp depends issue.
+Patch2004: 0005-isoftapp-depends.patch
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -196,6 +198,7 @@ programs that will manipulate RPM packages and databases.
 %patch2001 -p1
 %patch2002 -p1
 %patch2003 -p1
+%patch2004 -p1
 
 ln -s db-%{bdbver} db
 
@@ -414,6 +417,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jan 21 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Fix isoftapp depends issue.
+
 * Thu Dec 10 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Add --os args.
 
