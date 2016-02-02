@@ -774,6 +774,7 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 * Tue Feb 02 2016 sulit - 4.4.1-1
 - update kernel to 4.4.1
 - update amdgpu to latest
+- modify kernel config file name and config file don't change
 
 * Mon Jan 18 2016 sulit <sulitsrc@gmail.com> - 4.4.0-23
 - modify efi config for kernel
