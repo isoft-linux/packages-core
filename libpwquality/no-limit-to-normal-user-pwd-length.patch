@@ -1,0 +1,116 @@
+diff -Nur libpwquality-1.2.4/src/check.c libpwquality-1.2.4n/src/check.c
+--- libpwquality-1.2.4/src/check.c	2016-01-11 16:01:28.598397325 +0800
++++ libpwquality-1.2.4n/src/check.c	2016-01-11 15:50:52.437425687 +0800
+@@ -293,8 +293,10 @@
+         if (size <= i)
+                 return 0;
+ 
+-        if (auxerror)
++        if (auxerror) {
++                size = pwq->min_length;
+                 *auxerror = (void *)(long)size;
++        }
+ 
+         return PWQ_ERROR_MIN_LENGTH;
+ }
+diff -Nur libpwquality-1.2.4/src/pam_pwquality.c libpwquality-1.2.4n/src/pam_pwquality.c
+--- libpwquality-1.2.4/src/pam_pwquality.c	2012-12-20 00:39:35.000000000 +0800
++++ libpwquality-1.2.4n/src/pam_pwquality.c	2016-01-11 15:56:40.660410162 +0800
+@@ -19,6 +19,8 @@
+ #include <stdio.h>
+ #include <pwd.h>
+ #include <errno.h>
++#include <grp.h>
++#include "pwqprivate.h"
+ #include "pwquality.h"
+ 
+ /* For Translators: "%s%s" could be replaced with "<service> " or "". */
+@@ -183,6 +185,7 @@
+                 const void *oldtoken;
+                 const char *user;
+                 int tries;
++                int is_normal_user = 1;
+ 
+                 retval = pam_get_user(pamh, &user, NULL);
+                 if (retval != PAM_SUCCESS || user == NULL) {
+@@ -198,6 +201,67 @@
+                                 pam_syslog(pamh, LOG_ERR, "Can not get old passwd");
+                         oldtoken = NULL;
+                 }
++                /*
++                 * user is in wheel group?
++                 */
++                while (1) {
++
++                    struct passwd pwd;
++                    struct passwd *result;
++                    char   current_user[256]="";
++
++                    char *buf;
++                    size_t bufsize;
++                    struct group grp;
++
++                    bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
++                    if (bufsize == -1 || bufsize > PWQ_MAX_PASSWD_BUF_LEN)
++                            bufsize = PWQ_MAX_PASSWD_BUF_LEN;
++                    buf = malloc(bufsize);
++                    if (buf == NULL) {
++                        break;
++                    }
++                    memset(&pwd,0,sizeof(struct passwd));
++                    uid_t euid = getuid();
++                    if (getpwuid_r(euid, &pwd, buf, bufsize, &result) != 0 ||
++                            result == NULL) {
++                        free(buf);
++                        break;
++                    }
++                    snprintf(current_user,sizeof(current_user),"%s",pwd.pw_name);
++
++                    struct group *res = NULL;
++                    free(buf);
++                    buf = NULL;
++
++                    bufsize = sysconf(_SC_GETGR_R_SIZE_MAX);
++                    if (bufsize == -1 || bufsize > PWQ_MAX_PASSWD_BUF_LEN)
++                            bufsize = PWQ_MAX_PASSWD_BUF_LEN;
++                    buf = malloc(bufsize);
++                    if (buf == NULL) {
++                        break;
++                    }
++
++                    memset(buf,0,bufsize);
++                    memset(&grp,0,sizeof(struct group));
++                    if (getgrnam_r("wheel", &grp, buf, bufsize, &res) != 0 ||
++                            res == NULL) {
++                            free(buf);
++                            break;
++                    }
++                    int i =0;
++                    while (grp.gr_mem[i]) {
++                        if(strcmp(grp.gr_mem[i],current_user) == 0) {
++                            is_normal_user = 0;
++                            break;
++                        }
++                        i++;
++                    }
++
++                    free(buf);
++                    break;
++                }
++
+ 
+                 tries = 0;
+                 while (tries < options.retry_times) {
+@@ -242,9 +306,12 @@
+ 
+                                 if (getuid() || options.enforce_for_root ||
+                                     (flags & PAM_CHANGE_EXPIRED_AUTHTOK)) {
++                                    /* normal user:no limit. */
++                                    if (is_normal_user == 0 ) {
+                                         pam_set_item(pamh, PAM_AUTHTOK, NULL);
+                                         retval = PAM_AUTHTOK_ERR;
+                                         continue;
++                                    }
+                                 }
+                         } else {
+                                 if (ctrl & PAM_DEBUG_ARG)

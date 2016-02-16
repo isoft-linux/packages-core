@@ -3,7 +3,7 @@
 Summary: A utility for determining file types
 Name: file
 Version: 5.23
-Release: 17
+Release: 19
 License: BSD
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
 URL: http://www.darwinsys.com/file/
@@ -150,6 +150,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jan 26 2016 xiaotian.wu@i-soft.com.cn - 5.23-19
+- rebuilt
+
+* Mon Jan 25 2016 xiaotian.wu@i-soft.com.cn - 5.23-18
+- rebuilt
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 5.23-17
 - Rebuild with python 3.5
 

@@ -45,7 +45,7 @@
 Name:           grub
 Epoch:          1
 Version:        2.02
-Release:        51%{?dist}
+Release:        53%{?dist}
 Summary:        Bootloader with support for Linux, Multiboot and more
 
 License:        GPLv3+
@@ -548,6 +548,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_datarootdir}/grub/themes/isoft-silence
 
 %changelog
+* Mon Feb 01 2016 test - 1:2.02-53
+- modify grub-revert-linux16-patch.patch date error, the
+- latest version git check it cause "mpkg prep" don't pass
+
+* Mon Feb 01 2016 test - 1:2.02-52
+- update isoft-silence
+
 * Thu Dec 31 2015 xiaotian.wu@i-soft.com.cn - 1:2.02-51
 - update po for zh_TW, ja
 

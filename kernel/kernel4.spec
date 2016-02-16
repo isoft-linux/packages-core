@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.0
-%define release 19
+%define kversion 4.4.1
+%define release 1
 
 %define extraversion -%{release}
 
@@ -30,7 +30,7 @@ Version: %{kversion}
 Release: %{release}
 ExclusiveArch: x86_64
 ExclusiveOS: Linux
-Provides: kernel-drm = 4.3.0
+Provides: kernel-drm = %{kversion}
 Provides: kernel-%{_target_cpu} = %{kversion}-%{release}
 Requires(pre): kmod, grub, dracut 
 # We can't let RPM do the dependencies automatic because it'll then pick up
@@ -293,7 +293,7 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   cat %{PATCH2} |patch -p1
   cat %{PATCH3} |patch -p1
   cat %{PATCH4} |patch -p1
-  cat %{PATCH5} |patch -p1 -R
+  cat %{PATCH5} |patch -p1
   popd
   #end amdgpu
 else 
@@ -771,6 +771,18 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Feb 02 2016 sulit - 4.4.1-1
+- update kernel to 4.4.1
+- update amdgpu to latest
+- modify kernel config file name and config file don't change
+
+* Mon Jan 18 2016 sulit <sulitsrc@gmail.com> - 4.4.0-23
+- modify efi config for kernel
+
+* Thu Jan 14 2016 sulit <sulitsrc@gmail.com> - 4.4.0-22
+- modify config file for efi boot, some ide pc boot
+- and disable ata output error
+
 * Mon Jan 11 2016 sulit <sulitsrc@gmail.com> - 4.4.0-19
 - kernel4.4.0 comes
 - config don't change
