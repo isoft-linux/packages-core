@@ -1,5 +1,5 @@
 %define gitdate 20151207
-%define iwlwifi_gitdate 20151231
+%define iwlwifi_gitdate 20160216 
 
 %global firmware_release 60 
 
@@ -7,7 +7,7 @@
 
 Name: linux-firmware
 Version: %{gitdate}
-Release: %{firmware_release}.git%{?dist}.7
+Release: %{firmware_release}.git%{?dist}.8
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
 URL: http://www.kernel.org/
@@ -136,6 +136,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Tue Feb 16 2016 Cjacker <cjacker@foxmail.com> - 20151207-60.git.8
+- Update iwlwifi firmware to 20
+
 * Thu Dec 31 2015 Cjacker <cjacker@foxmail.com> - 20151207-60.git.7
 - Update iwlwifi, add 19 ucode
 
