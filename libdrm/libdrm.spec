@@ -1,12 +1,10 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.66
-#Release: 6.git
-Release: 7
+Version: 2.4.67
+Release: 1
 License: MIT
 URL: http://dri.sourceforge.net
 
-#Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
 Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
 #http://anongit.freedesktop.org/git/mesa/drm.git
 #Source0: libdrm.tar.gz
@@ -154,6 +152,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Fri Feb 19 2016 sulit <sulitsrc@gmail.com> - 2.4.67-1
+- update to offical release 2.4.67
+
 * Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 2.4.66-7
 - update to git tag 2.4.66, 2.4.66 comes
 
