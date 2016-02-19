@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.1
-%define release 1
+%define kversion 4.4.2
+%define release 2
 
 %define extraversion -%{release}
 
@@ -771,6 +771,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Feb 19 2016 <sulit> <sulitsrc@gmail.com> - 4.4.2-2
+- update to 4.4.2
+
 * Tue Feb 02 2016 sulit - 4.4.1-1
 - update kernel to 4.4.1
 - update amdgpu to latest
