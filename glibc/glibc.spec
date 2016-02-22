@@ -75,6 +75,9 @@ Provides: rtld(GNU_HASH)
 
 Requires: glibc-common = %{version}-%{release}
 
+# We use systemd rpm macros for nscd
+BuildRequires: systemd
+
 # Require libgcc in case some program calls pthread_cancel in its %%post
 Requires(pre): filesystem, libgcc
 
