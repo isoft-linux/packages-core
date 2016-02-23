@@ -7,7 +7,7 @@
 
 Name: linux-firmware
 Version: %{gitdate}
-Release: %{firmware_release}.git%{?dist}.8
+Release: %{firmware_release}.git%{?dist}.9
 Summary: Firmware files used by the Linux kernel
 License: GPL+ and GPLv2+ and MIT and Redistributable, no modification permitted
 URL: http://www.kernel.org/
@@ -136,6 +136,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc WHENCE LICENCE.* LICENSE.*
 
 %changelog
+* Tue Feb 23 2016 sulit <sulitsrc@gmail.com> - 20151207-60.git.9
+- update release
+
 * Tue Feb 16 2016 Cjacker <cjacker@foxmail.com> - 20151207-60.git.8
 - Update iwlwifi firmware to 20
 
