@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.2
-%define release 2
+%define kversion 4.4.5
+%define release 1
 
 %define extraversion -%{release}
 
@@ -121,7 +121,6 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 #Upstream backport, may removed later.
 Patch2004: 0001-drm-i915-fix-idle_frames-counter.patch
 Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch 
-Patch2007: drm-i915-shut-up-gen8-SDE-irq-dmesg-noise-again.patch
 Patch2008: drm-udl-Use-unlocked-gem-unreferencing.patch
 Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
 
@@ -333,7 +332,6 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2004 -p1
 %patch2006 -p1
-%patch2007 -p1
 %patch2008 -p1
 %patch2009 -p1
 
@@ -771,6 +769,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Mar 14 2016 sulit <sulitsrc@gmail.com> - 4.4.5-1
+- update kernel to 4.4.5
+- remove patch2007 about i915
+
 * Fri Feb 19 2016 <sulit> <sulitsrc@gmail.com> - 4.4.2-2
 - update to 4.4.2
 
