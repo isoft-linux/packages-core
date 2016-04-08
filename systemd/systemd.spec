@@ -181,7 +181,7 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
         PYTHON=%{__python3}
         
 #-fno-lto to fix compile with gcc-4.9
-make CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
+make -j 1 CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
