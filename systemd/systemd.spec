@@ -5,8 +5,8 @@
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        228
-Release:        12
+Version:        229
+Release:        2
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
 Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
@@ -17,8 +17,6 @@ Source7:        99-default-disable.preset
 # Prevent accidental removal of the systemd package
 Source10:        yum-protect-systemd.conf
 
-Patch0: 0002-lz4-fix-size-check-which-had-no-chance-of-working-on.patch
-Patch1: 0004-core-Do-not-bind-a-mount-unit-to-a-device-if-it-was-.patch
 
  
 BuildRequires:  glib2-devel
@@ -142,8 +140,6 @@ glib-based applications using libudev functionality.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -515,6 +511,9 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 229-2
+- update to 229 release
+
 * Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 228-12
 - Disable terminal
 
