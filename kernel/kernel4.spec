@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.5
-%define release 1
+%define kversion 4.5
+%define release 2
 
 %define extraversion -%{release}
 
@@ -62,11 +62,6 @@ BuildRequires: pciutils-devel gettext ncurses-devel
 
 Source0: linux-%{kversion}.tar.xz
 
-#amdgpu with powerplay, now we use drm-next-4.5 branch
-#git clone --depth 1 -b "drm-next-4.5" git://people.freedesktop.org/~agd5f/linux
-#tar drivers/gpu/drm/amd.
-Source1: amd.tar.gz 
-
 Source20: kernel-%{kversion}-x86_64.config
 
 # Sources for kernel-tools
@@ -77,17 +72,6 @@ Source2001: cpupower.config
 Source3000: kbuild-AFTER_LINK.patch
  
 Patch0: linux-tune-cdrom-default.patch
-
-#Start amdgpu
-#Enabel amdgpu powerplay Kconfig
-Patch1: linux-add-amdgpu-powerplay-config.patch
-#amd added drm_pcie_get_max_link_width to drm.
-Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
-Patch3: backport-amdgpu-acp-asoc.patch
-Patch4: amdgpu-fix-warning.patch
-#this commit disable amdgpu powerplay by default, we revert it.
-Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
-#End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
 Patch452: no-pcspkr-modalias.patch
@@ -104,11 +88,7 @@ Patch607: drm-i915-hush-check-crtc-state.patch
 Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
 # drop it from kernel-4.4.0-rc4
 # Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
-Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
-
-#http://patchwork.ozlabs.org/patch/522709/
-Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
 
 #nouveau add dummy func to gk20a
 Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
@@ -119,40 +99,12 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 #Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
 
 #Upstream backport, may removed later.
-Patch2004: 0001-drm-i915-fix-idle_frames-counter.patch
-Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch 
 Patch2008: drm-udl-Use-unlocked-gem-unreferencing.patch
 Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
 
-Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
-Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
-Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
-Patch2016: alua_fix.patch
 # Fix rfkill issues on ideapad Y700-17ISK
 Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
-
-# Add support for Yoga touch input
-Patch2050: 0001-device-property-always-check-for-fwnode-type.patch
-Patch2051: 0002-device-property-rename-helper-functions.patch
-Patch2052: 0003-device-property-refactor-built-in-properties-support.patch
-Patch2053: 0004-device-property-keep-single-value-inplace.patch
-Patch2054: 0005-device-property-helper-macros-for-property-entry-cre.patch
-Patch2055: 0006-device-property-improve-readability-of-macros.patch
-Patch2056: 0007-device-property-return-EINVAL-when-property-isn-t-fo.patch
-Patch2057: 0008-device-property-Fallback-to-secondary-fwnode-if-prim.patch
-Patch2058: 0009-device-property-Take-a-copy-of-the-property-set.patch
-Patch2059: 0010-driver-core-platform-Add-support-for-built-in-device.patch
-Patch2060: 0011-driver-core-Do-not-overwrite-secondary-fwnode-with-N.patch
-Patch2061: 0012-mfd-core-propagate-device-properties-to-sub-devices-.patch
-Patch2062: 0013-mfd-intel-lpss-Add-support-for-passing-device-proper.patch
-Patch2063: 0014-mfd-intel-lpss-Pass-SDA-hold-time-to-I2C-host-contro.patch
-Patch2064: 0015-mfd-intel-lpss-Pass-HSUART-configuration-via-propert.patch
-Patch2065: 0016-i2c-designware-Convert-to-use-unified-device-propert.patch
-
-# ignore i915 no acpi video bus found
-Patch3001: ignore_i915_no_acpi_video_bus_found.patch
-
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -284,17 +236,6 @@ This package provides debug information for the perf python bindings.
 if [ ! -d kernel-%{kversion}/vanilla ]; then
 %setup -q -n %{name}-%{version} -c
   mv linux-%{kversion} vanilla
-  #start amdgpu
-  rm -rf vanilla/drivers/gpu/drm/amd
-  tar zxf %{SOURCE1} -C vanilla/drivers/gpu/drm
-  pushd vanilla
-  cat %{PATCH1} |patch -p1
-  cat %{PATCH2} |patch -p1
-  cat %{PATCH3} |patch -p1
-  cat %{PATCH4} |patch -p1
-  cat %{PATCH5} |patch -p1
-  popd
-  #end amdgpu
 else 
   cd kernel-%{kversion}
   if [ -d linux-%{kversion}.%{_target_cpu} ]; then
@@ -324,42 +265,15 @@ cat %{SOURCE3000} |patch -p1
 %patch606 -p1
 %patch607 -p1
 %patch608 -p1
-%patch611 -p1
 %patch612 -p1
 
-%patch2000 -p1
 %patch2002 -p1
 
-%patch2004 -p1
-%patch2006 -p1
 %patch2008 -p1
 %patch2009 -p1
 
-%patch2010 -p1
-%patch2011 -p1
 %patch2013 -p1
-%patch2014 -p1
-%patch2016 -p1
 %patch2017 -p1
-
-%patch2050 -p1
-%patch2051 -p1
-%patch2052 -p1
-%patch2053 -p1
-%patch2054 -p1
-%patch2055 -p1
-%patch2056 -p1
-%patch2057 -p1
-%patch2058 -p1
-%patch2059 -p1
-%patch2060 -p1
-%patch2061 -p1
-%patch2062 -p1
-%patch2063 -p1
-%patch2064 -p1
-%patch2065 -p1
-
-%patch3001 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -769,6 +683,11 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 4.5-2
+- update to 4.5 release
+- don't add many patch
+- add them later
+
 * Mon Mar 14 2016 sulit <sulitsrc@gmail.com> - 4.4.5-1
 - update kernel to 4.4.5
 - remove patch2007 about i915
