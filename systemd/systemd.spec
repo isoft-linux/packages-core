@@ -16,6 +16,7 @@ Source7:        99-default-disable.preset
 
 # Prevent accidental removal of the systemd package
 Source10:        yum-protect-systemd.conf
+Patch0999:      0999-Add-a-workaround-for-linux-net-if.h-conflict.patch
 
 
  
@@ -140,6 +141,7 @@ glib-based applications using libudev functionality.
 
 %prep
 %setup -q
+%patch0999 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -513,6 +515,7 @@ fi
 %changelog
 * Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 229-2
 - update to 229 release
+- add 0999 if.h patch
 
 * Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 228-12
 - Disable terminal
