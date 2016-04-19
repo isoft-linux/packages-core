@@ -12,8 +12,8 @@
 %global _python_bytecompile_errors_terminate_build 0
 
 Name:		python
-Version:	2.7.10
-Release:	3
+Version:	2.7.11
+Release:	2
 Summary:    An interpreted, interactive, object-oriented programming language	
 
 License:	Python
@@ -25,9 +25,8 @@ Source10:   macros.python2
 
 Patch30:    00153-fix-test_gdb-noise.patch  
 Patch31:    00156-gdb-autoload-safepath.patch       
-Patch32:    00166-fix-fake-repr-in-gdb-hooks.patch  
+Patch32:    fix-fake-repr-in-gdb-hooks.patch
 Patch33:    00167-disable-stack-navigation-tests-when-optimized-in-test_gdb.patch
-Patch34:    00189-gdb-py-bt-dont-raise-exception-from-eval.patch
 
 
 Provides:   python2 = %{version}-%{release}
@@ -127,7 +126,6 @@ user interface for Python programming.
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
-%patch34 -p1
 
 sed -i 's@#! /usr/local/bin/python@#!/usr/bin/env python@g' Lib/cgi.py 
 
@@ -205,6 +203,10 @@ EXTRATESTOPTS="$EXTRATESTOPTS" make test
 
 
 %changelog
+* Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 2.7.11-2
+- update to release 2.7.11
+- redo patch 00166 and rename it
+
 * Fri Nov 06 2015 Cjacker <cjacker@foxmail.com> - 2.7.10-3
 - Improve python rpm macro
 
