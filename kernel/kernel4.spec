@@ -83,7 +83,7 @@ Patch0: linux-tune-cdrom-default.patch
 Patch1: linux-add-amdgpu-powerplay-config.patch
 #amd added drm_pcie_get_max_link_width to drm.
 Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
-#Patch3: backport-amdgpu-acp-asoc.patch
+Patch3: backport-amdgpu.patch
 Patch4: amdgpu-fix-warning.patch
 #this commit disable amdgpu powerplay by default, we revert it.
 #Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
@@ -290,7 +290,7 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   pushd vanilla
   cat %{PATCH1} |patch -p1
   cat %{PATCH2} |patch -p1
-  #cat %{PATCH3} |patch -p1
+  cat %{PATCH3} |patch -p1
   cat %{PATCH4} |patch -p1
   #cat %{PATCH5} |patch -p1
   popd
@@ -772,6 +772,7 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 * Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 4.4.7-2
 - update kernel to release 4.4.7
 - some amd patch don't need
+- redo some amd patch
 
 * Mon Mar 14 2016 sulit <sulitsrc@gmail.com> - 4.4.5-1
 - update kernel to 4.4.5
