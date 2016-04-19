@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.5
-%define release 1
+%define kversion 4.4.7
+%define release 2
 
 %define extraversion -%{release}
 
@@ -75,7 +75,7 @@ Source2001: cpupower.config
 
 # build tweak for build ID magic, even for -vanilla
 Source3000: kbuild-AFTER_LINK.patch
- 
+
 Patch0: linux-tune-cdrom-default.patch
 
 #Start amdgpu
@@ -83,10 +83,10 @@ Patch0: linux-tune-cdrom-default.patch
 Patch1: linux-add-amdgpu-powerplay-config.patch
 #amd added drm_pcie_get_max_link_width to drm.
 Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
-Patch3: backport-amdgpu-acp-asoc.patch
+#Patch3: backport-amdgpu-acp-asoc.patch
 Patch4: amdgpu-fix-warning.patch
 #this commit disable amdgpu powerplay by default, we revert it.
-Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
+#Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
 #End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
@@ -290,9 +290,9 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   pushd vanilla
   cat %{PATCH1} |patch -p1
   cat %{PATCH2} |patch -p1
-  cat %{PATCH3} |patch -p1
+  #cat %{PATCH3} |patch -p1
   cat %{PATCH4} |patch -p1
-  cat %{PATCH5} |patch -p1
+  #cat %{PATCH5} |patch -p1
   popd
   #end amdgpu
 else 
@@ -769,6 +769,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 4.4.7-2
+- update kernel to release 4.4.7
+- some amd patch don't need
+
 * Mon Mar 14 2016 sulit <sulitsrc@gmail.com> - 4.4.5-1
 - update kernel to 4.4.5
 - remove patch2007 about i915
