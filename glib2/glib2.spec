@@ -25,6 +25,7 @@ BuildRequires: gtk-doc
 BuildRequires: python-devel
 BuildRequires: libelfutils-devel
 BuildRequires: chrpath
+BuildRequires: pcre-devel
 
 # required for GIO content-type support
 Requires: shared-mime-info
@@ -146,6 +147,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 2.48.0-2
 - update to release 2.48.0
+- add buildrequire pcre-devel
 
 * Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 2.46.2-2
 - Update to match gnome-3.18.2
