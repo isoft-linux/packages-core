@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.7
-%define release 2
+%define release 3
 
 %define extraversion -%{release}
 
@@ -64,6 +64,7 @@ Source0: linux-%{kversion}.tar.xz
 
 #amdgpu with powerplay, now we use drm-next-4.5 branch
 #git clone --depth 1 -b "drm-next-4.5" git://people.freedesktop.org/~agd5f/linux
+#git clone --depth 1 -b "drm-next-4.5-wip" git://people.freedesktop.org/~agd5f/linux
 #tar drivers/gpu/drm/amd.
 Source1: amd.tar.gz 
 
@@ -83,7 +84,7 @@ Patch0: linux-tune-cdrom-default.patch
 Patch1: linux-add-amdgpu-powerplay-config.patch
 #amd added drm_pcie_get_max_link_width to drm.
 Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
-Patch3: backport-amdgpu.patch
+Patch3: backport-amdgpu-acp-asoc.patch
 Patch4: amdgpu-fix-warning.patch
 #this commit disable amdgpu powerplay by default, we revert it.
 #Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
@@ -769,6 +770,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Thu Apr 21 2016 sulit <sulitsrc@gmail.com> - 4.4.7-3
+- update amd.tar.gz to drm-next-4.5-wip
+
 * Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 4.4.7-2
 - update kernel to release 4.4.7
 - some amd patch don't need
