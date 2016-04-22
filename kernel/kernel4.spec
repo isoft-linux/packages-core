@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.7
-%define release 4
+%define release 5
 
 %define extraversion -%{release}
 
@@ -88,6 +88,8 @@ Patch3: backport-amdgpu-acp-asoc.patch
 Patch4: amdgpu-fix-warning.patch
 #this commit disable amdgpu powerplay by default, we revert it.
 #Patch5: disable-amdgpu-powerplay-by-default-used-for-revert.patch
+# this patch add some drm ttm API, modify amdgpu function call and so on
+Patch6: backport-amdgpu-drm.patch
 #End amdgpu
 
 Patch450: input-kill-stupid-messages.patch
@@ -294,6 +296,7 @@ if [ ! -d kernel-%{kversion}/vanilla ]; then
   cat %{PATCH3} |patch -p1
   cat %{PATCH4} |patch -p1
   #cat %{PATCH5} |patch -p1
+  cat %{PATCH6} |patch -p1
   popd
   #end amdgpu
 else 
@@ -770,6 +773,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Apr 22 2016 sulit <sulitsrc@gmail.com> - 4.4.7-5
+- add backport amdgpu patch and apply the new linux-next-4.5-wip amdgpu
+
 * Fri Apr 22 2016 sulit <sulitsrc@gmail.com> - 4.4.7-4
 - use old amd.tar.gz, beacause the new one has drm's API damage
 - we can backport it and wait

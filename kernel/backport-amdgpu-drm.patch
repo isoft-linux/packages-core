@@ -1,0 +1,195 @@
+diff -Nur linux-4.4.7/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c linux-4.4.7n/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+--- linux-4.4.7/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c	2016-04-21 17:59:47.000000000 +0800
++++ linux-4.4.7n/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c	2016-04-22 12:13:41.419723695 +0800
+@@ -3729,7 +3729,7 @@
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DAC1:
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DAC2:
+ 		drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-				 DRM_MODE_ENCODER_DAC, NULL);
++				 DRM_MODE_ENCODER_DAC);
+ 		drm_encoder_helper_add(encoder, &dce_v10_0_dac_helper_funcs);
+ 		break;
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DVO1:
+@@ -3740,15 +3740,15 @@
+ 		if (amdgpu_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT)) {
+ 			amdgpu_encoder->rmx_type = RMX_FULL;
+ 			drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_LVDS, NULL);
++					 DRM_MODE_ENCODER_LVDS);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_lcd_info(amdgpu_encoder);
+ 		} else if (amdgpu_encoder->devices & (ATOM_DEVICE_CRT_SUPPORT)) {
+ 			drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_DAC, NULL);
++					 DRM_MODE_ENCODER_DAC);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_dig_info(amdgpu_encoder);
+ 		} else {
+ 			drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_TMDS, NULL);
++					 DRM_MODE_ENCODER_TMDS);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_dig_info(amdgpu_encoder);
+ 		}
+ 		drm_encoder_helper_add(encoder, &dce_v10_0_dig_helper_funcs);
+@@ -3766,13 +3766,13 @@
+ 		amdgpu_encoder->is_ext_encoder = true;
+ 		if (amdgpu_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT))
+ 			drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_LVDS, NULL);
++					 DRM_MODE_ENCODER_LVDS);
+ 		else if (amdgpu_encoder->devices & (ATOM_DEVICE_CRT_SUPPORT))
+ 			drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_DAC, NULL);
++					 DRM_MODE_ENCODER_DAC);
+ 		else
+ 			drm_encoder_init(dev, encoder, &dce_v10_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_TMDS, NULL);
++					 DRM_MODE_ENCODER_TMDS);
+ 		drm_encoder_helper_add(encoder, &dce_v10_0_ext_helper_funcs);
+ 		break;
+ 	}
+diff -Nur linux-4.4.7/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c linux-4.4.7n/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+--- linux-4.4.7/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c	2016-04-21 17:59:47.000000000 +0800
++++ linux-4.4.7n/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c	2016-04-22 12:13:41.421723695 +0800
+@@ -3724,7 +3724,7 @@
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DAC1:
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DAC2:
+ 		drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-				 DRM_MODE_ENCODER_DAC, NULL);
++				 DRM_MODE_ENCODER_DAC);
+ 		drm_encoder_helper_add(encoder, &dce_v11_0_dac_helper_funcs);
+ 		break;
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DVO1:
+@@ -3735,15 +3735,15 @@
+ 		if (amdgpu_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT)) {
+ 			amdgpu_encoder->rmx_type = RMX_FULL;
+ 			drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_LVDS, NULL);
++					 DRM_MODE_ENCODER_LVDS);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_lcd_info(amdgpu_encoder);
+ 		} else if (amdgpu_encoder->devices & (ATOM_DEVICE_CRT_SUPPORT)) {
+ 			drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_DAC, NULL);
++					 DRM_MODE_ENCODER_DAC);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_dig_info(amdgpu_encoder);
+ 		} else {
+ 			drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_TMDS, NULL);
++					 DRM_MODE_ENCODER_TMDS);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_dig_info(amdgpu_encoder);
+ 		}
+ 		drm_encoder_helper_add(encoder, &dce_v11_0_dig_helper_funcs);
+@@ -3761,13 +3761,13 @@
+ 		amdgpu_encoder->is_ext_encoder = true;
+ 		if (amdgpu_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT))
+ 			drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_LVDS, NULL);
++					 DRM_MODE_ENCODER_LVDS);
+ 		else if (amdgpu_encoder->devices & (ATOM_DEVICE_CRT_SUPPORT))
+ 			drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_DAC, NULL);
++					 DRM_MODE_ENCODER_DAC);
+ 		else
+ 			drm_encoder_init(dev, encoder, &dce_v11_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_TMDS, NULL);
++					 DRM_MODE_ENCODER_TMDS);
+ 		drm_encoder_helper_add(encoder, &dce_v11_0_ext_helper_funcs);
+ 		break;
+ 	}
+diff -Nur linux-4.4.7/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c linux-4.4.7n/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+--- linux-4.4.7/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c	2016-04-21 17:59:47.000000000 +0800
++++ linux-4.4.7n/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c	2016-04-22 12:13:41.423723695 +0800
+@@ -3659,7 +3659,7 @@
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DAC1:
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DAC2:
+ 		drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-				 DRM_MODE_ENCODER_DAC, NULL);
++				 DRM_MODE_ENCODER_DAC);
+ 		drm_encoder_helper_add(encoder, &dce_v8_0_dac_helper_funcs);
+ 		break;
+ 	case ENCODER_OBJECT_ID_INTERNAL_KLDSCP_DVO1:
+@@ -3670,15 +3670,15 @@
+ 		if (amdgpu_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT)) {
+ 			amdgpu_encoder->rmx_type = RMX_FULL;
+ 			drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_LVDS, NULL);
++					 DRM_MODE_ENCODER_LVDS);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_lcd_info(amdgpu_encoder);
+ 		} else if (amdgpu_encoder->devices & (ATOM_DEVICE_CRT_SUPPORT)) {
+ 			drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_DAC, NULL);
++					 DRM_MODE_ENCODER_DAC);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_dig_info(amdgpu_encoder);
+ 		} else {
+ 			drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_TMDS, NULL);
++					 DRM_MODE_ENCODER_TMDS);
+ 			amdgpu_encoder->enc_priv = amdgpu_atombios_encoder_get_dig_info(amdgpu_encoder);
+ 		}
+ 		drm_encoder_helper_add(encoder, &dce_v8_0_dig_helper_funcs);
+@@ -3696,13 +3696,13 @@
+ 		amdgpu_encoder->is_ext_encoder = true;
+ 		if (amdgpu_encoder->devices & (ATOM_DEVICE_LCD_SUPPORT))
+ 			drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_LVDS, NULL);
++					 DRM_MODE_ENCODER_LVDS);
+ 		else if (amdgpu_encoder->devices & (ATOM_DEVICE_CRT_SUPPORT))
+ 			drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_DAC, NULL);
++					 DRM_MODE_ENCODER_DAC);
+ 		else
+ 			drm_encoder_init(dev, encoder, &dce_v8_0_encoder_funcs,
+-					 DRM_MODE_ENCODER_TMDS, NULL);
++					 DRM_MODE_ENCODER_TMDS);
+ 		drm_encoder_helper_add(encoder, &dce_v8_0_ext_helper_funcs);
+ 		break;
+ 	}
+diff -Nur linux-4.4.7/drivers/gpu/drm/ttm/ttm_bo.c linux-4.4.7n/drivers/gpu/drm/ttm/ttm_bo.c
+--- linux-4.4.7/drivers/gpu/drm/ttm/ttm_bo.c	2016-04-13 00:09:26.000000000 +0800
++++ linux-4.4.7n/drivers/gpu/drm/ttm/ttm_bo.c	2016-04-22 12:15:40.217711500 +0800
+@@ -228,6 +228,27 @@
+ }
+ EXPORT_SYMBOL(ttm_bo_del_sub_from_lru);
+ 
++void ttm_bo_move_to_lru_tail(struct ttm_buffer_object *bo)
++{
++	struct ttm_bo_device *bdev = bo->bdev;
++	struct ttm_mem_type_manager *man;
++
++	lockdep_assert_held(&bo->resv->lock.base);
++
++	if (bo->mem.placement & TTM_PL_FLAG_NO_EVICT) {
++		list_del_init(&bo->swap);
++		list_del_init(&bo->lru);
++
++	} else {
++		if (bo->ttm && !(bo->ttm->page_flags & TTM_PAGE_FLAG_SG))
++			list_move_tail(&bo->swap, &bo->glob->swap_lru);
++
++		man = &bdev->man[bo->mem.mem_type];
++		list_move_tail(&bo->lru, &man->lru);
++	}
++}
++EXPORT_SYMBOL(ttm_bo_move_to_lru_tail);
++
+ /*
+  * Call bo->mutex locked.
+  */
+diff -Nur linux-4.4.7/include/drm/ttm/ttm_bo_api.h linux-4.4.7n/include/drm/ttm/ttm_bo_api.h
+--- linux-4.4.7/include/drm/ttm/ttm_bo_api.h	2016-04-13 00:09:26.000000000 +0800
++++ linux-4.4.7n/include/drm/ttm/ttm_bo_api.h	2016-04-22 12:15:10.419714559 +0800
+@@ -383,6 +383,16 @@
+  */
+ extern int ttm_bo_del_from_lru(struct ttm_buffer_object *bo);
+ 
++/**
++ * ttm_bo_move_to_lru_tail
++ *
++ * @bo: The buffer object.
++ *
++ * Move this BO to the tail of all lru lists used to lookup and reserve an
++ * object. This function must be called with struct ttm_bo_global::lru_lock
++ * held, and is used to make a BO less likely to be considered for eviction.
++ */
++extern void ttm_bo_move_to_lru_tail(struct ttm_buffer_object *bo);
+ 
+ /**
+  * ttm_bo_lock_delayed_workqueue
