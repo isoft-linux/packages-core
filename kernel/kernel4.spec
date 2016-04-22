@@ -114,7 +114,6 @@ Patch1000: 0001-drm-i915-Pretend-cursor-is-always-on-for-ILK-style-W.patch
 Patch1001: 0001-usb-hub-fix-panic-in-usb_reset_and_verify_device.patch
 Patch1002: acpi-Ignore-acpi_rsdp-kernel-parameter-when-module-l.patch
 Patch1003: ACPI-Limit-access-to-custom_method.patch
-Patch1006: Add-secure_modules-call.patch
 Patch1007: Add-sysrq-option-to-disable-secure-boot-mode.patch
 Patch1008: asus-wmi-Restrict-debugfs-interface-when-module-load.patch
 Patch1009: cdc_ncm-do-not-call-usbnet_link_change-from-cdc_ncm_.patch
@@ -364,7 +363,6 @@ cat %{SOURCE3000} |patch -p1
 %patch1001 -p1
 %patch1002 -p1
 %patch1003 -p1
-%patch1006 -p1
 %patch1007 -p1
 %patch1008 -p1
 %patch1009 -p1
