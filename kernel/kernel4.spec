@@ -110,6 +110,38 @@ Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
 Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
 
+Patch1000: 0001-drm-i915-Pretend-cursor-is-always-on-for-ILK-style-W.patch
+Patch1001: 0001-usb-hub-fix-panic-in-usb_reset_and_verify_device.patch
+Patch1002: acpi-Ignore-acpi_rsdp-kernel-parameter-when-module-l.patch
+Patch1003: ACPI-Limit-access-to-custom_method.patch
+Patch1006: Add-secure_modules-call.patch
+Patch1007: Add-sysrq-option-to-disable-secure-boot-mode.patch
+Patch1008: asus-wmi-Restrict-debugfs-interface-when-module-load.patch
+Patch1009: cdc_ncm-do-not-call-usbnet_link_change-from-cdc_ncm_.patch
+Patch1010: crash-driver.patch
+Patch1011: criu-no-expert.patch
+Patch1015: ext4-fix-races-between-page-faults-and-hole-punching.patch
+Patch1016: ext4-fix-races-of-writeback-with-punch-hole-and-zero.patch
+Patch1017: ext4-move-unlocked-dio-protection-from-ext4_alloc_fi.patch
+Patch1018: hibernate-Disable-in-a-signed-modules-environment.patch
+Patch1019: HID-sony-do-not-bail-out-when-the-sixaxis-refuses-th.patch
+Patch1020: input-gtco-fix-crash-on-detecting-device-without-end.patch
+Patch1021: Kbuild-Add-an-option-to-enable-GCC-VTA.patch
+Patch1024: KEYS-Add-a-system-blacklist-keyring.patch
+Patch1025: lib-cpumask-Make-CPUMASK_OFFSTACK-usable-without-deb.patch
+Patch1026: lis3-improve-handling-of-null-rate.patch
+Patch1027: media-ivtv-avoid-going-past-input-audio-array.patch
+Patch1028: MODSIGN-Import-certificates-from-UEFI-Secure-Boot.patch
+Patch1029: MODSIGN-Support-not-importing-certs-from-db.patch
+Patch1030: netfilter-x_tables-check-for-size-overflow.patch
+Patch1031: netfilter-x_tables-deal-with-bogus-nextoffset-values.patch
+Patch1032: PCI-Lock-down-BAR-access-when-module-security-is-ena.patch
+Patch1033: pipe-limit-the-per-user-amount-of-pages-allocated-in.patch
+Patch1034: PNP-Add-Broadwell-to-Intel-MCH-size-workaround.patch
+Patch1035: PNP-Add-Haswell-ULT-to-Intel-MCH-size-workaround.patch
+Patch1036: Restrict-dev-mem-and-dev-kmem-when-module-loading-is.patch
+Patch1037: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
+
 #http://patchwork.ozlabs.org/patch/522709/
 Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
 
@@ -327,6 +359,38 @@ cat %{SOURCE3000} |patch -p1
 %patch608 -p1
 %patch611 -p1
 %patch612 -p1
+
+%patch1000 -p1
+%patch1001 -p1
+%patch1002 -p1
+%patch1003 -p1
+%patch1006 -p1
+%patch1007 -p1
+%patch1008 -p1
+%patch1009 -p1
+%patch1010 -p1
+%patch1011 -p1
+%patch1015 -p1
+%patch1016 -p1
+%patch1017 -p1
+%patch1018 -p1
+%patch1019 -p1
+%patch1020 -p1
+%patch1021 -p1
+%patch1024 -p1
+%patch1025 -p1
+%patch1026 -p1
+%patch1027 -p1
+%patch1028 -p1
+%patch1029 -p1
+%patch1030 -p1
+%patch1031 -p1
+%patch1032 -p1
+%patch1033 -p1
+%patch1034 -p1
+%patch1035 -p1
+%patch1036 -p1
+%patch1037 -p1
 
 %patch2000 -p1
 %patch2002 -p1
