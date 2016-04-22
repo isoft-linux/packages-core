@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.4.7
-%define release 3
+%define release 4
 
 %define extraversion -%{release}
 
@@ -770,6 +770,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Apr 22 2016 sulit <sulitsrc@gmail.com> - 4.4.7-4
+- use old amd.tar.gz, beacause the new one has drm's API damage
+
 * Thu Apr 21 2016 sulit <sulitsrc@gmail.com> - 4.4.7-3
 - update amd.tar.gz to drm-next-4.5-wip
 
