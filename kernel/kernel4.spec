@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.7
-%define release 5
+%define kversion 4.4.8
+%define release 2
 
 %define extraversion -%{release}
 
@@ -124,11 +124,8 @@ Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
 #Upstream backport, may removed later.
 Patch2004: 0001-drm-i915-fix-idle_frames-counter.patch
 Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch 
-Patch2008: drm-udl-Use-unlocked-gem-unreferencing.patch
 Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
-
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
-Patch2011: usbvision-fix-crash-on-detecting-device-with-invalid.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
 Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
 Patch2016: alua_fix.patch
@@ -336,11 +333,9 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2004 -p1
 %patch2006 -p1
-%patch2008 -p1
 %patch2009 -p1
 
 %patch2010 -p1
-%patch2011 -p1
 %patch2013 -p1
 %patch2014 -p1
 %patch2016 -p1
@@ -773,6 +768,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Apr 22 2016 sulit <sulitsrc@gmail.com> - 4.4.8-2
+- upgrade to release 4.4.8
+- remove some fixed patch
+
 * Fri Apr 22 2016 sulit <sulitsrc@gmail.com> - 4.4.7-5
 - add backport amdgpu patch and apply the new linux-next-4.5-wip amdgpu
 
