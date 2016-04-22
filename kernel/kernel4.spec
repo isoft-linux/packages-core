@@ -114,7 +114,6 @@ Patch1000: 0001-drm-i915-Pretend-cursor-is-always-on-for-ILK-style-W.patch
 Patch1001: 0001-usb-hub-fix-panic-in-usb_reset_and_verify_device.patch
 Patch1002: acpi-Ignore-acpi_rsdp-kernel-parameter-when-module-l.patch
 Patch1003: ACPI-Limit-access-to-custom_method.patch
-Patch1007: Add-sysrq-option-to-disable-secure-boot-mode.patch
 Patch1008: asus-wmi-Restrict-debugfs-interface-when-module-load.patch
 Patch1009: cdc_ncm-do-not-call-usbnet_link_change-from-cdc_ncm_.patch
 Patch1010: crash-driver.patch
@@ -136,8 +135,6 @@ Patch1030: netfilter-x_tables-check-for-size-overflow.patch
 Patch1031: netfilter-x_tables-deal-with-bogus-nextoffset-values.patch
 Patch1032: PCI-Lock-down-BAR-access-when-module-security-is-ena.patch
 Patch1033: pipe-limit-the-per-user-amount-of-pages-allocated-in.patch
-Patch1034: PNP-Add-Broadwell-to-Intel-MCH-size-workaround.patch
-Patch1035: PNP-Add-Haswell-ULT-to-Intel-MCH-size-workaround.patch
 Patch1036: Restrict-dev-mem-and-dev-kmem-when-module-loading-is.patch
 Patch1037: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
 
@@ -363,7 +360,6 @@ cat %{SOURCE3000} |patch -p1
 %patch1001 -p1
 %patch1002 -p1
 %patch1003 -p1
-%patch1007 -p1
 %patch1008 -p1
 %patch1009 -p1
 %patch1010 -p1
@@ -385,8 +381,6 @@ cat %{SOURCE3000} |patch -p1
 %patch1031 -p1
 %patch1032 -p1
 %patch1033 -p1
-%patch1034 -p1
-%patch1035 -p1
 %patch1036 -p1
 %patch1037 -p1
 
