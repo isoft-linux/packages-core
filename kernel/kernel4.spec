@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.8
+%define kversion 4.4.9
 %define release 2
 
 %define extraversion -%{release}
@@ -115,11 +115,7 @@ Patch1001: 0001-usb-hub-fix-panic-in-usb_reset_and_verify_device.patch
 Patch1009: cdc_ncm-do-not-call-usbnet_link_change-from-cdc_ncm_.patch
 Patch1010: crash-driver.patch
 Patch1011: criu-no-expert.patch
-Patch1015: ext4-fix-races-between-page-faults-and-hole-punching.patch
-Patch1016: ext4-fix-races-of-writeback-with-punch-hole-and-zero.patch
-Patch1017: ext4-move-unlocked-dio-protection-from-ext4_alloc_fi.patch
 Patch1019: HID-sony-do-not-bail-out-when-the-sixaxis-refuses-th.patch
-Patch1020: input-gtco-fix-crash-on-detecting-device-without-end.patch
 Patch1021: Kbuild-Add-an-option-to-enable-GCC-VTA.patch
 Patch1024: KEYS-Add-a-system-blacklist-keyring.patch
 Patch1025: lib-cpumask-Make-CPUMASK_OFFSTACK-usable-without-deb.patch
@@ -355,11 +351,7 @@ cat %{SOURCE3000} |patch -p1
 %patch1009 -p1
 %patch1010 -p1
 %patch1011 -p1
-%patch1015 -p1
-%patch1016 -p1
-%patch1017 -p1
 %patch1019 -p1
-%patch1020 -p1
 %patch1021 -p1
 %patch1024 -p1
 %patch1025 -p1
@@ -812,6 +804,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon May 09 2016 sulit <sulitsrc@gmail.com> - 4.4.9-2
+- update kernel to 4.4.9 official release
+
 * Fri Apr 22 2016 sulit <sulitsrc@gmail.com> - 4.4.8-2
 - upgrade to release 4.4.8
 - remove some fixed patch
