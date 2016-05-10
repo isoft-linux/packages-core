@@ -5,7 +5,7 @@
 
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name:    openssl
-Version: 1.0.2g
+Version: 1.0.2e
 Release: 1
 Epoch:   1
 Source:  http://openssl.org/source/openssl-%{version}.tar.gz
@@ -269,9 +269,6 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
-* Thu Mar 03 2016 sulitsrc <sulitsrc@gmail.com> - 1:1.0.2g-1
-- update to 1.0.2g
-
 * Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 1:1.0.2e-1
 - update to 1.0.2e for security, and four securify fixes
 
