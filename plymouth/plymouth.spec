@@ -26,6 +26,7 @@ BuildRequires: pkgconfig(libdrm)
 BuildRequires: kernel-headers
 BuildRequires: libpng-devel
 BuildRequires: systemd-devel
+BuildRequires: libxslt, docbook-style-xsl
 #for post scripts
 Requires(pre): coreutils
 
