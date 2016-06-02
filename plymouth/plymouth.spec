@@ -5,8 +5,8 @@
 
 Summary: Graphical Boot Animation and Logger
 Name: plymouth
-Version: 0.8.9
-Release: 9
+Version: 0.9.2
+Release: 1
 License: GPLv2+
 Source0: http://freedesktop.org/software/plymouth/releases/%{name}-%{version}.tar.bz2
 
@@ -16,9 +16,6 @@ Source2: plymouth-encrypt_install
 Source3: plymouth_hook             
 Source4: plymouth-encrypt_hook     
 Source5: isoft-splash.txz
-
-Patch0: dont-timeout-waiting.patch
-Patch1: sysfs-tty-fix.patch
 
 URL: http://www.freedesktop.org/wiki/Software/Plymouth
 
@@ -49,8 +46,6 @@ and headers needed to develop 3rd party splash plugins for Plymouth.
 
 %prep
 %setup -q
-%patch0 -p1 -b .dont-timeout-waiting
-%patch1 -p1 -b .sysfs-tty-fix
 
 # Change the default theme
 #sed -i -e 's/fade-in/spinner/g' src/plymouthd.defaults
@@ -212,6 +207,9 @@ fi
 
 
 %changelog
+* Thu Jun 02 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 0.9.2-1
+- 0.9.2
+
 * Mon Dec 21 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Change logo for isoft-splash.txz
 
