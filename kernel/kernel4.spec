@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.12
+%define kversion 4.4.13
 %define release 2
 
 %define extraversion -%{release}
@@ -125,7 +125,6 @@ Patch1028: MODSIGN-Import-certificates-from-UEFI-Secure-Boot.patch
 Patch1029: MODSIGN-Support-not-importing-certs-from-db.patch
 Patch1030: netfilter-x_tables-check-for-size-overflow.patch
 Patch1031: netfilter-x_tables-deal-with-bogus-nextoffset-values.patch
-Patch1033: pipe-limit-the-per-user-amount-of-pages-allocated-in.patch
 Patch1037: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
 
 #http://patchwork.ozlabs.org/patch/522709/
@@ -361,7 +360,6 @@ cat %{SOURCE3000} |patch -p1
 %patch1029 -p1
 %patch1030 -p1
 %patch1031 -p1
-%patch1033 -p1
 %patch1037 -p1
 
 %patch2000 -p1
@@ -804,6 +802,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Sun Jun 12 2016 sulit <sulitsrc@gmail.com> - 4.4.13-2
+- upgrade to official release version
+
 * Thu Jun 02 2016 sulit <sulitsrc@gmail.com> - 4.4.12-2
 - update to official release version
 
