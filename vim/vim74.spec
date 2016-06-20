@@ -5,14 +5,14 @@
 
 %define baseversion 7.4
 #should as same as Source1
-%define patchlevel 909 
+%define patchlevel 959 
 %define vimdir vim74
 
 Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 11
+Release: 4
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/7.4/
@@ -22,7 +22,7 @@ Source1: vim-patches.tar.gz
 Source2: vimrc
 
 Source10: new-rpm-spec-syntax.vim
- 
+
 Source20: spec-template.new
  
 %if %{withvimspell}
@@ -150,6 +150,7 @@ make installmacros DESTDIR=$RPM_BUILD_ROOT
 mkdir -p %{buildroot}/%{_datadir}/%{name}/vimfiles/
 cp -f %{SOURCE20} %{buildroot}/%{_datadir}/%{name}/vimfiles/template.spec
 
+#default config files
 mkdir -p $RPM_BUILD_ROOT/etc
 install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/vimrc
 install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/virc
@@ -165,6 +166,16 @@ EOF
 chmod 0755 $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d/vim.sh
 
 cd .. # from src
+
+#own this folders
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/ftdetect
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/ftplugin
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/indent
+mkdir -p %{buildroot}%{_datadir}/%{name}/vimfiles/syntax
+
+
+#/etc/vimrc.d support is enabled in /etc/vimrc
+mkdir -p %{buildroot}%{_sysconfdir}/vimrc.d
 
 #install the mini vi
 install -m0755 mini/vim $RPM_BUILD_ROOT%{_bindir}/vi
@@ -187,12 +198,25 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/profile.d/vim.sh
 %config(noreplace) %{_sysconfdir}/vimrc
 %config(noreplace) %{_sysconfdir}/virc
+
+#own this dir
+%{_sysconfdir}/vimrc.d
+
 %{_bindir}/*
 %{_mandir}/man1/*
 %dir %{_datadir}/vim
 %{_datadir}/vim/*
 
 %changelog
+* Tue Dec 15 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-4
+- Remove swift.vim
+
+* Mon Dec 14 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-3
+- Add /etc/vimrc.d support
+
+* Fri Dec 04 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-2
+- Update to patchlevel 759
+
 * Mon Nov 09 2015 Cjacker <cjacker@foxmail.com> - 7.4.909-11
 - Build with python3
 

@@ -6,11 +6,15 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   44.git
+Release:   50.git
 URL:       http://www.x.org
 License:   MIT
-Source0:   %{tarball}-0995ad2.tar.xz
+Source0:   %{tarball}-371219c.tar.xz
 Patch0:     intel-gcc-pr65873.patch
+Patch1:    intel-prefer-drmModeSetCursor2-in-uxa.patch
+#this patch added a option 'SWCursor' 'true'/'false' to force to swcursor in sna.
+#Do not document it and Even DO NOT use it unless you known what you are doing.
+Patch2:    intel-add-swcursor-option-to-sna.patch
 
 BuildRequires: autoconf automake libtool
 BuildRequires: flex bison
@@ -23,6 +27,7 @@ BuildRequires: libXfixes-devel
 BuildRequires: libXinerama-devel
 BuildRequires: libXrandr-devel
 BuildRequires: libXrender-devel
+BuildRequires: libXScrnSaver-devel
 BuildRequires: libXtst-devel
 BuildRequires: libXvMC-devel
 BuildRequires: libXfont-devel
@@ -46,6 +51,8 @@ X.Org X11 Intel video driver.
 %prep
 %setup -q -n xf86-video-intel
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 ./autogen.sh
@@ -76,6 +83,25 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Mon Jan 11 2016 sulit <sulitsrc@gmail.com> - 2.99.917-50.git
+- regular update
+- add libXScrnSaver-devel buildrequires
+
+* Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-49.git
+- Regular update
+
+* Sat Dec 12 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-48.git
+- Update
+
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-47.git
+- Add SWCursor option to sna, DO NOT use it unless you known what you are doing
+
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-46.git
+- Add prefer drmModeSetCursor2 patch for uxa
+
+* Tue Dec 01 2015 sulit <sulitsrc@gmail.com> - 2.99.917-45.git
+- update to git codes da9ad38
+
 * Mon Nov 23 2015 Cjacker <cjacker@foxmail.com> - 2.99.917-44.git
 - Update to git 0995ad2
 

@@ -1,0 +1,22 @@
+diff -Nur repairdev-0.3/pci.d/8086-0102.sh repairdev-0.3n/pci.d/8086-0102.sh
+--- repairdev-0.3/pci.d/8086-0102.sh	1970-01-01 08:00:00.000000000 +0800
++++ repairdev-0.3n/pci.d/8086-0102.sh	2015-12-04 13:30:02.254450543 +0800
+@@ -0,0 +1,18 @@
++#!/bin/bash
++conf_file=/etc/X11/xorg.conf.d/20-intel.conf
++
++create_cfg() {
++	cat > $conf_file <<EOF
++Section "Device"
++        Identifier "intel"
++        Driver "modesetting"
++        Option "SWCursor" "on"
++EndSection
++EOF
++}
++
++if [ ! -f $conf_file ];then
++	create_cfg
++fi
++
++exit 0

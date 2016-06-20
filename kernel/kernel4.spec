@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.0
-%define release 5
+%define kversion 4.5.1
+%define release 3
 
 %define extraversion -%{release}
 
@@ -20,14 +20,17 @@
 # Architectures we build tools/cpupower on
 %define cpupowerarchs %{ix86} x86_64
 
+# redefine _unitdir for independencing systemd
+%define _unitdir /usr/lib/systemd/system
+
 Name: kernel
 Summary: The Linux kernel (the core of the Linux operating system)
 License: GPLv2
 Version: %{kversion}
 Release: %{release}
-ExclusiveArch: noarch x86_64
+ExclusiveArch: x86_64
 ExclusiveOS: Linux
-Provides: kernel-drm = 4.3.0
+Provides: kernel-drm = %{kversion}
 Provides: kernel-%{_target_cpu} = %{kversion}-%{release}
 Requires(pre): kmod, grub, dracut 
 # We can't let RPM do the dependencies automatic because it'll then pick up
@@ -47,6 +50,7 @@ BuildRequires: net-tools, hostname, bc
 BuildRequires: libelfutils-devel zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) bison flex xz-devel
 BuildRequires: audit-libs-devel
 BuildRequires: numactl-devel
+BuildRequires: openssl-devel
 
 %if %{with_debuginfo}
 BuildRequires: rpm-build, elfutils
@@ -58,11 +62,6 @@ BuildRequires: pciutils-devel gettext ncurses-devel
 
 Source0: linux-%{kversion}.tar.xz
 
-#amdgpu with powerplay
-#git clone --depth 1 -b "amdgpu-powerplay" git://people.freedesktop.org/~agd5f/linux amdgpu
-#tar drivers/gpu/drm/amd.
-Source1: amd.tar.gz 
-
 Source20: kernel-%{kversion}-x86_64.config
 
 # Sources for kernel-tools
@@ -72,48 +71,40 @@ Source2001: cpupower.config
 # build tweak for build ID magic, even for -vanilla
 Source3000: kbuild-AFTER_LINK.patch
  
-Patch0: linux-tune-cdrom-default.patch
-
-#Start amdgpu
-#Enabel amdgpu powerplay Kconfig
-Patch1: linux-add-amdgpu-powerplay-config.patch
-#amd added drm_pcie_get_max_link_width to drm.
-Patch2: amdgpu-add-drm_pcie_get_max_link_width-helper.patch 
-#End amdgpu
-
-Patch450: input-kill-stupid-messages.patch
-Patch452: no-pcspkr-modalias.patch
-
-Patch470: die-floppy-die.patch
-
-Patch601: amd-xgbe-a0-Add-support-for-XGBE-on-A0.patch
-Patch602: amd-xgbe-phy-a0-Add-support-for-XGBE-PHY-on-A0.patch
-Patch603: ath9k-rx-dma-stop-check.patch
-Patch604: disable-i8042-check-on-apple-mac.patch
-Patch606: drm-i915-turn-off-wc-mmaps.patch
-Patch607: drm-i915-hush-check-crtc-state.patch
-
-Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
-Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
-Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
-Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
-
-Patch615: 0001-iwlwifi-Add-new-PCI-IDs-for-the-8260-series.patch
-Patch616: RDS-fix-race-condition-when-sending-a-message-on-unb.patch
- 
-#http://patchwork.ozlabs.org/patch/522709/
-Patch2000: netfilter-ftp-irc-sane-sip-tftp-Fix-the-kernel-panic-when-load-these-modules-with-duplicated-ports.patch
-
-#nouveau add dummy func to gk20a
-Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
-
-#already upstream, should removed later
-#http://patchwork.ozlabs.org/patch/544307/
-Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
-
-#https://bugs.freedesktop.org/show_bug.cgi?id=92638
-#It should be removed later.
-Patch2004: drm-i915-Ensure-associated-VMAs-are-inactive-when-contexts-are-destroyed.patch
+# Patch0: linux-tune-cdrom-default.patch
+# 
+# Patch450: input-kill-stupid-messages.patch
+# Patch452: no-pcspkr-modalias.patch
+# 
+# Patch470: die-floppy-die.patch
+# 
+# Patch601: amd-xgbe-a0-Add-support-for-XGBE-on-A0.patch
+# Patch602: amd-xgbe-phy-a0-Add-support-for-XGBE-PHY-on-A0.patch
+# Patch603: ath9k-rx-dma-stop-check.patch
+# Patch604: disable-i8042-check-on-apple-mac.patch
+# Patch606: drm-i915-turn-off-wc-mmaps.patch
+# Patch607: drm-i915-hush-check-crtc-state.patch
+# 
+# Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
+# # drop it from kernel-4.4.0-rc4
+# # Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
+# Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
+# 
+# #nouveau add dummy func to gk20a
+# Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
+# 
+# #already upstream, should removed later
+# #http://patchwork.ozlabs.org/patch/544307/
+# # remove it from kernel4.4.0-rc3
+# #Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
+# 
+# #Upstream backport, may removed later.
+# Patch2008: drm-udl-Use-unlocked-gem-unreferencing.patch
+# Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
+# 
+# Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
+# # Fix rfkill issues on ideapad Y700-17ISK
+# Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
@@ -245,14 +236,6 @@ This package provides debug information for the perf python bindings.
 if [ ! -d kernel-%{kversion}/vanilla ]; then
 %setup -q -n %{name}-%{version} -c
   mv linux-%{kversion} vanilla
-  #start amdgpu
-  rm -rf vanilla/drivers/gpu/drm/amd
-  tar zxf %{SOURCE1} -C vanilla/drivers/gpu/drm
-  pushd vanilla
-  cat %{PATCH1} |patch -p1
-  cat %{PATCH2} |patch -p1
-  popd
-  #end amdgpu
 else 
   cd kernel-%{kversion}
   if [ -d linux-%{kversion}.%{_target_cpu} ]; then
@@ -269,32 +252,28 @@ cd linux-%{kversion}.%{_target_cpu}
 # The kbuild-AFTER_LINK patch is needed regardless
 cat %{SOURCE3000} |patch -p1
 
-%patch0 -p1
-
-%patch450 -p1
-%patch452 -p1
-%patch470 -p1
-
-%patch601 -p1
-%patch602 -p1
-%patch603 -p1
-%patch604 -p1
-%patch606 -p1
-%patch607 -p1
-%patch608 -p1
-%patch609 -p1
-%patch611 -p1
-%patch612 -p1
-
-%patch615 -p1
-%patch616 -p1
-
-%patch2000 -p1
-%patch2002 -p1
-
-%patch2003 -p1
-
-%patch2004 -p1
+#%patch0 -p1
+#
+#%patch450 -p1
+#%patch452 -p1
+#%patch470 -p1
+#
+#%patch601 -p1
+#%patch602 -p1
+#%patch603 -p1
+#%patch604 -p1
+#%patch606 -p1
+#%patch607 -p1
+#%patch608 -p1
+#%patch612 -p1
+#
+#%patch2002 -p1
+#
+#%patch2008 -p1
+#%patch2009 -p1
+#
+#%patch2013 -p1
+#%patch2017 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -704,6 +683,93 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 4.5-2
+- update to 4.5 release
+- don't add many patch
+- add them later
+
+* Mon Mar 14 2016 sulit <sulitsrc@gmail.com> - 4.4.5-1
+- update kernel to 4.4.5
+- remove patch2007 about i915
+
+* Fri Feb 19 2016 <sulit> <sulitsrc@gmail.com> - 4.4.2-2
+- update to 4.4.2
+
+* Tue Feb 02 2016 sulit - 4.4.1-1
+- update kernel to 4.4.1
+- update amdgpu to latest
+- modify kernel config file name and config file don't change
+
+* Mon Jan 18 2016 sulit <sulitsrc@gmail.com> - 4.4.0-23
+- modify efi config for kernel
+
+* Thu Jan 14 2016 sulit <sulitsrc@gmail.com> - 4.4.0-22
+- modify config file for efi boot, some ide pc boot
+- and disable ata output error
+
+* Mon Jan 11 2016 sulit <sulitsrc@gmail.com> - 4.4.0-19
+- kernel4.4.0 comes
+- config don't change
+- add i915 ERROR shut up patch
+- add Check locking in drm_gem_object_unreference patch
+- add being capable wrt a process requires mapped uids/gids patch
+
+* Mon Jan 04 2016 sulit <sulitsrc@gmail.com> - 4.4.0-18
+- update to 4.4.0 rc8
+- remove patch2018
+
+* Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 4.4.0-17
+- update to 4.4.0 rc7
+- config don't change
+
+* Wed Dec 23 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-16
+- amdgpu switch to drm-next-4.5 channel
+
+* Mon Dec 21 2015 sulit <sulitsrc@gmail.com> - 4.4.0-15
+- update to 4.4.0 rc6
+- Fix rfkill issues on ideapad Y700-17ISK
+- CVE-2015-7550 Race between read and revoke keys
+- Add support for Yoga touch input
+- Remove Patch2005 and Patch2015
+
+* Mon Dec 14 2015 sulit <sulitsrc@gmail.com> - 4.4.0-14
+- update to kernel 4.4.0-rc5, the config file has no
+- change, delete patch 2012 and add patch 2016
+
+* Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-13
+- Update to latest amdgpu powerplay and rebase acp patch
+
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-12
+- Backport some i915 fixes
+
+* Tue Dec 08 2015 sulit <sulitsrc@gmail.com> - 4.4.0-11
+- add ignore i915 no acpi video bus found patch
+
+* Mon Dec 07 2015 sulit <sulitsrc@gmail.com> - 4.4.0-10
+- update kernel to 4.4.0-rc4
+- update amd.tar.gz and add amd ACP
+- drop patch 609, because rc4 driver/scsi/sd.c has
+- drop patch #615, #616, already upstreamed.
+- add patch from 2010 to 2015, various fixes.
+- lots of modifications
+
+* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 4.4.0-9
+- update amd.tar.gz
+- Add thermal protection support for Fiji
+- add display configeration changed function in hwmgr for Fiji
+
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- redefine %{_unitdir} for independecing systemd
+
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- disable noarch
+
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- remove patch2003
+
+* Mon Nov 30 2015 sulit <sulitsrc@gmail.com> - 4.4.0-8
+- update to kernel4.4 rc3
+
 * Wed Nov 18 2015 Cjacker <cjacker@foxmail.com> - 4.4.0-5
 - Enable more drivers
 

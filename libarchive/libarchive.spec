@@ -1,6 +1,6 @@
 Name:           libarchive
 Version:        3.1.2 
-Release:        3
+Release:        4
 Summary:        A library for handling streaming archive formats 
 
 License:        BSD
@@ -42,7 +42,7 @@ developing applications that use %{name}.
 %build
 %configure \
     --disable-static \
-    --disable-bsdtar \
+    --enable-bsdtar \
     --enable-bsdcpio \
     --without-nettle \
     --without-xml2
@@ -85,6 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jan 21 2016 xiaotian.wu@i-soft.com.cn - 3.1.2-4
+- Enable bsdtar
+
 * Fri Oct 23 2015 cjacker - 3.1.2-3
 - Rebuild for new 4.0 release
 

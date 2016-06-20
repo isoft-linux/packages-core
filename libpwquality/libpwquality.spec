@@ -1,12 +1,14 @@
 Summary: A library for password generation and password quality checking
 Name: libpwquality
 Version: 1.2.4
-Release: 6%{?dist}
+Release: 9%{?dist}
 # The package is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 License: BSD or GPLv2+
 Source0: http://fedorahosted.org/releases/l/i/libpwquality/libpwquality-%{version}.tar.bz2
-
+Patch0: libpwquality-support-disable-dict-check.patch
+Patch1: no-limit-to-normal-user-pwd-length.patch
+ 
 %global _pwqlibdir %{_libdir}
 %global _moduledir %{_libdir}/security
 %global _secconfdir %{_sysconfdir}/security
@@ -62,6 +64,8 @@ pronounceable passwords from Python applications.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 rm -rf %{py3dir}
 cp -a . %{py3dir}
@@ -141,6 +145,15 @@ rm -f $RPM_BUILD_ROOT%{_moduledir}/*.la
 %{python3_sitearch}/*.egg-info
 
 %changelog
+* Mon Jan 11 2016 fj <fujiang.zhu@i-soft.com.cn> - 1.2.4-9
+- Do not check normal user's pwd length 
+
+* Mon Jan 11 2016 Cjacker <cjacker@foxmail.com> - 1.2.4-8
+- Need set to 7 to minimum to 6
+
+* Wed Dec 23 2015 Cjacker <cjacker@foxmail.com> - 1.2.4-7
+- Support nodictcheck
+
 * Thu Nov 05 2015 Cjacker <cjacker@foxmail.com> - 1.2.4-6
 - Rebuild with python 3.5
 

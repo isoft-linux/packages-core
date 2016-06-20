@@ -1,23 +1,25 @@
 #the package contains pkg-config files, but DO NOT let it depend on pkgconfig
 %global __requires_exclude pkg-config
 
-%global enable_terminal 1 
+%global enable_terminal 0 
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        228
-Release:        11
+Version:        229
+Release:        2
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
-#Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
-Source0:        systemd-%{version}-f1f8a5a.tar.gz
+Source0:        http://www.freedesktop.org/software/systemd/%{name}-%{version}.tar.gz
 Source1:        90-default.preset
 Source5:        85-display-manager.preset
 Source7:        99-default-disable.preset
 
 # Prevent accidental removal of the systemd package
 Source10:        yum-protect-systemd.conf
+Patch0999:      0999-Add-a-workaround-for-linux-net-if.h-conflict.patch
 
+
+ 
 BuildRequires:  glib2-devel
 BuildRequires:  pciutils-devel
 BuildRequires:  libcap-devel
@@ -57,9 +59,7 @@ BuildRequires:  libtool
 #for test-path-util fsck.minix
 BuildRequires:  util-linux >= 2.27.1
 
-%if %enable_terminal
 BuildRequires:  libxkbcommon-devel
-%endif
 
 Requires(post): coreutils
 Requires(post): gawk
@@ -141,6 +141,7 @@ glib-based applications using libudev functionality.
 
 %prep
 %setup -q
+%patch0999 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -150,7 +151,7 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
         --enable-myhostname \
         --enable-machined \
         --enable-networkd \
-	--enable-manpages \
+        --enable-manpages \
         --enable-resolved \
         --enable-libcurl \
         --enable-gnuefi \
@@ -172,16 +173,17 @@ if [ ! -f "configure" ]; then ./autogen.sh; fi
 %else
         --disable-terminal \
 %endif
+        --enable-xkbcommon \
         --enable-tests \
-	--with-ntp-servers="asia.pool.ntp.org 0.asia.pool.ntp.org 1.asia.pool.ntp.org 2.asia.pool.ntp.org 3.asia.pool.ntp.org 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org" \
-	--with-certificate-root=/etc/pki/tls \
+        --with-ntp-servers="asia.pool.ntp.org 0.asia.pool.ntp.org 1.asia.pool.ntp.org 2.asia.pool.ntp.org 3.asia.pool.ntp.org 0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org" \
+        --with-certificate-root=/etc/pki/tls \
         --with-sysvinit-path=/etc/rc.d/init.d \
         --with-rc-local-script-path-start=/etc/rc.d/rc.local \
         --enable-introspection=no \
         PYTHON=%{__python3}
         
 #-fno-lto to fix compile with gcc-4.9
-make CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
+make -j 1 CFLAGS="${CFLAGS} -fno-lto" %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -511,6 +513,13 @@ fi
 %{_mandir}/man3/*
 
 %changelog
+* Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 229-2
+- update to 229 release
+- add 0999 if.h patch
+
+* Wed Dec 16 2015 Cjacker <cjacker@foxmail.com> - 228-12
+- Disable terminal
+
 * Thu Nov 19 2015 Cjacker <cjacker@foxmail.com> - 228-11
 - Update, and add requires to util-linux >= 2.27.1
 

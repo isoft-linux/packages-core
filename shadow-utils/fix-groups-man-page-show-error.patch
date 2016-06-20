@@ -1,0 +1,24 @@
+diff -Nur shadow-4.2.1/man/po/zh_CN.po shadow-4.2.1n/man/po/zh_CN.po
+--- shadow-4.2.1/man/po/zh_CN.po	2014-05-09 18:53:50.000000000 +0800
++++ shadow-4.2.1n/man/po/zh_CN.po	2015-12-11 11:34:03.622797025 +0800
+@@ -7540,7 +7540,7 @@
+ 
+ #: groups.1.xml:65(refpurpose)
+ msgid "display current group names"
+-msgstr "现实当前组名"
++msgstr "显示当前组名"
+ 
+ #: groups.1.xml:72(replaceable)
+ msgid "user"
+diff -Nur shadow-4.2.1/man/zh_CN/man1/groups.1 shadow-4.2.1n/man/zh_CN/man1/groups.1
+--- shadow-4.2.1/man/zh_CN/man1/groups.1	2014-05-10 00:57:55.000000000 +0800
++++ shadow-4.2.1n/man/zh_CN/man1/groups.1	2015-12-11 11:34:31.441797949 +0800
+@@ -28,7 +28,7 @@
+ .\" * MAIN CONTENT STARTS HERE *
+ .\" -----------------------------------------------------------------
+ .SH "名称"
+-groups \- 现实当前组名
++groups \- 显示当前组名
+ .SH "大纲"
+ .HP \w'\fBgroups\fR\ 'u
+ \fBgroups\fR [\fI用户\fR]

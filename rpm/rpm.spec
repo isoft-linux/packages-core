@@ -4,7 +4,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver} 
-Release: 29
+Release: 37
 Url: http://www.rpm.org/
 License: GPLv2+
 Source0: http://rpm.org/releases/rpm-4.13.x/%{name}-%{version}-rc1.tar.bz2
@@ -63,6 +63,12 @@ Patch1500: rpm-macro-add-python3.patch
 Patch2000: 0001-isoftapp-skeleton.patch
 # Keep silent DB
 Patch2001: 0002-db-quite.patch
+# isoftapp need public initFilterIteratorISoftApp API for fujiang
+Patch2002: 0003-isoftapp-need-public-init-filter-iter.patch
+# Add --os args
+Patch2003: 0004-add-os-args.patch
+# Fix isoftapp depends issue.
+Patch2004: 0005-isoftapp-depends.patch
 
 Requires: popt >= 1.10.2.1
 Requires: coreutils
@@ -190,6 +196,9 @@ programs that will manipulate RPM packages and databases.
 
 %patch2000 -p1
 %patch2001 -p1
+%patch2002 -p1
+%patch2003 -p1
+%patch2004 -p1
 
 ln -s db-%{bdbver} db
 
@@ -408,6 +417,24 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jan 21 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Fix isoftapp depends issue.
+
+* Thu Dec 10 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Add --os args.
+
+* Wed Dec 09 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- isoftapp need public initFilterIteratorISoftApp API for fujiang.
+
+* Wed Dec 02 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Add isoftapp Packages count support.
+
+* Wed Nov 25 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Add rpmSpecBuildISoftApp for converting src rpm to bin rpm.
+- Fix fileName is NULL issue for packageBinaries.
+- Rollback because it does not need to rpmbuild --isoftapp --rebuild scr.rpm 
+  for isoft-package-installer.
+
 * Mon Nov 23 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix closing already-closed cursor issue.
 

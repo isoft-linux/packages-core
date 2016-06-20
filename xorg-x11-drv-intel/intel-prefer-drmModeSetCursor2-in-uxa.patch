@@ -1,0 +1,38 @@
+Binary files xf86-video-intel/.git/index and xf86-video-inteln/.git/index differ
+diff -Nur xf86-video-intel/src/uxa/intel_display.c xf86-video-inteln/src/uxa/intel_display.c
+--- xf86-video-intel/src/uxa/intel_display.c	2015-07-10 00:52:07.000000000 +0800
++++ xf86-video-inteln/src/uxa/intel_display.c	2015-12-08 17:37:27.880222420 +0800
+@@ -44,8 +44,10 @@
+ #include "intel_bufmgr.h"
+ #include "intel_options.h"
+ #include "backlight.h"
++#include "cursorstr.h"
+ #include "xf86drm.h"
+ #include "xf86drmMode.h"
++
+ #include "X11/Xatom.h"
+ #if defined(HAVE_X11_EXTENSIONS_DPMSCONST_H)
+ #include <X11/extensions/dpmsconst.h>
+@@ -509,6 +511,22 @@
+ {
+ 	struct intel_crtc *intel_crtc = crtc->driver_private;
+ 	struct intel_mode *mode = intel_crtc->mode;
++        static Bool use_set_cursor2 = TRUE;
++        if (use_set_cursor2) {
++                xf86CrtcConfigPtr xf86_config = XF86_CRTC_CONFIG_PTR(crtc->scrn);
++                CursorPtr cursor = xf86_config->cursor;
++                int ret;
++
++                ret = drmModeSetCursor2(mode->fd,
++                                        crtc_id(intel_crtc),
++                                        intel_crtc->cursor->handle,
++                                        64, 64,
++                                        cursor->bits->xhot, cursor->bits->yhot);
++                if (!ret)
++                        return;
++                if (ret == -EINVAL)
++                        use_set_cursor2 = FALSE;
++        }
+ 
+ 	drmModeSetCursor(mode->fd, crtc_id(intel_crtc),
+ 			 intel_crtc->cursor->handle, 64, 64);

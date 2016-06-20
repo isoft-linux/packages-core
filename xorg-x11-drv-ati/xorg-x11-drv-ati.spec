@@ -5,13 +5,13 @@
 Summary:   Xorg X11 ati video driver
 Name:      xorg-x11-drv-ati
 Version:   7.6.0
-Release:   9.git
+Release:   11.git
 URL:       http://www.x.org
 License:   MIT
 
 #Source0:    http://www.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 #git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-ati
-Source0: %{tarball}-10b7c3d.tar.xz
+Source0: %{tarball}-78fbca0.tar.xz
 
 Patch10:    radeon-6.12.2-lvds-default-modes.patch
 Patch13:    fix-default-modes.patch
@@ -59,6 +59,14 @@ rm -rf $RPM_BUILD_ROOT%{moduledir}/multimedia/
 %{_mandir}/man4/radeon.4*
 
 %changelog
+* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 7.6.0-11.git
+- update to git codes 78fbca0
+- Load fb module before glamoregl/shadow modules
+
+* Tue Dec 01 2015 sulit <sulitsrc@gmail.com> - 7.6.0-10.git
+- minor modifictions, update to git codes b19417e
+- Don't advertise any PRIME offloading capabilities without acceleration
+
 * Mon Nov 23 2015 Cjacker <cjacker@foxmail.com> - 7.6.0-9.git
 - Rebuild with xorg server
 

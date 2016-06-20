@@ -1,0 +1,81 @@
+From 51a4399b94f9adfac5f7718d4cbf73f793dcca56 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Mon, 23 Nov 2015 08:51:48 +0100
+Subject: xwayland: Do not set root clip when rootless
+
+Otherwise the server may try to draw onto the root window when closing
+down, but when running rootless the root window has no storage thus
+causing a memory corruption.
+
+Thanks to Adam Jackson <ajax@redhat.com> for helping tracking this down!
+
+Reviewed-by: Adam Jackson <ajax@redhat.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=93045
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Tested-by: Marek Chalupa <mchqwerty@gmail.com>
+
+diff --git a/hw/xwayland/xwayland-glamor.c b/hw/xwayland/xwayland-glamor.c
+index ebaf05a..c357217 100644
+--- a/hw/xwayland/xwayland-glamor.c
++++ b/hw/xwayland/xwayland-glamor.c
+@@ -233,9 +233,11 @@ xwl_glamor_create_screen_resources(ScreenPtr screen)
+     if (!ret)
+         return ret;
+ 
+-    if (xwl_screen->rootless)
++    if (xwl_screen->rootless) {
+         screen->devPrivate =
+             fbCreatePixmap(screen, 0, 0, screen->rootDepth, 0);
++        SetRootClip(screen, FALSE);
++    }
+     else {
+         screen->devPrivate =
+             xwl_glamor_create_pixmap(screen, screen->width, screen->height,
+diff --git a/hw/xwayland/xwayland-output.c b/hw/xwayland/xwayland-output.c
+index 260c9dc..8b2f8cb 100644
+--- a/hw/xwayland/xwayland-output.c
++++ b/hw/xwayland/xwayland-output.c
+@@ -186,7 +186,7 @@ output_handle_done(void *data, struct wl_output *wl_output)
+ 	--xwl_screen->expecting_event;
+     }
+ 
+-    if (xwl_screen->screen->root)
++    if (!xwl_screen->rootless)
+         SetRootClip(xwl_screen->screen, FALSE);
+ 
+     xwl_screen->width = width;
+@@ -206,11 +206,13 @@ output_handle_done(void *data, struct wl_output *wl_output)
+     if (xwl_screen->screen->root) {
+         xwl_screen->screen->root->drawable.width = width;
+         xwl_screen->screen->root->drawable.height = height;
+-        SetRootClip(xwl_screen->screen, TRUE);
+         RRScreenSizeNotify(xwl_screen->screen);
+     }
+ 
+     update_desktop_dimensions();
++
++    if (!xwl_screen->rootless)
++        SetRootClip(xwl_screen->screen, TRUE);
+ }
+ 
+ static void
+diff --git a/hw/xwayland/xwayland-shm.c b/hw/xwayland/xwayland-shm.c
+index 1022c0d..7072be4 100644
+--- a/hw/xwayland/xwayland-shm.c
++++ b/hw/xwayland/xwayland-shm.c
+@@ -279,9 +279,11 @@ xwl_shm_create_screen_resources(ScreenPtr screen)
+     if (!ret)
+         return ret;
+ 
+-    if (xwl_screen->rootless)
++    if (xwl_screen->rootless) {
+         screen->devPrivate =
+             fbCreatePixmap(screen, 0, 0, screen->rootDepth, 0);
++        SetRootClip(screen, FALSE);
++    }
+     else
+         screen->devPrivate =
+             xwl_shm_create_pixmap(screen, screen->width, screen->height,
+-- 
+cgit v0.10.2
+

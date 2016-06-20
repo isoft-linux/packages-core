@@ -1,13 +1,13 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.66
-Release: 2.git
+Version: 2.4.67
+Release: 1
 License: MIT
 URL: http://dri.sourceforge.net
 
-#Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
 #http://anongit.freedesktop.org/git/mesa/drm.git
-Source0: libdrm.tar.gz
+#Source0: libdrm.tar.gz
 
 Source2: 91-drm-modeset.rules
 
@@ -50,7 +50,8 @@ Summary: Direct Rendering Manager utilities
 Utility programs for the kernel DRM interface.
 
 %prep
-%setup -q -n libdrm
+# %setup -q -n libdrm
+%setup -q -n %{name}-%{version}
 %patch3 -p1 -b .forceperms
 %patch4 -p1 -b .no-bc
 %patch5 -p1 -b .check
@@ -151,6 +152,25 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Fri Feb 19 2016 sulit <sulitsrc@gmail.com> - 2.4.67-1
+- update to offical release 2.4.67
+
+* Mon Dec 28 2015 sulit <sulitsrc@gmail.com> - 2.4.66-7
+- update to git tag 2.4.66, 2.4.66 comes
+
+* Tue Dec 22 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-6.git
+- Git with nouveau nvif support, mesa 11.2.0git need this
+
+* Fri Dec 18 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-5.git
+- Regular update
+
+* Fri Dec 04 2015 sulit <sulitsrc@gmail.com> - 2.4.66-4.git
+- Update to git codes ,git update one line,
+- for adding <string.h> head file
+
+* Fri Nov 27 2015 sulit <sulitsrc@gmail.com> - 2.4.66-3.git
+- Update to git codes and wait tag libdrm-2.4.66
+
 * Sat Nov 14 2015 Cjacker <cjacker@foxmail.com> - 2.4.66-2.git
 - Update to git codes
 

@@ -3,14 +3,13 @@
 
 Name: libclc
 Version: 0.2.0
-Release: 11.llvm37.git20150727
+Release: 16.255421.svn
 Epoch: 2 
 Summary: An open source implementation of the OpenCL 1.1 library requirements
 License: BSD
 URL: http://libclc.llvm.org/
-#git clone http://llvm.org/git/libclc.git
-Source0: libclc.tar.gz
-Patch0: libclc-fix-build-with-llvm-3.6.1.patch
+
+Source0: libclc.tar.xz
 # Only builds on x86
 ExclusiveArch:	%{ix86} x86_64
 
@@ -50,22 +49,6 @@ developing applications that use %{name}.
 %prep
 %setup -q -n libclc
 
-#Revision 225041 - Directory Listing
-#Modified Wed Dec 31 09:27:53 2014 CST (6 months, 1 week ago) by tstellar
-#
-#Require LLVM 3.6 and bump version to 0.1.0
-#
-#Some functions are implemented using hand-written LLVM IR, and
-#LLVM assembly format is allowed to change between versions, so we
-#should require a specific version of LLVM.
-
-#if build with llvm-3.6.x, uncomment below lines.
-#git checkout 9a53500b66544d50b0f42afa4eb0de3b6cdbcb16
-#%patch0 -p1
-
-
-#the 20150727 checkout 7958b0202bf5d274dfb6ce3562141957ed21ee8f is build with llvm-3.7.0rc1
-
 %build
 CFLAGS="%{optflags} -D__extern_always_inline=inline"
 ./configure.py --prefix=%{_prefix} --libexecdir=%{_libdir}/clc/ --pkgconfigdir=%{_libdir}/pkgconfig/
@@ -75,10 +58,8 @@ sed -i "s/fstack-protector-strong/fstack-protector/" Makefile
 
 make %{?_smp_mflags}
 
-
 %install
-%make_install
-
+make install DESTDIR=%{buildroot}
 
 %files
 %doc LICENSE.TXT README.TXT CREDITS.TXT
@@ -86,11 +67,16 @@ make %{?_smp_mflags}
 %{_includedir}/clc
 
 %files devel
-%doc
 %{_libdir}/pkgconfig/%{name}.pc
 
 
 %changelog
+* Sat Dec 12 2015 Cjacker <cjacker@foxmail.com> - 2:0.2.0-16.255421.svn
+- Update and rebuild
+
+* Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 2:0.2.0-12.llvm37.svn20151205
+- Update
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 2:0.2.0-11.llvm37.git20150727
 - Rebuild
 

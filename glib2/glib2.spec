@@ -1,6 +1,6 @@
 Summary: A library of handy utility functions
 Name: glib2
-Version: 2.46.2
+Version: 2.48.0
 Release: 2
 License: LGPL
 URL: http://www.gtk.org
@@ -25,6 +25,7 @@ BuildRequires: gtk-doc
 BuildRequires: python-devel
 BuildRequires: libelfutils-devel
 BuildRequires: chrpath
+BuildRequires: pcre-devel
 
 # required for GIO content-type support
 Requires: shared-mime-info
@@ -144,6 +145,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-gettextize.1.gz
 
 %changelog
+* Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 2.48.0-2
+- update to release 2.48.0
+- add buildrequire pcre-devel
+
 * Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 2.46.2-2
 - Update to match gnome-3.18.2
 

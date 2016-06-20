@@ -7,7 +7,7 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %{glibcversion}
-Release: %{glibcrelease}.1
+Release: %{glibcrelease}.2
 License: LGPL
 Source0:	http://ftp.gnu.org/gnu/glibc/glibc-%{glibcversion}.tar.xz
 
@@ -68,10 +68,15 @@ Patch2002: glibc-rh827510.patch
 # Upstream BZ 14185
 Patch2003: glibc-rh819430.patch
 
+Patch2016: glibc-2.22-CVE-2015-7547.patch
+
 Provides: ldconfig
 Provides: rtld(GNU_HASH)
 
 Requires: glibc-common = %{version}-%{release}
+
+# We use systemd rpm macros for nscd
+BuildRequires: systemd
 
 # Require libgcc in case some program calls pthread_cancel in its %%post
 Requires(pre): filesystem, libgcc
@@ -197,6 +202,7 @@ If unsure if you need this, don't install this package.
 %patch2001 -p1
 %patch2002 -p1
 %patch2003 -p1
+%patch2016 -p1
 
 %build
 GCC=gcc
@@ -540,6 +546,9 @@ fi
 
 
 %changelog
+* Thu Feb 18 2016 xiaotian.wu@i-soft.com.cn - 2.22-12.2
+- Fixed CVE-2015-7547.
+
 * Fri Oct 23 2015 cjacker - 2.22-12.1
 - Rebuild for new 4.0 release
 

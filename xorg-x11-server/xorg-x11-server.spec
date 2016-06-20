@@ -13,8 +13,8 @@
 
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
-Version:   1.18.0
-Release:   4
+Version:   1.18.3
+Release:   2
 URL:       http://www.x.org
 License:   MIT
 
@@ -46,27 +46,29 @@ Patch10000: 0001-hack-Make-the-suid-root-wrapper-always-start-.patch
 # Fix build with gcc5, submitted upstream, likely needs a better fix
 Patch10001: 0001-sdksyms.sh-Make-sdksyms.sh-work-with-gcc5.patch
 Patch10003: 0001-include-Fix-endianness-setup.patch
-Patch10004: 0001-Xorg.wrap-activate-libdrm-based-detection-for-KMS-dr.patch
 
+Patch20018: 0019-Split-filter-execution-into-separate-function.patch
+Patch20019: 0020-input-add-deviceEventSource-enum.patch
+Patch20020: 0021-input-add-focus-in-event-source.patch
+Patch20021: 0022-xwayland-use-focusin-events-for-keyboard-enter.patch
+Patch20023: 0024-dix-remove-redundant-ChangeWindowProperty.patch
+Patch20025: 0026-replace-sun-with__sun.patch
 
-#backport from post 1.18
-Patch20000: 0001-also-dump-passive-grubs-on-XF86LogGrabInfo.patch
-Patch20001: 0002-glamor-avoid-GL-errors-from-mapping-with-size-0.patch
-Patch20002: 0003-glamor-handle-GL_OUT_OF_MEMORY-when-allocating-texture-image.patch
-Patch20003: 0004-glamor-fix-crashes-when-glyph-atlas-allocation-fails.patch
-Patch20004: 0005-glamor-fix-rendering-when-core-font-texture-allocation-fails.patch
-Patch20005: 0006-glamor-fix-assert-failure-when-fallback-picture-upload-alloc-fails.patch
-Patch20006: 0007-glamor-fix-segfault-in-fallback-picture-uploading.patch
-Patch20007: 0008-glamor-no-need-to-glflush-before-destroying-pixmap.patch
-Patch20008: 0009-modesetting-No-need-to-free-the-EGLImage-just-before-freeing-the-pixmap.patch
-Patch20009: 0010-glamor-remove-glamor_egl_destroy_textured_pixmap.patch
-Patch20010: 0011-glamor-unexport-glamor_destroy_textured_pixmap.patch
-Patch20011: 0012-glamor-hook-up-EGL-DestroyPixmap-through-normal-wrap-chain.patch
-Patch20012: 0013-glamor-use-gbm-function-for-get-FD-from-GBM-BO.patch
-Patch20013: 0014-glamor-use-real-types-for-glamor_egl-public-gbm-functions.patch
-Patch20014: 0015-glamor-simplify-DRI3-pixmap-from-fd-using-GBM.patch
-Patch20015: 0016-glamor-make-glamor_get_name_from_bo-static.patch
-Patch20016: 0017-glamor-delay-making-pixmaps-shareable-util-we-need-to.patch
+Patch20034: 0010-render-use-ostimer-for-animated-cursor-timing.patch
+Patch20035: 0011-dix-move-initfonts-up-above-screen-initialization.patch
+
+Patch20040: 0040-os-add-nofityfd-interfaces.patch
+Patch20041: 0041-os-implement-support-for-notifyfd-X_NOTIFY_WRITE.patch
+Patch20042: 0042-config-use-NotifyFd-for-dbus-interface.patch
+Patch20043: 0043-config-use-NotifyFd-interface-for-udev.patch
+Patch20044: 0044-hw-kdrive-use-NotifyFd-interface-for-kdrive-linux-APM-monitoring.patch
+Patch20045: 0045-hw-kdrive-use-NotifyFd-for-kdrive-input-devices.patch
+Patch20046: 0046-kdrive-ephyr-use-NotifyFd-for-XCB-connection-input.patch
+Patch20047: 0047-modesettings-use-NotifyFd-for-drm-event-monitoring.patch
+Patch20048: 0048-hw-xwayland-use-NotifyFd-handler-to-monitor-wayland-socket.patch
+Patch20049: 0049-xext-xselinux-use-NotifyFd.patch
+Patch20050: 0050-os-xdmcp-replace-xdmcp-block-wakeup-handlers-with-timer-and-NotifyFd.patch
+Patch20051: 0051-os-use-NotifyFd-interface-for-listen-descriptors.patch
 
 
 BuildRequires: automake autoconf libtool pkgconfig
@@ -254,31 +256,35 @@ drivers, input drivers, or other X modules should install this package.
 %patch10000 -p1
 %patch10001 -p1
 %patch10003 -p1
-%patch10004 -p1
 
+%patch20018 -p1
+%patch20019 -p1
+%patch20020 -p1
+%patch20021 -p1
+%patch20023 -p1
+%patch20025 -p1
 
-%patch20000 -p1
-%patch20001 -p1
-%patch20002 -p1
-%patch20003 -p1
-%patch20004 -p1
-%patch20005 -p1
-%patch20006 -p1
-%patch20007 -p1
-%patch20008 -p1
-%patch20009 -p1
-%patch20010 -p1
-%patch20011 -p1
-%patch20012 -p1
-%patch20013 -p1
-%patch20014 -p1
-%patch20015 -p1
-%patch20016 -p1
+%patch20034 -p1
+%patch20035 -p1
+
+%patch20040 -p1
+%patch20041 -p1
+%patch20042 -p1
+%patch20043 -p1
+%patch20044 -p1
+%patch20045 -p1
+%patch20046 -p1
+%patch20047 -p1
+%patch20048 -p1
+%patch20049 -p1
+%patch20050 -p1
+%patch20051 -p1
 
 %build
 autoreconf -ivf
 export CFLAGS="${RPM_OPT_FLAGS} $CFLAGS"
 %configure \
+    --enable-ipv6 \
     --enable-xorg \
     --enable-kdrive \
     --enable-kdrive-evdev \
@@ -445,6 +451,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
+* Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 1.18.3-2
+- update to 1.18.3 release
+- add some patch later
+
+* Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-7
+- Enable ipv6
+
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-6
+- More patches
+
+* Tue Dec 08 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-5
+- Backport more patches
+
 * Sun Nov 22 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-4
 - Backport some patches from 1.19 git
 

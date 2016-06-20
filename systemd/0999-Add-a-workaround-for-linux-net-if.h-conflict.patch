@@ -1,0 +1,21 @@
+diff -Nur systemd-229/src/shared/firewall-util.c systemd-229b/src/shared/firewall-util.c
+--- systemd-229/src/shared/firewall-util.c	2016-02-12 00:28:00.000000000 +0800
++++ systemd-229b/src/shared/firewall-util.c	2016-04-11 11:46:57.098295628 +0800
+@@ -16,15 +16,16 @@
+   You should have received a copy of the GNU Lesser General Public License
+   along with systemd; If not, see <http://www.gnu.org/licenses/>.
+ ***/
++#define _NET_IF_H 1
+ 
+ #include <alloca.h>
+ #include <arpa/inet.h>
+ #include <endian.h>
+ #include <errno.h>
+-#include <net/if.h>
+ #include <stddef.h>
+ #include <string.h>
+ #include <sys/socket.h>
++#include <linux/if.h>
+ #include <linux/netfilter_ipv4/ip_tables.h>
+ #include <linux/netfilter/nf_nat.h>
+ #include <linux/netfilter/xt_addrtype.h>

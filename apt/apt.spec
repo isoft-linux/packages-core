@@ -10,7 +10,7 @@
 Summary: Debian's Advanced Packaging Tool with RPM support
 Name: apt
 Version: %{aptver}
-Release: 28.%{snapver}
+Release: 30.%{snapver}
 URL: http://apt-rpm.org/
 # SourceLicense: GPLv2+ except lua/ which is MIT
 License: GPLv2+ 
@@ -55,7 +55,7 @@ Patch6: apt-0.5.15lorg3.95-lua-5.3.patch
 #already merged into Patch11 by fujiang.
 #Patch10: apt-isoftapp-use-own-conf-method-data-dir.patch
 # iSOFT App skeleton implemented by fujiang and Leslie Zhai
-Patch11: 0001-isoft-app-skeleton.patch
+#Patch11: 0001-isoft-app-skeleton.patch
 
 # TODO: verify the required minimum Python version
 BuildRequires: autoconf automake m4 libtool
@@ -96,11 +96,6 @@ install and upgrade packages. APT features complete installation
 ordering, multiple source capability and several other useful
 features.
 
-%package -n isoftapp 
-Summary: Modified APT-RPM to support iSoft AppDB
-
-%description -n isoftapp
-Modified APT-RPM to support iSoft AppDB
 
 %package devel
 Summary: Development files and documentation for APT's libapt-pkg
@@ -155,13 +150,6 @@ find contrib/ -type f | xargs chmod 0644
 
 popd
 
-#cp original apt to apt-<version>-isoftapp, and apply our isoftapp customized pactch
-cp -r %{name}-%{srcver} %{name}-%{srcver}-isoftapp
-pushd %{name}-%{srcver}-isoftapp
-%patch11 -p1 -b .isoftapp
-popd
-
-
 %build
 #build common apt.
 pushd %{name}-%{srcver}
@@ -176,20 +164,6 @@ cp -p %{SOURCE5} rpmpriorities
 xsltproc -o rpmpriorities comps2prio.xsl %{comps}
 %endif
 popd #common apt.
-
-#static build apt with isoftapp support
-pushd %{name}-%{srcver}-isoftapp
-autoreconf -ivf
-CXXFLAGS="%{optflags} -DLUA_COMPAT_MODULE"
-%configure --enable-static --disable-shared
-make %{?_smp_mflags}
-
-cp -p %{SOURCE5} rpmpriorities
-%if %{generate_rpmpriorities}
-xsltproc -o rpmpriorities comps2prio.xsl %{comps}
-%endif
-
-popd #apt with isoftapp support.
 
 %install
 #install common apt.
@@ -242,42 +216,6 @@ rm -f %{buildroot}%{_libdir}/*.la
 popd #end installation of common apt.
 
 
-
-#install static build apt-get with isoftapp support.
-#what we need is 'apt-get', also we rename it to 'app-get'
-pushd %{name}-%{srcver}-isoftapp
-install -m 0755 cmdline/apt-get %{buildroot}/%{_bindir}/isoftapp
-
-#install own method copy.
-pushd methods
-make install DESTDIR=%{buildroot}
-popd
-
-# The state files
-mkdir -p %{buildroot}%{_localstatedir}/cache/isoftapp/archives/partial
-mkdir -p %{buildroot}%{_localstatedir}/cache/isoftapp/genpkglist
-mkdir -p %{buildroot}%{_localstatedir}/cache/isoftapp/gensrclist
-mkdir -p %{buildroot}%{_localstatedir}/lib/isoftapp/lists/partial
-
-# The config files
-mkdir -p %{buildroot}%{_sysconfdir}/isoftapp
-mkdir -p %{buildroot}%{_sysconfdir}/isoftapp/isoftapp.conf.d
-mkdir -p %{buildroot}%{_sysconfdir}/isoftapp/sources.list.d
-mkdir -p %{buildroot}%{_sysconfdir}/isoftapp/vendors.list.d
-install -pm 644 %{SOURCE1} %{buildroot}/%{_sysconfdir}/isoftapp/isoftapp.conf
-install -pm 644 %{SOURCE2} %{buildroot}/%{_sysconfdir}/isoftapp/sources.list
-install -pm 644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/isoftapp/vendors.list
-install -pm 644 %{SOURCE4} %{buildroot}/%{_sysconfdir}/isoftapp/preferences
-install -pm 644 rpmpriorities %{buildroot}/%{_sysconfdir}/isoftapp/
-
-# install config parts
-install -pm 644 %{SOURCE150} %{buildroot}%{_sysconfdir}/isoftapp/isoftapp.conf.d/
-
-# Lua scripts
-mkdir -p %{buildroot}%{_datadir}/isoftapp/scripts
-
-popd #end of isoftapp
-
 %find_lang %{name}
 
 %post -p /sbin/ldconfig
@@ -321,26 +259,6 @@ popd #end of isoftapp
 %{_localstatedir}/lib/apt/
 %{_mandir}/man[58]/*.[58]*
 
-%files -n isoftapp
-%dir %{_sysconfdir}/isoftapp/
-%config(noreplace) %{_sysconfdir}/isoftapp/isoftapp.conf
-%config(noreplace) %{_sysconfdir}/isoftapp/preferences
-%config(noreplace) %{_sysconfdir}/isoftapp/rpmpriorities
-%config(noreplace) %{_sysconfdir}/isoftapp/sources.list
-%config(noreplace) %{_sysconfdir}/isoftapp/vendors.list
-%dir %{_sysconfdir}/isoftapp/isoftapp.conf.d/
-# NOTE: no noreplace because we WANT to be able to change the defaults
-# without user intervention!
-%config %{_sysconfdir}/isoftapp/isoftapp.conf.d/default.conf
-%dir %{_sysconfdir}/isoftapp/sources.list.d/
-%dir %{_sysconfdir}/isoftapp/vendors.list.d/
-%{_bindir}/isoftapp
-%{_libdir}/isoftapp/
-%dir %{_datadir}/isoftapp/
-%dir %{_datadir}/isoftapp/scripts/
-%{_localstatedir}/cache/isoftapp/
-%{_localstatedir}/lib/isoftapp/
-
 %files devel
 %{_includedir}/apt-pkg/
 %{_libdir}/libapt-pkg*.so
@@ -362,6 +280,13 @@ popd #end of isoftapp
 
 
 %changelog
+* Tue Dec 08 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Drop isoftapp patch.
+
+* Thu Nov 26 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
+- Fix only support single one package issue by fujiang.
+- Private some function forbit multidefine issue.
+
 * Fri Nov 20 2015 Leslie Zhai <xiang.zhai@i-soft.com.cn>
 - Fix install/remove system component issue.
 - Only support single one package install/remove at present.

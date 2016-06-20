@@ -1,22 +1,21 @@
-%define osname iSoft Enterprise Desktop
+%define osname iSoft Desktop
 %define osid   iSoft 
 %define builtin_release_version 4.0 
 %define builtin_release_name Nvwa 
 
 %define real_release_version %{?release_version}%{!?release_version:%{builtin_release_version}}
-%define real_release_name %{?release_name}%{!?release_name:%{builtin_release_name}}
 
 
-Summary: iSoft Enterprise Desktop release file
+Summary: iSoft Desktop release file
 Name: os-release
 Version: %{real_release_version}
-release: 2.2
+release: 4.2
 License: GPL
 
 #Fake a lsb provides for some comercial binary software.
 Provides: lsb > 4.0
 %description
-iSoft Enterprise Desktop release file
+iSoft Desktop release file
 
 %prep
 %build
@@ -25,10 +24,10 @@ mkdir -p $RPM_BUILD_ROOT/usr/lib
 mkdir -p $RPM_BUILD_ROOT/etc
 cat > $RPM_BUILD_ROOT/usr/lib/%{name} <<-EOF
 NAME="%{osname}"
-VERSION="%{builtin_release_version} (%{builtin_release_name})"
+VERSION="%{builtin_release_version}"
 ID=%{osid}
 VERSION_ID=%{builtin_release_version}
-PRETTY_NAME="%{osname} %{builtin_release_version} (%{builtin_release_name})"
+PRETTY_NAME="%{osname} %{builtin_release_version}"
 ANSI_COLOR="0;32"
 CPE_NAME="cpe:/o:%{osid}:%{osid}:%{builtin_release_version}"
 EOF
@@ -44,9 +43,9 @@ DISTRIB_CODENAME=%{builtin_release_name}
 DISTRIB_DESCRIPTION="%{osname} %{builtin_release_version}"
 EOF
 
-echo "%{osname} %{builtin_release_version} (%{real_release_name})" > $RPM_BUILD_ROOT/etc/system-release
-echo "%{osname} %{builtin_release_version} (%{real_release_name})" >$RPM_BUILD_ROOT/etc/issue 
-echo "%{osname} %{builtin_release_version} (%{real_release_name})" >$RPM_BUILD_ROOT/etc/issue.net
+echo "%{osname} %{builtin_release_version}" > $RPM_BUILD_ROOT/etc/system-release
+echo "%{osname} %{builtin_release_version}" > $RPM_BUILD_ROOT/etc/issue
+echo "%{osname} %{builtin_release_version}" > $RPM_BUILD_ROOT/etc/issue.net
 echo "Kernel \r on an \m" >>$RPM_BUILD_ROOT/etc/issue
 echo "" >>$RPM_BUILD_ROOT/etc/issue
 echo "Kernel \r on an \m" >>$RPM_BUILD_ROOT/etc/issue.net
@@ -61,6 +60,12 @@ echo "" >>$RPM_BUILD_ROOT/etc/issue.net
 /usr/lib/os-release
 
 %changelog
+* Mon Jan 04 2016 sulit <sulitsrc@gmail.com> - 4.0-4.2
+- remove real_release_name due to design
+
+* Mon Dec 21 2015 Cjacker <cjacker@foxmail.com> - 4.0-3.2
+- Rename to iSoft Desktop
+
 * Fri Oct 23 2015 cjacker - 4.0-2.2
 - Rebuild for new 4.0 release
 

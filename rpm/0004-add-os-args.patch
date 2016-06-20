@@ -1,0 +1,151 @@
+diff --git a/rpmbuild.c b/rpmbuild.c
+index c1a2066..abff736 100644
+--- a/rpmbuild.c
++++ b/rpmbuild.c
+@@ -30,6 +30,7 @@ static struct rpmBuildArguments_s rpmBTArgs;
+ #define POPT_NODIRTOKENS	-1020
+ #define POPT_BUILDINPLACE	-1021
+ #define PORT_ISOFTAPP   -1022
++#define PORT_OS -1023
+ 
+ #define	POPT_REBUILD		0x4262 /* Bb */
+ #define	POPT_RECOMPILE		0x4369 /* Ci */
+@@ -66,6 +67,7 @@ static rpmBuildFlags nobuildAmount = 0;	/*!< Build stage disablers */
+ static ARGV_t build_targets = NULL;	/*!< Target platform(s) */
+ static int buildInPlace = 0;		/*!< from --build-in-place */
+ static int isoftApp = 0;    /*!< Build for iSOFT App */
++static int os = 0;  /*!< Build for osdb */
+ 
+ static void buildArgCallback( poptContext con,
+ 	enum poptCallbackReason reason,
+@@ -135,6 +137,10 @@ static void buildArgCallback( poptContext con,
+     case PORT_ISOFTAPP:
+     isoftApp = 1;
+     break;
++
++    case PORT_OS:
++    os = 1;
++    break;
+     }
+ }
+ 
+@@ -253,6 +259,10 @@ static struct poptOption rpmBuildPoptTable[] = {
+ 
+  { "isoftapp", '\0', 0, 0, PORT_ISOFTAPP,
+     N_("build for iSOFT App"), NULL },
++
++ { "os", '\0', 0, 0, PORT_OS,
++    N_("build for osdb"), NULL },
++
+    POPT_TABLEEND
+ };
+ 
+@@ -286,7 +296,7 @@ static struct poptOption optionsTable[] = {
+ static int checkSpec(rpmts ts, rpmSpec spec)
+ {
+     int rc;
+-    rpmps ps = isoftApp | rpmExpandNumeric("%{_isoftapp}") ? 
++    rpmps ps = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+         rpmSpecCheckDepsISoftApp(ts, spec) : 
+         rpmSpecCheckDeps(ts, spec);
+ 
+diff --git a/rpmkeys.c b/rpmkeys.c
+index ce7019a..1ef2444 100644
+--- a/rpmkeys.c
++++ b/rpmkeys.c
+@@ -19,6 +19,7 @@ enum modes {
+ static int mode = 0;
+ static int test = 0;
+ static int isoftApp = 0;
++static int os = 0;
+ 
+ static struct poptOption keyOptsTable[] = {
+     { "checksig", 'K', (POPT_ARG_VAL|POPT_ARGFLAG_OR), &mode, MODE_CHECKSIG,
+@@ -43,7 +44,10 @@ static struct poptOption optionsTable[] = {
+ 	N_("Common options for all rpm modes and executables:"), NULL },
+ 
+     { "isoftapp", '\0', POPT_ARGFLAG_OR, &isoftApp, 0, 
+-      N_("Operate iSOFT App"), NULL},
++      N_("Operate iSOFT App"), NULL },
++
++    { "os", '\0', POPT_ARGFLAG_OR, &os, 0,
++      N_("Operate osdb"), NULL },
+ 
+     POPT_AUTOALIAS
+     POPT_AUTOHELP
+@@ -71,14 +75,14 @@ int main(int argc, char *argv[])
+ 
+     switch (mode) {
+     case MODE_CHECKSIG:
+-	ec = isoftApp ? 
++	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+          rpmcliVerifySignaturesISoftApp(ts, args) : 
+          rpmcliVerifySignatures(ts, args);
+ 	break;
+     case MODE_IMPORTKEY:
+ 	if (test)
+ 	    rpmtsSetFlags(ts, (rpmtsFlags(ts)|RPMTRANS_FLAG_TEST));
+-	ec = isoftApp ? 
++	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+          rpmcliImportPubkeysISoftApp(ts, args) : 
+          rpmcliImportPubkeys(ts, args);
+ 	break;
+diff --git a/rpmqv.c b/rpmqv.c
+index 945add5..38ca122 100644
+--- a/rpmqv.c
++++ b/rpmqv.c
+@@ -33,6 +33,7 @@ enum modes {
+ 
+ static int quiet;
+ static int isoftApp = 0;
++static int os = 0;
+ 
+ /* the structure describing the options we take and the defaults */
+ static struct poptOption optionsTable[] = {
+@@ -69,6 +70,10 @@ static struct poptOption optionsTable[] = {
+     N_("Operate iSOFT App"), 
+     NULL},
+ 
++ { "os", '\0', POPT_ARGFLAG_OR, &os, 0,
++    N_("Operate osdb"),
++    NULL},
++
+    POPT_AUTOALIAS
+    POPT_AUTOHELP
+    POPT_TABLEEND
+@@ -261,7 +266,7 @@ int main(int argc, char *argv[])
+ 	if (!poptPeekArg(optCon)) {
+ 	    argerror(_("no packages given for erase"));
+ 	} else {
+-	    ec += isoftApp | rpmExpandNumeric("%{_isoftapp}")? 
++	    ec += isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+               rpmEraseISoftApp(ts, ia, (ARGV_const_t) poptGetArgs(optCon)) : 
+               rpmErase(ts, ia, (ARGV_const_t) poptGetArgs(optCon));
+ 	}
+@@ -298,7 +303,7 @@ int main(int argc, char *argv[])
+ 	    argerror(_("no packages given for install"));
+ 	} else {
+ 	    /* FIX: ia->relocations[0].newPath undefined */
+-        ec += isoftApp | rpmExpandNumeric("%{_isoftapp}") ? 
++        ec += isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+               rpmInstallISoftApp(ts, ia, (ARGV_t) poptGetArgs(optCon), NULL) : 
+               rpmInstall(ts, ia, (ARGV_t) poptGetArgs(optCon));
+ 	}
+@@ -311,7 +316,7 @@ int main(int argc, char *argv[])
+ 	if (!poptPeekArg(optCon) && !(qva->qva_source == RPMQV_ALL))
+ 	    argerror(_("no arguments given for query"));
+ 
+-	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") ? 
++	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+          rpmcliQueryISoftApp(ts, qva, (ARGV_const_t) poptGetArgs(optCon)) : 
+          rpmcliQuery(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
+ 	break;
+@@ -324,7 +329,7 @@ int main(int argc, char *argv[])
+ 
+ 	if (!poptPeekArg(optCon) && !(qva->qva_source == RPMQV_ALL))
+ 	    argerror(_("no arguments given for verify"));
+-	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") ? 
++	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+          rpmcliVerifyISoftApp(ts, qva, (ARGV_const_t) poptGetArgs(optCon)) : 
+          rpmcliVerify(ts, qva, (ARGV_const_t) poptGetArgs(optCon));
+     }	break;
