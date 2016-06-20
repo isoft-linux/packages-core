@@ -1,13 +1,11 @@
-%define     gitdate
- 
 Name:           wayland
 Version:        1.9.93
-Release:        1%{?gitdate:.git%{gitdate}}
+Release:        1
 Summary:        Wayland Compositor Infrastructure
 
 License:        MIT
 URL:            http://%{name}.freedesktop.org/
-Source0:        http://wayland.freedesktop.org/releases/%{name}-%{?gitdate:}%{!?gitdate:%{version}}.tar.xz
+Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 #git clone git://anongit.freedesktop.org/wayland/wayland
 #Source0:	wayland.tar.gz
 
@@ -75,7 +73,7 @@ Requires: wayland-devel%{?_isa} = %{version}-%{release}
 Headers and symlinks for developing wayland server applications.
 
 %prep
-%setup -q -n %{name}-%{?gitdate:}%{!?gitdate:%{version}}
+%setup -q -n %{name}-%{version}
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
 %configure --disable-static --disable-documentation
