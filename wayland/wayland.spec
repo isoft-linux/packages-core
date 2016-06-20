@@ -13,6 +13,7 @@ BuildRequires:  autoconf automake libtool
 BuildRequires:  pkgconfig(libffi)
 BuildRequires:  expat-devel
 BuildRequires:  libxslt
+BuildRequires:  libxml2-devel
 
 Provides:       %{name}-common = %{version}-%{release}
 Obsoletes:      %{name}-common < 0.85.0
