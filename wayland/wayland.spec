@@ -1,8 +1,8 @@
 %define     gitdate
  
 Name:           wayland
-Version:        1.9.0
-Release:        4%{?gitdate:.git%{gitdate}}
+Version:        1.9.93
+Release:        1%{?gitdate:.git%{gitdate}}
 Summary:        Wayland Compositor Infrastructure
 
 License:        MIT
@@ -148,6 +148,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/wayland-server.pc
 
 %changelog
+* Mon Jun 20 2016 yetist - 1.9.93-1
+- new version
+
 * Fri Oct 23 2015 cjacker - 1.9.0-4
 - Rebuild for new 4.0 release
 
