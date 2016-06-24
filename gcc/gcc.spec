@@ -593,7 +593,7 @@ fi
 %dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/finclude
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/finclude/*
 %{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/f951
-%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgfortranbegin.a
+#%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgfortranbegin.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libcaf_single.a
 
 %files -n libgfortran
