@@ -557,8 +557,8 @@ fi
 %{_libdir}/libgomp.a
 %{_libdir}/libgomp.so
 %{_libdir}/libgomp.spec
-%{_libdir}/libgomp-plugin-host_nonshm.so
-%{_libdir}/libgomp-plugin-host_nonshm.so.*
+#%{_libdir}/libgomp-plugin-host_nonshm.so
+#%{_libdir}/libgomp-plugin-host_nonshm.so.*
 
 
 %files go
