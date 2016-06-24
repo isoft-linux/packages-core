@@ -77,7 +77,6 @@ Source0: gcc-%{version}.tar.bz2
 
 Patch0:  gcc-64bit-use-lib-as-libdir.patch
 Patch1:  gcc-4.9-fix-cstddef-for-clang.patch 
-Patch2:  kill-fixincludes.diff
 
 URL: http://gcc.gnu.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -283,7 +282,6 @@ This package contains header files and documentation for GCC JIT front-end.
 %setup -q -n gcc-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 echo 'iSoft %{version}-%{gcc_release}' > gcc/DEV-PHASE
 

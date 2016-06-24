@@ -1,7 +1,7 @@
-diff -Nur gcc-4.8.0/gcc/config/i386/linux64.h gcc-4.8.0n/gcc/config/i386/linux64.h
---- gcc-4.8.0/gcc/config/i386/linux64.h	2013-01-11 04:38:27.000000000 +0800
-+++ gcc-4.8.0n/gcc/config/i386/linux64.h	2013-06-01 15:42:26.277037982 +0800
-@@ -27,6 +27,6 @@
+diff -Naur gcc-6.1.0.ori/gcc/config/i386/linux64.h gcc-6.1.0.dst/gcc/config/i386/linux64.h
+--- gcc-6.1.0.ori/gcc/config/i386/linux64.h	2016-01-04 22:30:50.000000000 +0800
++++ gcc-6.1.0.dst/gcc/config/i386/linux64.h	2016-06-24 09:15:13.856076699 +0800
+@@ -27,8 +27,8 @@
  #define GNU_USER_LINK_EMULATION64 "elf_x86_64"
  #define GNU_USER_LINK_EMULATIONX32 "elf32_x86_64"
  
@@ -10,9 +10,11 @@ diff -Nur gcc-4.8.0/gcc/config/i386/linux64.h gcc-4.8.0n/gcc/config/i386/linux64
 +#define GLIBC_DYNAMIC_LINKER32 "/lib32/ld-linux.so.2"
 +#define GLIBC_DYNAMIC_LINKER64 "/lib/ld-linux-x86-64.so.2"
  #define GLIBC_DYNAMIC_LINKERX32 "/libx32/ld-linux-x32.so.2"
-diff -Nur gcc-4.8.0/gcc/config/i386/t-linux64 gcc-4.8.0n/gcc/config/i386/t-linux64
---- gcc-4.8.0/gcc/config/i386/t-linux64	2013-01-11 04:38:27.000000000 +0800
-+++ gcc-4.8.0n/gcc/config/i386/t-linux64	2013-06-01 15:41:59.577037581 +0800
+ 
+ #undef MUSL_DYNAMIC_LINKER32
+diff -Naur gcc-6.1.0.ori/gcc/config/i386/t-linux64 gcc-6.1.0.dst/gcc/config/i386/t-linux64
+--- gcc-6.1.0.ori/gcc/config/i386/t-linux64	2016-01-04 22:30:50.000000000 +0800
++++ gcc-6.1.0.dst/gcc/config/i386/t-linux64	2016-06-24 09:16:54.028078202 +0800
 @@ -33,6 +33,6 @@
  comma=,
  MULTILIB_OPTIONS    = $(subst $(comma),/,$(TM_MULTILIB_CONFIG))
