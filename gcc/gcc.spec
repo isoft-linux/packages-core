@@ -62,8 +62,8 @@
 %endif
 
 
-%define gcc_version 5.3.0 
-%define gcc_release 12
+%define gcc_version 6.1.0 
+%define gcc_release 1
 %define _unpackaged_files_terminate_build 0
 
 %define gcc_target_platform %{_target_platform}
@@ -71,7 +71,7 @@
 Summary: Various compilers (C, C++, Objective-C, Java, ...)
 Name: gcc
 Version: %{gcc_version}
-Release: %{gcc_release}.2
+Release: %{gcc_release}.1
 License: GPLv3+ and GPLv2+ with exceptions
 Source0: gcc-%{version}.tar.bz2
 
@@ -99,7 +99,7 @@ Provides: gcc-c++ = %{version}-%{release}
 AutoReq: true
 
 %description
-The gcc package contains the GNU Compiler Collection version 4.3.
+The gcc package contains the GNU Compiler Collection version 6.
 You'll need this package in order to compile C code.
 
 
@@ -699,6 +699,9 @@ fi
 
 
 %changelog
+* Fri Jun 24 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 6.1.0-1.1
+- 6.1.0
+
 * Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 5.3.0-12.2
 - Update
 
