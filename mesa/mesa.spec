@@ -418,7 +418,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{_sysconfdir}/drirc
 %dir %{_libdir}/dri
 %{_libdir}/dri/*_dri.so
-%{_libdir}/dri/gallium_drv_video.so
+#%{_libdir}/dri/gallium_drv_video.so
 %{_libdir}/gallium-pipe/pipe_*.so
 
 %files libwayland-egl
