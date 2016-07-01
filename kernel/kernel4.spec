@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.5.1
-%define release 3
+%define kversion 4.6.3
+%define release 2
 
 %define extraversion -%{release}
 
@@ -683,6 +683,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 4.6.3-2
+- update kernel to official release 4.6.3
+
 * Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 4.5-2
 - update to 4.5 release
 - don't add many patch
