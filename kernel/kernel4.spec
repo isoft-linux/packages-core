@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.13
+%define kversion 4.4.14
 %define release 2
 
 %define extraversion -%{release}
@@ -802,6 +802,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 4.4.14-2
+- upgrade to official release version
+
 * Sun Jun 12 2016 sulit <sulitsrc@gmail.com> - 4.4.13-2
 - upgrade to official release version
 
