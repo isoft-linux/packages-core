@@ -1,6 +1,6 @@
 #!!!!!!!!!!SVN!!!!!!!!!!
 #checkout trunk: svn co http://llvm.org/svn/llvm-project/<component>/trunk <component>
-#checkout branch: svn co http://llvm.org/svn/llvm-project/<component>/branches/release_XY <component>-XY.src 
+#checkout branch: svn co http://llvm.org/svn/llvm-project/<component>/branches/release_XY <component>-XY.src
 #!!!!!!!!!!!!!!!!!!!!!!!
 
 #build as 'Release', otherwise delete this line.
@@ -18,7 +18,7 @@
 #disable lldb build, lldb provided by swift(swift ship a modified version, swift REPL depend on it)
 %define build_lldb 0
 
-%define build_lld 1 
+%define build_lld 1
 %define build_polly 1
 
 %define build_libcxx 1
@@ -34,14 +34,14 @@
 %define build_test_suite 0
 
 Name: llvm
-Version: 3.7.1
+Version: 3.8.0
 Release: 24
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
-License: University of Illinois/NCSA Open Source License 
+License: University of Illinois/NCSA Open Source License
 URL: http://llvm.org
 
-#note, libcxx/libcxxabi/libunwind/openmp is svn trunk 257014 
+#note, libcxx/libcxxabi/libunwind/openmp is svn trunk 257014
 Source0: llvm-%{version}.src.tar.xz
 Source1: cfe-%{version}.src.tar.xz
 Source2: compiler-rt-%{version}.src.tar.xz
@@ -94,24 +94,10 @@ Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
 #It's important.
 Patch1: clang-lib64-to-lib.patch
 
-# Backport LLVM_LINK_LLVM_DYLIB option
-Patch2: llvm-3.7.0-link-tools-against-libLLVM.patch
-# https://llvm.org/bugs/show_bug.cgi?id=24157
-Patch3: llvm-3.7.0-export-more-symbols.patch
-
 #gcc abi_tag support
 Patch4: 0001-add-gcc-abi_tag-support.patch
 Patch5: 0002-Adapt-previous-Clang-trunk-patch-to-Clang-3.7.patch
 Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
-
-# https://llvm.org/bugs/show_bug.cgi?id=24046
-# Upstreamed - http://reviews.llvm.org/D13206
-Patch7: clang-tools-extra-3.7.0-install-clang-query.patch
-# https://llvm.org/bugs/show_bug.cgi?id=24155
-Patch8: 0001-New-MSan-mapping-layout-llvm-part.patch
-Patch9: 0001-New-MSan-mapping-layout-compiler-rt-part.patch
-
-#Patch10: fix-broken-include-path.patch
 
 #pp-trace in clang-tools-extra did not install properly.
 Patch11: clang-extra-install-pp-trace.patch
@@ -126,9 +112,6 @@ Patch30: lldb-3.7.0-avoid-linking-to-libLLVM.patch
 #configure build system of llvm latest svn already enable openmp support.
 #this patch is for cmake build system
 Patch40: llvm37-enable-openmp-build.patch
-
-#use libomp instead of libgomp for clang -fopenmp, it's already enabled upstream in 3.8.x 
-Patch41: clang-use-libomp-as-default-openmp-runtime.patch
 
 BuildRequires: clang gcc-go
 BuildRequires: cmake, ninja-build
@@ -200,13 +183,13 @@ Requires: libllvm-devel = %{version}-%{release}
 This package contains static libraries needed to develop new
 native programs that use the LLVM infrastructure.
 
-%package -n clang 
+%package -n clang
 Summary: A C language family frontend for LLVM
-Requires: llvm = %{version}-%{release} 
-Requires: libllvm = %{version}-%{release} 
+Requires: llvm = %{version}-%{release}
+Requires: libllvm = %{version}-%{release}
 
-%description -n clang 
-The goal of the Clang project is to create a new C, C++, Objective C and Objective C++ front-end for the LLVM compiler. 
+%description -n clang
+The goal of the Clang project is to create a new C, C++, Objective C and Objective C++ front-end for the LLVM compiler.
 
 %package -n clang-tools
 Summary:  Extra tools of clang
@@ -350,10 +333,10 @@ Headers and libbraries for libcxx
 
 # start build_openmp
 %if %{build_openmp}
-%package -n openmp 
+%package -n openmp
 Summary: OpenMP runtime for use with the OpenMP implementation in Clang
 
-%description -n openmp 
+%description -n openmp
 OpenMP runtime for use with the OpenMP implementation in Clang
 
 %package -n openmp-devel
@@ -422,15 +405,9 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p2
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1 -d tools/clang/tools/extra
-%patch8 -p1
-%patch9 -p1 -d projects/compiler-rt
-#%patch10 -p1
 %patch11 -p1
 
 %patch19 -p1
@@ -438,11 +415,10 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 
 %if %{build_lldb}
 %patch30 -p1 -d tools/lldb
-%endif 
+%endif
 
 %if %{build_openmp}
 %patch40 -p1
-%patch41 -p1 -d tools/clang
 %endif
 
 %build
@@ -659,7 +635,7 @@ exit 0
 %{_datadir}/emacs/site-lisp/site-start.d/*.el
 
 
-%files -n libllvm 
+%files -n libllvm
 %defattr(-,root,root)
 %{_libdir}/libLTO.so.*
 %{_libdir}/libLLVM*.so*
@@ -832,7 +808,7 @@ exit 0
 #end build_libcxx
 
 #start build_openmp
-%files -n openmp 
+%files -n openmp
 %{_libdir}/libiomp5.so
 %{_libdir}/libomp.so
 
@@ -905,4 +881,4 @@ exit 0
 
 * Fri Jul 10 2015 Cjacker <cjacker@foxmail.com>
 - rebuild llvm, link to libstdc++/libgcc.
-- add more comment in spec to explain why this spec is important! 
+- add more comment in spec to explain why this spec is important!

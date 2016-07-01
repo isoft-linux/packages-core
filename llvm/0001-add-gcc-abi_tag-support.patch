@@ -131,18 +131,6 @@ index 6187bcb..c54ab34 100644
    let Args = [IntArgument<"AddressSpace">];
 diff --git a/include/clang/Basic/DiagnosticSemaKinds.td b/include/clang/Basic/DiagnosticSemaKinds.td
 index 82f5121..973456e 100644
---- a/tools/clang/include/clang/Basic/DiagnosticSemaKinds.td
-+++ b/tools/clang/include/clang/Basic/DiagnosticSemaKinds.td
-@@ -2323,7 +2323,8 @@ def warn_attribute_wrong_decl_type : Warning<
-   "Objective-C instance methods|init methods of interface or class extension declarations|"
-   "variables, functions and classes|Objective-C protocols|"
-   "functions and global variables|structs, unions, and typedefs|structs and typedefs|"
--  "interface or protocol declarations|kernel functions}1">,
-+  "interface or protocol declarations|kernel functions|"
-+  "structs, classes, variables, functions, methods and inline namespaces}1">,
-   InGroup<IgnoredAttributes>;
- def err_attribute_wrong_decl_type : Error<warn_attribute_wrong_decl_type.Text>;
- def warn_type_attribute_wrong_type : Warning<
 @@ -3997,6 +3998,13 @@ def err_definition_of_explicitly_defaulted_member : Error<
  def err_redefinition_extern_inline : Error<
    "redefinition of a 'extern inline' function %0 is not supported in "
@@ -157,22 +145,6 @@ index 82f5121..973456e 100644
  
  def note_deleted_dtor_no_operator_delete : Note<
    "virtual destructor requires an unambiguous, accessible 'operator delete'">;
-diff --git a/include/clang/Sema/AttributeList.h b/include/clang/Sema/AttributeList.h
-index 4d18633..b3a9333 100644
---- a/tools/clang/include/clang/Sema/AttributeList.h
-+++ b/tools/clang/include/clang/Sema/AttributeList.h
-@@ -854,7 +854,8 @@ enum AttributeDeclKind {
-   ExpectedStructOrUnionOrTypedef,
-   ExpectedStructOrTypedef,
-   ExpectedObjectiveCInterfaceOrProtocol,
--  ExpectedKernelFunction
-+  ExpectedKernelFunction,
-+  ExpectedStructClassVariableFunctionMethodOrInlineNamespace
- };
- 
- }  // end namespace clang
-diff --git a/lib/AST/ItaniumMangle.cpp b/lib/AST/ItaniumMangle.cpp
-index dac803e..e32b659 100644
 --- a/tools/clang/lib/AST/ItaniumMangle.cpp
 +++ b/tools/clang/lib/AST/ItaniumMangle.cpp
 @@ -214,6 +214,8 @@ public:
@@ -504,15 +476,6 @@ index dac803e..e32b659 100644
    if (FD->hasAttr<EnableIfAttr>()) {
      FunctionTypeDepthState Saved = FunctionTypeDepth.push();
      Out << "Ua9enable_ifI";
-@@ -524,7 +735,7 @@ void CXXNameMangler::mangleFunctionEncoding(const FunctionDecl *FD) {
-     FD = PrimaryTemplate->getTemplatedDecl();
-   }
- 
--  mangleBareFunctionType(FD->getType()->getAs<FunctionType>(), 
-+  mangleBareFunctionType(FD->getType()->getAs<FunctionType>(),
-                          MangleReturnType);
- }
- 
 @@ -582,7 +793,21 @@ isTemplate(const NamedDecl *ND, const TemplateArgumentList *&TemplateArgs) {
    return nullptr;
  }

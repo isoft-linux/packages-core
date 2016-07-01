@@ -1,16 +1,6 @@
 diff -Nur llvm-3.7.1.src/projects/CMakeLists.txt llvm-3.7.1.srcn/projects/CMakeLists.txt
 --- llvm-3.7.1.src/projects/CMakeLists.txt	2015-10-17 10:23:42.000000000 +0800
 +++ llvm-3.7.1.srcn/projects/CMakeLists.txt	2015-12-11 13:58:07.046779389 +0800
-@@ -8,7 +8,8 @@
-        (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/dragonegg) AND
-        (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libcxx) AND
-        (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libcxxabi) AND
--       (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libunwind))
-+       (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/libunwind) AND
-+       (NOT ${entry} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/openmp))
-       add_subdirectory(${entry})
-     endif()
-   endif()
 @@ -25,6 +26,7 @@
      add_llvm_external_project(libcxxabi)
      add_llvm_external_project(libcxx)

@@ -8,3 +8,15 @@ llvm-3.7.1.src.tar.xz
 openmp-3.7.1.src.tar.xz
 polly-3.7.1.src.tar.xz
 libunwind-3.7.1.src.tar.xz
+cfe-3.8.0.src.tar.xz
+clang-tools-extra-3.8.0.src.tar.xz
+compiler-rt-3.8.0.src.tar.xz
+libcxx-3.8.0.src.tar.xz
+libcxxabi-3.8.0.src.tar.xz
+libunwind-3.8.0.src.tar.xz
+lld-3.8.0.src.tar.xz
+lldb-3.8.0.src.tar.xz
+llvm-3.8.0.src.tar.xz
+openmp-3.8.0.src.tar.xz
+polly-3.8.0.src.tar.xz
+test-suite-3.8.0.src.tar.xz
