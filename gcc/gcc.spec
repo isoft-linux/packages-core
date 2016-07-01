@@ -62,8 +62,8 @@
 %endif
 
 
-%define gcc_version 5.3.0 
-%define gcc_release 12
+%define gcc_version 6.1.0 
+%define gcc_release 1
 %define _unpackaged_files_terminate_build 0
 
 %define gcc_target_platform %{_target_platform}
@@ -71,13 +71,12 @@
 Summary: Various compilers (C, C++, Objective-C, Java, ...)
 Name: gcc
 Version: %{gcc_version}
-Release: %{gcc_release}.2
+Release: %{gcc_release}.1
 License: GPLv3+ and GPLv2+ with exceptions
 Source0: gcc-%{version}.tar.bz2
 
 Patch0:  gcc-64bit-use-lib-as-libdir.patch
 Patch1:  gcc-4.9-fix-cstddef-for-clang.patch 
-Patch2:  kill-fixincludes.diff
 
 URL: http://gcc.gnu.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -99,7 +98,7 @@ Provides: gcc-c++ = %{version}-%{release}
 AutoReq: true
 
 %description
-The gcc package contains the GNU Compiler Collection version 4.3.
+The gcc package contains the GNU Compiler Collection version 6.
 You'll need this package in order to compile C code.
 
 
@@ -283,7 +282,6 @@ This package contains header files and documentation for GCC JIT front-end.
 %setup -q -n gcc-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 echo 'iSoft %{version}-%{gcc_release}' > gcc/DEV-PHASE
 
@@ -559,8 +557,8 @@ fi
 %{_libdir}/libgomp.a
 %{_libdir}/libgomp.so
 %{_libdir}/libgomp.spec
-%{_libdir}/libgomp-plugin-host_nonshm.so
-%{_libdir}/libgomp-plugin-host_nonshm.so.*
+#%{_libdir}/libgomp-plugin-host_nonshm.so
+#%{_libdir}/libgomp-plugin-host_nonshm.so.*
 
 
 %files go
@@ -595,7 +593,7 @@ fi
 %dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/finclude
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/finclude/*
 %{_prefix}/libexec/gcc/%{gcc_target_platform}/%{gcc_version}/f951
-%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgfortranbegin.a
+#%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgfortranbegin.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libcaf_single.a
 
 %files -n libgfortran
@@ -699,6 +697,9 @@ fi
 
 
 %changelog
+* Fri Jun 24 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 6.1.0-1.1
+- 6.1.0
+
 * Sat Dec 05 2015 Cjacker <cjacker@foxmail.com> - 5.3.0-12.2
 - Update
 

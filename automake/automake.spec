@@ -1,9 +1,9 @@
-%define api_version 1.14.1
+%define api_version 1.15
 
 Summary:    A GNU tool for automatically creating Makefiles
 Name:       automake
 Version:    %{api_version}
-Release:    4
+Release:    1
 License:    GPLv2+ and GFDL and MIT 
 Source:     http://ftp.gnu.org/gnu/automake/automake-%{version}.tar.xz
 Source1:    filter-provides-automake.sh
@@ -68,6 +68,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %dir %{_datadir}/aclocal
 
 %changelog
+* Wed Apr 20 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 1.15-1
+- 1.15
+
 * Fri Oct 23 2015 cjacker - 1.14.1-4
 - Rebuild for new 4.0 release
 

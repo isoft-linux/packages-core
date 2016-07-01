@@ -1,13 +1,11 @@
-%define     gitdate
- 
 Name:           wayland
-Version:        1.9.0
-Release:        4%{?gitdate:.git%{gitdate}}
+Version:        1.9.93
+Release:        1
 Summary:        Wayland Compositor Infrastructure
 
 License:        MIT
 URL:            http://%{name}.freedesktop.org/
-Source0:        http://wayland.freedesktop.org/releases/%{name}-%{?gitdate:}%{!?gitdate:%{version}}.tar.xz
+Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 #git clone git://anongit.freedesktop.org/wayland/wayland
 #Source0:	wayland.tar.gz
 
@@ -15,6 +13,7 @@ BuildRequires:  autoconf automake libtool
 BuildRequires:  pkgconfig(libffi)
 BuildRequires:  expat-devel
 BuildRequires:  libxslt
+BuildRequires:  libxml2-devel
 
 Provides:       %{name}-common = %{version}-%{release}
 Obsoletes:      %{name}-common < 0.85.0
@@ -75,7 +74,7 @@ Requires: wayland-devel%{?_isa} = %{version}-%{release}
 Headers and symlinks for developing wayland server applications.
 
 %prep
-%setup -q -n %{name}-%{?gitdate:}%{!?gitdate:%{version}}
+%setup -q -n %{name}-%{version}
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
 %configure --disable-static --disable-documentation
@@ -148,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/wayland-server.pc
 
 %changelog
+* Mon Jun 20 2016 yetist - 1.9.93-1
+- new version
+
 * Fri Oct 23 2015 cjacker - 1.9.0-4
 - Rebuild for new 4.0 release
 

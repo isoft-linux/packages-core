@@ -1,15 +1,16 @@
 %define with_opencl 1
+%global rctag rc4
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 11.2.0
-Release: 2
+Version: 12.0.0
+Release: 1%{?rctag:.%{rctag}}%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
 # if git codes needed:
 # git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.xz
+Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}%{?rctag:-%{rctag}}.tar.xz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
@@ -250,7 +251,7 @@ Mesa OpenCL development package.
 
 
 %prep
-%setup -q -n %{name}-%{version} 
+%setup -q -n %{name}-%{version}%{?rctag:-%{rctag}}
 
 # Fix detection of libLLVM when built with CMake
 # It depend on LLVM shared lib name, If libLLVM.so.<version>, this is needed.
@@ -417,7 +418,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{_sysconfdir}/drirc
 %dir %{_libdir}/dri
 %{_libdir}/dri/*_dri.so
-%{_libdir}/dri/gallium_drv_video.so
+#%{_libdir}/dri/gallium_drv_video.so
 %{_libdir}/gallium-pipe/pipe_*.so
 
 %files libwayland-egl
@@ -505,6 +506,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 27 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 12.0.0-rc4-1
+- 12.0.0-rc4
+
 * Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 11.2.0-2
 - update to 11.2.0 release
 
