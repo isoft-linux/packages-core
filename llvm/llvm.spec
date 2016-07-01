@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.8.0
-Release: 24
+Release: 25
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License
@@ -817,6 +817,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 3.8.0-25
+- update llvm to official release version 3.8.0
+
 * Thu Jan 07 2016 Cjacker <cjacker@foxmail.com> - 3.7.1-24
 - Update to 3.7.1 official release, codes unchanged
 
