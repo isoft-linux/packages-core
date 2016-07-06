@@ -111,7 +111,7 @@ Patch30: lldb-3.7.0-avoid-linking-to-libLLVM.patch
 
 #configure build system of llvm latest svn already enable openmp support.
 #this patch is for cmake build system
-Patch40: llvm37-enable-openmp-build.patch
+# Patch40: llvm37-enable-openmp-build.patch
 
 BuildRequires: clang gcc-go
 BuildRequires: cmake, ninja-build
@@ -418,7 +418,7 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 %endif
 
 %if %{build_openmp}
-%patch40 -p1
+#%patch40 -p1
 %endif
 
 %build
@@ -819,6 +819,7 @@ exit 0
 %changelog
 * Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 3.8.0-25
 - update llvm to official release version 3.8.0
+- remove default use openmp patch, it may be supported
 
 * Thu Jan 07 2016 Cjacker <cjacker@foxmail.com> - 3.7.1-24
 - Update to 3.7.1 official release, codes unchanged
