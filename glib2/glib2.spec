@@ -1,7 +1,7 @@
 Summary: A library of handy utility functions
 Name: glib2
-Version: 2.48.0
-Release: 2
+Version: 2.49.2
+Release: 1
 License: LGPL
 URL: http://www.gtk.org
 %global versiondir %(echo %{version} | cut -d. -f1-2)
@@ -143,8 +143,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/glib-mkenums.1.gz
 %{_mandir}/man1/glib-genmarshal.1.gz
 %{_mandir}/man1/glib-gettextize.1.gz
+%{_datadir}/gdb/auto-load/usr/lib/libglib-2.0.so.0.4902.0-gdb.pyc
+%{_datadir}/gdb/auto-load/usr/lib/libglib-2.0.so.0.4902.0-gdb.pyo
+%{_datadir}/gdb/auto-load/usr/lib/libgobject-2.0.so.0.4902.0-gdb.pyc
+%{_datadir}/gdb/auto-load/usr/lib/libgobject-2.0.so.0.4902.0-gdb.pyo
+%{_datadir}/gettext/its/gschema.its
+%{_datadir}/gettext/its/gschema.loc
 
 %changelog
+* Fri Jul 08 2016 zhouyang <yang.zhou@i-soft.com.cn> - 2.49.2-1
+- Update
+
 * Tue Apr 19 2016 sulit <sulitsrc@gmail.com> - 2.48.0-2
 - update to release 2.48.0
 - add buildrequire pcre-devel
