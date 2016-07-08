@@ -1,12 +1,13 @@
 Summary: libinput is a library to handle input devices in Wayland compositors and to provide a generic X.Org input driver. 
 Name:    libinput 
-Version: 1.1.1
-Release: 2 
+Version: 1.3.3
+Release: 2
 License: GPL
 Source0: http://www.freedesktop.org/software/libinput/libinput-%{version}.tar.xz
 
 BuildRequires: libevdev-devel
 BuildRequires: mtdev-devel
+BuildRequires: libwacom-devel
 #for libudev
 BuildRequires: systemd-devel
 
@@ -63,6 +64,9 @@ rm -rf %{buildroot}
 %{_includedir}/*
 
 %changelog
+* Fri Jul 08 2016 zhouyang <yang.zhou@i-soft.com.cn> - 1.3.3-2
+- Update
+
 * Wed Nov 18 2015 Cjacker <cjacker@foxmail.com> - 1.1.1-2
 - Update
 
