@@ -34,8 +34,8 @@
 %define build_test_suite 0
 
 Name: llvm
-Version: 3.8.0
-Release: 25
+Version: 3.8.1
+Release: 1
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License
@@ -817,6 +817,10 @@ exit 0
 #end build_openmp
 
 %changelog
+* Fri Jul 15 2016 sulit <sulitsrc@gmail.com> - 3.8.1-1
+- upgrade llvm to official release version
+- llvm 3.8.0 has a bug that don't build by gcc 6.1.0
+
 * Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 3.8.0-25
 - update llvm to official release version 3.8.0
 - remove default use openmp patch, it may be supported

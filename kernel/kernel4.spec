@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.6.3
-%define release 2
+%define kversion 4.6.4
+%define release 1
 
 %define extraversion -%{release}
 
@@ -71,41 +71,6 @@ Source2001: cpupower.config
 # build tweak for build ID magic, even for -vanilla
 Source3000: kbuild-AFTER_LINK.patch
  
-# Patch0: linux-tune-cdrom-default.patch
-# 
-# Patch450: input-kill-stupid-messages.patch
-# Patch452: no-pcspkr-modalias.patch
-# 
-# Patch470: die-floppy-die.patch
-# 
-# Patch601: amd-xgbe-a0-Add-support-for-XGBE-on-A0.patch
-# Patch602: amd-xgbe-phy-a0-Add-support-for-XGBE-PHY-on-A0.patch
-# Patch603: ath9k-rx-dma-stop-check.patch
-# Patch604: disable-i8042-check-on-apple-mac.patch
-# Patch606: drm-i915-turn-off-wc-mmaps.patch
-# Patch607: drm-i915-hush-check-crtc-state.patch
-# 
-# Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
-# # drop it from kernel-4.4.0-rc4
-# # Patch609: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
-# Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
-# 
-# #nouveau add dummy func to gk20a
-# Patch2002: nouveau-gk20a-add-dummy-func-to-avoid-null.patch
-# 
-# #already upstream, should removed later
-# #http://patchwork.ozlabs.org/patch/544307/
-# # remove it from kernel4.4.0-rc3
-# #Patch2003: net-fix-feature-changes-on-device-without-ndo-set-features.patch
-# 
-# #Upstream backport, may removed later.
-# Patch2008: drm-udl-Use-unlocked-gem-unreferencing.patch
-# Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
-# 
-# Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
-# # Fix rfkill issues on ideapad Y700-17ISK
-# Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
-
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
 
@@ -251,29 +216,6 @@ cd linux-%{kversion}.%{_target_cpu}
 
 # The kbuild-AFTER_LINK patch is needed regardless
 cat %{SOURCE3000} |patch -p1
-
-#%patch0 -p1
-#
-#%patch450 -p1
-#%patch452 -p1
-#%patch470 -p1
-#
-#%patch601 -p1
-#%patch602 -p1
-#%patch603 -p1
-#%patch604 -p1
-#%patch606 -p1
-#%patch607 -p1
-#%patch608 -p1
-#%patch612 -p1
-#
-#%patch2002 -p1
-#
-#%patch2008 -p1
-#%patch2009 -p1
-#
-#%patch2013 -p1
-#%patch2017 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -683,6 +625,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Wed Jul 13 2016 sulit <sulitsrc@gmail.com> - 4.6.4-1
+- update kernel to official release version
+
 * Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 4.6.3-2
 - update kernel to official release 4.6.3
 
