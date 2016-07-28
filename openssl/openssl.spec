@@ -6,8 +6,8 @@
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name:    openssl
 Version: 1.0.2g
-Release: 1
-Epoch:   1
+Release: 2
+Epoch:   2
 Source:  http://openssl.org/source/openssl-%{version}.tar.gz
 Source2: Makefile.certificate
 Source6: make-dummy-cert
@@ -125,7 +125,7 @@ sslarch=%{_os}-%{_target_cpu}
     --openssldir=%{_sysconfdir}/pki/tls \
     zlib enable-camellia enable-seed enable-tlsext enable-rfc3779 \
     enable-cms enable-md2 no-mdc2 no-rc5 no-ec2m no-gost no-srp \
-    shared  ${sslarch}
+    shared enable-ssl2  ${sslarch}
 
 #modify libdir for x86_64
 sed -i -e 's/LIBDIR=lib64/LIBDIR=lib/g' Makefile
@@ -269,6 +269,9 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
+* Mon Jul 25 2016 zhouyang <yang.zhou@i-soft.com.cn> - 1:1.0.2g-2
+- Add SSLv2 Support
+
 * Thu Mar 03 2016 sulitsrc <sulitsrc@gmail.com> - 1:1.0.2g-1
 - update to 1.0.2g
 
