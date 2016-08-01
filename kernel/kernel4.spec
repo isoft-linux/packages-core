@@ -616,7 +616,7 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 %ifarch %{cpupowerarchs}
 %files -n kernel-tools-libs
 %{_libdir}/libcpupower.so.0
-%{_libdir}/libcpupower.so.0.0.0
+%{_libdir}/libcpupower.so.0.0*
 
 %files -n kernel-tools-libs-devel
 %{_libdir}/libcpupower.so
@@ -627,6 +627,7 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 %changelog
 * Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 4.7-1
 - update kernel to 4.7
+- modify kernel-tools-libs file libcpupower.so.0.0*
 
 * Wed Jul 13 2016 sulit <sulitsrc@gmail.com> - 4.6.4-1
 - update kernel to official release version
