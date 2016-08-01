@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.14
-%define release 2
+%define kversion 4.4.16
+%define release 1
 
 %define extraversion -%{release}
 
@@ -144,7 +144,6 @@ Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch
 Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
-Patch2014: HID-multitouch-enable-palm-rejection-if-device-imple.patch
 Patch2016: alua_fix.patch
 # Fix rfkill issues on ideapad Y700-17ISK
 Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
@@ -371,7 +370,6 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2010 -p1
 %patch2013 -p1
-%patch2014 -p1
 %patch2016 -p1
 %patch2017 -p1
 
@@ -802,6 +800,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 4.4.16-1
+- update kernel to 4.4.16
+
 * Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 4.4.14-2
 - upgrade to official release version
 
