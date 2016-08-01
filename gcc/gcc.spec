@@ -85,7 +85,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: binutils >= 2.17.50.0.17-3
 BuildRequires: mpc-devel >= 1.0.2 
 BuildRequires: zlib-devel, gettext
-BuildRequires: flex-devel
+BuildRequires: flex
 
 %if %build_check_log
 BuildRequires: autogen, dejagnu, expect, tcl
@@ -702,7 +702,7 @@ fi
 %changelog
 * Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 6.1.1-1.1
 - upgrade gcc for some compile problems
-- add flex-devel buildrequires
+- add flex buildrequires
 
 * Fri Jun 24 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 6.1.0-1.1
 - 6.1.0
