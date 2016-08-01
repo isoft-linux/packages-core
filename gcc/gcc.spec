@@ -62,7 +62,8 @@
 %endif
 
 
-%define gcc_version 6.1.0 
+%define gcc_version 6.1.1
+%define DATE 20160621
 %define gcc_release 1
 %define _unpackaged_files_terminate_build 0
 
@@ -73,7 +74,8 @@ Name: gcc
 Version: %{gcc_version}
 Release: %{gcc_release}.1
 License: GPLv3+ and GPLv2+ with exceptions
-Source0: gcc-%{version}.tar.bz2
+# tar pkg from fedora
+Source0: gcc-%{version}-%{DATE}.tar.bz2
 
 Patch0:  gcc-64bit-use-lib-as-libdir.patch
 Patch1:  gcc-4.9-fix-cstddef-for-clang.patch 
@@ -279,7 +281,7 @@ This package contains header files and documentation for GCC JIT front-end.
 
 
 %prep
-%setup -q -n gcc-%{version}
+%setup -q -n gcc-%{version}-%{DATE}
 %patch0 -p1
 %patch1 -p1
 
@@ -697,6 +699,9 @@ fi
 
 
 %changelog
+* Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 6.1.1-1.1
+- upgrade gcc for some compile problems
+
 * Fri Jun 24 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 6.1.0-1.1
 - 6.1.0
 
