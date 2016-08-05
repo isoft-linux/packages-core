@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.8.1
-Release: 1
+Release: 2
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License
@@ -430,8 +430,8 @@ mkdir -p %{_target_platform}
 pushd %{_target_platform}
 cmake \
     -G Ninja \
-    -DCMAKE_C_COMPILER=gcc \
-    -DCMAKE_CXX_COMPILER=g++ \
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++ \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
     -DCMAKE_BUILD_TYPE="%{build_type}" \
@@ -826,6 +826,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 3.8.1-2
+- compile llvm by clang
+
 * Fri Jul 15 2016 sulit <sulitsrc@gmail.com> - 3.8.1-1
 - upgrade llvm to official release version
 - llvm 3.8.0 has a bug that don't build by gcc 6.1.0
