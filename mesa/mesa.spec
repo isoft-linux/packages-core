@@ -1,9 +1,9 @@
 %define with_opencl 1
-%global rctag rc4
+#%global rctag rc4
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 12.0.0
+Version: 12.0.1
 Release: 1%{?rctag:.%{rctag}}%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
@@ -506,6 +506,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 12.0.1-1
+- rebuild mesa by llvm
+
 * Mon Jun 27 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 12.0.0-rc4-1
 - 12.0.0-rc4
 
