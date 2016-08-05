@@ -95,9 +95,9 @@ Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
 Patch1: clang-lib64-to-lib.patch
 
 #gcc abi_tag support
-Patch4: 0001-add-gcc-abi_tag-support.patch
+#Patch4: 0001-add-gcc-abi_tag-support.patch
 Patch5: 0002-Adapt-previous-Clang-trunk-patch-to-Clang-3.7.patch
-Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
+#Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
 
 #pp-trace in clang-tools-extra did not install properly.
 Patch11: clang-extra-install-pp-trace.patch
@@ -405,9 +405,9 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 
 %patch0 -p1
 %patch1 -p1
-%patch4 -p1
+#%patch4 -p1
 %patch5 -p1
-%patch6 -p1
+#%patch6 -p1
 %patch11 -p1
 
 %patch19 -p1
@@ -430,8 +430,8 @@ mkdir -p %{_target_platform}
 pushd %{_target_platform}
 cmake \
     -G Ninja \
-    -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_C_COMPILER=gcc \
+    -DCMAKE_CXX_COMPILER=g++ \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
     -DCMAKE_BUILD_TYPE="%{build_type}" \
@@ -464,6 +464,7 @@ ninja
 popd
 
 %install
+cd %{_builddir}/%{name}-%{version}.src
 rm -rf %{buildroot}
 
 pushd %{_target_platform}
@@ -475,12 +476,12 @@ pushd tools/clang
 mkdir -p %{buildroot}%{_datadir}
 for TOOL in scan-{build,view}; do
     cp -a tools/$TOOL %{buildroot}%{_datadir}/
-    ln -s %{_datadir}/$TOOL/$TOOL %{buildroot}%{_bindir}/$TOOL
+#ln -s %{_datadir}/$TOOL/$TOOL %{buildroot}%{_bindir}/$TOOL
 done
 
 # man page
 mkdir -p %{buildroot}%{_mandir}/man1
-mv %{buildroot}%{_datadir}/scan-build/scan-build.1 %{buildroot}%{_mandir}/man1/
+#mv %{buildroot}%{_datadir}/scan-build/man/scan-build.1 %{buildroot}%{_mandir}/man1/
 
 # scan-build looks for clang within the same directory
 ln -sf %{_bindir}/clang %{buildroot}%{_datadir}/scan-build/clang
@@ -594,6 +595,7 @@ exit 0
 %{_bindir}/llvm-diff
 %{_bindir}/llvm-dis
 %{_bindir}/llvm-dwarfdump
+%{_bindir}/llvm-dwp
 %{_bindir}/llvm-extract
 %{_bindir}/llvm-link
 %{_bindir}/llvm-mc
@@ -604,6 +606,7 @@ exit 0
 %{_bindir}/llvm-readobj
 %{_bindir}/llvm-rtdyld
 %{_bindir}/llvm-size
+%{_bindir}/llvm-split
 %{_bindir}/llvm-stress
 %{_bindir}/llvm-symbolizer
 %{_bindir}/llvm-tblgen
@@ -615,8 +618,9 @@ exit 0
 %{_bindir}/llvm-cxxdump
 %{_bindir}/llvm-lib
 %{_bindir}/llvm-pdbdump
-%{_bindir}/macho-dump
+# %{_bindir}/macho-dump
 %{_bindir}/obj2yaml
+%{_bindir}/sancov
 %{_bindir}/verify-uselistorder
 %{_bindir}/yaml2obj
 #plugins.
@@ -637,7 +641,7 @@ exit 0
 
 %files -n libllvm
 %defattr(-,root,root)
-%{_libdir}/libLTO.so.*
+%{_libdir}/libLTO.so
 %{_libdir}/libLLVM*.so*
 
 %files -n libllvm-devel
@@ -674,12 +678,15 @@ exit 0
 %{_bindir}/clang-apply-replacements
 %{_bindir}/clang-check
 %{_bindir}/clang-format
-%{_bindir}/clang-modernize
+# %{_bindir}/clang-modernize
 %{_bindir}/clang-rename
 %{_bindir}/clang-tidy
 %{_bindir}/clang-query
 %{_bindir}/git-clang-format
+%{_bindir}/modularize
 %{_bindir}/pp-trace
+%{_libexecdir}/c++-analyzer
+%{_libexecdir}/ccc-analyzer
 %dir %{_datadir}/clang/
 %{_datadir}/clang/*.py*
 %{_datadir}/clang/*.el
@@ -702,11 +709,12 @@ exit 0
 %{_includedir}/clang
 %{_includedir}/clang-c
 %{_libdir}/libclang*.so
+%{_datadir}/clang/cmake/*
 
 %files -n libclang-static
 %defattr(-,root,root)
 %{_libdir}/libclang*.a
-%{_libdir}/libmodernizeCore.a
+# %{_libdir}/libmodernizeCore.a
 
 #start of build_lldb
 %if %{build_lldb}
@@ -737,8 +745,8 @@ exit 0
 %if %{build_lld}
 %files -n lld
 %{_bindir}/lld
-# {_bindir}/ld.lld
-# {_bindir}/lld-link
+%{_bindir}/ld.lld
+%{_bindir}/lld-link
 
 %files -n liblld-devel
 %{_includedir}/lld
@@ -747,9 +755,10 @@ exit 0
 %{_libdir}/liblldCore.a
 %{_libdir}/liblldDriver.a
 %{_libdir}/liblldELF.a
+%{_libdir}/liblldELF2.a
 %{_libdir}/liblldHexagonELFTarget.a
 %{_libdir}/liblldMachO.a
-%{_libdir}/liblldPECOFF.a
+#%{_libdir}/liblldPECOFF.a
 %{_libdir}/liblldReaderWriter.a
 %{_libdir}/liblldX86ELFTarget.a
 %{_libdir}/liblldX86_64ELFTarget.a
@@ -820,6 +829,7 @@ exit 0
 * Fri Jul 15 2016 sulit <sulitsrc@gmail.com> - 3.8.1-1
 - upgrade llvm to official release version
 - llvm 3.8.0 has a bug that don't build by gcc 6.1.0
+- compile llvm by gcc
 
 * Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 3.8.0-25
 - update llvm to official release version 3.8.0
