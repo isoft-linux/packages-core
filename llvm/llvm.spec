@@ -35,7 +35,7 @@
 
 Name: llvm
 Version: 3.8.1
-Release: 2
+Release: 3
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License
@@ -95,9 +95,9 @@ Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
 Patch1: clang-lib64-to-lib.patch
 
 #gcc abi_tag support
-#Patch4: 0001-add-gcc-abi_tag-support.patch
+Patch4: 0001-add-gcc-abi_tag-support.patch
 Patch5: 0002-Adapt-previous-Clang-trunk-patch-to-Clang-3.7.patch
-#Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
+Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
 
 #pp-trace in clang-tools-extra did not install properly.
 Patch11: clang-extra-install-pp-trace.patch
@@ -405,9 +405,9 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 
 %patch0 -p1
 %patch1 -p1
-#%patch4 -p1
+%patch4 -p1
 %patch5 -p1
-#%patch6 -p1
+%patch6 -p1
 %patch11 -p1
 
 %patch19 -p1
@@ -826,6 +826,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 3.8.1-3
+- uncomment gcc abi patch
+
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 3.8.1-2
 - compile llvm by clang
 
