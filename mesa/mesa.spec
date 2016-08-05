@@ -3,7 +3,7 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 12.0.1
-Release: 1%{?dist}
+Release: 3%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -378,6 +378,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/GL/glx_mangle.h
 %{_includedir}/GL/glxext.h
 %{_includedir}/GL/glcorearb.h
+%{_includedir}/GL/mesa_glinterop.h
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/internal/dri_interface.h
 %{_libdir}/pkgconfig/dri.pc
@@ -505,6 +506,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 12.0.1-3
+- rebuild mesa by llvm
+
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 12.0.1-1
 - rebuild mesa by llvm
 - remove rc flags
