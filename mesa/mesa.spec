@@ -1,16 +1,15 @@
 %define with_opencl 1
-#%global rctag rc4
 
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 12.0.1
-Release: 1%{?rctag:.%{rctag}}%{?dist}
+Release: 1%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
 # if git codes needed:
 # git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}%{?rctag:-%{rctag}}.tar.xz
+Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.xz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
@@ -508,6 +507,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 12.0.1-1
 - rebuild mesa by llvm
+- remove rc flags
 
 * Mon Jun 27 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 12.0.0-rc4-1
 - 12.0.0-rc4
