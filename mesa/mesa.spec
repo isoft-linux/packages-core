@@ -3,7 +3,7 @@
 Summary: Mesa graphics libraries
 Name: mesa
 Version: 12.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -418,7 +418,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{_sysconfdir}/drirc
 %dir %{_libdir}/dri
 %{_libdir}/dri/*_dri.so
-#%{_libdir}/dri/gallium_drv_video.so
+%{_libdir}/dri/*_drv_video.so
 %{_libdir}/gallium-pipe/pipe_*.so
 
 %files libwayland-egl
@@ -506,6 +506,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 12.0.1-4
+- add new drv_video.so to files
+
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 12.0.1-3
 - rebuild mesa by llvm
 
