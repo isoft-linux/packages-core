@@ -1,21 +1,15 @@
-ripped from SuSE
-
-if /etc/resolv.conf is updated, then make sure applications
-already running get the updated information.
-
-http://bugs.gentoo.org/177416
-
---- libc/resolv/res_libc.c
-+++ libc/resolv/res_libc.c
-@@ -22,6 +22,7 @@
+diff -Nur glibc-2.24/resolv/res_libc.c glibc-2.24n/resolv/res_libc.c
+--- glibc-2.24/resolv/res_libc.c	2016-08-02 10:01:36.000000000 +0800
++++ glibc-2.24n/resolv/res_libc.c	2016-08-08 13:25:43.816555474 +0800
+@@ -25,6 +25,7 @@
  #include <arpa/nameser.h>
  #include <resolv.h>
- #include <bits/libc-lock.h>
+ #include <libc-lock.h>
 +#include <sys/stat.h>
  
- 
- /* The following bit is copied from res_data.c (where it is #ifdef'ed
-@@ -101,6 +102,20 @@
+ extern unsigned long long int __res_initstamp attribute_hidden;
+ /* We have atomic increment operations on 64-bit platforms.  */
+@@ -93,6 +94,20 @@
  __res_maybe_init (res_state resp, int preinit)
  {
  	if (resp->options & RES_INIT) {
@@ -34,5 +28,5 @@ http://bugs.gentoo.org/177416
 +			}
 +		}
  		if (__res_initstamp != resp->_u._ext.initstamp) {
- 			if (resp->nscount > 0) {
- 				__res_nclose (resp);
+ 			if (resp->nscount > 0)
+ 				__res_iclose (resp, true);

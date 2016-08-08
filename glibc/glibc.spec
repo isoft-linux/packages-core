@@ -1,13 +1,13 @@
 #never build seperate debuginfo package of glibc.
 %define debug_package %{nil}
 
-%define glibcversion 2.22
-%define glibcrelease 12
+%define glibcversion 2.24
+%define glibcrelease 1
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %{glibcversion}
-Release: %{glibcrelease}.2
+Release: %{glibcrelease}.1
 License: LGPL
 Source0:	http://ftp.gnu.org/gnu/glibc/glibc-%{glibcversion}.tar.xz
 
@@ -546,6 +546,9 @@ fi
 
 
 %changelog
+* Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 2.24-1.1
+- upgrade glibc to 2.24
+
 * Thu Feb 18 2016 xiaotian.wu@i-soft.com.cn - 2.22-12.2
 - Fixed CVE-2015-7547.
 
