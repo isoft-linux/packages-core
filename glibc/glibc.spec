@@ -7,7 +7,7 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %{glibcversion}
-Release: %{glibcrelease}.1
+Release: %{glibcrelease}.2
 License: LGPL
 Source0:	http://ftp.gnu.org/gnu/glibc/glibc-%{glibcversion}.tar.xz
 
@@ -33,13 +33,6 @@ Patch22: glibc-2.19-fix-build-locale-archive.patch
 Patch30: nscd-server-user.patch
 Patch31: glibc-nscd-sysconfig.patch
 Patch32: glibc-nscd-service.patch
-
-#unicode related, # Upstream BZ 18568
-Patch40: glibc-rh1238412-remove-duplicate-transliterations.patch
-Patch41: glibc-rh1238412-addition-and-fixes-for-translit_neutral.patch
-Patch42: glibc-rh1238412-update-the-translit-files-to-unicode-7.0.0.patch
-Patch43: glibc-rh1238412-add-translit-rules-for-da-nb-nn-sv-locales.patch
-Patch44: glibc-rh1238412-unicode-8.0.0-update.patch
 
 # confstr _CS_PATH should only return /usr/bin on Fedora since /bin is just a
 # symlink to it.
@@ -183,12 +176,6 @@ If unsure if you need this, don't install this package.
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
-
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
 
 %patch53 -p1
 %patch54 -p1
@@ -546,6 +533,9 @@ fi
 
 
 %changelog
+* Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 2.24-1.2
+- update glibc to 2.24
+
 * Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 2.24-1.1
 - upgrade glibc to 2.24
 

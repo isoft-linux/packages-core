@@ -3,9 +3,9 @@ Index: glibc-2.22-193-g315267a/resolv/gethnamaddr.c
 --- glibc-2.22-193-g315267a.orig/resolv/gethnamaddr.c
 +++ glibc-2.22-193-g315267a/resolv/gethnamaddr.c
 @@ -71,6 +71,7 @@ static char sccsid[] = "@(#)gethostnamad
- #include <ctype.h>
  #include <errno.h>
- #include <syslog.h>
+ #include <stdlib.h>
+ #include <string.h>
 +#include <libc-internal.h>
  
  #define RESOLVSORT

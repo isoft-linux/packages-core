@@ -6,6 +6,7 @@ Index: glibc-2.22-193-g315267a/resolv/res_hconf.c
  #include "ifreq.h"
  #include "res_hconf.h"
  #include <wchar.h>
+ #include <atomic.h>
 +#include <libc-internal.h>
  
  #if IS_IN (libc)
