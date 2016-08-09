@@ -535,6 +535,7 @@ fi
 %changelog
 * Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 2.24-1.2
 - update glibc to 2.24
+- modify utf-8 locale patch
 
 * Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 2.24-1.1
 - upgrade glibc to 2.24
