@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.16
+%define kversion 4.4.17
 %define release 1
 
 %define extraversion -%{release}
@@ -800,6 +800,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Thu Aug 11 2016 sulit <sulitsrc@gmail.com> - 4.4.17-1
+- update kernel to 4.4.17
+
 * Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 4.4.16-1
 - update kernel to 4.4.16
 
