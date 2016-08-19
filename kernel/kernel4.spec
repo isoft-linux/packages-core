@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.17
+%define kversion 4.4.18
 %define release 1
 
 %define extraversion -%{release}
@@ -110,12 +110,9 @@ Patch608: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
 Patch611: watchdog-Disable-watchdog-on-virtual-machines.patch
 Patch612: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
 
-Patch1000: 0001-drm-i915-Pretend-cursor-is-always-on-for-ILK-style-W.patch
 Patch1001: 0001-usb-hub-fix-panic-in-usb_reset_and_verify_device.patch
-Patch1009: cdc_ncm-do-not-call-usbnet_link_change-from-cdc_ncm_.patch
 Patch1010: crash-driver.patch
 Patch1011: criu-no-expert.patch
-Patch1019: HID-sony-do-not-bail-out-when-the-sixaxis-refuses-th.patch
 Patch1021: Kbuild-Add-an-option-to-enable-GCC-VTA.patch
 Patch1024: KEYS-Add-a-system-blacklist-keyring.patch
 Patch1025: lib-cpumask-Make-CPUMASK_OFFSTACK-usable-without-deb.patch
@@ -144,7 +141,6 @@ Patch2006: 0003-drm-i915-remove-double-wait_for_vblank-on-broadwell.patch
 Patch2009: ptrace-being-capable-wrt-a-process-requires-mapped-u.patch
 Patch2010: mfd-wm8994-Ensure-that-the-whole-MFD-is-built-into-a.patch
 Patch2013: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
-Patch2016: alua_fix.patch
 # Fix rfkill issues on ideapad Y700-17ISK
 Patch2017: ideapad-laptop-Add-Lenovo-ideapad-Y700-17ISK-to-no_h.patch
 
@@ -344,12 +340,9 @@ cat %{SOURCE3000} |patch -p1
 %patch611 -p1
 %patch612 -p1
 
-%patch1000 -p1
 %patch1001 -p1
-%patch1009 -p1
 %patch1010 -p1
 %patch1011 -p1
-%patch1019 -p1
 %patch1021 -p1
 %patch1024 -p1
 %patch1025 -p1
@@ -370,7 +363,6 @@ cat %{SOURCE3000} |patch -p1
 
 %patch2010 -p1
 %patch2013 -p1
-%patch2016 -p1
 %patch2017 -p1
 
 %patch2050 -p1
@@ -800,6 +792,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Thu Aug 18 2016 sulit <sulitsrc@gmail.com> - 4.4.18-1
+- update kernel to 4.4.18
+
 * Thu Aug 11 2016 sulit <sulitsrc@gmail.com> - 4.4.17-1
 - update kernel to 4.4.17
 
