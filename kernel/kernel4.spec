@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.18
+%define kversion 4.4.19
 %define release 1
 
 %define extraversion -%{release}
@@ -161,9 +161,6 @@ Patch2062: 0013-mfd-intel-lpss-Add-support-for-passing-device-proper.patch
 Patch2063: 0014-mfd-intel-lpss-Pass-SDA-hold-time-to-I2C-host-contro.patch
 Patch2064: 0015-mfd-intel-lpss-Pass-HSUART-configuration-via-propert.patch
 Patch2065: 0016-i2c-designware-Convert-to-use-unified-device-propert.patch
-
-# ignore i915 no acpi video bus found
-Patch3001: ignore_i915_no_acpi_video_bus_found.patch
 
 
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
@@ -381,8 +378,6 @@ cat %{SOURCE3000} |patch -p1
 %patch2063 -p1
 %patch2064 -p1
 %patch2065 -p1
-
-%patch3001 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -792,6 +787,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Aug 22 2016 sulit <sulitsrc@gmail.com> - 4.4.19-1
+- update kernel to 4.4.19
+
 * Thu Aug 18 2016 sulit <sulitsrc@gmail.com> - 4.4.18-1
 - update kernel to 4.4.18
 
