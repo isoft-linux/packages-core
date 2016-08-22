@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.7
+%define kversion 4.7.2
 %define release 1
 
 %define extraversion -%{release}
@@ -625,6 +625,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Aug 22 2016 sulit <sulitsrc@gmail.com> - 4.7.2-1
+- update kernel to 4.7.2
+
 * Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 4.7-1
 - update kernel to 4.7
 - modify kernel-tools-libs file libcpupower.so.0.0*
