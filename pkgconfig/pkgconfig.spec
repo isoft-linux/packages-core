@@ -1,7 +1,7 @@
 Summary: A tool for determining compilation options
 Name: pkgconfig
-Version: 0.29
-Release: 4
+Version: 0.29.1
+Release: 1
 License: GPL
 URL: http://pkgconfig.freedesktop.org
 Source0: http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
@@ -46,6 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/*
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 0.29.1-1
+- update pkg-config to 0.29.1
+
 * Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 0.29-4
 - Update
 
