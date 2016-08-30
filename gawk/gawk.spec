@@ -5,8 +5,8 @@ Release: 1
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}.tar.xz
 
+BuildRequires: /bin/more
 Requires: /bin/mktemp
-Requires: /bin/more
 Provides: /bin/awk
 Provides: /bin/gawk
 
