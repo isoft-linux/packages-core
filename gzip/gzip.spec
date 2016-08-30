@@ -10,7 +10,7 @@ Provides: /bin/gunzip
 Provides: /bin/gzip
 Provides: /bin/zcat
 #for one check
-BuildRequires: less
+BuildRequires: less, more
 
 %description
 The gzip package contains the popular GNU gzip data compression
@@ -47,6 +47,7 @@ make check
 %changelog
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 1.8-1
 - update gzip to 1.8
+- add more command BuildRequires
 
 * Fri Oct 23 2015 cjacker - 1.6-7
 - Rebuild for new 4.0 release
