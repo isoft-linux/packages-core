@@ -1,7 +1,7 @@
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
-Version: 4.1.3
-Release: 3 
+Version: 4.1.4
+Release: 1
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%{version}.tar.xz
 
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/gawkapi.h
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 4.1.4-1
+- update gawk to 4.1.4
+
 * Fri Oct 23 2015 cjacker - 4.1.3-3
 - Rebuild for new 4.0 release
 
