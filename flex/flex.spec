@@ -1,11 +1,10 @@
 Summary: A tool for creating scanners (text pattern recognizers)
 Name: flex
-Version: 2.5.39
-Release: 8
+Version: 2.6.0
+Release: 1
 License: BSD
 URL: http://flex.sourceforge.net/
 Source: flex-%{version}.tar.bz2
-Patch0: 0001-bison-test-fixes-Do-not-use-obsolete-bison-construct.patch
 
 Requires: m4
 BuildRequires: gettext bison m4
@@ -32,7 +31,6 @@ This package contains the static library for flex.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %configure --disable-dependency-tracking --disable-shared CFLAGS="-fPIC $RPM_OPT_FLAGS"
@@ -72,6 +70,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/*.a
 %{_includedir}/FlexLexer.h
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 2.6.0-1
+- update flex to 2.6.0
+
 * Fri Oct 23 2015 cjacker - 2.5.39-8
 - Rebuild for new 4.0 release
 
