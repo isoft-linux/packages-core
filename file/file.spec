@@ -2,8 +2,8 @@
 
 Summary: A utility for determining file types
 Name: file
-Version: 5.23
-Release: 19
+Version: 5.28
+Release: 1
 License: BSD
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
 URL: http://www.darwinsys.com/file/
@@ -150,6 +150,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 5.28-1
+- update file to 5.28
+
 * Tue Jan 26 2016 xiaotian.wu@i-soft.com.cn - 5.23-19
 - rebuilt
 
