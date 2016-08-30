@@ -1,7 +1,7 @@
 Summary:	LZMA compression utilities
 Name:		xz
-Version:	5.2.1
-Release:	2
+Version:	5.2.2
+Release:	1
 License:	LGPLv2+
 Source0:	http://tukaani.org/%{name}/%{name}-%{version}.tar.xz
 URL:		http://tukaani.org/%{name}/
@@ -100,6 +100,9 @@ rm -rf %{buildroot}
 %{_mandir}/man1/*lz*
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 5.2.2-1
+- update xz to 5.2.2
+
 * Fri Oct 23 2015 cjacker - 5.2.1-2
 - Rebuild for new 4.0 release
 
