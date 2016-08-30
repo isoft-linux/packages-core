@@ -9,6 +9,7 @@ Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
 URL: http://www.darwinsys.com/file/
 Requires: file-libs = %{version}-%{release}
 BuildRequires: zlib-devel
+BuildRequires: python-setuptools
 
 %description
 The file command is used to identify a particular file according to the
@@ -152,6 +153,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 5.28-1
 - update file to 5.28
+- add python-setuptools BuildRequires
 
 * Tue Jan 26 2016 xiaotian.wu@i-soft.com.cn - 5.23-19
 - rebuilt
