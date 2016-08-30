@@ -1,7 +1,7 @@
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.22
-Release: 2 
+Version: 2.25
+Release: 1
 License: GPL
 URL: http://www.gnu.org/software/grep/
 
@@ -16,7 +16,6 @@ Source4: grepconf.sh
 Patch0: grep-2.22-man-fix-gs.patch
 # upstream ticket 39445
 Patch1: grep-2.22-help-align.patch
-Patch2: grep-2.22-disable-performance-related-tests.patch
 
 Buildrequires: pcre-devel >= 3.9-10, gettext, gzip
 BuildRequires: autoconf automake
@@ -34,7 +33,6 @@ utility for searching through text.
 %setup -q
 %patch0 -p1 -b .man-fix-gs
 %patch1 -p1 -b .help-align
-%patch2 -p1
 
 chmod 755 tests/kwset-abuse
 
@@ -81,6 +79,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/*/*
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 2.25-1
+- update grep to 2.25
+
 * Sat Nov 07 2015 Cjacker <cjacker@foxmail.com> - 2.22-2
 - Update
 
