@@ -62,7 +62,7 @@
 %endif
 
 
-%define gcc_version 6.1.1
+%define gcc_version 6.2.0
 %define DATE 20160621
 %define gcc_release 1
 %define _unpackaged_files_terminate_build 0
@@ -72,10 +72,9 @@
 Summary: Various compilers (C, C++, Objective-C, Java, ...)
 Name: gcc
 Version: %{gcc_version}
-Release: %{gcc_release}.1
+Release: %{gcc_release}
 License: GPLv3+ and GPLv2+ with exceptions
-# tar pkg from fedora
-Source0: gcc-%{version}-%{DATE}.tar.bz2
+Source0: gcc-%{version}.tar.bz2
 
 Patch0:  gcc-64bit-use-lib-as-libdir.patch
 Patch1:  gcc-4.9-fix-cstddef-for-clang.patch 
@@ -282,7 +281,7 @@ This package contains header files and documentation for GCC JIT front-end.
 
 
 %prep
-%setup -q -n gcc-%{version}-%{DATE}
+%setup -q -n gcc-%{version}
 %patch0 -p1
 %patch1 -p1
 
@@ -700,6 +699,9 @@ fi
 
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 6.2.0-1
+- update gcc to 6.2.0
+
 * Mon Aug 01 2016 sulit <sulitsrc@gmail.com> - 6.1.1-1.1
 - upgrade gcc for some compile problems
 - add flex buildrequires
