@@ -5,6 +5,7 @@ Release: 1
 License: GPL
 URL: http://pkgconfig.freedesktop.org
 Source0: http://www.freedesktop.org/software/pkgconfig/releases/pkg-config-%{version}.tar.gz
+Patch0:	fix_pkg-config_gdate_format-nonliteral.patch
 
 BuildRequires: autoconf, automake, libtool
 
@@ -15,14 +16,13 @@ compiler and linker flags.
 
 %prep
 %setup -n pkg-config-%{version} -q
+%patch0 -p1
 
 %build
 %configure \
     --with-internal-glib \
     --disable-shared \
     --with-pc-path=%{_libdir}/pkgconfig:%{_datadir}/pkgconfig 
-
-sed -i "s/CFLAGS = -g -O2/CFLAGS = -g -O2 -Wno-error=format-nonliteral/g" Makefile
 
 make %{?_smp_mflags}
 
@@ -50,6 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 0.29.1-1
 - update pkg-config to 0.29.1
+- fix gdate.c -Wformat-nonliteral compile error by gcc 6
 
 * Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 0.29-4
 - Update
