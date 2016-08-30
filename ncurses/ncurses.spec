@@ -1,8 +1,8 @@
-%global revision 20150808
+%global revision 20160827
 Summary: Ncurses support utilities
 Name: ncurses
 Version: 6.0 
-Release: 22.%{revision}%{?dist}
+Release: 24.%{revision}%{?dist}
 License: MIT
 URL: http://invisible-island.net/ncurses/ncurses.html
 Source0: ftp://invisible-island.net/ncurses/current/ncurses-%{version}-%{revision}.tgz
@@ -234,6 +234,9 @@ bzip2 NEWS
 %{_libdir}/lib*.a
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 6.0-24.20160827
+- update ncurses to 6.0-20160827
+
 * Fri Oct 23 2015 cjacker - 6.0-22.20150808
 - Rebuild for new 4.0 release
 
