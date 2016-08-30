@@ -1,7 +1,7 @@
 Summary: A GNU collection of diff utilities.
 Name: diffutils
-Version: 3.3 
-Release: 2
+Version: 3.5
+Release: 1
 URL: http://www.gnu.org/software/diffutils/diffutils.html
 Source: ftp://ftp.gnu.org/gnu/diffutils/diffutils-%{version}.tar.xz
 License: GPL
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 3.5-1
+- update diffutils to 3.5
+
 * Fri Oct 23 2015 cjacker - 3.3-2
 - Rebuild for new 4.0 release
 
