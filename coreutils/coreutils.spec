@@ -1,7 +1,7 @@
 Summary: A set of basic GNU tools commonly used in shell scripts
 Name:    coreutils
-Version: 8.24
-Release: 3
+Version: 8.25
+Release: 1
 License: GPLv3+
 Url:     http://www.gnu.org/software/coreutils/
 Source0: ftp://ftp.gnu.org/gnu/%{name}/%{name}-%{version}.tar.xz
@@ -161,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/locale/*
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 8.25-1
+- update to 8.25
+
 * Wed Jan 13 2016 sulit <sulitsrc@gmail.com> - 8.24-3
 - add --enable-install-program=arch for configure
 - because some program need arch command, such as dracut
