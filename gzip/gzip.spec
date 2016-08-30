@@ -10,7 +10,7 @@ Provides: /bin/gunzip
 Provides: /bin/gzip
 Provides: /bin/zcat
 #for one check
-BuildRequires: less, more
+BuildRequires: less, /bin/more
 
 %description
 The gzip package contains the popular GNU gzip data compression
