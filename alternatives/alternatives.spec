@@ -1,7 +1,7 @@
 Summary: alternatives management system.
 Name: alternatives 
-Version: 1.5
-Release: 3
+Version: 1.8
+Release: 1
 License: GPLv2
 Source: http://fedorahosted.org/releases/c/h/chkconfig/chkconfig-%{version}.tar.bz2
 
@@ -40,6 +40,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/*/alternatives*
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 1.8-1
+- update alternatives to 1.8
+
 * Fri Oct 23 2015 cjacker - 1.5-3
 - Rebuild for new 4.0 release
-
