@@ -2,8 +2,8 @@
 %define ld_gold_priority 30
 
 Name: binutils	
-Version: 2.25.1
-Release: 7 
+Version: 2.27
+Release: 1
 Summary: A GNU collection of binary utilities	
 
 License: MIT
@@ -12,10 +12,6 @@ Source0: ftp://ftp.gnu.org/gnu/binutils/%{name}-%{version}.tar.bz2
 #fix for gold exception_static_test/ifunc test failed 
 #https://sourceware.org/bugzilla/show_bug.cgi?id=14675
 #https://sourceware.org/bugzilla/show_bug.cgi?id=18521
-Patch0: gold-test-failure-fix1.patch  
-Patch1: gold-test-failure-fix2.patch  
-Patch2: gold-test-failure-fix3.patch  
-Patch3: gold-test-failure-fix4.patch  
 
 #fix bfd.h header
 Patch4: binutils-2.22.52.0.4-no-config-h-check.patch
@@ -64,10 +60,6 @@ using libelf instead of BFD.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 %patch4 -p1
 
 %build
@@ -170,6 +162,9 @@ exit 0
 %{_libdir}/libopcodes.so
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 2.27-1
+- update binutils to 2.27
+
 * Mon Nov 16 2015 Cjacker <cjacker@foxmail.com> - 2.25.1-7
 - Rebuild, enable critical check, we can pass all of them
 
