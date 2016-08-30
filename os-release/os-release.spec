@@ -1,6 +1,6 @@
 %define osname iSoft Desktop
 %define osid   iSoft 
-%define builtin_release_version 4.0 
+%define builtin_release_version 5.0 
 %define builtin_release_name Nvwa 
 
 %define real_release_version %{?release_version}%{!?release_version:%{builtin_release_version}}
@@ -9,7 +9,7 @@
 Summary: iSoft Desktop release file
 Name: os-release
 Version: %{real_release_version}
-release: 4.2
+release: 1
 License: GPL
 
 #Fake a lsb provides for some comercial binary software.
@@ -60,6 +60,9 @@ echo "" >>$RPM_BUILD_ROOT/etc/issue.net
 /usr/lib/os-release
 
 %changelog
+* Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 5.0-1
+- update os-release to 5.0
+
 * Mon Jan 04 2016 sulit <sulitsrc@gmail.com> - 4.0-4.2
 - remove real_release_name due to design
 
