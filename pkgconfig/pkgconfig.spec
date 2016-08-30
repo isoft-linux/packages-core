@@ -22,6 +22,8 @@ compiler and linker flags.
     --disable-shared \
     --with-pc-path=%{_libdir}/pkgconfig:%{_datadir}/pkgconfig 
 
+sed -i "s/CFLAGS = -g -O2/CFLAGS = -g -O2 -Wno-error=format-nonliteral/g" Makefile
+
 make %{?_smp_mflags}
 
 %install
