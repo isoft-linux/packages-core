@@ -4,7 +4,7 @@
 %define debuginfodir /usr/lib/debug
 
 %define kversion 4.7.2
-%define release 1
+%define release 2
 
 %define extraversion -%{release}
 
@@ -625,6 +625,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Wed Aug 31 2016 sulit <sulitsrc@gmail.com> - 4.7.2-2
+- update kernel for new binutils
+
 * Mon Aug 22 2016 sulit <sulitsrc@gmail.com> - 4.7.2-1
 - update kernel to 4.7.2
 
