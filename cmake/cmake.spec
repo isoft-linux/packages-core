@@ -1,6 +1,6 @@
 Name: cmake
-Version: 3.4.0
-Release: 3 
+Version: 3.6.1
+Release: 1 
 Summary: Cross-platform make system
 
 License: BSD
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Wed Sep 07 2016 sulit <sulitsrc@gmail.com> - 3.6.1-1
+- upgrade cmake to 3.6.1
+
 * Tue Dec 29 2015 Cjacker <cjacker@foxmail.com> - 3.4.0-3
 - Remove orig files
 
