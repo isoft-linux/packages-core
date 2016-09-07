@@ -34,8 +34,8 @@
 %define build_test_suite 0
 
 Name: llvm
-Version: 3.8.1
-Release: 3
+Version: 3.9.0
+Release: 1
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License
@@ -104,7 +104,7 @@ Patch11: clang-extra-install-pp-trace.patch
 
 Patch19: clang-fix-objc-exceptions-cflags.patch
 #https://llvm.org/bugs/show_bug.cgi?id=25021
-Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
+#Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
 
 # https://llvm.org/bugs/show_bug.cgi?id=24953
 Patch30: lldb-3.7.0-avoid-linking-to-libLLVM.patch
@@ -411,7 +411,7 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 %patch11 -p1
 
 %patch19 -p1
-%patch20 -p1
+#%patch20 -p1
 
 %if %{build_lldb}
 %patch30 -p1 -d tools/lldb
@@ -826,6 +826,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Mon Sep 05 2016 sulit <sulitsrc@gmail.com> - 3.9.0-1
+- update llvm to 3.9.0
+
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 3.8.1-3
 - uncomment gcc abi patch
 - gcc abi tag support has a problem, we don't use it

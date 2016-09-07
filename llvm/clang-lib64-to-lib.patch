@@ -64,16 +64,13 @@ diff -Nur llvm-static-3.7.0rc1/tools/clang/lib/Driver/ToolChains.cpp llvm-static
 +  return Triple.isArch32Bit() ? "lib" : "lib";
  }
  
- Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
-diff -Nur llvm-static-3.7.0rc1/tools/clang/lib/Driver/Tools.cpp llvm-static-3.7.0rc1n/tools/clang/lib/Driver/Tools.cpp
---- llvm-static-3.7.0rc1/tools/clang/lib/Driver/Tools.cpp	2015-07-24 22:11:49.308932630 +0000
-+++ llvm-static-3.7.0rc1n/tools/clang/lib/Driver/Tools.cpp	2015-07-24 22:17:29.374926540 +0000
-@@ -7913,7 +7913,7 @@
-            ToolChain.getTriple().getEnvironment() == llvm::Triple::GNUX32)
-     return "/libx32/ld-linux-x32.so.2";
-   else
--    return "/lib64/ld-linux-x86-64.so.2";
-+    return "/lib/ld-linux-x86-64.so.2";
- }
+ static void addMultilibsFilePaths(const Driver &D, const MultilibSet &Multilibs,
+@@ -4317,7 +4323,7 @@
+   case llvm::Triple::x86_64: {
+     bool X32 = Triple.getEnvironment() == llvm::Triple::GNUX32;
  
- static void AddRunTimeLibs(const ToolChain &TC, const Driver &D,
+-    LibDir = X32 ? "libx32" : "lib64";
++    LibDir = X32 ? "libx32" : "lib";
+     Loader = X32 ? "ld-linux-x32.so.2" : "ld-linux-x86-64.so.2";
+     break;
+   }
