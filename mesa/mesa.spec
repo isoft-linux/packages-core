@@ -2,8 +2,8 @@
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 12.0.1
-Release: 4%{?dist}
+Version: 12.0.3
+Release: 1%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -506,6 +506,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Oct 18 2016 sulit <sulitsrc@gmail.com> - 12.0.3-1
+- upgrade mesa to 12.0.3
+
 * Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 12.0.1-4
 - add new drv_video.so to files
 
