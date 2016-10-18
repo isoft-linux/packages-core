@@ -1,6 +1,6 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.68
+Version: 2.4.71
 Release: 1
 License: MIT
 URL: http://dri.sourceforge.net
@@ -14,7 +14,7 @@ Source2: 91-drm-modeset.rules
 # hardcode the 666 instead of 660 for device nodes
 Patch3: libdrm-make-dri-perms-okay.patch
 # remove backwards compat
-Patch4: libdrm-2.4.0-no-bc.patch
+Patch4: libdrm-2.4.71-no-bc.patch
 # make rule to print the list of test programs
 Patch5: libdrm-2.4.25-check-programs.patch
 
@@ -152,6 +152,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Tue Oct 18 2016 sulit <sulitsrc@gmail.com> - 2.4.71-1
+- upgrade libdrm to 2.4.71
+
 * Mon Jun 27 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 2.4.68-1
 - 2.4.68
 
