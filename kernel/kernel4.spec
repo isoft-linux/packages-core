@@ -3,8 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.7.2
-%define release 2
+%define kversion 4.8.2
+%define release 1
 
 %define extraversion -%{release}
 
@@ -61,16 +61,63 @@ BuildRequires: rpm-build, elfutils
 BuildRequires: pciutils-devel gettext ncurses-devel
 
 Source0: linux-%{kversion}.tar.xz
-
 Source20: kernel-%{kversion}-x86_64.config
 
 # Sources for kernel-tools
 Source2000: cpupower.service
 Source2001: cpupower.config
 
-# build tweak for build ID magic, even for -vanilla
-Source3000: kbuild-AFTER_LINK.patch
- 
+# patch start
+Patch6001: 0001-cpupower-Correct-return-type-of-cpu_power_is_cpu_onl.patch
+Patch6002: 0001-iio-Use-event-header-from-kernel-tree.patch
+Patch6003: acpi-Ignore-acpi_rsdp-kernel-parameter-when-module-l.patch
+Patch6004: ACPI-Limit-access-to-custom_method.patch
+Patch6005: Add-an-EFI-signature-blob-parser-and-key-loader.patch
+Patch6006: Add-EFI-signature-data-types.patch
+Patch6008: Add-secure_modules-call.patch
+Patch6010: arcmsr-buffer-overflow-in-archmsr_iop_message_xfer.patch
+Patch6011: asus-wmi-Restrict-debugfs-interface-when-module-load.patch
+Patch6012: ath9k-rx-dma-stop-check.patch
+Patch6013: bcm2837-initial-support.patch
+Patch6014: bcm283x-vc4-fixes.patch
+Patch6015: crash-driver.patch
+Patch6016: criu-no-expert.patch
+Patch6017: die-floppy-die.patch
+Patch6018: disable-i8042-check-on-apple-mac.patch
+Patch6019: drm-i915-hush-check-crtc-state.patch
+Patch6020: drm-virtio-reinstate-drm_virtio_set_busid.patch
+Patch6023: firmware-Drop-WARN-from-usermodehelper_read_trylock-.patch
+Patch6024: geekbox-v4-device-tree-support.patch
+Patch6025: hibernate-Disable-in-a-signed-modules-environment.patch
+Patch6026: HID-microsoft-Add-Surface-4-type-cover-pro-4-JP.patch
+Patch6027: i8042-skip-selftest-asus-laptops.patch
+Patch6028: input-kill-stupid-messages.patch
+Patch6029: Input-synaptics-pin-3-touches-when-the-firmware-repo.patch
+Patch6030: Kbuild-Add-an-option-to-enable-GCC-VTA.patch
+Patch6031: kbuild-AFTER_LINK.patch
+Patch6032: kexec-Disable-at-runtime-if-the-kernel-enforces-modu.patch
+Patch6033: kexec-uefi-copy-secure_boot-flag-in-boot-params.patch
+Patch6034: KEYS-Add-a-system-blacklist-keyring.patch
+Patch6035: lib-cpumask-Make-CPUMASK_OFFSTACK-usable-without-deb.patch
+Patch6036: lis3-improve-handling-of-null-rate.patch
+Patch6037: MODSIGN-Import-certificates-from-UEFI-Secure-Boot.patch
+Patch6038: MODSIGN-Support-not-importing-certs-from-db.patch
+Patch6039: netfilter-x_tables-deal-with-bogus-nextoffset-values.patch
+Patch6040: no-pcspkr-modalias.patch
+Patch6041: PCI-Lock-down-BAR-access-when-module-security-is-ena.patch
+Patch6042: qcom-QDF2432-tmp-errata.patch
+Patch6043: qxl-reapply-cursor-after-SetCrtc-calls.patch
+Patch6044: rc-core-fix-repeat-events.patch
+Patch6045: Restrict-dev-mem-and-dev-kmem-when-module-loading-is.patch
+Patch6046: scsi-sd_revalidate_disk-prevent-NULL-ptr-deref.patch
+Patch6047: security-selinux-overlayfs-support.patch
+Patch6048: silence-fbcon-logo.patch
+Patch6049: usb-phy-tegra-Add-38.4MHz-clock-table-entry.patch
+Patch6050: x86-Lock-down-IO-port-access-when-module-security-is.patch
+Patch6051: x86-Restrict-MSR-access-when-module-loading-is-restr.patch
+Patch6052: xen-pciback-Don-t-disable-PCI_COMMAND-on-PCI-device-.patch
+# patch end
+
 BuildRoot: %{_tmppath}/kernel-%{KVERREL}-root-%{_target_cpu}
 
 
@@ -214,8 +261,54 @@ cp -rl vanilla linux-%{kversion}.%{_target_cpu}
 
 cd linux-%{kversion}.%{_target_cpu}
 
-# The kbuild-AFTER_LINK patch is needed regardless
-cat %{SOURCE3000} |patch -p1
+%patch6001 -p1
+%patch6002 -p1
+%patch6003 -p1
+%patch6004 -p1
+%patch6005 -p1
+%patch6006 -p1
+%patch6008 -p1
+%patch6010 -p1
+%patch6011 -p1
+%patch6012 -p1
+%patch6013 -p1
+%patch6014 -p1
+%patch6015 -p1
+%patch6016 -p1
+%patch6017 -p1
+%patch6018 -p1
+%patch6019 -p1
+%patch6020 -p1
+%patch6023 -p1
+%patch6024 -p1
+%patch6025 -p1
+%patch6026 -p1
+%patch6027 -p1
+%patch6028 -p1
+%patch6029 -p1
+%patch6030 -p1
+%patch6031 -p1
+%patch6032 -p1
+%patch6033 -p1
+%patch6034 -p1
+%patch6035 -p1
+%patch6036 -p1
+%patch6037 -p1
+%patch6038 -p1
+%patch6039 -p1
+%patch6040 -p1
+%patch6041 -p1
+%patch6042 -p1
+%patch6043 -p1
+%patch6044 -p1
+%patch6045 -p1
+%patch6046 -p1
+%patch6047 -p1
+%patch6048 -p1
+%patch6049 -p1
+%patch6050 -p1
+%patch6051 -p1
+%patch6052 -p1
 
 # END OF PATCH APPLICATIONS
 
@@ -625,6 +718,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Wed Oct 19 2016 sulit <sulitsrc@gmail.com> - 4.8.2-1
+- update kernel to kernel 4.8.2
+
 * Wed Aug 31 2016 sulit <sulitsrc@gmail.com> - 4.7.2-2
 - update kernel for new binutils
 
