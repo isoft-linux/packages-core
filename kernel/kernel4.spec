@@ -3,7 +3,8 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.25
+%define kversion 4.4.26
+%define kconfig_version 4.4.x
 %define release 1
 
 %define extraversion -%{release}
@@ -68,7 +69,7 @@ Source0: linux-%{kversion}.tar.xz
 #tar drivers/gpu/drm/amd.
 Source1: amd.tar.gz 
 
-Source20: kernel-%{kversion}-x86_64.config
+Source20: kernel-%{kconfig_version}-x86_64.config
 
 # Sources for kernel-tools
 Source2000: cpupower.service
@@ -787,6 +788,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Oct 21 2016 sulit <sulitsrc@gmail.com> - 4.4.26-1
+- upgrade kernel to 4.4.26 and official fix dirty cow cve-2016-5195
+
 * Tue Oct 18 2016 sulit <sulitsrc@gmail.com> - 4.4.25-1
 - upgrade kernel to 4.4.25
 
