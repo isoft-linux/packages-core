@@ -3,9 +3,9 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.26
+%define kversion 4.4.27
 %define kconfig_version 4.4.x
-%define release 1
+%define release 2
 
 %define extraversion -%{release}
 
@@ -788,6 +788,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Oct 24 2016 sulit <sulitsrc@gmail.com> - 4.4.27-2
+- upgrade kernel to 4.4.27, and fix starvation of asynchronous writes
+
 * Fri Oct 21 2016 sulit <sulitsrc@gmail.com> - 4.4.26-1
 - upgrade kernel to 4.4.26 and official fix dirty cow cve-2016-5195
 
