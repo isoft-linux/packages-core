@@ -3,9 +3,9 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.27
+%define kversion 4.4.30
 %define kconfig_version 4.4.x
-%define release 2
+%define release 1
 
 %define extraversion -%{release}
 
@@ -788,6 +788,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Nov 01 2016 sulit - 4.4.30-1
+- update kernel to 4.4.30, Revert 'x86/mm: Expand the exception table
+  logic to allow new handling options'
+
 * Mon Oct 24 2016 sulit <sulitsrc@gmail.com> - 4.4.27-2
 - upgrade kernel to 4.4.27, and fix starvation of asynchronous writes
 
