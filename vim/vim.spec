@@ -3,21 +3,22 @@
 %define withruby 1
 %define withlua 1
 
-%define baseversion 7.4
+%define baseversion 8.0
 #should as same as Source1
-%define patchlevel 959 
-%define vimdir vim74
+%define patchlevel 069
+%define vimdir vim80
 
 Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 4
+Release: 0
 License: GPL
-Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.tar.bz2
-#from ftp://ftp.vim.org/pub/vim/patches/7.4/
+Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.%{patchlevel}.tar.bz2
+#from ftp://ftp.vim.org/pub/vim/patches/8.0/
 #download all patches and tar them.
-Source1: vim-patches.tar.gz
+# Source1: vim-patches.tar.xz
+# vim sources contains all patches, vim-%{baseversion} is the latest vim-%{baseversion}.%{patchlevel} now
 
 Source2: vimrc
 
@@ -62,12 +63,12 @@ still very popular.  VIM improves on vi by adding new features:
 multiple windows, multi-level undo, block highlighting and more.
 
 %prep
-%setup -q  -n %{vimdir} -a1
+%setup -q  -n %{vimdir}
 
-for i in `ls vim-patches/7.4.*`
-do
-    cat $i|patch -p0
-done 
+# for i in `ls vim-patches/8.0.*`
+# do
+#     cat $i|patch -p0
+# done 
 
 #update rpm spec syntax highlight defines...
 rm -rf runtime/syntax/spec.vim
