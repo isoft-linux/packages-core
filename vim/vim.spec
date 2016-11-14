@@ -12,7 +12,7 @@ Summary: The VIM editor
 URL:     http://www.vim.org/
 Name:    vim
 Version: %{baseversion}.%{patchlevel}
-Release: 0
+Release: 1
 License: GPL
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%{baseversion}.%{patchlevel}.tar.bz2
 #from ftp://ftp.vim.org/pub/vim/patches/8.0/
@@ -157,7 +157,7 @@ install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/vimrc
 install -m0644 %{SOURCE2} $RPM_BUILD_ROOT/etc/virc
 
 #remove this files, do not import unneeded dependencies
-rm -rf $RPM_BUILD_ROOT%{_datadir}/vim/vim74/tools
+rm -rf $RPM_BUILD_ROOT%{_datadir}/vim/vim80/tools
 
 #alias vi to vim, that's to say, use vim as vi in common.
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/profile.d
@@ -185,6 +185,12 @@ install -m0755 mini/vim $RPM_BUILD_ROOT%{_bindir}/vi
 rm -rf $RPM_BUILD_ROOT%{_mandir}/{fr.ISO8859-1,fr.UTF-8,fr,it.ISO8859-1}
 rm -rf $RPM_BUILD_ROOT%{_mandir}/{it.UTF-8,it,ja,pl.ISO8859-1,pl.UTF-8,pl,pl.ISO8859-2}
 rm -rf $RPM_BUILD_ROOT%{_mandir}/{ru.KOI8-R,ru.UTF-8}
+#remove desktop files
+rm -rf %{_datadir}/applications/gvim.desktop
+rm -rf %{_datadir}/applications/vim.desktop
+rm -rf %{_datadir}/icons/hicolor/48x48/apps/gvim.png
+rm -rf %{_datadir}/icons/locolor/16x16/apps/gvim.png
+rm -rf %{_datadir}/icons/locolor/32x32/apps/gvim.png
 
 
 %postun
@@ -208,7 +214,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/vim
 %{_datadir}/vim/*
 
+
 %changelog
+* Mon Nov 14 2016 sulit - 8.0.069-1
+- remove noneed desktop files
+
 * Tue Dec 15 2015 Cjacker <cjacker@foxmail.com> - 7.4.959-4
 - Remove swift.vim
 
