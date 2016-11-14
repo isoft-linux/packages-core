@@ -6,7 +6,7 @@
 %define rcversion   rc4
 
 %define kversion 4.9
-%define release 1
+%define release 2
 
 %define extraversion -%{release}
 
@@ -709,6 +709,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 14 2016 sulit - 4.9-2
+- don't compile SND_SOC_RT5677
+
 * Wed Oct 19 2016 sulit <sulitsrc@gmail.com> - 4.8.2-1
 - update kernel to kernel 4.8.2
 
