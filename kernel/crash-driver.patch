@@ -148,20 +148,6 @@ index 0000000..404bcb9
 +#endif /* __KERNEL__ */
 +
 +#endif /* _ASM_IA64_CRASH_H */
-diff --git a/arch/ia64/kernel/ia64_ksyms.c b/arch/ia64/kernel/ia64_ksyms.c
-index 0967310..e888878 100644
---- a/arch/ia64/kernel/ia64_ksyms.c
-+++ b/arch/ia64/kernel/ia64_ksyms.c
-@@ -84,6 +84,9 @@ EXPORT_SYMBOL(ia64_save_scratch_fpregs);
- #include <asm/unwind.h>
- EXPORT_SYMBOL(unw_init_running);
- 
-+#include <linux/efi.h>
-+EXPORT_SYMBOL_GPL(efi_mem_type);
-+
- #if defined(CONFIG_IA64_ESI) || defined(CONFIG_IA64_ESI_MODULE)
- extern void esi_call_phys (void);
- EXPORT_SYMBOL_GPL(esi_call_phys);
 diff --git a/arch/powerpc/include/asm/crash-driver.h b/arch/powerpc/include/asm/crash-driver.h
 new file mode 100644
 index 0000000..50092d9
