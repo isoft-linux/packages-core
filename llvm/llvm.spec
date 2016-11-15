@@ -651,8 +651,8 @@ exit 0
 %{_includedir}/%{name}/*
 %dir %{_includedir}/%{name}-c
 %{_includedir}/%{name}-c/*
-%dir %{_datadir}/llvm/cmake
-%{_datadir}/llvm/cmake/*
+%dir %{_libdir}/cmake/llvm
+%{_libdir}/cmake/llvm/*
 %{_libdir}/libLLVM*.so
 
 %files -n libllvm-static
@@ -676,6 +676,8 @@ exit 0
 %files -n clang-tools
 %defattr(-,root, root,-)
 %{_bindir}/clang-apply-replacements
+%{_bindir}/clang-include-fixer
+%{_bindir}/find-all-symbols
 %{_bindir}/clang-check
 %{_bindir}/clang-format
 # %{_bindir}/clang-modernize
@@ -694,6 +696,7 @@ exit 0
 #clang analyzer
 %{_bindir}/scan-build
 %{_bindir}/scan-view
+%{_bindir}/sanstats
 %dir %{_datadir}/scan-build
 %{_datadir}/scan-build/*
 %dir %{_datadir}/scan-view
@@ -709,11 +712,12 @@ exit 0
 %{_includedir}/clang
 %{_includedir}/clang-c
 %{_libdir}/libclang*.so
-%{_datadir}/clang/cmake/*
+%{_libdir}/cmake/clang/*
 
 %files -n libclang-static
 %defattr(-,root,root)
 %{_libdir}/libclang*.a
+%{_libdir}/libfindAllSymbols.a
 # %{_libdir}/libmodernizeCore.a
 
 #start of build_lldb
@@ -755,20 +759,12 @@ exit 0
 %{_libdir}/liblldCore.a
 %{_libdir}/liblldDriver.a
 %{_libdir}/liblldELF.a
-%{_libdir}/liblldELF2.a
-%{_libdir}/liblldHexagonELFTarget.a
 %{_libdir}/liblldMachO.a
 #%{_libdir}/liblldPECOFF.a
 %{_libdir}/liblldReaderWriter.a
-%{_libdir}/liblldX86ELFTarget.a
-%{_libdir}/liblldX86_64ELFTarget.a
-%{_libdir}/liblldMipsELFTarget.a
 %{_libdir}/liblldYAML.a
-%{_libdir}/liblldAArch64ELFTarget.a
 %{_libdir}/liblldConfig.a
-%{_libdir}/liblldARMELFTarget.a
 %{_libdir}/liblldCOFF.a
-%{_libdir}/liblldExampleSubTarget.a
 %endif #end build_lld
 
 #start of polly
@@ -828,6 +824,7 @@ exit 0
 %changelog
 * Mon Sep 05 2016 sulit <sulitsrc@gmail.com> - 3.9.0-1
 - update llvm to 3.9.0
+- modify cmake file path
 
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 3.8.1-3
 - uncomment gcc abi patch
