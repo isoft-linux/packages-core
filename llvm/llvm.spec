@@ -1,8 +1,3 @@
-#!!!!!!!!!!SVN!!!!!!!!!!
-#checkout trunk: svn co http://llvm.org/svn/llvm-project/<component>/trunk <component>
-#checkout branch: svn co http://llvm.org/svn/llvm-project/<component>/branches/release_XY <component>-XY.src
-#!!!!!!!!!!!!!!!!!!!!!!!
-
 #build as 'Release', otherwise delete this line.
 %define debug_package %{nil}
 
@@ -18,8 +13,9 @@
 #disable lldb build, lldb provided by swift(swift ship a modified version, swift REPL depend on it)
 %define build_lldb 0
 
-%define build_lld 1
-%define build_polly 1
+#for 3.9.0, lld/polly is disabled, it cause an issue about link
+%define build_lld 0 
+%define build_polly 0
 
 %define build_libcxx 1
 %define build_libcxxabi 1
@@ -35,13 +31,13 @@
 
 Name: llvm
 Version: 3.9.0
-Release: 1
+Release: 5 
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
-License: University of Illinois/NCSA Open Source License
+License: University of Illinois/NCSA Open Source License 
 URL: http://llvm.org
 
-#note, libcxx/libcxxabi/libunwind/openmp is svn trunk 257014
+#note, libcxx/libcxxabi/libunwind/openmp is svn trunk 257014 
 Source0: llvm-%{version}.src.tar.xz
 Source1: cfe-%{version}.src.tar.xz
 Source2: compiler-rt-%{version}.src.tar.xz
@@ -92,29 +88,23 @@ Patch0: clang-add-our-own-gcc-toolchain-tripplet-to-clang-path.patch
 #We use 'lib' instead of 'lib64' under x86_64
 #The intepretor of genenrated ELF by clang contains PATH.
 #It's important.
-Patch1: clang-lib64-to-lib.patch
-
-#gcc abi_tag support
-# Patch4: 0001-add-gcc-abi_tag-support.patch
-Patch5: 0002-Adapt-previous-Clang-trunk-patch-to-Clang-3.7.patch
-# Patch6: 0001-abi_tag-fix-segfault-when-build-libcxx.patch
+Patch1: isoft-clang-lib64-to-lib.patch
 
 #pp-trace in clang-tools-extra did not install properly.
-Patch11: clang-extra-install-pp-trace.patch
+Patch10: clang-extra-install-pp-trace.patch
 
-Patch19: clang-fix-objc-exceptions-cflags.patch
-#https://llvm.org/bugs/show_bug.cgi?id=25021
-#Patch20: add-test-hasSSE41-detection-pentium-dual-core.patch
+Patch11: clang-fix-objc-exceptions-cflags.patch
 
-# https://llvm.org/bugs/show_bug.cgi?id=24953
-Patch30: lldb-3.7.0-avoid-linking-to-libLLVM.patch
+# https://reviews.llvm.org/D24736
+Patch12: msan-prevent-initialization-failure-with-newer-glibc.patch 
 
 #configure build system of llvm latest svn already enable openmp support.
 #this patch is for cmake build system
-# Patch40: llvm37-enable-openmp-build.patch
+Patch20: llvm-enable-openmp-build.patch
 
 BuildRequires: clang gcc-go
-BuildRequires: cmake, ninja-build
+BuildRequires: cmake >= 3.4.3
+BuildRequires: ninja-build
 BuildRequires: bison flex libtool-ltdl-devel
 BuildRequires: zip bzip2 coreutils grep gzip sed unzip findutils
 BuildRequires: chrpath
@@ -142,13 +132,23 @@ BuildRequires: libedit-devel >= 3.0
 BuildRequires:swig
 %endif
 
+#if not build lld, remove older version.
 %if %{build_lld}
 Requires: alternatives
+%else
+Obsoletes: lld < %{version}-%{release}
+Obsoletes: liblld-devel < %{version}-%{release}
+Obsoletes: liblld-static < %{version}-%{release}
 %endif
 
+#if not build polly, remove older version.
 %if %{build_polly}
 BuildRequires: isl-devel >= 0.14
+%else
+Obsoletes: polly < %{version}-%{release}
 %endif
+
+
 
 %description
 Low Level Virtual Machine (LLVM) is:
@@ -183,13 +183,13 @@ Requires: libllvm-devel = %{version}-%{release}
 This package contains static libraries needed to develop new
 native programs that use the LLVM infrastructure.
 
-%package -n clang
+%package -n clang 
 Summary: A C language family frontend for LLVM
-Requires: llvm = %{version}-%{release}
-Requires: libllvm = %{version}-%{release}
+Requires: llvm = %{version}-%{release} 
+Requires: libllvm = %{version}-%{release} 
 
-%description -n clang
-The goal of the Clang project is to create a new C, C++, Objective C and Objective C++ front-end for the LLVM compiler.
+%description -n clang 
+The goal of the Clang project is to create a new C, C++, Objective C and Objective C++ front-end for the LLVM compiler. 
 
 %package -n clang-tools
 Summary:  Extra tools of clang
@@ -333,10 +333,10 @@ Headers and libbraries for libcxx
 
 # start build_openmp
 %if %{build_openmp}
-%package -n openmp
+%package -n openmp 
 Summary: OpenMP runtime for use with the OpenMP implementation in Clang
 
-%description -n openmp
+%description -n openmp 
 OpenMP runtime for use with the OpenMP implementation in Clang
 
 %package -n openmp-devel
@@ -405,20 +405,14 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 
 %patch0 -p1
 %patch1 -p1
-#%patch4 -p1
-%patch5 -p1
-#%patch6 -p1
+%patch10 -p1
+
 %patch11 -p1
 
-%patch19 -p1
-#%patch20 -p1
-
-%if %{build_lldb}
-%patch30 -p1 -d tools/lldb
-%endif
+%patch12 -p0 -d projects/compiler-rt
 
 %if %{build_openmp}
-#%patch40 -p1
+%patch20 -p1
 %endif
 
 %build
@@ -428,23 +422,23 @@ export CXX="clang++"
 
 mkdir -p %{_target_platform}
 pushd %{_target_platform}
+#-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 cmake \
     -G Ninja \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
-    -DCMAKE_BUILD_TYPE:STRING=Release \
-    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
     -DCMAKE_BUILD_TYPE="%{build_type}" \
+    -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
     -DCMAKE_C_FLAGS="-fPIC" \
     -DCMAKE_CXX_FLAGS="-std=c++11 -fPIC" \
     -DLLVM_ENABLE_EH=ON \
+    -DLLVM_ENABLE_FFI=ON \
     -DLLVM_ENABLE_RTTI=ON \
-    -DLLVM_BINUTILS_INCDIR:PATH=/usr/include \
     -DFFI_INCLUDE_DIR:PATH="$(pkg-config --variable=includedir libffi)" \
     -DFFI_LIBRARY_DIR:PATH="$(pkg-config --variable=libdir libffi)" \
+    -DLLVM_BINUTILS_INCDIR:PATH=%{_includedir} \
     -DLLVM_BUILD_LLVM_DYLIB:BOOL=ON \
     -DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
-    -DLLVM_DYLIB_EXPORT_ALL=ON \
     -DLLVM_TARGETS_TO_BUILD="%{llvm_targets}" \
 %if %{build_libcxx}
     -DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
@@ -464,28 +458,11 @@ ninja
 popd
 
 %install
-cd %{_builddir}/%{name}-%{version}.src
 rm -rf %{buildroot}
 
 pushd %{_target_platform}
 DESTDIR=%{buildroot} ninja install
 popd
-
-#install clang-analyzer
-pushd tools/clang
-mkdir -p %{buildroot}%{_datadir}
-for TOOL in scan-{build,view}; do
-    cp -a tools/$TOOL %{buildroot}%{_datadir}/
-#ln -s %{_datadir}/$TOOL/$TOOL %{buildroot}%{_bindir}/$TOOL
-done
-
-# man page
-mkdir -p %{buildroot}%{_mandir}/man1
-#mv %{buildroot}%{_datadir}/scan-build/man/scan-build.1 %{buildroot}%{_mandir}/man1/
-
-# scan-build looks for clang within the same directory
-ln -sf %{_bindir}/clang %{buildroot}%{_datadir}/scan-build/clang
-popd # end clang-analyzer installation
 
 
 # Symlink LLVMgold.so to /usr/lib/bfd-plugins
@@ -595,7 +572,6 @@ exit 0
 %{_bindir}/llvm-diff
 %{_bindir}/llvm-dis
 %{_bindir}/llvm-dwarfdump
-%{_bindir}/llvm-dwp
 %{_bindir}/llvm-extract
 %{_bindir}/llvm-link
 %{_bindir}/llvm-mc
@@ -606,11 +582,12 @@ exit 0
 %{_bindir}/llvm-readobj
 %{_bindir}/llvm-rtdyld
 %{_bindir}/llvm-size
-%{_bindir}/llvm-split
 %{_bindir}/llvm-stress
 %{_bindir}/llvm-symbolizer
 %{_bindir}/llvm-tblgen
 %{_bindir}/llvm-profdata
+%{_bindir}/llvm-dwp
+%{_bindir}/llvm-split
 %{_bindir}/opt
 %{_bindir}/llvm-c-test
 %{_bindir}/llvm-lto
@@ -618,11 +595,12 @@ exit 0
 %{_bindir}/llvm-cxxdump
 %{_bindir}/llvm-lib
 %{_bindir}/llvm-pdbdump
-# %{_bindir}/macho-dump
 %{_bindir}/obj2yaml
-%{_bindir}/sancov
 %{_bindir}/verify-uselistorder
 %{_bindir}/yaml2obj
+%{_bindir}/sancov
+%{_bindir}/sanstats
+
 #plugins.
 %{_libdir}/BugpointPasses.so
 %{_libdir}/libLTO.so
@@ -639,9 +617,8 @@ exit 0
 %{_datadir}/emacs/site-lisp/site-start.d/*.el
 
 
-%files -n libllvm
+%files -n libllvm 
 %defattr(-,root,root)
-%{_libdir}/libLTO.so
 %{_libdir}/libLLVM*.so*
 
 %files -n libllvm-devel
@@ -676,19 +653,16 @@ exit 0
 %files -n clang-tools
 %defattr(-,root, root,-)
 %{_bindir}/clang-apply-replacements
-%{_bindir}/clang-include-fixer
-%{_bindir}/find-all-symbols
 %{_bindir}/clang-check
 %{_bindir}/clang-format
-# %{_bindir}/clang-modernize
+%{_bindir}/modularize
 %{_bindir}/clang-rename
 %{_bindir}/clang-tidy
 %{_bindir}/clang-query
 %{_bindir}/git-clang-format
-%{_bindir}/modularize
 %{_bindir}/pp-trace
-%{_libexecdir}/c++-analyzer
-%{_libexecdir}/ccc-analyzer
+%{_bindir}/clang-include-fixer
+%{_bindir}/find-all-symbols
 %dir %{_datadir}/clang/
 %{_datadir}/clang/*.py*
 %{_datadir}/clang/*.el
@@ -696,11 +670,13 @@ exit 0
 #clang analyzer
 %{_bindir}/scan-build
 %{_bindir}/scan-view
-%{_bindir}/sanstats
 %dir %{_datadir}/scan-build
 %{_datadir}/scan-build/*
 %dir %{_datadir}/scan-view
 %{_datadir}/scan-view/*
+%{_libexecdir}/c++-analyzer
+%{_libexecdir}/ccc-analyzer
+
 %{_mandir}/man1/*
 
 %files -n libclang
@@ -712,13 +688,15 @@ exit 0
 %{_includedir}/clang
 %{_includedir}/clang-c
 %{_libdir}/libclang*.so
+#actually, it's should not be here, it belong to clang-tools
+%{_libdir}/libfindAllSymbols.a
+%dir %{_libdir}/cmake/clang
 %{_libdir}/cmake/clang/*
+
 
 %files -n libclang-static
 %defattr(-,root,root)
 %{_libdir}/libclang*.a
-%{_libdir}/libfindAllSymbols.a
-# %{_libdir}/libmodernizeCore.a
 
 #start of build_lldb
 %if %{build_lldb}
@@ -756,15 +734,14 @@ exit 0
 %{_includedir}/lld
 
 %files -n liblld-static
+%{_libdir}/liblldCOFF.a
 %{_libdir}/liblldCore.a
 %{_libdir}/liblldDriver.a
 %{_libdir}/liblldELF.a
 %{_libdir}/liblldMachO.a
-#%{_libdir}/liblldPECOFF.a
 %{_libdir}/liblldReaderWriter.a
 %{_libdir}/liblldYAML.a
 %{_libdir}/liblldConfig.a
-%{_libdir}/liblldCOFF.a
 %endif #end build_lld
 
 #start of polly
@@ -813,7 +790,7 @@ exit 0
 #end build_libcxx
 
 #start build_openmp
-%files -n openmp
+%files -n openmp 
 %{_libdir}/libiomp5.so
 %{_libdir}/libomp.so
 
@@ -822,9 +799,17 @@ exit 0
 #end build_openmp
 
 %changelog
-* Mon Sep 05 2016 sulit <sulitsrc@gmail.com> - 3.9.0-1
-- update llvm to 3.9.0
-- modify cmake file path
+* Mon Nov 21 2016 sulit <sulitsrc@gmail.com> - 3.9.0-5
+- rebuild
+
+* Fri Nov 18 2016 cjacker <cjacker@foxmail.com> - 3.9.0-4
+- Disable lld/polly build by default, they cause an link issue in 3.9.0
+
+* Fri Nov 18 2016 cjacker <cjacker@foxmail.com> - 3.9.0-3
+- rebuild
+
+* Thu Nov 17 2016 cjacker <cjacker@foxmail.com> - 3.9.0-2
+- Update to 3.9.0
 
 * Fri Aug 05 2016 sulit <sulitsrc@gmail.com> - 3.8.1-3
 - uncomment gcc abi patch
@@ -841,7 +826,7 @@ exit 0
 
 * Fri Jul 01 2016 sulit <sulitsrc@gmail.com> - 3.8.0-25
 - update llvm to official release version 3.8.0
-- remove default use openmp patch, it may be supported
+
 
 * Thu Jan 07 2016 Cjacker <cjacker@foxmail.com> - 3.7.1-24
 - Update to 3.7.1 official release, codes unchanged
@@ -907,4 +892,4 @@ exit 0
 
 * Fri Jul 10 2015 Cjacker <cjacker@foxmail.com>
 - rebuild llvm, link to libstdc++/libgcc.
-- add more comment in spec to explain why this spec is important!
+- add more comment in spec to explain why this spec is important! 

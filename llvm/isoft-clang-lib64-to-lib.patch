@@ -1,0 +1,39 @@
+diff -Nur llvm-3.9.0.src/tools/clang/lib/Driver/ToolChains.cpp llvm-3.9.0.srcn/tools/clang/lib/Driver/ToolChains.cpp
+--- llvm-3.9.0.src/tools/clang/lib/Driver/ToolChains.cpp	2016-11-18 11:24:57.639616097 +0800
++++ llvm-3.9.0.srcn/tools/clang/lib/Driver/ToolChains.cpp	2016-11-18 11:29:46.616610922 +0800
+@@ -1496,7 +1496,7 @@
+   static const char *const ARMebHFTriples[] = {
+       "armeb-linux-gnueabihf", "armebv7hl-redhat-linux-gnueabi"};
+ 
+-  static const char *const X86_64LibDirs[] = {"/lib64", "/lib"};
++  static const char *const X86_64LibDirs[] = {"/lib", "/lib32"};
+   static const char *const X86_64Triples[] = {
+       "x86_64-linux-gnu",       "x86_64-unknown-linux-gnu",
+       "x86_64-isoft-linux",     "x86_64-isoft-linux-gnu",
+@@ -1753,7 +1753,7 @@
+     BinPath = CudaPath + "/bin";
+     IncludePath = InstallPath + "/include";
+     LibDevicePath = InstallPath + "/nvvm/libdevice";
+-    LibPath = InstallPath + (TargetTriple.isArch64Bit() ? "/lib64" : "/lib");
++    LibPath = InstallPath + (TargetTriple.isArch64Bit() ? "/lib" : "/lib32");
+ 
+     auto &FS = D.getVFS();
+     if (!(FS.exists(IncludePath) && FS.exists(BinPath) && FS.exists(LibPath) &&
+@@ -3983,7 +3983,7 @@
+       Triple.getEnvironment() == llvm::Triple::GNUX32)
+     return "libx32";
+ 
+-  return Triple.isArch32Bit() ? "lib" : "lib64";
++  return Triple.isArch32Bit() ? "lib32" : "lib";
+ }
+ 
+ static void addMultilibsFilePaths(const Driver &D, const MultilibSet &Multilibs,
+@@ -4323,7 +4323,7 @@
+   case llvm::Triple::x86_64: {
+     bool X32 = Triple.getEnvironment() == llvm::Triple::GNUX32;
+ 
+-    LibDir = X32 ? "libx32" : "lib64";
++    LibDir = X32 ? "libx32" : "lib";
+     Loader = X32 ? "ld-linux-x32.so.2" : "ld-linux-x86-64.so.2";
+     break;
+   }

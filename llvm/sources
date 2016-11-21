@@ -4,9 +4,5 @@ b7ea34c9d744da16ffc0217b6990d095  compiler-rt-3.9.0.src.tar.xz
 0a11efefd864ce6f321194e441f7e569  libcxx-3.9.0.src.tar.xz
 d02642308e22e614af6b061b9b4fedfa  libcxxabi-3.9.0.src.tar.xz
 3e5c87c723a456be599727a444b1c166  libunwind-3.9.0.src.tar.xz
-c23c895c0d855a0dc426af686538a95e  lld-3.9.0.src.tar.xz
-968d053c3c3d7297983589164c6999e9  lldb-3.9.0.src.tar.xz
 f2093e98060532449eb7d2fcfd0bc6c6  llvm-3.9.0.src.tar.xz
 5390164f2374e1444e82393541ecf6c7  openmp-3.9.0.src.tar.xz
-1cf328cbae25267749b68cfa6f113674  polly-3.9.0.src.tar.xz
-45e9ae5b7a395ecc3eb7c52820a27ccb  test-suite-3.9.0.src.tar.xz
