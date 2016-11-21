@@ -2,12 +2,12 @@
 %define debug_package %{nil}
 
 %define glibcversion 2.24
-%define glibcrelease 1
+%define glibcrelease 2
 
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %{glibcversion}
-Release: %{glibcrelease}.2
+Release: %{glibcrelease}
 License: LGPL
 Source0:	http://ftp.gnu.org/gnu/glibc/glibc-%{glibcversion}.tar.xz
 
@@ -533,6 +533,9 @@ fi
 
 
 %changelog
+* Mon Nov 21 2016 sulit <sulitsrc@gmail.com> - 2.24-1.3
+- rebuild glibc
+
 * Mon Aug 08 2016 sulit <sulitsrc@gmail.com> - 2.24-1.2
 - update glibc to 2.24
 - modify utf-8 locale patch
