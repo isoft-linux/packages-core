@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.30
+%define kversion 4.4.33
 %define kconfig_version 4.4.x
 %define release 1
 
@@ -788,6 +788,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 21 2016 sulit <sulitsrc@gmail.com> - 4.4.33-1
+- upgrade kernel to 4.4.33
+
 * Tue Nov 01 2016 sulit - 4.4.30-1
 - update kernel to 4.4.30, Revert 'x86/mm: Expand the exception table
   logic to allow new handling options'
