@@ -4,16 +4,17 @@
 
 Summary: A 2D graphics library
 Name:  cairo
-Version: 1.14.2
-Release: 4 
+Version: 1.14.6
+Release: 3
 URL:  http://cairographics.org
 License: LGPLv2 or MPLv1.1
 
 Source0: %{name}-%{version}.tar.xz
-#This patch is import to improve fonts rendering result.
-#be careful when update cairo.
-#By Cjacker
-Patch0: cairo-respect-fontconfig_pb.patch  
+Patch0: cairo-make-lcdfilter-default.patch
+Patch1: cairo-respect-fontconfig_pb.patch
+Patch2: cairo-server-side-gradients.patch
+Patch3: cairo-webkit-html5-fix.patch
+Patch4: cairo-color-glyphs.patch
 
 BuildRequires: pkgconfig
 BuildRequires: libXrender-devel
@@ -89,6 +90,10 @@ This package contains tools for working with the cairo graphics library.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" %configure --disable-static \
@@ -181,6 +186,12 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.la
 %{_libdir}/cairo/
 
 %changelog
+* Thu Nov 24 2016 sulit <sulitsrc@163.com> - 1.14.6-3
+- rebuild
+
+* Tue Nov 22 2016 cjacker - 1.14.6-2
+- Update to 1.14.6
+
 * Fri Oct 23 2015 cjacker - 1.14.2-4
 - Rebuild for new 4.0 release
 
