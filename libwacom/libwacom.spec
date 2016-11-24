@@ -1,7 +1,7 @@
 %global udevdir %(pkg-config --variable=udevdir udev)
 
 Name:           libwacom
-Version:        0.15
+Version:        0.22
 Release:        2%{?dist}
 Summary:        Tablet Information Client Library
 Requires:       %{name}-data
@@ -80,6 +80,9 @@ rm -f %{buildroot}%{_libdir}/*.la
 %{_datadir}/libwacom/layouts/*.svg
 
 %changelog
+* Thu Nov 24 2016 cjacker - 0.22-2
+- Update to 0.22
+
 * Sat Oct 24 2015 Cjacker <cjacker@foxmail.com> - 0.15-2
 - Rebuild for new 4.0 release.
 
