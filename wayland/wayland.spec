@@ -1,6 +1,6 @@
 Name:           wayland
-Version:        1.9.93
-Release:        1
+Version:        1.11.1
+Release:        2
 Summary:        Wayland Compositor Infrastructure
 
 License:        MIT
@@ -147,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/wayland-server.pc
 
 %changelog
+* Thu Nov 24 2016 cjacker - 1.11.1-2
+- Update to 1.11.1
+
 * Mon Jun 20 2016 yetist - 1.9.93-1
 - new version
 
