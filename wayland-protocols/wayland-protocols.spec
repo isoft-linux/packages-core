@@ -9,6 +9,7 @@ Source0: http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires: pkgconfig gawk 
 BuildRequires: autoconf automake libtool
+BuildRequires: wayland-devel
 BuildArch: noarch
 
 %description
