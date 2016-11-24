@@ -2,24 +2,21 @@
 
 Summary: Font configuration and customization library
 Name: fontconfig
-Version: 2.11.94
-Release: 6 
+Version: 2.12.1
+Release: 2
 License: MIT
 URL: http://fontconfig.org
 Source0: http://fontconfig.org/release/fontconfig-%{version}.tar.bz2
 
-Source1: 99-lcd.conf
+Source1: fontconfig-ultimate-git.tar.bz2 
+
+Source10: 99-lcd.conf
 
 #NOTE, this config file will force monospace/serif automatch a English font.
 #since there is no really monospace chinesefont we used.
-Source2:   99-force-monospace-serif.conf
+Source11:   99-force-monospace-serif.conf
 #disable bitmap of some fonts.
-Source3:   25-no-bitmap.conf
-
-#the patch is coresponding to SOURCE10
-Patch6:     fontconfig-auto-match-yahei-after-force-monospace-and-serif.patch
-Patch7:     fontconfig-prefer-sourcehansans-than-wenquanyi.patch
-
+Source12:   25-no-bitmap.conf
 
 BuildRequires: %{freetype2}-devel
 BuildRequires: expat-devel
@@ -45,16 +42,28 @@ Install fontconfig-devel if you want to develop programs which
 will use fontconfig.
 
 %prep
-%setup -q
-%patch6 -p1
-%patch7 -p1
+%setup -q -a1
+for i in fontconfig-ultimate-git/fontconfig_patches/0*.patch
+do
+    cat $i|patch -p1
+done
+
+cp -r  fontconfig-ultimate-git/conf.d.infinality .
+aclocal
+libtoolize -f
+automake -afi
+
 %build
 FLAGS="$RPM_OPT_FLAGS"
 export CXXFLAGS="$FLAGS"
 export CFLAGS="$FLAGS"
+#   --with-templatedir=%{_sysconfdir}/fonts/conf.avail \
+#   --with-xmldir=%{_sysconfdir}/fonts \
 %configure \
    --with-add-fonts=/usr/X11R6/lib/X11/fonts \
+   --with-default-fonts=%{_datadir}/fonts \
    --with-baseconfigdir=%{_sysconfdir}/fonts \
+   --with-templateinfdir=%{_sysconfdir}/fonts/conf.avail.infinality \
    --disable-docs
 make %{?_smp_mflags}
 
@@ -62,10 +71,14 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p" 
 
+cp -r fontconfig-ultimate-git/fontconfig_patches/{combi,free,ms} \
+    %{buildroot}%{_sysconfdir}/fonts/conf.avail.infinality
 
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
-install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
+install -m755 fontconfig-ultimate-git/fontconfig_patches/fc-presets %{buildroot}%{_bindir}/fc-presets
+
+install -m 644 %{SOURCE10} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
+install -m 644 %{SOURCE11} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
+install -m 644 %{SOURCE12} $RPM_BUILD_ROOT/%{_datadir}/fontconfig/conf.avail
 
 pushd $RPM_BUILD_ROOT/etc/fonts/conf.d
 ln -sf %{_datadir}/fontconfig/conf.avail/99-lcd.conf ./99-lcd.conf
@@ -109,6 +122,7 @@ mkdir -p /usr/lib/X11/fonts/TrueType
 /var/cache/fontconfig
 %{_datadir}/fontconfig
 %{_datadir}/xml/*
+
 %files devel
 %defattr(-, root, root)
 %{_includedir}/*
@@ -116,6 +130,9 @@ mkdir -p /usr/lib/X11/fonts/TrueType
 %{_libdir}/pkgconfig/*
 
 %changelog
+* Thu Nov 24 2016 sulit <sulitsrc@163.com> - 2.12.1-2
+- rebuild
+
 * Fri Oct 23 2015 cjacker - 2.11.94-6
 - Rebuild for new 4.0 release
 
