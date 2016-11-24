@@ -1,6 +1,6 @@
 Name: wayland-protocols 
-Version: 1.4 
-Release: 1
+Version: 1.7
+Release: 2
 Summary: Wayland protocols 
 
 License: MIT 
@@ -9,7 +9,6 @@ Source0: http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires: pkgconfig gawk 
 BuildRequires: autoconf automake libtool
-BuildRequires: pkgconfig(wayland-scanner)
 BuildArch: noarch
 
 %description
@@ -34,21 +33,14 @@ make install DESTDIR=%{buildroot}
 %files
 %doc README COPYING
 %{_datadir}/pkgconfig/wayland-protocols.pc
-%{_datadir}/wayland-protocols/unstable/fullscreen-shell/fullscreen-shell-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/input-method/input-method-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/linux-dmabuf/linux-dmabuf-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/pointer-gestures/pointer-gestures-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/text-input/text-input-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/xdg-shell/xdg-shell-unstable-v5.xml
-%{_datadir}/wayland-protocols/stable/presentation-time/presentation-time.xml
-%{_datadir}/wayland-protocols/stable/viewporter/viewporter.xml
-%{_datadir}/wayland-protocols/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/relative-pointer/relative-pointer-unstable-v1.xml
-%{_datadir}/wayland-protocols/unstable/tablet/tablet-unstable-v1.xml
+%dir %{_datadir}/wayland-protocols/stable
+%{_datadir}/wayland-protocols/stable/*
+%dir %{_datadir}/wayland-protocols/unstable
+%{_datadir}/wayland-protocols/unstable/*
 
 %changelog
-* Fri Jul 08 2016 zhouyang <yang.zhou@i-soft.com.cn> - 1.4-1
-- Update
+* Thu Nov 24 2016 cjacker - 1.7-2
+- Update to 1.7
 
 * Thu Nov 26 2015 Cjacker <cjacker@foxmail.com> - 1.0-2
 - Update to 1.0 release
