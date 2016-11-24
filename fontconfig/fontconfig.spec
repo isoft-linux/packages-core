@@ -21,6 +21,8 @@ Source12:   25-no-bitmap.conf
 BuildRequires: %{freetype2}-devel
 BuildRequires: expat-devel
 BuildRequires: perl
+BuildRequires: automake
+BuildRequires: libtool
 Requires:coreutils
 Requires(pre): %{freetype2}
 
@@ -132,6 +134,7 @@ mkdir -p /usr/lib/X11/fonts/TrueType
 %changelog
 * Thu Nov 24 2016 sulit <sulitsrc@163.com> - 2.12.1-2
 - rebuild
+- add buildrequires automake libtool
 
 * Fri Oct 23 2015 cjacker - 2.11.94-6
 - Rebuild for new 4.0 release
