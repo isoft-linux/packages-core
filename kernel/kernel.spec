@@ -3,10 +3,10 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define rcversion   rc4
+%define rcversion   rc6
 
 %define kversion 4.9
-%define release 2
+%define release 1
 
 %define extraversion -%{release}
 
@@ -74,7 +74,6 @@ Source2000: cpupower.service
 Source2001: cpupower.config
 
 # patch start
-Patch6001: 0001-cpupower-Correct-return-type-of-cpu_power_is_cpu_onl.patch
 Patch6002: 0001-iio-Use-event-header-from-kernel-tree.patch
 Patch6003: acpi-Ignore-acpi_rsdp-kernel-parameter-when-module-l.patch
 Patch6004: ACPI-Limit-access-to-custom_method.patch
@@ -261,7 +260,6 @@ cp -rl vanilla linux-%{kversion}.%{_target_cpu}
 
 cd linux-%{kversion}.%{_target_cpu}
 
-%patch6001 -p1
 %patch6002 -p1
 %patch6003 -p1
 %patch6004 -p1
@@ -709,6 +707,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Fri Nov 25 2016 sulit <sulitsrc@gmail.com> - 4.9-1
+- upgrade kernel to 4.9-rc6
+
 * Mon Nov 14 2016 sulit - 4.9-2
 - don't compile SND_SOC_RT5677
 
