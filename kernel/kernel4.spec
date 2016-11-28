@@ -3,7 +3,7 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define kversion 4.4.33
+%define kversion 4.4.35
 %define kconfig_version 4.4.x
 %define release 1
 
@@ -788,6 +788,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Mon Nov 28 2016 sulit <sulitsrc@gmail.com> - 4.4.35-1
+- upgrade kernel to 4.4.35
+
 * Mon Nov 21 2016 sulit <sulitsrc@gmail.com> - 4.4.33-1
 - upgrade kernel to 4.4.33
 
