@@ -506,7 +506,7 @@ cp -r utils/vim/syntax %{buildroot}%{_datadir}/vim/vimfiles
 mkdir -p %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
 install -m 0644 utils/emacs/llvm-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
 install -m 0644 utils/emacs/tablegen-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
-install -m 0644 %{SOURCE30} %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
+#install -m 0644 %{SOURCE30} %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
 
 rm -rf %{buildroot}/usr/docs
 rm -rf %{buildroot}%{_bindir}/c-index-test
@@ -614,7 +614,7 @@ exit 0
 #emacs files for .ll IR and .tb tablegen files.
 #but not own dirs, it's belong to vim.
 %{_datadir}/emacs/site-lisp/*.el
-%{_datadir}/emacs/site-lisp/site-start.d/*.el
+#%{_datadir}/emacs/site-lisp/site-start.d/*.el
 
 
 %files -n libllvm 
@@ -801,6 +801,8 @@ exit 0
 %changelog
 * Mon Nov 21 2016 sulit <sulitsrc@gmail.com> - 3.9.0-5
 - rebuild
+- remove /usr/share/emacs/site-lisp/site-start.d/llvm-init.el, it cause rpmbuild
+- segmentation fault.
 
 * Fri Nov 18 2016 cjacker <cjacker@foxmail.com> - 3.9.0-4
 - Disable lld/polly build by default, they cause an link issue in 3.9.0
