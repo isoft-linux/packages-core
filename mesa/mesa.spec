@@ -2,8 +2,8 @@
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 12.0.3
-Release: 1%{?dist}
+Version: 13.0.1
+Release: 3%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -378,7 +378,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/GL/glx_mangle.h
 %{_includedir}/GL/glxext.h
 %{_includedir}/GL/glcorearb.h
-%{_includedir}/GL/mesa_glinterop.h
+#% {_includedir}/GL/mesa_glinterop.h
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/internal/dri_interface.h
 %{_libdir}/pkgconfig/dri.pc
@@ -449,6 +449,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/GLES3/gl3.h
 %{_includedir}/GLES3/gl3ext.h
 %{_includedir}/GLES3/gl31.h
+%{_includedir}/GLES3/gl32.h
 %{_libdir}/pkgconfig/glesv2.pc
 %{_libdir}/libGLESv2.so
 
@@ -506,6 +507,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Nov 28 2016 sulit - 13.0.1-3
+- rebuild it
+
+* Fri Nov 18 2016 cjacker - 13.0.1-2
+- Update to 13.0.1
+
 * Tue Oct 18 2016 sulit <sulitsrc@gmail.com> - 12.0.3-1
 - upgrade mesa to 12.0.3
 
