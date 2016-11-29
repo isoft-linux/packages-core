@@ -9,7 +9,7 @@ Source0: http://xorg.freedesktop.org/X11R7.0/src/everything/%{name}-%{version}.t
 BuildRequires: xorg-x11-proto-devel
 BuildRequires: libX11-devel
 BuildRequires: libXext-devel
-BuildRequires: libXi
+BuildRequires: libXi-devel
 Obsoletes: XFree86-libs, xorg-x11-libs
 
 %description
