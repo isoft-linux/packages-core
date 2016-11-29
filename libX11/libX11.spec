@@ -1,7 +1,7 @@
 Summary: X.Org X11 libX11 runtime library
 Name:    libX11
-Version: 1.6.3
-Release: 8 
+Version: 1.6.4
+Release: 2
 License: MIT/X11
 URL:     http://www.x.org
 Source0: ftp://ftp.x.org/pub/individual/lib/%{name}-%{version}.tar.bz2
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/doc/libX11
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.6.4-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.6.3-8
 - Rebuild for new 4.0 release
 
