@@ -9,7 +9,7 @@ URL: http://www.mesa3d.org
 
 # if git codes needed:
 # git clone git://anongit.freedesktop.org/mesa/mesa
-Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.xz
+Source0: ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.gz
 
 #this patch used to build mesa with llvm/libcxx
 #currently not applied, just keep it here.
