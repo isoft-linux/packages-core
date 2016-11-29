@@ -1,7 +1,7 @@
 Summary: X.Org X11 libXvMC runtime library
 Name: libXvMC
-Version: 1.0.9
-Release: 2
+Version: 1.0.10
+Release: 3
 License: MIT/X11
 URL: http://www.x.org
 
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/libXvMC
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.0.10-3
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.0.9-2
 - Rebuild for new 4.0 release
 
