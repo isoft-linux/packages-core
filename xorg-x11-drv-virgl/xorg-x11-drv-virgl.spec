@@ -9,16 +9,14 @@
 Summary: Xorg virgl video driver
 Name: xorg-x11-drv-virgl
 Version: 0.0.01
-Release: 1.git
+Release: 2.git
 URL: http://cgit.freedesktop.org/~airlied/xf86-video-virgl 
 License: MIT
 
 # git clone git://people.freedesktop.org/~airlied/xf86-video-virgl
 Source0: %{tarball}.tar.gz
 
-#kernel drm provide this header, this is a copy after we backport virgl to kernel-4.3.
-#It should provided by libdrm. Once libdrm ship this header, we should remove this local copy.
-Source1: virtgpu_drm.h
+Patch0: virgl-fix-build-with-xorg-1.9.patch
  
 BuildRequires: pkgconfig
 BuildRequires: autoconf automake libtool
@@ -39,10 +37,7 @@ X.Org X11 VirGL video driver.
 
 %prep
 %setup -q -n %{tarball} 
-#local copy of virtgpu_drm.h
-cp %{SOURCE1} src
-#modify it to use global drm.h
-sed -i 's@"drm/drm.h"@<drm.h>@g' src/virtgpu_drm.h 
+%patch0 -p1
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
@@ -68,3 +63,6 @@ rm -rf $RPM_BUILD_ROOT
 #%{_datadir}/X11/xorg.conf.d/10-amdgpu.conf
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.0.01-2.git
+- Update
+
