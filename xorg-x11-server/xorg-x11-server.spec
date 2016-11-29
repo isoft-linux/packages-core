@@ -75,7 +75,7 @@ BuildRequires: dbus-devel
 BuildRequires: tslib-devel
 BuildRequires: systemd-devel
 BuildRequires: libxcb-devel xcb-util-devel xcb-util-image-devel xcb-util-keysyms-devel xcb-util-renderutil-devel xcb-util-wm-devel
-BuildRequires: libwayland-client-devel libwayland-server-devel
+BuildRequires: libwayland-client-devel libwayland-server-devel wayland-protocols
 BuildRequires: gawk make doxygen xmlto libxslt flex bison gdbm-devel kernel-headers
 BuildRequires: libgcrypt-devel openssl-devel 
 Requires: libdrm 
