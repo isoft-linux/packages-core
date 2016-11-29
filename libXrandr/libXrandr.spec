@@ -1,7 +1,7 @@
 Summary: X.Org X11 libXrandr runtime library
 Name: libXrandr
-Version: 1.5.0
-Release: 3 
+Version: 1.5.1
+Release: 2 
 License: MIT/X11
 URL: http://www.x.org
 Source0: libXrandr-%{version}.tar.bz2 
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*.3*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.5.1-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.5.0-3
 - Rebuild for new 4.0 release
 
