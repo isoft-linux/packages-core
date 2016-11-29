@@ -1,7 +1,7 @@
 Summary: X.Org X11 libXtst runtime library
 Name: libXtst
-Version: 1.2.2
-Release: 2.2
+Version: 1.2.3
+Release: 2
 License: MIT/X11
 URL: http://www.x.org
 Source0: http://xorg.freedesktop.org/X11R7.0/src/everything/%{name}-%{version}.tar.bz2
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/libXtst
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.2.3-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.2.2-2.2
 - Rebuild for new 4.0 release
 
