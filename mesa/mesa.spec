@@ -2,8 +2,8 @@
 
 Summary: Mesa graphics libraries
 Name: mesa
-Version: 13.0.1
-Release: 3%{?dist}
+Version: 13.0.2
+Release: 4%{?dist}
 License: MIT
 URL: http://www.mesa3d.org
 
@@ -507,6 +507,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Nov 29 2016 cjacker - 13.0.2-4
+- Update to 13.0.2
+
 * Mon Nov 28 2016 sulit - 13.0.1-3
 - rebuild it
 
