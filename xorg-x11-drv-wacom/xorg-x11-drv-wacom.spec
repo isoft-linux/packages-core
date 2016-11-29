@@ -5,8 +5,8 @@
 
 Summary:    Xorg X11 wacom input driver
 Name:       xorg-x11-drv-wacom
-Version:    0.31.0
-Release:    4 
+Version:    0.33.99.1
+Release:    2 
 URL:        http://www.x.org
 License:    GPLv2+
 
@@ -66,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 %{driverdir}/wacom_drv.so
 %{_mandir}/man4/wacom.4*
 %{_mandir}/man1/xsetwacom.1*
-%{_datadir}/X11/xorg.conf.d/50-wacom.conf
+%{_datadir}/X11/xorg.conf.d/70-wacom.conf
 %{_bindir}/xsetwacom
 %{_libdir}/udev/rules.d/70-wacom.rules
 %{_libdir}/udev/rules.d/wacom.rules
@@ -84,6 +84,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/isdv4-serial-debugger
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.33.99.1-2
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.31.0-4
 - Rebuild with xorg-server 1.8.0
 
