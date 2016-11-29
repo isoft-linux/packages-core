@@ -145,11 +145,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/modeprint
 %{_bindir}/vbltest
 %{_bindir}/kmstest
-%{_bindir}/amdgpu_test
+#%{_bindir}/amdgpu_test
 %{_bindir}/kms-steal-crtc
 %{_bindir}/kms-universal-planes
 
-%exclude %{_bindir}/exynos*
+#%exclude %{_bindir}/exynos*
 %exclude %{_bindir}/drmsl
 %exclude %{_bindir}/hash
 %exclude %{_bindir}/proptest
