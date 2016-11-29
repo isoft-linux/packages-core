@@ -6,7 +6,7 @@
 Summary: X.Org X11 Protocol headers
 Name: xorg-x11-proto-devel
 Version: 7.7
-Release: 29
+Release: 31
 License: The Open Group License
 URL: http://www.x.org
 
@@ -18,14 +18,14 @@ Source4:  http://xorg.freedesktop.org/archive/individual/proto//dri2proto-2.8.ta
 Source5:  http://xorg.freedesktop.org/archive/individual/proto//fixesproto-5.0.tar.bz2
 Source6:  http://xorg.freedesktop.org/archive/individual/proto//fontsproto-2.1.3.tar.bz2
 Source7:  http://xorg.freedesktop.org/archive/individual/proto//glproto-1.4.17.tar.bz2
-Source8:  http://xorg.freedesktop.org/archive/individual/proto//inputproto-2.3.1.tar.bz2
+Source8:  http://xorg.freedesktop.org/archive/individual/proto//inputproto-2.3.2.tar.bz2
 Source9:  http://xorg.freedesktop.org/archive/individual/proto//kbproto-1.0.7.tar.bz2
 Source10: http://xorg.freedesktop.org/archive/individual/proto//randrproto-1.5.0.tar.bz2
 Source11: http://xorg.freedesktop.org/archive/individual/proto//recordproto-1.14.2.tar.bz2
 Source12: http://xorg.freedesktop.org/archive/individual/proto//renderproto-0.11.1.tar.bz2
 Source13: http://xorg.freedesktop.org/archive/individual/proto//resourceproto-1.2.0.tar.bz2
 Source14: http://xorg.freedesktop.org/archive/individual/proto//scrnsaverproto-1.2.2.tar.bz2
-Source15: http://xorg.freedesktop.org/archive/individual/proto//videoproto-2.3.2.tar.bz2
+Source15: http://xorg.freedesktop.org/archive/individual/proto//videoproto-2.3.3.tar.bz2
 Source16: http://xorg.freedesktop.org/archive/individual/proto//xcmiscproto-1.2.2.tar.bz2
 Source17: http://xorg.freedesktop.org/archive/individual/proto//xextproto-7.3.0.tar.bz2
 Source18: http://xorg.freedesktop.org/archive/individual/proto//xf86bigfontproto-1.2.0.tar.bz2
@@ -33,7 +33,7 @@ Source19: http://xorg.freedesktop.org/archive/individual/proto//xf86dgaproto-2.1
 Source20: http://xorg.freedesktop.org/archive/individual/proto//xf86driproto-2.1.1.tar.bz2
 Source21: http://xorg.freedesktop.org/archive/individual/proto//xf86vidmodeproto-2.3.1.tar.bz2
 Source22: http://xorg.freedesktop.org/archive/individual/proto//xineramaproto-1.2.1.tar.bz2
-Source23: http://xorg.freedesktop.org/archive/individual/proto//xproto-7.0.28.tar.bz2
+Source23: http://xorg.freedesktop.org/archive/individual/proto//xproto-7.0.31.tar.bz2
 Source24: http://xorg.freedesktop.org/archive/individual/proto//printproto-1.0.5.tar.bz2
 Source25: http://xorg.freedesktop.org/archive/individual/proto//dri3proto-1.0.tar.bz2
 Source26: http://xorg.freedesktop.org/archive/individual/proto//presentproto-1.0.tar.bz2
@@ -90,6 +90,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 7.7-31
+- Update videoproto inputproto
+
+* Tue Nov 29 2016 cjacker - 7.7-30
+- Update xproto
+
 * Fri Oct 23 2015 cjacker - 7.7-29
 - Rebuild for new 4.0 release
 
