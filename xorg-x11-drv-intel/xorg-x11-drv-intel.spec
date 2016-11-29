@@ -6,10 +6,10 @@
 Summary:   Xorg intel video driver
 Name:      xorg-x11-drv-intel
 Version:   2.99.917
-Release:   50.git
+Release:   51.git
 URL:       http://www.x.org
 License:   MIT
-Source0:   %{tarball}-371219c.tar.xz
+Source0:   %{tarball}.tar.gz
 Patch0:     intel-gcc-pr65873.patch
 Patch1:    intel-prefer-drmModeSetCursor2-in-uxa.patch
 #this patch added a option 'SWCursor' 'true'/'false' to force to swcursor in sna.
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/polkit-1/actions/org.x.xf86-video-intel.backlight-helper.policy
 
 %changelog
+* Tue Nov 29 2016 cjacker - 2.99.917-51.git
+- Rebuild
+
 * Mon Jan 11 2016 sulit <sulitsrc@gmail.com> - 2.99.917-50.git
 - regular update
 - add libXScrnSaver-devel buildrequires
