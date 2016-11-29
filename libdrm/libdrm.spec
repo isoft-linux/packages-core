@@ -1,7 +1,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.71
-Release: 1
+Version: 2.4.73
+Release: 2
 License: MIT
 URL: http://dri.sourceforge.net
 
@@ -145,6 +145,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/modeprint
 %{_bindir}/vbltest
 %{_bindir}/kmstest
+%{_bindir}/amdgpu_test
+%{_bindir}/kms-steal-crtc
+%{_bindir}/kms-universal-planes
+
 %exclude %{_bindir}/exynos*
 %exclude %{_bindir}/drmsl
 %exclude %{_bindir}/hash
@@ -152,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Tue Nov 29 2016 cjacker - 2.4.73-2
+- Update
+
 * Tue Oct 18 2016 sulit <sulitsrc@gmail.com> - 2.4.71-1
 - upgrade libdrm to 2.4.71
 
