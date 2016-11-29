@@ -1,6 +1,6 @@
 Summary: X.Org X11 libXfixes runtime library
 Name: libXfixes
-Version: 5.0.1 
+Version: 5.0.3
 Release: 2
 License: MIT/X11
 URL: http://www.x.org
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/Xfixes.3*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 5.0.3-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 5.0.1-2
 - Rebuild for new 4.0 release
 
