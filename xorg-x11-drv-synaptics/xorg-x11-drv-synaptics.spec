@@ -5,8 +5,8 @@
 
 Name:           xorg-x11-drv-synaptics
 Summary:        Xorg X11 Synaptics touchpad input driver
-Version:        1.8.3
-Release:        4
+Version:        1.9.0
+Release:        2
 URL:            http://www.x.org
 License:        MIT
 
@@ -14,7 +14,6 @@ Source0:        ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.
 Source3:        50-synaptics.conf
 Source4:        70-touchpad-quirks.rules
 
-Patch02:        0001-Limit-the-movement-to-20-mm-per-event.patch
 
 ExcludeArch:    s390 s390x
 
@@ -53,7 +52,6 @@ Development files for the Synaptics TouchPad for X.Org.
 
 %prep
 %setup -q -n %{tarball}-%{version}
-%patch02 -p1
 
 %build
 autoreconf -v --install --force || exit 1
@@ -92,6 +90,9 @@ udevadm control --reload-rules || :
 %{_includedir}/xorg/synaptics-properties.h
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.9.0-2
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 1.8.3-4
 - Rebuild with xorg-server 1.8.0
 
