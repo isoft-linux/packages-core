@@ -23,7 +23,7 @@ Name:      xorg-x11-drv-qxl
 
 Version:   0.1.4
 
-Release:   7%{?gver}%{?dist}
+Release:   8%{?gver}%{?dist}
 URL:       http://www.x.org
 Source0:   http://xorg.freedesktop.org/releases/individual/driver/%{tarball}-%{version}.tar.bz2
 
@@ -129,6 +129,9 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/X11/spiceqxl.xorg.conf
 
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.1.4-8
+- Rebuild
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.1.4-7
 - Rebuild with xorg-server 1.8.0
 
