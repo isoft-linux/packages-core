@@ -1,6 +1,6 @@
 Summary: X.Org X11 libXfont runtime library
 Name: libXfont
-Version: 1.5.1
+Version: 1.5.2
 Release: 2
 License: MIT/X11
 URL: http://www.x.org
@@ -78,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/xfont.pc
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.5.2-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.5.1-2
 - Rebuild for new 4.0 release
 
