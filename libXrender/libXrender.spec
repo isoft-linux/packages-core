@@ -1,6 +1,6 @@
 Summary: X.Org X11 libXrender runtime library
 Name: libXrender
-Version: 0.9.9
+Version: 0.9.10
 Release: 2
 License: MIT/X11
 URL: http://www.x.org
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/libXrender
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.9.10-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 0.9.9-2
 - Rebuild for new 4.0 release
 
