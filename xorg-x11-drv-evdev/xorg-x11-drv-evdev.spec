@@ -8,8 +8,8 @@
 
 Summary:   Xorg X11 evdev input driver
 Name:      xorg-x11-drv-evdev
-Version:   2.10.0
-Release:   5 
+Version:   2.10.4
+Release:   2
 URL:       http://www.x.org
 Source0:   xf86-input-evdev-%{version}.tar.bz2
 License:   MIT/X11
@@ -59,12 +59,16 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{driverdir}
 %{driverdir}/evdev_drv.so
 %{_mandir}/man4/evdev.4*
+%{_datadir}/X11/xorg.conf.d/10-evdev.conf
 
 %files devel
 %{_includedir}/xorg/evdev-properties.h
 %{_libdir}/pkgconfig/xorg-evdev.pc
 
 %changelog
+* Tue Nov 29 2016 cjacker - 2.10.4-2
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 2.10.0-5
 - Update, rebuild with xorg-server 1.8.0
 
