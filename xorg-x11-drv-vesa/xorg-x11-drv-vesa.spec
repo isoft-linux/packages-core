@@ -7,7 +7,7 @@
 Summary:   Xorg X11 vesa video driver
 Name:      xorg-x11-drv-vesa
 Version:   2.3.4
-Release:   6 
+Release:   7 
 URL:       http://www.x.org
 Source0:   xf86-video-vesa-%{version}.tar.bz2 
 License:   MIT/X11
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/vesa.4*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 2.3.4-7
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 2.3.4-6
 - Rebuild with xorg-server 1.8.0
 
