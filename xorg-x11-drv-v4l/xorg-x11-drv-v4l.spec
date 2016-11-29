@@ -8,7 +8,7 @@
 Summary:   Xorg X11 v4l video driver
 Name:      xorg-x11-drv-v4l
 Version:   0.2.0
-Release:   46%{?dist}
+Release:   47%{?dist}
 URL:       http://www.x.org
 License:   MIT
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/v4l.4*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.2.0-47
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.2.0-46
 - Rebuild with xorg-server 1.8.0
 
