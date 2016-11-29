@@ -1,0 +1,17 @@
+diff -Nur xf86-video-sisusb-0.9.6/src/compat-api.h xf86-video-sisusb-0.9.6n/src/compat-api.h
+--- xf86-video-sisusb-0.9.6/src/compat-api.h	2012-06-06 19:05:19.000000000 +0800
++++ xf86-video-sisusb-0.9.6n/src/compat-api.h	2016-11-29 12:41:58.094323824 +0800
+@@ -75,8 +75,13 @@
+ 
+ #define SCREEN_INIT_ARGS_DECL ScreenPtr pScreen, int argc, char **argv
+ 
++#if ABI_VIDEODRV_VERSION >= SET_ABI_VERSION(23, 0)
++#define BLOCKHANDLER_ARGS_DECL ScreenPtr arg, pointer pTimeout
++#define BLOCKHANDLER_ARGS arg, pTimeout
++#else
+ #define BLOCKHANDLER_ARGS_DECL ScreenPtr arg, pointer pTimeout, pointer pReadmask
+ #define BLOCKHANDLER_ARGS arg, pTimeout, pReadmask
++#endif
+ 
+ #define CLOSE_SCREEN_ARGS_DECL ScreenPtr pScreen
+ #define CLOSE_SCREEN_ARGS pScreen

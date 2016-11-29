@@ -8,12 +8,13 @@
 Summary:    Xorg X11 sisusb video driver
 Name:	    xorg-x11-drv-sisusb
 Version:    0.9.6
-Release:    23%{?dist}
+Release:    25%{?dist}
 URL:	    http://www.x.org
 License:    MIT
 
 Source0:    ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 Patch0: 0001-Remove-mibstore.h.patch 
+Patch1: sisusb-fix-build-with-xorg-1.9.patch
 
 ExcludeArch: s390 s390x %{?rhel:ppc ppc64}
 
@@ -30,7 +31,7 @@ X.Org X11 sisusb video driver.
 %prep
 %setup -q -n %{tarball}-%{version}
 %patch0 -p1
-
+%patch1 -p1
 %build
 autoreconf -vif
 %configure --disable-static
@@ -56,6 +57,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/*.4*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.9.6-25
+- Fix build with xorg 1.9
+
+* Tue Nov 29 2016 cjacker - 0.9.6-24
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.9.6-23
 - Rebuild with xorg-server 1.8.0
 
