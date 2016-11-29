@@ -1,7 +1,7 @@
 Summary: X.Org X11 libXv runtime library
 Name: libXv
-Version: 1.0.10
-Release: 2.2
+Version: 1.0.11
+Release: 2
 License: MIT/X11
 URL: http://www.x.org
 Source0: http://xorg.freedesktop.org/X11R7.0/src/everything/%{name}-%{version}.tar.bz2
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*.3*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.0.11-2
+- Update
+
 * Fri Oct 23 2015 cjacker - 1.0.10-2.2
 - Rebuild for new 4.0 release
 
