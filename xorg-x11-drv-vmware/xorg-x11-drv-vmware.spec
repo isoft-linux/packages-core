@@ -5,14 +5,14 @@
 
 Summary:    Xorg X11 vmware video driver
 Name:	    xorg-x11-drv-vmware
-Version:    13.0.2
-Release:    11.git%{?dist}
+Version:    13.2.1
+Release:    1
 URL:	    http://www.x.org
 License:    MIT
 
-#Source0:   ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
+Source0:   ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 #git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-vmware
-Source0: %{tarball}.tar.gz
+#Source0: %{tarball}.tar.gz
 
 ExclusiveArch: %{ix86} x86_64 ia64
 
@@ -30,7 +30,7 @@ Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 X.Org X11 vmware video driver.
 
 %prep
-%setup -q -n %{tarball}
+%setup -q -n %{tarball}-%{version}
 
 %build
 if [ ! -f "configure" ]; then ./autogen.sh; fi
