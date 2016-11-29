@@ -8,7 +8,7 @@
 Summary:   Xorg X11 fbdev video driver
 Name:      xorg-x11-drv-fbdev
 Version:   0.4.4
-Release:   5 
+Release:   6 
 URL:       http://www.x.org
 Source0:   xf86-video-fbdev-%{version}.tar.bz2 
 License:   MIT/X11
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/fbdev.4*
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.4.4-6
+- Rebuild
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.4.4-5
 - Rebuild with xorg-server 1.8.0
 
