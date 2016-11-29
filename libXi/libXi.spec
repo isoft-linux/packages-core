@@ -1,6 +1,6 @@
 Summary: X.Org X11 libXi runtime library
 Name:    libXi
-Version: 1.7.5
+Version: 1.7.8
 Release: 2
 License: MIT/X11
 URL: http://www.x.org
@@ -60,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/libXi/*.xml
 
 %changelog
+* Tue Nov 29 2016 cjacker - 1.7.8-2
+- Update
+
 * Wed Nov 11 2015 Cjacker <cjacker@foxmail.com> - 1.7.5-2
 - Update
 
