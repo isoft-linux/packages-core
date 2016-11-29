@@ -5,12 +5,11 @@
 
 Summary:    Xorg X11 libinput input driver
 Name:       xorg-x11-drv-libinput
-Version:    0.15.0
-Release:    3
+Version:    0.22.0
+Release:    2 
 URL:        http://ww.x.org
 License:    MIT
 Source0:    %{tarball}-%{version}.tar.bz2
-Source1:    90-libinput.conf
 
 
 BuildRequires: autoconf automake libtool
@@ -49,12 +48,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 find $RPM_BUILD_ROOT -regex ".*\.la$" | xargs rm -f --
 
-install -d $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d
-install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d/90-libinput.conf
-
 %files
 %{moduledir}/input/libinput_drv.so
-%{_datadir}/X11/xorg.conf.d/90-libinput.conf
+%{_datadir}/X11/xorg.conf.d/40-libinput.conf
 %{_mandir}/man4/libinput.4*
 
 %files devel
@@ -62,6 +58,9 @@ install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/X11/xorg.conf.d/90-libi
 %{_includedir}/xorg/libinput-properties.h
 
 %changelog
+* Tue Nov 29 2016 cjacker - 0.22.0-2
+- Update
+
 * Tue Nov 10 2015 Cjacker <cjacker@foxmail.com> - 0.15.0-3
 - Update, rebuild with xorg-server 1.8.0
 
