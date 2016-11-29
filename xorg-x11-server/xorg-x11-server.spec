@@ -4,17 +4,17 @@
 #below definations should always match to xorg-server.pc
 %global ansic_major 0
 %global ansic_minor 4
-%global videodrv_major 20 
+%global videodrv_major 23
 %global videodrv_minor 0
-%global xinput_major 22
+%global xinput_major 24
 %global xinput_minor 1
-%global extension_major 9
+%global extension_major 10 
 %global extension_minor 0
 
 Summary:   X.Org X11 X server
 Name:      xorg-x11-server
-Version:   1.18.3
-Release:   2
+Version:   1.19.0
+Release:   2 
 URL:       http://www.x.org
 License:   MIT
 
@@ -47,28 +47,7 @@ Patch10000: 0001-hack-Make-the-suid-root-wrapper-always-start-.patch
 Patch10001: 0001-sdksyms.sh-Make-sdksyms.sh-work-with-gcc5.patch
 Patch10003: 0001-include-Fix-endianness-setup.patch
 
-Patch20018: 0019-Split-filter-execution-into-separate-function.patch
-Patch20019: 0020-input-add-deviceEventSource-enum.patch
-Patch20020: 0021-input-add-focus-in-event-source.patch
-Patch20021: 0022-xwayland-use-focusin-events-for-keyboard-enter.patch
-Patch20023: 0024-dix-remove-redundant-ChangeWindowProperty.patch
-Patch20025: 0026-replace-sun-with__sun.patch
 
-Patch20034: 0010-render-use-ostimer-for-animated-cursor-timing.patch
-Patch20035: 0011-dix-move-initfonts-up-above-screen-initialization.patch
-
-Patch20040: 0040-os-add-nofityfd-interfaces.patch
-Patch20041: 0041-os-implement-support-for-notifyfd-X_NOTIFY_WRITE.patch
-Patch20042: 0042-config-use-NotifyFd-for-dbus-interface.patch
-Patch20043: 0043-config-use-NotifyFd-interface-for-udev.patch
-Patch20044: 0044-hw-kdrive-use-NotifyFd-interface-for-kdrive-linux-APM-monitoring.patch
-Patch20045: 0045-hw-kdrive-use-NotifyFd-for-kdrive-input-devices.patch
-Patch20046: 0046-kdrive-ephyr-use-NotifyFd-for-XCB-connection-input.patch
-Patch20047: 0047-modesettings-use-NotifyFd-for-drm-event-monitoring.patch
-Patch20048: 0048-hw-xwayland-use-NotifyFd-handler-to-monitor-wayland-socket.patch
-Patch20049: 0049-xext-xselinux-use-NotifyFd.patch
-Patch20050: 0050-os-xdmcp-replace-xdmcp-block-wakeup-handlers-with-timer-and-NotifyFd.patch
-Patch20051: 0051-os-use-NotifyFd-interface-for-listen-descriptors.patch
 
 
 BuildRequires: automake autoconf libtool pkgconfig
@@ -77,7 +56,7 @@ BuildRequires: xcb-util
 BuildRequires: xcb-util-wm-devel
 BuildRequires: xorg-x11-proto-devel >= 7.3-10
 BuildRequires: xorg-x11-xtrans-devel >= 1.0.3-3
-BuildRequires: libXfont-devel libXau-devel libxkbfile-devel libXres-devel
+BuildRequires: libXfont-devel libXfont2-devel libXau-devel libxkbfile-devel libXres-devel
 BuildRequires: libfontenc-devel libXtst-devel libXdmcp-devel
 BuildRequires: libX11-devel libXext-devel
 BuildRequires: libXft libXinerama libXcursor
@@ -257,28 +236,6 @@ drivers, input drivers, or other X modules should install this package.
 %patch10001 -p1
 %patch10003 -p1
 
-%patch20018 -p1
-%patch20019 -p1
-%patch20020 -p1
-%patch20021 -p1
-%patch20023 -p1
-%patch20025 -p1
-
-%patch20034 -p1
-%patch20035 -p1
-
-%patch20040 -p1
-%patch20041 -p1
-%patch20042 -p1
-%patch20043 -p1
-%patch20044 -p1
-%patch20045 -p1
-%patch20046 -p1
-%patch20047 -p1
-%patch20048 -p1
-%patch20049 -p1
-%patch20050 -p1
-%patch20051 -p1
 
 %build
 autoreconf -ivf
@@ -451,9 +408,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/xorg-server.m4
 
 %changelog
-* Fri Apr 08 2016 sulit <sulitsrc@gmail.com> - 1.18.3-2
-- update to 1.18.3 release
-- add some patch later
+* Tue Nov 29 2016 cjacker - 1.19.0-2
+- Update to 1.19.0
 
 * Thu Dec 10 2015 Cjacker <cjacker@foxmail.com> - 1.18.0-7
 - Enable ipv6
