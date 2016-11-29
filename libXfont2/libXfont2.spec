@@ -1,7 +1,7 @@
 Summary: X.Org X11 libXfont2 runtime library
 Name: libXfont2
 Version: 2.0.1
-Release: 2
+Release: 3
 License: MIT/X11
 URL: http://www.x.org
 Source0:  %{name}-%{version}.tar.bz2
@@ -61,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/xfont2.pc
 
 %changelog
+* Tue Nov 29 2016 cjacker - 2.0.1-3
+- Rebuild
+
 * Tue Nov 29 2016 cjacker - 2.0.1-2
 - New package
 
