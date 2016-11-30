@@ -1,0 +1,40 @@
+diff --git a/magic/Magdir/varied.script b/magic/Magdir/varied.script
+index 7f4e405..b3b50d5 100644
+--- a/magic/Magdir/varied.script
++++ b/magic/Magdir/varied.script
+@@ -4,27 +4,35 @@
+ 
+ 0	string/t		#!\ /			a
+ >3	string		>\0			%s script text executable
++!:strength / 10
+ 
+ 0	string/b		#!\ /			a
+ >3	string		>\0			%s script executable (binary data)
++!:strength / 10
+ 
+ 0	string/t		#!\t/			a
+ >3	string		>\0			%s script text executable
++!:strength / 10
+ 
+ 0	string/b		#!\t/			a
+ >3	string		>\0			%s script executable (binary data)
++!:strength / 10
+ 
+ 0	string/t		#!/			a
+ >2	string		>\0			%s script text executable
++!:strength / 10
+ 
+ 0	string/b		#!/			a
+ >2	string		>\0			%s script executable (binary data)
++!:strength / 10
+ 
+ 0	string/t		#!\ 			script text executable
+ >3	string		>\0			for %s
++!:strength / 10
+ 
+ 0	string/b		#!\ 			script executable
+ >3	string		>\0			for %s (binary data)
++!:strength / 10
+ 
+ # using env
+ 0	string/t	#!/usr/bin/env		a

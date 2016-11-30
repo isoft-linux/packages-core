@@ -2,10 +2,21 @@
 
 Summary: A utility for determining file types
 Name: file
-Version: 5.28
+Version: 5.29
 Release: 1
 License: BSD
 Source0: ftp://ftp.astron.com/pub/file/file-%{version}.tar.gz
+Patch0: file-4.17-rpm-name.patch
+Patch1: file-5.04-generic-msdos.patch
+Patch2: file-5.04-man-return-code.patch
+Patch3: file-5.04-volume_key.patch
+Patch4: file-5.10-strength.patch
+Patch5: file-5.14-perl.patch
+Patch6: file-5.14-x86boot.patch
+Patch7: file-5.19-cafebabe.patch
+Patch8: file-5.22-awk-perl.patch
+Patch9: file-5.24-varied.patch
+Patch10: file-localmagic.patch
 URL: http://www.darwinsys.com/file/
 Requires: file-libs = %{version}-%{release}
 BuildRequires: zlib-devel
@@ -69,6 +80,17 @@ file(1) command.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %if %{with_python3}
 rm -rf %{py3dir}
@@ -151,6 +173,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 30 2016 sulit - 5.29-1
+- upgrade file to 5.29 and add some patches
+- 5.28 file-libs sometimes cause rpmbuild segmentation fault
+
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 5.28-1
 - update file to 5.28
 - add python-setuptools BuildRequires

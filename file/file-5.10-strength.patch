@@ -1,0 +1,61 @@
+From 8c3f1e3f479ff35b89f4b1c699753f4f107bfa02 Mon Sep 17 00:00:00 2001
+From: Jan Kaluza <jkaluza@redhat.com>
+Date: Thu, 16 Oct 2014 10:38:15 +0200
+Subject: [PATCH] file-5.10-strength.patch
+
+Signed-off-by: Kamil Dudka <kdudka@redhat.com>
+---
+ magic/Magdir/python | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/magic/Magdir/python b/magic/Magdir/python
+index d954ee6..52796ba 100644
+--- a/magic/Magdir/python
++++ b/magic/Magdir/python
+@@ -43,20 +43,24 @@
+ # from module.submodule import func1, func2
+ 0	regex	\^from\\s+(\\w|\\.)+\\s+import.*$	Python script text executable
+ !:mime text/x-python
++!:strength + 15
+ 
+ # def __init__ (self, ...):
+ 0	search/4096	def\ __init__
+ >&0	search/64 self	Python script text executable
+ !:mime text/x-python
++!:strength + 15
+ 
+ # comments
+-#0	search/4096	'''
+-#>&0	regex	.*'''$	Python script text executable
+-#!:mime text/x-python
++0	search/4096	'''
++>&0	regex	.*'''$	Python script text executable
++!:mime text/x-python
++!:strength + 15
+ 
+-#0	search/4096	"""
+-#>&0	regex	.*"""$	Python script text executable
+-#!:mime text/x-python
++0	search/4096	"""
++>&0	regex	.*"""$	Python script text executable
++!:mime text/x-python
++!:strength + 15
+ 
+ # try:
+ # except: or finally:
+@@ -66,8 +70,10 @@
+ !:mime text/x-python
+ >&0	search/4096	finally:	Python script text executable
+ !:mime text/x-python
++!:strength + 15
+ 
+ # def name(args, args):
+-0	regex	 \^(\ |\\t){0,50}def\ {1,50}[a-zA-Z]{1,100}
+->&0	regex	\ {0,50}\\(([a-zA-Z]|,|\ ){1,255}\\):$ Python script text executable
++0	regex	 \^(\ |\\t)*def\ +[a-zA-Z]+
++>&0	regex	\ *\\(([a-zA-Z]|,|\ )*\\):$ Python script text executable
+ !:mime text/x-python
++!:strength + 15
+-- 
+2.5.5
+
