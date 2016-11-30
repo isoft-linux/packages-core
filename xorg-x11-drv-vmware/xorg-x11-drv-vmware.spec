@@ -21,7 +21,9 @@ BuildRequires: xorg-x11-server-devel >= 1.10.99.902
 BuildRequires: libdrm-devel pkgconfig(xext) pkgconfig(x11)
 BuildRequires: mesa-libxatracker-devel >= 8.0.1-4
 BuildRequires: libXfont-devel
-
+#for libudev
+BuildRequires: systemd-devel
+ 
 Requires:  xorg-x11-server-Xorg
 Requires: mesa-libxatracker >= 8.0.1-4
 Requires: Xorg %(xserver-sdk-abi-requires ansic)
