@@ -30,6 +30,7 @@ BuildRequires: libdrm-devel >= 2.4.62-3
 BuildRequires: systemd-devel
 
 BuildRequires: libXfont-devel
+BuildRequires: libXfont2-devel
 
 BuildRequires: xcb-util
 Requires: xorg-x11-server-Xorg >= 1.1.0-1
