@@ -56,6 +56,7 @@ BuildRequires: glib2-devel
 BuildRequires: libtool
 BuildRequires: libudev-devel
 BuildRequires: libXfont-devel
+BuildRequires: libXfont2-devel
 
 Requires: Xorg %(xserver-sdk-abi-requires ansic)
 Requires: Xorg %(xserver-sdk-abi-requires videodrv)
