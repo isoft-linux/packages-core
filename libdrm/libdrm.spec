@@ -1,6 +1,6 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.73
+Version: 2.4.74
 Release: 2
 License: MIT
 URL: http://dri.sourceforge.net
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_bindir}/random
 
 %changelog
+* Wed Nov 30 2016 cjacker - 2.4.74-2
+- Update
+
 * Tue Nov 29 2016 cjacker - 2.4.73-2
 - Update
 
