@@ -39,6 +39,7 @@ BuildRequires: libxcb-devel >= 1.5
 BuildRequires: xcb-util-devel
 BuildRequires: cairo-devel
 BuildRequires: python
+BuildRequires: libXfont2-devel
 
 Requires: xorg-x11-server-Xorg >= 1.1.0-1
 Requires: polkit
