@@ -31,7 +31,7 @@
 
 Name: llvm
 Version: 3.9.0
-Release: 5 
+Release: 6
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -506,7 +506,7 @@ cp -r utils/vim/syntax %{buildroot}%{_datadir}/vim/vimfiles
 mkdir -p %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
 install -m 0644 utils/emacs/llvm-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
 install -m 0644 utils/emacs/tablegen-mode.el %{buildroot}%{_datadir}/emacs/site-lisp
-#install -m 0644 %{SOURCE30} %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
+install -m 0644 %{SOURCE30} %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d
 
 rm -rf %{buildroot}/usr/docs
 rm -rf %{buildroot}%{_bindir}/c-index-test
@@ -614,7 +614,7 @@ exit 0
 #emacs files for .ll IR and .tb tablegen files.
 #but not own dirs, it's belong to vim.
 %{_datadir}/emacs/site-lisp/*.el
-#%{_datadir}/emacs/site-lisp/site-start.d/*.el
+%{_datadir}/emacs/site-lisp/site-start.d/*.el
 
 
 %files -n libllvm 
@@ -799,6 +799,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Wed Nov 30 2016 sulit - 3.9.0-6
+- recovery llvm-init.el, file-libs sometimes cause rpmbuild segmentation fault
+
 * Mon Nov 21 2016 sulit <sulitsrc@gmail.com> - 3.9.0-5
 - rebuild
 - remove /usr/share/emacs/site-lisp/site-start.d/llvm-init.el, it cause rpmbuild
