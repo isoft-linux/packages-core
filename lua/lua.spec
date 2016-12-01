@@ -1,7 +1,7 @@
 %global major_version 5.3
 Name:           lua
-Version:        %{major_version}.1
-Release:        2 
+Version:        %{major_version}.3
+Release:        1
 Summary:        Powerful light-weight programming language
 License:        MIT
 URL:            http://www.lua.org/
@@ -96,6 +96,9 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/lua/%{major_version}
 
 
 %changelog
+* Thu Dec 01 2016 sulit - 5.3.3-1
+- upgrade lua to 5.3.3
+
 * Fri Oct 23 2015 cjacker - 5.3.1-2
 - Rebuild for new 4.0 release
 
