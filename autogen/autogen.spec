@@ -1,7 +1,7 @@
 Summary:	Automated text file generator
 Name:		autogen
-Version:	5.18.4
-Release:    2
+Version:	5.18.12
+Release:    1
 License:	GPLv3+
 URL:		http://www.gnu.org/software/autogen/
 Source0:	ftp://ftp.gnu.org/gnu/autogen/rel%{version}/%{name}-%{version}.tar.xz
@@ -109,6 +109,9 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %{_includedir}/autoopts/usage-txt.h
 
 %changelog
+* Fri Dec 02 2016 sulit - 5.18.12-1
+- upgrade autogen to 5.18.12
+
 * Fri Oct 23 2015 cjacker - 5.18.4-2
 - Rebuild for new 4.0 release
 
