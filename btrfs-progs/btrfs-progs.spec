@@ -1,6 +1,6 @@
 Name:		btrfs-progs
-Version:    4.0.1 
-Release:	2
+Version:    4.8.5
+Release:	1
 Summary:	Userspace programs for btrfs
 
 License:	GPLv2
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libbtrfs.a
 
 %changelog
+* Fri Dec 02 2016 sulit - 4.8.5-1
+- upgrade btrfs-progs to 4.8.5
+
 * Fri Oct 23 2015 cjacker - 4.0.1-2
 - Rebuild for new 4.0 release
 
