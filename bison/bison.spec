@@ -1,7 +1,7 @@
 Summary: A GNU general-purpose parser generator
 Name: bison
-Version: 3.0.2 
-Release: 5
+Version: 3.0.4
+Release: 1
 License: GPLv2+
 Source: ftp://ftp.gnu.org/pub/gnu/bison/bison-%{version}.tar.xz
 URL: http://www.gnu.org/software/bison/
@@ -70,6 +70,9 @@ make check
 %clean
 rm -rf $RPM_BUILD_ROOT
 %changelog
+* Fri Dec 02 2016 sulit - 3.0.4-1
+- update bison to 3.0.4
+
 * Fri Oct 23 2015 cjacker - 3.0.2-5
 - Rebuild for new 4.0 release
 
