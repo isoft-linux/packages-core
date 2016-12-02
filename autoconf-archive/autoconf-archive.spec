@@ -1,6 +1,6 @@
 Name: autoconf-archive
-Version: 2015.09.25
-Release: 2
+Version: 2016.09.16
+Release: 1
 Summary: A collection of more than 500 macros for GNU Autoconf 
 
 License:        GPLv3+ with exceptions
@@ -39,6 +39,9 @@ rm -frv %{buildroot}%{_datadir}/%{name}
 %{_datadir}/aclocal/*.m4
 
 %changelog
+* Fri Dec 02 2016 sulit - 2016.09.16-1
+- upgrade autoconf-archive to 2016.09.16
+
 * Thu Nov 26 2015 Cjacker <cjacker@foxmail.com> - 2015.09.25-2
 - Initial build
 
