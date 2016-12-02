@@ -100,7 +100,7 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %{_datadir}/aclocal/autoopts.m4
 #%{_datadir}/aclocal/liboptschk.m4
 %{_libdir}/libopts.so
-%{_datadir}/pkgconfig/autoopts.pc
+%{_libdir}/pkgconfig/autoopts.pc
 %{_mandir}/man1/autoopts-config.1.gz
 %{_mandir}/man3/*
 
@@ -111,6 +111,7 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %changelog
 * Fri Dec 02 2016 sulit - 5.18.12-1
 - upgrade autogen to 5.18.12
+- pc files locale in /usr/lib now
 
 * Fri Oct 23 2015 cjacker - 5.18.4-2
 - Rebuild for new 4.0 release
