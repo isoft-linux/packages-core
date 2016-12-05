@@ -61,13 +61,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/btrfs-map-logical
 %{_sbindir}/btrfs-zero-log
 %{_sbindir}/btrfs-find-root
-%{_sbindir}/btrfs-show-super
 %{_sbindir}/btrfs-select-super
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 
 %files -n libbtrfs
 %{_libdir}/libbtrfs.so.0*
+%{_libdir}/udev/rules.d/64-btrfs-dm.rules
 
 %files -n libbtrfs-devel
 %{_includedir}/*
