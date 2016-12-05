@@ -1,17 +1,12 @@
-%global commit 94fdb47af528d24a08f1549efe7ab79bcdc5f878
-%global commitdate 20150215
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global gitversion .git%{commitdate}.%{shortcommit}
-
 Summary: Enumerate OpenCL platforms and devices
 Name:    clinfo
-Version: 0.1
-Release: 0.8%{?gitversion}%{?dist}
+Version: 2.1.16.01.12
+Release: 1%{?dist}
 License: Public Domain
 URL:     https://github.com/Oblomov/clinfo
 
 %global tarball %{name}-%{gitversion}.tar.gz
-Source0: https://github.com/Oblomov/%{name}/archive/%{commit}/%{name}-%{version}-%{shortcommit}.tar.gz
+Source0: %{url}/%{name}/archive/%{version}.tar.gz
 
 BuildRequires: opencl-headers ocl-icd-devel
 
@@ -26,7 +21,7 @@ platforms).
 
 
 %prep
-%setup -q -n %{name}-%{commit}
+%autosetup
 
 
 %build
@@ -49,6 +44,9 @@ mkdir -p %{buildroot}/%{_mandir}/man1
 %{_mandir}/man1/clinfo.1.gz
 
 %changelog
+* Mon Dec 05 2016 sulit - 2.1.16.01.12-1
+- update clinfo to 2.1.16.01.12, rename clinfo versioin name
+
 * Fri Oct 23 2015 cjacker - 0.1-0.8.git20150215.94fdb47
 - Rebuild for new 4.0 release
 
