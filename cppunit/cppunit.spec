@@ -1,6 +1,6 @@
 Name: cppunit
-Version: 1.12.1
-Release: 10%{?dist}
+Version: 1.13.2
+Release: 1%{?dist}
 
 Summary: C++ unit testing framework
 # no license in files
@@ -100,6 +100,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc/html
 
 %changelog
+* Mon Dec 05 2016 sulit - 1.13.2-1
+- upgrade cppunit to 1.13.2
+
 * Fri Oct 23 2015 cjacker - 1.12.1-10
 - Rebuild for new 4.0 release
 
