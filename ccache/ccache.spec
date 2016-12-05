@@ -12,8 +12,8 @@
 %global relccache %(%abs2rel %{_bindir}/ccache %{_libdir}/ccache)
 
 Name:           ccache
-Version:        3.2.3
-Release:        4%{?dist}
+Version:        3.3.3
+Release:        1%{?dist}
 Summary:        C/C++ compiler cache
 
 License:        GPLv3+
@@ -218,6 +218,9 @@ getent group ccache >/dev/null || groupadd -r ccache || :
 
 
 %changelog
+* Mon Dec 05 2016 sulit - 3.3.3-1
+- upgrade ccache to 3.3.3
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 3.2.3-4
 - Rebuild, require compiler-wrapper
 
