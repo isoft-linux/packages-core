@@ -1,5 +1,5 @@
 Name: cmake
-Version: 3.6.1
+Version: 3.7.1
 Release: 1 
 Summary: Cross-platform make system
 
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/aclocal/cmake.m4
 
 %changelog
+* Mon Dec 05 2016 sulit - 3.7.1-1
+- upgrade cmake to 3.7.1
+
 * Wed Sep 07 2016 sulit <sulitsrc@gmail.com> - 3.6.1-1
 - upgrade cmake to 3.6.1
 

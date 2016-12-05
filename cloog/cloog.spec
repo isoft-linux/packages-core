@@ -1,7 +1,7 @@
 Name:           cloog
 %global         tarball_name %{name}
-Version:        0.18.3
-Release:        3%{?dist}
+Version:        0.18.4
+Release:        1%{?dist}
 Epoch:		1
 Summary:        The Chunky Loop Generator
 
@@ -14,7 +14,7 @@ URL:            http://www.cloog.org
 #    git clone git://repo.or.cz/cloog.git -b cloog-0.18.3 cloog-0.18.3
 #    tar -cvf cloog-0.18.3.tar.gz cloog-0.18.3
 
-Source0:        cloog-0.18.3.tar.gz
+Source0:        cloog-0.18.4.tar.gz
 
 BuildRequires:  isl-devel >= 0.12
 BuildRequires:  gmp-devel >= 4.1.3
@@ -75,6 +75,9 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/libcloog-isl.la
 
 %changelog
+* Mon Dec 05 2016 sulit - 1:0.18.4-1
+- upgrade cloog to 0.18.4
+
 * Fri Oct 23 2015 cjacker - 1:0.18.3-3
 - Rebuild for new 4.0 release
 
