@@ -1,6 +1,6 @@
 Summary: A set of basic GNU tools commonly used in shell scripts
 Name:    coreutils
-Version: 8.25
+Version: 8.26
 Release: 1
 License: GPLv3+
 Url:     http://www.gnu.org/software/coreutils/
@@ -161,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/locale/*
 
 %changelog
+* Mon Dec 05 2016 sulit - 8.26-1
+- upgrade coreutils to 8.26
+
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 8.25-1
 - update to 8.25
 
