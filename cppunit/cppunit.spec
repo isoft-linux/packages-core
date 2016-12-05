@@ -8,9 +8,6 @@ License: LGPLv2+
 Url: http://cppunit.sourceforge.net/
 Source: http://downloads.sourceforge.net/cppunit/cppunit-%{version}.tar.gz
 Patch0: cppunit-1.12.0-nolibdir.patch
-Patch1: cppunit-msg.patch
-#https://sourceforge.net/tracker/?func=detail&aid=2912630&group_id=11795&atid=311795
-Patch2: cppunit-warnings-sf2912630.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: doxygen
@@ -44,8 +41,6 @@ for file in THANKS ChangeLog NEWS; do
    touch -c -r $file ${file}.utf8
    mv ${file}.utf8 $file
 done
-%patch1 -p1 -b .nomsg
-%patch2 -p1 -b .warnings-sf2912630
 
 %build
 export LDFLAGS=-ldl
