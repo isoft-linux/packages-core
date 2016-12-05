@@ -4,9 +4,9 @@
 
 Summary: A password-checking library
 Name: cracklib
-Version: 2.9.1
-Release: 7%{?dist}
-Source0: http://prdownloads.sourceforge.net/cracklib/cracklib-%{version}.tar.gz
+Version: 2.9.6
+Release: 1%{?dist}
+Source0: https://github.com/cracklib/cracklib/releases/download/%{name}-%{version}/%{name}-%{version}.tar.gz
 
 # Retrieved at 20091201191719Z.
 Source1: http://iweb.dl.sourceforge.net/project/cracklib/cracklib-words/2008-05-07/cracklib-words-20080507.gz
@@ -53,10 +53,9 @@ Source37: pass_file.gz
 Source38: ry-threshold10.txt
 Patch1: cracklib-2.9.1-inttypes.patch
 Patch2: cracklib-2.9.0-python-gzdicts.patch
-Patch3: cracklib-2.9.1-packlib-lookup.patch
-Patch4: cracklib-2.9.1-packlib-reentrant.patch
-Patch6: cracklib-2.9.1-simplistic.patch
-Patch7: cracklib-2.9.1-translation-updates.patch
+Patch4: cracklib-2.9.6-packlib-reentrant.patch
+Patch6: cracklib-2.9.6-simplistic.patch
+Patch7: cracklib-2.9.6-translation-updates.patch
 URL: http://sourceforge.net/projects/cracklib/
 License: LGPLv2+
 Buildroot: %{_tmppath}/%{name}-%{version}-root
@@ -122,7 +121,6 @@ install -p -m 644 %{SOURCE3} po/zh_CN.po
 
 %patch1 -p1 -b .inttypes
 %patch2 -p1 -b .gzdicts
-%patch3 -p1 -b .lookup
 %patch4 -p1 -b .reentrant
 %patch6 -p1 -b .simplistic
 %patch7 -p1 -b .translations
@@ -253,6 +251,9 @@ EOF
 %{_libdir}/python*/site-packages/*.py*
 
 %changelog
+* Mon Dec 05 2016 sulit - 2.9.6-1
+- upgrade cracklib to 2.9.6
+
 * Fri Oct 23 2015 cjacker - 2.9.1-7
 - Rebuild for new 4.0 release
 

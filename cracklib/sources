@@ -3,7 +3,6 @@ c262148af56614d9b33946c4758e101b  cartoon.gz
 5e35a78582c233f8b703f1dabf264788  common-passwords.txt.gz
 d5b23f17981b3dff16532e2b2878dcb8  Congress.gz
 12936e97cc34a28f2efec62e115a60e1  cracklib2_2.8.19-1.debian.tar.gz
-90536219c520add2ceb3c26f0d7da404  cracklib-2.9.1.tar.gz
 7fa6ba0cd50e7f9ccaf4707c810b14f1  cracklib-words-20080507.gz
 176684d648b795c599e2125ade7fbe10  Domains.gz
 bc7edfe2cc34e80b1a74753b1f215c73  Dosref.gz
@@ -29,3 +28,4 @@ a2bd31ce25a3057b61d2e5a1182d93a9  sf.gz
 15ec61296de799eaa8111cfabbcbb44f  shakespeare.gz
 c03b38448aefcde059e6fcfb20784f2c  surnames.finnish.gz
 d2af1d5bfb80515129632a5d5cd106f7  Trek.gz
+c52f463585d85924b28cdc1e373ae06d  cracklib-2.9.6.tar.gz

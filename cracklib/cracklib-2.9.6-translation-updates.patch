@@ -1,6 +1,6 @@
-diff -up cracklib-2.9.1/po/as.po.translations cracklib-2.9.1/po/as.po
---- cracklib-2.9.1/po/as.po.translations	2013-12-09 09:34:43.044969070 +0100
-+++ cracklib-2.9.1/po/as.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/as.po.translations cracklib-2.9.6/po/as.po
+--- cracklib-2.9.6/po/as.po.translations	2015-10-22 18:24:54.374118684 +0200
++++ cracklib-2.9.6/po/as.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,82 +1,83 @@
  # Copyright (C) 2009 Free Software Foundation, Inc.
  # This file is distributed under the same license as the PACKAGE package.
@@ -12,7 +12,7 @@ diff -up cracklib-2.9.1/po/as.po.translations cracklib-2.9.1/po/as.po
  msgstr ""
  "Project-Id-Version: \n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-12 11:39+0530\n"
 -"Last-Translator: Amitakhya Phukan <aphukan@fedoraproject.org>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -112,9 +112,9 @@ diff -up cracklib-2.9.1/po/as.po.translations cracklib-2.9.1/po/as.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "শব্দকোষ ল'ড কৰোতে ত্ৰুটি"
-diff -up cracklib-2.9.1/po/bn_IN.po.translations cracklib-2.9.1/po/bn_IN.po
---- cracklib-2.9.1/po/bn_IN.po.translations	2013-12-09 09:34:43.044969070 +0100
-+++ cracklib-2.9.1/po/bn_IN.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/bn_IN.po.translations cracklib-2.9.6/po/bn_IN.po
+--- cracklib-2.9.6/po/bn_IN.po.translations	2015-10-22 18:24:54.374118684 +0200
++++ cracklib-2.9.6/po/bn_IN.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,83 +1,84 @@
  # translation of cracklib.po to Bengali INDIA
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -127,7 +127,7 @@ diff -up cracklib-2.9.1/po/bn_IN.po.translations cracklib-2.9.1/po/bn_IN.po
  msgstr ""
  "Project-Id-Version: cracklib.default.cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-11 12:34+0530\n"
 -"Last-Translator: Runa Bhattacharjee <runab@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -227,9 +227,9 @@ diff -up cracklib-2.9.1/po/bn_IN.po.translations cracklib-2.9.1/po/bn_IN.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "অভিধান লোড হতে সমস্যা"
-diff -up cracklib-2.9.1/po/de.po.translations cracklib-2.9.1/po/de.po
---- cracklib-2.9.1/po/de.po.translations	2013-12-09 09:34:43.044969070 +0100
-+++ cracklib-2.9.1/po/de.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/de.po.translations cracklib-2.9.6/po/de.po
+--- cracklib-2.9.6/po/de.po.translations	2015-10-22 18:24:54.375118708 +0200
++++ cracklib-2.9.6/po/de.po	2014-07-09 17:24:45.000000000 +0200
 @@ -4,82 +4,82 @@
  # Antje Faber <afaber@suse.de>, 2000-2003.
  # Karl Eichwalder <ke@suse.de>, 1999-2003.
@@ -240,7 +240,7 @@ diff -up cracklib-2.9.1/po/de.po.translations cracklib-2.9.1/po/de.po
  msgstr ""
  "Project-Id-Version: new\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2003-11-27 18:31GMT\n"
 -"Last-Translator: Novell Language <language@novell.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -341,9 +341,9 @@ diff -up cracklib-2.9.1/po/de.po.translations cracklib-2.9.1/po/de.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "Fehler beim Laden des Wörterbuches"
-diff -up cracklib-2.9.1/po/es.po.translations cracklib-2.9.1/po/es.po
---- cracklib-2.9.1/po/es.po.translations	2013-12-09 09:34:43.044969070 +0100
-+++ cracklib-2.9.1/po/es.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/es.po.translations cracklib-2.9.6/po/es.po
+--- cracklib-2.9.6/po/es.po.translations	2015-10-22 18:24:54.375118708 +0200
++++ cracklib-2.9.6/po/es.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,81 +1,82 @@
  # translation of cracklib.po to
  # This file is put in the public domain.
@@ -354,7 +354,7 @@ diff -up cracklib-2.9.1/po/es.po.translations cracklib-2.9.1/po/es.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2005-06-23 13:17+02:00\n"
 -"Last-Translator: Novell Language <language@novell.com>\n"
 -"Language-Team:  Novell Language <language@novell.com>\n"
@@ -458,9 +458,9 @@ diff -up cracklib-2.9.1/po/es.po.translations cracklib-2.9.1/po/es.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "Error al cargar el diccionario"
-diff -up cracklib-2.9.1/po/fr.po.translations cracklib-2.9.1/po/fr.po
---- cracklib-2.9.1/po/fr.po.translations	2013-12-09 09:34:43.045969092 +0100
-+++ cracklib-2.9.1/po/fr.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/fr.po.translations cracklib-2.9.6/po/fr.po
+--- cracklib-2.9.6/po/fr.po.translations	2015-10-22 18:24:54.375118708 +0200
++++ cracklib-2.9.6/po/fr.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,81 +1,82 @@
  # translation of cracklib.po to Français
  # This file is put in the public domain.
@@ -471,7 +471,7 @@ diff -up cracklib-2.9.1/po/fr.po.translations cracklib-2.9.1/po/fr.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2005-06-23 13:17+02:00\n"
 +"Report-Msgid-Bugs-To: \n"
 +"POT-Creation-Date: 2012-12-14 16:11-0600\n"
@@ -571,9 +571,9 @@ diff -up cracklib-2.9.1/po/fr.po.translations cracklib-2.9.1/po/fr.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "erreur lors du chargement du dictionnaire"
-diff -up cracklib-2.9.1/po/gu.po.translations cracklib-2.9.1/po/gu.po
---- cracklib-2.9.1/po/gu.po.translations	2013-12-09 09:34:43.045969092 +0100
-+++ cracklib-2.9.1/po/gu.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/gu.po.translations cracklib-2.9.6/po/gu.po
+--- cracklib-2.9.6/po/gu.po.translations	2015-10-22 18:24:54.375118708 +0200
++++ cracklib-2.9.6/po/gu.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,84 +1,85 @@
  # translation of cracklib.default.cracklib.gu.po to Gujarati
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -586,7 +586,7 @@ diff -up cracklib-2.9.1/po/gu.po.translations cracklib-2.9.1/po/gu.po
  msgstr ""
  "Project-Id-Version: cracklib.default.cracklib.gu\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-10-22 18:13+0530\n"
 -"Last-Translator: Ankit Patel <ankit@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -688,9 +688,9 @@ diff -up cracklib-2.9.1/po/gu.po.translations cracklib-2.9.1/po/gu.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "શબ્દકોષને લાવી રહ્યા હોય ત્યારે ભૂલ"
-diff -up cracklib-2.9.1/po/hi.po.translations cracklib-2.9.1/po/hi.po
---- cracklib-2.9.1/po/hi.po.translations	2013-12-09 09:34:43.045969092 +0100
-+++ cracklib-2.9.1/po/hi.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/hi.po.translations cracklib-2.9.6/po/hi.po
+--- cracklib-2.9.6/po/hi.po.translations	2015-10-22 18:24:54.376118732 +0200
++++ cracklib-2.9.6/po/hi.po	2014-07-09 17:24:45.000000000 +0200
 @@ -2,84 +2,85 @@
  # Hindi translations for cracklib package.
  # Copyright (C) 2009, 2010 Free Software Foundation, Inc.
@@ -703,7 +703,7 @@ diff -up cracklib-2.9.1/po/hi.po.translations cracklib-2.9.1/po/hi.po
  msgstr ""
  "Project-Id-Version: cracklib.default.cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2010-04-06 12:21+0530\n"
 -"Last-Translator: Rajesh Ranjan <rranjan@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -804,9 +804,9 @@ diff -up cracklib-2.9.1/po/hi.po.translations cracklib-2.9.1/po/hi.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "शब्दकोश लोड करने में त्रुटि"
-diff -up cracklib-2.9.1/po/it.po.translations cracklib-2.9.1/po/it.po
---- cracklib-2.9.1/po/it.po.translations	2013-12-09 09:34:43.045969092 +0100
-+++ cracklib-2.9.1/po/it.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/it.po.translations cracklib-2.9.6/po/it.po
+--- cracklib-2.9.6/po/it.po.translations	2015-10-22 18:24:54.376118732 +0200
++++ cracklib-2.9.6/po/it.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,81 +1,82 @@
  # SOME DESCRIPTIVE TITLE.
  # This file is put in the public domain.
@@ -817,7 +817,7 @@ diff -up cracklib-2.9.1/po/it.po.translations cracklib-2.9.1/po/it.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2005-06-23 13:15+02:00\n"
 -"Last-Translator: Novell Language <language@novell.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -918,9 +918,9 @@ diff -up cracklib-2.9.1/po/it.po.translations cracklib-2.9.1/po/it.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "errore nel caricare il dizionario"
-diff -up cracklib-2.9.1/po/ja.po.translations cracklib-2.9.1/po/ja.po
---- cracklib-2.9.1/po/ja.po.translations	2013-12-09 09:34:43.046969115 +0100
-+++ cracklib-2.9.1/po/ja.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/ja.po.translations cracklib-2.9.6/po/ja.po
+--- cracklib-2.9.6/po/ja.po.translations	2015-10-22 18:24:54.376118732 +0200
++++ cracklib-2.9.6/po/ja.po	2014-07-09 17:24:45.000000000 +0200
 @@ -2,80 +2,82 @@
  # Copyright (C) YEAR Free Software Foundation, Inc.
  # This file is distributed under the same license as the PACKAGE package.
@@ -931,7 +931,7 @@ diff -up cracklib-2.9.1/po/ja.po.translations cracklib-2.9.1/po/ja.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2005-08-18 11:52-0000\n"
 -"Last-Translator: Novell Language <language@novell.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1030,9 +1030,9 @@ diff -up cracklib-2.9.1/po/ja.po.translations cracklib-2.9.1/po/ja.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "辞書の読み込み中二エラーが発生しました"
-diff -up cracklib-2.9.1/po/kn.po.translations cracklib-2.9.1/po/kn.po
---- cracklib-2.9.1/po/kn.po.translations	2013-12-09 09:34:43.046969115 +0100
-+++ cracklib-2.9.1/po/kn.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/kn.po.translations cracklib-2.9.6/po/kn.po
+--- cracklib-2.9.6/po/kn.po.translations	2015-10-22 18:24:54.376118732 +0200
++++ cracklib-2.9.6/po/kn.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,83 +1,84 @@
  # translation of cracklib.po to Kannada
  # Copyright (C) 2008 Free Software Foundation, Inc.
@@ -1045,7 +1045,7 @@ diff -up cracklib-2.9.1/po/kn.po.translations cracklib-2.9.1/po/kn.po
  msgstr ""
 -"Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2008-12-11 11:49+0530\n"
 +"Project-Id-Version: PACKAGE VERSION\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1147,9 +1147,9 @@ diff -up cracklib-2.9.1/po/kn.po.translations cracklib-2.9.1/po/kn.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "ಕೋಶವನ್ನು ಲೋಡ್ ಮಾಡುವಲ್ಲಿ ದೋಷ"
-diff -up cracklib-2.9.1/po/ko.po.translations cracklib-2.9.1/po/ko.po
---- cracklib-2.9.1/po/ko.po.translations	2013-12-09 09:34:43.046969115 +0100
-+++ cracklib-2.9.1/po/ko.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/ko.po.translations cracklib-2.9.6/po/ko.po
+--- cracklib-2.9.6/po/ko.po.translations	2015-10-22 18:24:54.377118756 +0200
++++ cracklib-2.9.6/po/ko.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,83 +1,84 @@
  # translation of cracklib.default.po to Korean
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -1162,7 +1162,7 @@ diff -up cracklib-2.9.1/po/ko.po.translations cracklib-2.9.1/po/ko.po
  msgstr ""
  "Project-Id-Version: cracklib.default\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-18 11:19+1000\n"
 -"Last-Translator: Eunju Kim <eukim@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1263,9 +1263,9 @@ diff -up cracklib-2.9.1/po/ko.po.translations cracklib-2.9.1/po/ko.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "사전을 불러오는 도중 오류 발생 "
-diff -up cracklib-2.9.1/po/ml.po.translations cracklib-2.9.1/po/ml.po
---- cracklib-2.9.1/po/ml.po.translations	2013-12-09 09:34:43.046969115 +0100
-+++ cracklib-2.9.1/po/ml.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/ml.po.translations cracklib-2.9.6/po/ml.po
+--- cracklib-2.9.6/po/ml.po.translations	2015-10-22 18:24:54.377118756 +0200
++++ cracklib-2.9.6/po/ml.po	2014-07-09 17:24:45.000000000 +0200
 @@ -2,81 +2,82 @@
  # Copyright (C) 2009 Free Software Foundation, Inc.
  # This file is distributed under the same license as the cracklib package.
@@ -1276,7 +1276,7 @@ diff -up cracklib-2.9.1/po/ml.po.translations cracklib-2.9.1/po/ml.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-11 14:46+0530\n"
 -"Last-Translator: Ani Peter <apeter@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1376,9 +1376,9 @@ diff -up cracklib-2.9.1/po/ml.po.translations cracklib-2.9.1/po/ml.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "നിഘണ്ടു ലഭ്യമാക്കുന്നതില്‍ പിശക്"
-diff -up cracklib-2.9.1/po/mr.po.translations cracklib-2.9.1/po/mr.po
---- cracklib-2.9.1/po/mr.po.translations	2013-12-09 09:34:43.047969137 +0100
-+++ cracklib-2.9.1/po/mr.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/mr.po.translations cracklib-2.9.6/po/mr.po
+--- cracklib-2.9.6/po/mr.po.translations	2015-10-22 18:24:54.377118756 +0200
++++ cracklib-2.9.6/po/mr.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,83 +1,84 @@
  # translation of cracklib.default.cracklib.po to Marathi
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -1391,7 +1391,7 @@ diff -up cracklib-2.9.1/po/mr.po.translations cracklib-2.9.1/po/mr.po
  msgstr ""
 -"Project-Id-Version: cracklib.default.cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-11 12:24+0530\n"
 +"Project-Id-Version: PACKAGE VERSION\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1491,9 +1491,9 @@ diff -up cracklib-2.9.1/po/mr.po.translations cracklib-2.9.1/po/mr.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "शब्दकोष लोड करतेवेळी त्रुटी"
-diff -up cracklib-2.9.1/po/or.po.translations cracklib-2.9.1/po/or.po
---- cracklib-2.9.1/po/or.po.translations	2013-12-09 09:34:43.047969137 +0100
-+++ cracklib-2.9.1/po/or.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/or.po.translations cracklib-2.9.6/po/or.po
+--- cracklib-2.9.6/po/or.po.translations	2015-10-22 18:24:54.377118756 +0200
++++ cracklib-2.9.6/po/or.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,84 +1,85 @@
  # translation of cracklib.default.cracklib.or.po to Oriya
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -1506,7 +1506,7 @@ diff -up cracklib-2.9.1/po/or.po.translations cracklib-2.9.1/po/or.po
  msgstr ""
  "Project-Id-Version: cracklib.default.cracklib.or\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-12 13:02+0530\n"
 -"Last-Translator: Manoj Kumar Giri <mgiri@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1608,9 +1608,9 @@ diff -up cracklib-2.9.1/po/or.po.translations cracklib-2.9.1/po/or.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "ଅଭିଧାନ ଧାରଣ କରିବାରେ ତ୍ରୁଟି"
-diff -up cracklib-2.9.1/po/pa.po.translations cracklib-2.9.1/po/pa.po
---- cracklib-2.9.1/po/pa.po.translations	2013-12-09 09:34:43.047969137 +0100
-+++ cracklib-2.9.1/po/pa.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/pa.po.translations cracklib-2.9.6/po/pa.po
+--- cracklib-2.9.6/po/pa.po.translations	2015-10-22 18:24:54.378118779 +0200
++++ cracklib-2.9.6/po/pa.po	2014-07-09 17:24:45.000000000 +0200
 @@ -2,84 +2,85 @@
  # translation of cracklib.po to Panjabi
  # Copyright (C) 2005 Free Software Foundation, Inc.
@@ -1624,7 +1624,7 @@ diff -up cracklib-2.9.1/po/pa.po.translations cracklib-2.9.1/po/pa.po
  msgstr ""
  "Project-Id-Version: cracklib.pa\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-17 05:52+0530\n"
 -"Last-Translator: A S Alam <aalam@users.sf.net>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1724,9 +1724,9 @@ diff -up cracklib-2.9.1/po/pa.po.translations cracklib-2.9.1/po/pa.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "ਸ਼ਬਦ-ਕੋਸ਼ ਲੋਡ ਕਰਨ ਵੇਲੇ ਗਲਤੀ"
-diff -up cracklib-2.9.1/po/pt_BR.po.translations cracklib-2.9.1/po/pt_BR.po
---- cracklib-2.9.1/po/pt_BR.po.translations	2013-12-09 09:34:43.047969137 +0100
-+++ cracklib-2.9.1/po/pt_BR.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/pt_BR.po.translations cracklib-2.9.6/po/pt_BR.po
+--- cracklib-2.9.6/po/pt_BR.po.translations	2015-10-22 18:24:54.378118779 +0200
++++ cracklib-2.9.6/po/pt_BR.po	2014-07-09 17:24:45.000000000 +0200
 @@ -2,80 +2,82 @@
  # Copyright (C) YEAR Free Software Foundation, Inc.
  # This file is distributed under the same license as the PACKAGE package.
@@ -1737,7 +1737,7 @@ diff -up cracklib-2.9.1/po/pt_BR.po.translations cracklib-2.9.1/po/pt_BR.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2005-08-18 15:02+0000\n"
 -"Last-Translator: Novell Language <language@novell.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1837,9 +1837,9 @@ diff -up cracklib-2.9.1/po/pt_BR.po.translations cracklib-2.9.1/po/pt_BR.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "erro ao carregar dicionário"
-diff -up cracklib-2.9.1/po/ru.po.translations cracklib-2.9.1/po/ru.po
---- cracklib-2.9.1/po/ru.po.translations	2013-12-09 09:34:43.048969160 +0100
-+++ cracklib-2.9.1/po/ru.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/ru.po.translations cracklib-2.9.6/po/ru.po
+--- cracklib-2.9.6/po/ru.po.translations	2015-10-22 18:24:54.378118779 +0200
++++ cracklib-2.9.6/po/ru.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,85 +1,86 @@
  # translation of cracklib.pot to Russian
  # Copyright (C) 2008, 2009
@@ -1853,7 +1853,7 @@ diff -up cracklib-2.9.1/po/ru.po.translations cracklib-2.9.1/po/ru.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-12-03 10:17+1100\n"
 -"Last-Translator: Yulia <ypoyarko@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -1960,9 +1960,9 @@ diff -up cracklib-2.9.1/po/ru.po.translations cracklib-2.9.1/po/ru.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "ошибка при загрузке словаря"
-diff -up cracklib-2.9.1/po/ta.po.translations cracklib-2.9.1/po/ta.po
---- cracklib-2.9.1/po/ta.po.translations	2013-12-09 09:34:43.048969160 +0100
-+++ cracklib-2.9.1/po/ta.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/ta.po.translations cracklib-2.9.6/po/ta.po
+--- cracklib-2.9.6/po/ta.po.translations	2015-10-22 18:24:54.378118779 +0200
++++ cracklib-2.9.6/po/ta.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,83 +1,84 @@
  # translation of cracklib.default.cracklib.po to Tamil
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -1975,7 +1975,7 @@ diff -up cracklib-2.9.1/po/ta.po.translations cracklib-2.9.1/po/ta.po
  msgstr ""
  "Project-Id-Version: cracklib.default.cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-11 14:21+0530\n"
 -"Last-Translator: I. Felix <ifelix@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -2075,9 +2075,9 @@ diff -up cracklib-2.9.1/po/ta.po.translations cracklib-2.9.1/po/ta.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "அகராதியை ஏற்றுவதில் பிழை"
-diff -up cracklib-2.9.1/po/te.po.translations cracklib-2.9.1/po/te.po
---- cracklib-2.9.1/po/te.po.translations	2013-12-09 09:34:43.048969160 +0100
-+++ cracklib-2.9.1/po/te.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/te.po.translations cracklib-2.9.6/po/te.po
+--- cracklib-2.9.6/po/te.po.translations	2015-10-22 18:24:54.379118803 +0200
++++ cracklib-2.9.6/po/te.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,84 +1,85 @@
  # translation of cracklib.pot to Telugu
  # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -2090,7 +2090,7 @@ diff -up cracklib-2.9.1/po/te.po.translations cracklib-2.9.1/po/te.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2009-11-11 15:13+0530\n"
 -"Last-Translator: Krishna Babu K <kkrothap@redhat.com>\n"
 +"Report-Msgid-Bugs-To: \n"
@@ -2191,9 +2191,9 @@ diff -up cracklib-2.9.1/po/te.po.translations cracklib-2.9.1/po/te.po
  msgid "error loading dictionary"
 -msgstr ""
 +msgstr "నిఘంటువును లోడు చేయుటలో దోషం"
-diff -up cracklib-2.9.1/po/zh_CN.po.translations cracklib-2.9.1/po/zh_CN.po
---- cracklib-2.9.1/po/zh_CN.po.translations	2011-07-26 11:55:29.000000000 +0200
-+++ cracklib-2.9.1/po/zh_CN.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/zh_CN.po.translations cracklib-2.9.6/po/zh_CN.po
+--- cracklib-2.9.6/po/zh_CN.po.translations	2011-07-26 11:55:29.000000000 +0200
++++ cracklib-2.9.6/po/zh_CN.po	2014-07-09 17:24:45.000000000 +0200
 @@ -1,78 +1,84 @@
  # translation of cracklib.default.po to Wei Liu
  # Copyright (C) 2010 Free Software Foundation, Inc.
@@ -2297,9 +2297,9 @@ diff -up cracklib-2.9.1/po/zh_CN.po.translations cracklib-2.9.1/po/zh_CN.po
 +#: ../lib/fascist.c:867
 +msgid "error loading dictionary"
 +msgstr "载入字典出错"
-diff -up cracklib-2.9.1/po/zh_TW.po.translations cracklib-2.9.1/po/zh_TW.po
---- cracklib-2.9.1/po/zh_TW.po.translations	2013-12-09 09:34:43.048969160 +0100
-+++ cracklib-2.9.1/po/zh_TW.po	2013-12-02 09:40:11.000000000 +0100
+diff -up cracklib-2.9.6/po/zh_TW.po.translations cracklib-2.9.6/po/zh_TW.po
+--- cracklib-2.9.6/po/zh_TW.po.translations	2015-10-22 18:24:54.379118803 +0200
++++ cracklib-2.9.6/po/zh_TW.po	2014-07-09 17:24:45.000000000 +0200
 @@ -2,80 +2,82 @@
  # Copyright (C) YEAR Free Software Foundation, Inc.
  # This file is distributed under the same license as the PACKAGE package.
@@ -2310,7 +2310,7 @@ diff -up cracklib-2.9.1/po/zh_TW.po.translations cracklib-2.9.1/po/zh_TW.po
  msgstr ""
  "Project-Id-Version: cracklib\n"
 -"Report-Msgid-Bugs-To: cracklib-devel@lists.sourceforge.net\n"
--"POT-Creation-Date: 2013-12-06 07:51-0600\n"
+-"POT-Creation-Date: 2015-08-18 13:45-0500\n"
 -"PO-Revision-Date: 2005-06-23 12:52+0200\n"
 -"Last-Translator: Novell Language <language@novell.com>\n"
 +"Report-Msgid-Bugs-To: \n"
