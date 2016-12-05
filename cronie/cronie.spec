@@ -3,8 +3,8 @@
 
 Summary:   Cron daemon for executing programs at set times
 Name:      cronie
-Version:   1.5.0
-Release:   3%{?dist}
+Version:   1.5.1
+Release:   1%{?dist}
 License:   MIT and BSD and ISC and GPLv2+
 URL:       https://fedorahosted.org/cronie
 Source0:   https://fedorahosted.org/releases/c/r/cronie/%{name}-%{version}.tar.gz
@@ -183,6 +183,9 @@ exit 0
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/cron.d/dailyjobs
 
 %changelog
+* Mon Dec 05 2016 sulit - 1.5.1-1
+- upgrade cronie to 1.5.1
+
 * Sat Oct 24 2015 Cjacker <cjacker@foxmail.com> - 1.5.0-3
 - Rebuild for new 4.0 release.
 
