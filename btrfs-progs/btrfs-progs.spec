@@ -9,7 +9,7 @@ Source0:	https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/%{name
 
 BuildRequires:	e2fsprogs-devel, libuuid-devel, zlib-devel
 BuildRequires:	libacl-devel, libblkid-devel, lzo-devel
-BuildRequires:  asciidoc
+BuildRequires:  asciidoc xmlto
 Requires:   libbtrfs = %{version}-%{release}
 
 %description
@@ -78,6 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Dec 02 2016 sulit - 4.8.5-1
 - upgrade btrfs-progs to 4.8.5
 - add buildrequires asciidoc
+- add buildrequires xmlto
 
 * Fri Oct 23 2015 cjacker - 4.0.1-2
 - Rebuild for new 4.0 release
