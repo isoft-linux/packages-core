@@ -42,7 +42,7 @@ The header files and dynamic shared libraries of the Chunky Loop Generator.
 %setup -q -n %{tarball_name}-%{version}
 
 %build
-./autogen.sh
+#./autogen.sh
 %configure \
     --with-isl=system \
     --with-isl-prefix=%{_prefix}
@@ -77,6 +77,7 @@ rm -rf %{buildroot}
 %changelog
 * Mon Dec 05 2016 sulit - 1:0.18.4-1
 - upgrade cloog to 0.18.4
+- remove autogen gen configure stage
 
 * Fri Oct 23 2015 cjacker - 1:0.18.3-3
 - Rebuild for new 4.0 release

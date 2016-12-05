@@ -18,6 +18,7 @@ BuildRequires:  jsoncpp-devel
 BuildRequires:  libarchive-devel
 BuildRequires:  python-sphinx
 BuildRequires:  xz-devel
+BuildRequires:  libuv-devel
 
 BuildRequires:  findutils
 
