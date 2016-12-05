@@ -1,7 +1,7 @@
 Summary: Modify rpath of compiled programs
 Name: chrpath
-Version: 0.13
-Release: 4
+Version: 0.16
+Release: 1
 License: GPL+
 URL: ftp://ftp.hungry.com/pub/hungry/chrpath/
 Source0: ftp://ftp.hungry.com/pub/hungry/chrpath/%{name}-%{version}.tar.gz
@@ -33,6 +33,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Dec 05 2016 sulit - 0.16-1
+- upgrade chrpath to 0.16
+
 * Fri Oct 23 2015 cjacker - 0.13-4
 - Rebuild for new 4.0 release
 
