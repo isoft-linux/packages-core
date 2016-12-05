@@ -1,9 +1,9 @@
-%define byaccdate 20140527
+%define byaccdate 20161202
 
 Summary: A public domain Yacc parser generator
 Name: byacc
 Version: 1.9.%{byaccdate}
-Release: 2
+Release: 1
 License: Public Domain
 URL: http://dickey.his.com/byacc/byacc.html
 Source: ftp://invisible-island.net/byacc/byacc-%{byaccdate}.tgz
@@ -42,6 +42,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Dec 05 2016 sulit - 1.9.20161202-1
+- update byacc to version 20161202
+
 * Fri Oct 23 2015 cjacker - 1.9.20140527-2
 - Rebuild for new 4.0 release
 
