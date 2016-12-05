@@ -1,5 +1,5 @@
 Name:		check
-Version:	0.10.1
+Version:	0.10.0
 Release:	1
 Summary:	A unit test framework for C
 Source0:	http://download.sourceforge.net/check/%{name}-%{version}.tar.gz
@@ -81,7 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libcheck.a
 
 %changelog
-* Mon Dec 05 2016 sulit - 0.10.1-1
+* Mon Dec 05 2016 sulit - 0.10.0-1
 - update check to 0.10.0
 
 * Fri Oct 23 2015 cjacker - 0.9.13-3
