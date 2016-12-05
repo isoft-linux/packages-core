@@ -10,12 +10,12 @@ Source: ftp://ftp.gnu.org/gnu/cpio/cpio-%{version}.tar.bz2
 Source1: cpio.1
 Patch1: cpio-2.6-setLocale.patch
 Patch2: cpio-2.9-rh.patch
-Patch3: cpio-2.9-chmodRaceC.patch
 Patch4: cpio-2.9-exitCode.patch
-Patch5: cpio-2.9-dir_perm.patch
 Patch6: cpio-2.9-dev_number.patch
-Patch7: cpio-2.9-sys_umask.patch
 Patch8: cpio-2.9.90-defaultremoteshell.patch
+Patch9: cpio-2.10-patternnamesigsegv.patch
+Patch10: cpio-2.10-longnames-split.patch
+Patch11: cpio-2.11-crc-fips-nit.patch
 BuildRequires: autoconf, gettext
 
 %description
@@ -36,12 +36,12 @@ Install cpio if you need a program to manage file archives.
 %setup -q
 %patch1  -p1 -b .setLocale
 %patch2  -p1 -b .rh
-%patch3  -p1 -b .chmodRaceC
 %patch4  -p1 -b .exitCode
-%patch5  -p1 -b .dir_perm
 %patch6  -p1 -b .dev_number
-%patch7  -p1 -b .sys_umask
 %patch8  -p1 -b .defaultremote
+%patch9  -p1 -b .patternnamesigsegv
+%patch10  -p1 -b .longnames-split
+%patch11  -p1 -b .crc-fips-nit
 
 autoheader
 
@@ -76,6 +76,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Mon Dec 05 2016 sulit - 2.12-1
 - upgrade cpio to 2.12
+- repatch cpio
 
 * Fri Oct 23 2015 cjacker - 2.10-2
 - Rebuild for new 4.0 release
