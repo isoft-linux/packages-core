@@ -17,6 +17,7 @@ Patch9: cpio-2.10-patternnamesigsegv.patch
 Patch10: cpio-2.10-longnames-split.patch
 Patch11: cpio-2.11-crc-fips-nit.patch
 BuildRequires: autoconf, gettext
+BuildRequires: texinfo
 
 %description
 GNU cpio copies files into or out of a cpio or tar archive.  Archives
@@ -77,6 +78,7 @@ rm -rf ${RPM_BUILD_ROOT}
 * Mon Dec 05 2016 sulit - 2.12-1
 - upgrade cpio to 2.12
 - repatch cpio
+- add buildrequires texinfo
 
 * Fri Oct 23 2015 cjacker - 2.10-2
 - Rebuild for new 4.0 release
