@@ -67,7 +67,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n libbtrfs
 %{_libdir}/libbtrfs.so.0*
-%{_libdir}/udev/rules.d/64-btrfs-dm.rules
 
 %files -n libbtrfs-devel
 %{_includedir}/*
