@@ -5,8 +5,9 @@ Release: 1
 License: Freely distributable
 Source: http://waterlan.home.xs4all.nl/%{name}/%{name}-%{version}.tar.gz
 
-Buildroot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: gettext
+Provides: unix2dos = %{version}-%{release}
+Obsoletes: unix2dos < 5.1-1
 
 %description
 Dos2unix converts DOS or MAC text files to UNIX format.
@@ -14,31 +15,26 @@ Dos2unix converts DOS or MAC text files to UNIX format.
 %prep
 %setup -q
 
-for I in *.[ch]; do
-	sed -e 's,#endif.*,#endif,g' -e 's,#else.*,#else,g' $I > $I.new
-	mv -f $I.new $I
-done
-
 %build
-make clean
-make CFLAGS="$RPM_OPT_FLAGS" 
-make link
+make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
+make DESTDIR=$RPM_BUILD_ROOT install
 
-mkdir -p $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1}
-install -m755 dos2unix $RPM_BUILD_ROOT%{_bindir}
-install -m755 mac2unix $RPM_BUILD_ROOT%{_bindir}
-install -m444 dos2unix.1 $RPM_BUILD_ROOT%{_mandir}/man1
-install -m444 mac2unix.1 $RPM_BUILD_ROOT%{_mandir}/man1
+# We add doc files manually to %%doc
+rm -rf $RPM_BUILD_ROOT%{_docdir}
 
-%files
+%find_lang %{name} --with-man --all-name
+
+%files -f %{name}.lang
 %defattr(-,root,root,0755)
-%doc COPYRIGHT
+%doc man/man1/dos2unix.htm  ChangeLog.txt COPYING.txt
+%doc NEWS.txt README.txt TODO.txt
 %{_bindir}/dos2unix
 %{_bindir}/mac2unix
-%{_mandir}/*/*
+%{_bindir}/unix2dos
+%{_bindir}/unix2mac
+%{_mandir}/man1/*.1*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
