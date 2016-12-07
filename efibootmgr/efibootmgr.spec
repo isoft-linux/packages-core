@@ -6,7 +6,8 @@ Release: 1
 License: GPLv2+
 URL: http://linux.dell.com/%{name}/
 BuildRequires: pciutils-devel, zlib-devel
-BuildRequires: popt-devel
+BuildRequires: popt-devel popt
+Requires: popt
 # EFI/UEFI don't exist on PPC
 ExclusiveArch: %{ix86} x86_64 ia64
 
