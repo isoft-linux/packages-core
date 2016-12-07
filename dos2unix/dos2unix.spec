@@ -1,9 +1,9 @@
 Summary: Text file format converter
 Name: dos2unix
-Version: 3.1
-Release: 25.2.1
+Version: 7.3.4
+Release: 1
 License: Freely distributable
-Source: %{name}-%{version}.tar.bz2
+Source: http://waterlan.home.xs4all.nl/%{name}/%{name}-%{version}.tar.gz
 Patch0: %{name}-%{version}.patch
 Patch1: dos2unix-3.1-segfault.patch
 Patch2: dos2unix-3.1-safeconv.patch
@@ -55,6 +55,9 @@ install -m444 mac2unix.1 $RPM_BUILD_ROOT%{_mandir}/man1
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Wed Dec 07 2016 sulit - 7.3.4-1
+- upgrade dos2unix to 7.3.4
+
 * Fri Oct 23 2015 cjacker - 3.1-25.2.1
 - Rebuild for new 4.0 release
 
