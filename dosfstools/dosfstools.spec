@@ -1,7 +1,7 @@
 Name: dosfstools
 Summary: Utilities for making and checking MS-DOS FAT filesystems on Linux
-Version: 3.0.28
-Release: 7
+Version: 4.0
+Release: 1
 License: GPLv3+
 Source0: https://github.com/dosfstools/dosfstools/releases/download/v%{version}/dosfstools-%{version}.tar.xz
 
@@ -32,6 +32,9 @@ rm -rf %{buildroot}
 %{_mandir}/man8/*
 
 %changelog
+* Wed Dec 07 2016 sulit - 4.0-1
+- upgrade dosfstools to 4.0
+
 * Fri Nov 06 2015 Cjacker <cjacker@foxmail.com> - 3.0.28-7
 - Update to 3.0.28, fix mkfs.vfat missing
 
