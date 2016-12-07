@@ -1,7 +1,7 @@
 Summary: A front end for testing other programs
 Name: dejagnu
-Version: 1.5.1
-Release: 4
+Version: 1.6
+Release: 1
 Epoch: 1
 License: GPLv3+
 Source: ftp://ftp.gnu.org/gnu/dejagnu/dejagnu-%{version}.tar.gz
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/dejagnu.h
 
 %changelog
+* Wed Dec 07 2016 sulit - 1:1.6-1
+- upgrade dejagnu to 1.6
+
 * Fri Oct 23 2015 cjacker - 1:1.5.1-4
 - Rebuild for new 4.0 release
 
