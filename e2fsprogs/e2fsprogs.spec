@@ -1,13 +1,14 @@
 Summary: Utilities for managing ext2, ext3, and ext4 filesystems
 Name: e2fsprogs
-Version: 1.42.14
-Release: 8.git
+Version: 1.43.3
+Release: 1
 License: GPLv2
 Url: http://e2fsprogs.sourceforge.net/
 #Source0: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 #git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
-Source0: %{name}.tar.gz
-Patch0: e2fsprogs-enable-e4crypt.patch
+#Source0: %{name}.tar.gz
+Source0: https://www.kernel.org/pub/linux/kernel/people/tytso/%{name}/v%{version}/%{name}-%{version}.tar.xz
+#Patch0: e2fsprogs-enable-e4crypt.patch
 
 Requires: e2fsprogs-libs = %{version}-%{release}
 
@@ -109,8 +110,8 @@ parses a command table to generate a simple command-line interface parser.
 It was originally inspired by the Multics SubSystem library.
 
 %prep
-%setup -q -n %{name}
-%patch0 -p1
+%setup -q
+#%patch0 -p1
 
 %build
 %configure \
@@ -261,6 +262,9 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/ss.pc
 
 %changelog
+* Wed Dec 07 2016 sulit - 1.43.3-1
+- upgrade e2fsprogs to 1.43.3
+
 * Fri Oct 23 2015 cjacker - 1.42.14-8.git
 - Rebuild for new 4.0 release
 
