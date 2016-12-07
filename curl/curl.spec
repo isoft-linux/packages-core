@@ -1,6 +1,6 @@
 Summary: A utility for getting files from remote servers (FTP, HTTP, and others)
 Name:    curl 
-Version: 7.50.1
+Version: 7.51.0
 Release: 1
 License: MIT
 Source0:  http://curl.haxx.se/download/%{name}-%{version}.tar.bz2
@@ -151,6 +151,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man3/*
 
 %changelog
+* Wed Dec 07 2016 sulit - 7.51.0-1
+- upgrade curl to 7.51.0
+
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 7.50.1-1
 - update curl to 7.50.1
 
