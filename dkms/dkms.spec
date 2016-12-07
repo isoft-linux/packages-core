@@ -1,12 +1,11 @@
-%define commit 7b6e78fac588b499eafa897c90a94fd1456a392f
 Summary:        Dynamic Kernel Module Support Framework
 Name:           dkms
-Version:        2.2.0.3
-Release:        2.git
+Version:        2.3
+Release:        1
 License:        GPLv2+
 BuildArch:      noarch
 URL:            http://linux.dell.com/dkms
-Source0:        http://linux.dell.com/cgi-bin/cgit.cgi/dkms.git/snapshot/dkms-%{commit}.tar.bz2
+Source0:        https://github.com/dell/%{name}/archive/%{version}.tar.gz
 Requires:       coreutils
 Requires:       cpio
 Requires:       file
@@ -31,7 +30,7 @@ This package contains the framework for the Dynamic Kernel Module Support (DKMS)
 method for installing module RPMS as originally developed by Dell.
 
 %prep
-%setup -q -n %{name}-%{commit}
+%setup -q -n %{name}-%{version}
 
 %build
 
@@ -70,6 +69,9 @@ rm -rf %{buildroot}
 %{_sysconfdir}/bash_completion.d/%{name}
 
 %changelog
+* Wed Dec 07 2016 sulit - 2.3-1
+- upgrade dkms to 2.3
+
 * Fri Nov 13 2015 Cjacker <cjacker@foxmail.com> - 2.2.0.3-2
 - Initial build
 
