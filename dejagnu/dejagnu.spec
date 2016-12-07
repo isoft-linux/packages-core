@@ -9,6 +9,7 @@ URL: http://www.gnu.org/software/dejagnu/
 Requires: expect
 BuildArch: noarch
 BuildRequires: expect
+BuildRequires: automake
 Patch2: dejagnu-1.5-runtest.patch
 
 %description
@@ -45,6 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Dec 07 2016 sulit - 1:1.6-1
 - upgrade dejagnu to 1.6
+- add buildrequires automake
 
 * Fri Oct 23 2015 cjacker - 1:1.5.1-4
 - Rebuild for new 4.0 release
