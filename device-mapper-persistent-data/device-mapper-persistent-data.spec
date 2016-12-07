@@ -10,6 +10,8 @@ BuildRequires: autoconf, expat-devel, libaio-devel, libstdc++-devel, boost-devel
 Requires: expat
 Patch0: device-mapper-persistent-data-0.4.1-bz1085620.patch
 Patch1: device-mapper-persistent-data-0.4.1-missing-man-pages.patch
+Patch2: device-mapper-persistent-data-avoid-strip.patch
+Patch3: device-mapper-persistent-data-add-era_restore-and-cache_metadata_size-man-pages.patch
 
 %description
 thin-provisioning-tools contains check,dump,restore,repair,rmap
@@ -23,6 +25,8 @@ snapshot eras
 %setup -q -n thin-provisioning-tools-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 echo %{version}-%{release} > VERSION
 
 %build
@@ -70,6 +74,7 @@ make DESTDIR=%{buildroot} MANDIR=%{_mandir} install
 %changelog
 * Wed Dec 07 2016 sulit - 0.6.3-1
 - upgrade device-mapper-persistent-data to 0.6.3
+- add avoid-strip patch
 
 * Fri Oct 23 2015 cjacker - 0.4.1-4
 - Rebuild for new 4.0 release
