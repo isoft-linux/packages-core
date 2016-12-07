@@ -4,12 +4,6 @@ Version: 7.3.4
 Release: 1
 License: Freely distributable
 Source: http://waterlan.home.xs4all.nl/%{name}/%{name}-%{version}.tar.gz
-Patch0: %{name}-%{version}.patch
-Patch1: dos2unix-3.1-segfault.patch
-Patch2: dos2unix-3.1-safeconv.patch
-Patch3: dos2unix-3.1-manpage-update-57507.patch
-Patch4: dos2unix-3.1-preserve-file-modes.patch
-Patch5: dos2unix-3.1-tmppath.patch
 
 Buildroot: %{_tmppath}/%{name}-%{version}-root
 
@@ -18,12 +12,6 @@ Dos2unix converts DOS or MAC text files to UNIX format.
 
 %prep
 %setup -q
-%patch0 -p1 -b .orig
-%patch1 -p1 -b .segfault
-%patch2 -p1 -b .safeconv
-%patch3 -p1 -b .manpage-update-57507
-%patch4 -p1 -b .preserve-file-modes
-%patch5 -p1 -b .tmppath
 
 for I in *.[ch]; do
 	sed -e 's,#endif.*,#endif,g' -e 's,#else.*,#else,g' $I > $I.new
@@ -57,6 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Dec 07 2016 sulit - 7.3.4-1
 - upgrade dos2unix to 7.3.4
+- remove all older patches
 
 * Fri Oct 23 2015 cjacker - 3.1-25.2.1
 - Rebuild for new 4.0 release
