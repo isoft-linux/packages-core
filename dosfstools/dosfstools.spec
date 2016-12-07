@@ -16,17 +16,19 @@ drives or on floppies.
 %setup -q 
 
 %build
+%configure --enable-compat-symlinks
 make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing"
 
 %install
 rm -rf %{buildroot}
-make DESTDIR=%{buildroot} install-bin install-man install-symlinks PREFIX=%{_prefix}
+make DESTDIR=%{buildroot} install PREFIX=%{_prefix}
 
 rm -rf %{buildroot}%{_mandir}/de
 %clean
 rm -rf %{buildroot}
 
 %files
+%doc ChangeLog COPYING doc/*
 %defattr(-,root,root,-)
 %{_sbindir}/*
 %{_mandir}/man8/*
