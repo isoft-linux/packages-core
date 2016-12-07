@@ -29,6 +29,7 @@ Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
 
 BuildRequires: libtool
+BuildRequires: autoconf
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libX11-devel
 BuildRequires: libcap-ng-devel
@@ -323,6 +324,7 @@ popd
 %changelog
 * Wed Dec 07 2016 sulit - 1:1.11.8-1
 - upgrade dbus to 1.11.8
+- add buildrequire autoconf
 
 * Thu Dec 31 2015 Cjacker <cjacker@foxmail.com> - 1:1.11.0-2
 - Update
