@@ -1,0 +1,11 @@
+diff -Nur efibootmgr-14/src/efibootdump.c efibootmgr-14n/src/efibootdump.c
+--- efibootmgr-14/src/efibootdump.c	2016-09-28 05:00:36.000000000 +0800
++++ efibootmgr-14n/src/efibootdump.c	2016-12-07 17:37:16.558399081 +0800
+@@ -10,7 +10,6 @@
+ 
+ #include <ctype.h>
+ #include <efiboot.h>
+-#include <efivar.h>
+ #include <err.h>
+ #include <inttypes.h>
+ #include <libintl.h>
