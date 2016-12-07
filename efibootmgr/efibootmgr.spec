@@ -6,6 +6,7 @@ Release: 1
 License: GPLv2+
 URL: http://linux.dell.com/%{name}/
 BuildRequires: pciutils-devel, zlib-devel
+BuildRequires: popt-devel
 # EFI/UEFI don't exist on PPC
 ExclusiveArch: %{ix86} x86_64 ia64
 
@@ -74,6 +75,7 @@ rm -rf %{buildroot}
 * Wed Dec 07 2016 sulit - 14-1
 - upgrade efibootmgr to 14
 - add efivar to efbootmgr package
+- add BuildRequires popt-devel
 
 * Fri Oct 23 2015 cjacker - 0.5.4-2
 - Rebuild for new 4.0 release
