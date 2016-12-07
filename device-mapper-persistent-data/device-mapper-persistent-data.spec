@@ -54,6 +54,9 @@ make DESTDIR=%{buildroot} MANDIR=%{_mandir} install
 %{_mandir}/man8/thin_restore.8.gz
 %{_mandir}/man8/thin_repair.8.gz
 %{_mandir}/man8/thin_rmap.8.gz
+%{_mandir}/man8/thin_delta.8.gz
+%{_mandir}/man8/thin_ls.8.gz
+%{_mandir}/man8/thin_trim.8.gz
 %{_sbindir}/pdata_tools
 %{_sbindir}/cache_check
 %{_sbindir}/cache_dump
@@ -70,6 +73,10 @@ make DESTDIR=%{buildroot} MANDIR=%{_mandir} install
 %{_sbindir}/thin_restore
 %{_sbindir}/thin_repair
 %{_sbindir}/thin_rmap
+%{_sbindir}/thin_delta
+%{_sbindir}/thin_ls
+%{_sbindir}/thin_trim
+
 
 %changelog
 * Wed Dec 07 2016 sulit - 0.6.3-1
