@@ -1,16 +1,15 @@
 Summary: Device-mapper Persistent Data Tools
 Name: device-mapper-persistent-data
-Version: 0.4.1
-Release: 4%{?dist}
+Version: 0.6.3
+Release: 1%{?dist}
 License: GPLv3+
 URL: https://github.com/jthornber/thin-provisioning-tools
-Source0: https://github.com/jthornber/thin-provisioning-tools/archive/thin-provisioning-tools-v%{version}.tar.bz2
+Source0: https://github.com/jthornber/thin-provisioning-tools/archive/v%{version}.tar.gz
 # Source1: https://github.com/jthornber/thin-provisioning-tools/archive/v%{version}.tar.gz
 BuildRequires: autoconf, expat-devel, libaio-devel, libstdc++-devel, boost-devel
 Requires: expat
 Patch0: device-mapper-persistent-data-0.4.1-bz1085620.patch
 Patch1: device-mapper-persistent-data-0.4.1-missing-man-pages.patch
-Patch2: device-mapper-persistent-data-0.4.1-avoid-strip.patch
 
 %description
 thin-provisioning-tools contains check,dump,restore,repair,rmap
@@ -24,7 +23,6 @@ snapshot eras
 %setup -q -n thin-provisioning-tools-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 echo %{version}-%{release} > VERSION
 
 %build
@@ -70,6 +68,9 @@ make DESTDIR=%{buildroot} MANDIR=%{_mandir} install
 %{_sbindir}/thin_rmap
 
 %changelog
+* Wed Dec 07 2016 sulit - 0.6.3-1
+- upgrade device-mapper-persistent-data to 0.6.3
+
 * Fri Oct 23 2015 cjacker - 0.4.1-4
 - Rebuild for new 4.0 release
 
