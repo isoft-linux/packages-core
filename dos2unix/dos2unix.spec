@@ -6,6 +6,7 @@ License: Freely distributable
 Source: http://waterlan.home.xs4all.nl/%{name}/%{name}-%{version}.tar.gz
 
 Buildroot: %{_tmppath}/%{name}-%{version}-root
+BuildRequires: gettext
 
 %description
 Dos2unix converts DOS or MAC text files to UNIX format.
@@ -46,6 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Dec 07 2016 sulit - 7.3.4-1
 - upgrade dos2unix to 7.3.4
 - remove all older patches
+- add BuildRequires gettext
 
 * Fri Oct 23 2015 cjacker - 3.1-25.2.1
 - Rebuild for new 4.0 release
