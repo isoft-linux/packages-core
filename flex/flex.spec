@@ -1,10 +1,10 @@
 Summary: A tool for creating scanners (text pattern recognizers)
 Name: flex
-Version: 2.6.0
+Version: 2.6.2
 Release: 1
 License: BSD
 URL: http://flex.sourceforge.net/
-Source: flex-%{version}.tar.bz2
+Source: flex-%{version}.tar.gz
 
 Requires: m4
 BuildRequires: gettext bison m4
@@ -70,6 +70,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/*.a
 %{_includedir}/FlexLexer.h
 %changelog
+* Thu Dec 08 2016 sulit - 2.6.2-1
+- upgrade flex to 2.6.2
+
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 2.6.0-1
 - update flex to 2.6.0
 
