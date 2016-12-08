@@ -1,7 +1,7 @@
 Name:		ethtool
 Epoch:		2
-Version:	4.0
-Release:	3%{?dist}
+Version:	4.8
+Release:	1%{?dist}
 Summary:	Settings tool for Ethernet NICs
 
 License:	GPLv2
@@ -48,6 +48,9 @@ make DESTDIR=%{buildroot} INSTALL='install -p' install
 %{_mandir}/man8/%{name}.8*
 
 %changelog
+* Thu Dec 08 2016 sulit - 2:4.8-1
+- upgrade ethtool to 4.8
+
 * Fri Oct 23 2015 cjacker - 2:4.0-3
 - Rebuild for new 4.0 release
 
