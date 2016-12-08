@@ -34,6 +34,10 @@ This package contains the libraries required by %{name}.
 %prep
 %setup -q
 %patch0 -p1 -b .inttypes
+for makefile in ./doc/*/Makefile.am; do
+	sed -i -e "s@man_MANS = faked.1 fakeroot.1@man_MANS = ../faked.1 ../fakeroot.1@g" $makefile
+	sed -i -e "s@man_MANS = fakeroot.1 faked.1@man_MANS = ../fakeroot.1 ../faked.1@g" $makefile
+done
 
 for file in ./doc/*.1; do
   iconv -f latin1 -t utf8 < $file > $file.new
@@ -41,6 +45,7 @@ for file in ./doc/*.1; do
 done
 
 %build
+./bootstrap
 for type in sysv tcp; do
 mkdir obj-$type
 cd obj-$type
