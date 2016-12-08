@@ -5,6 +5,9 @@ Release: 1
 License: BSD
 URL: http://flex.sourceforge.net/
 Source: flex-%{version}.tar.gz
+# cxx_restart test fail, it's a bug
+# https://github.com/westes/flex/issues/98
+Patch0: flex-do-not-enable-cxx_restart-test.patch
 
 Requires: m4
 BuildRequires: gettext bison m4 help2man
@@ -31,6 +34,7 @@ This package contains the static library for flex.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %configure --disable-dependency-tracking --disable-shared CFLAGS="-fPIC $RPM_OPT_FLAGS"
@@ -50,7 +54,7 @@ rm -rf $RPM_BUILD_ROOT/%{_infodir}
 )
 
 %check
-make check 
+make check
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -62,6 +66,7 @@ rm -rf ${RPM_BUILD_ROOT}
 #%{_libdir}/libfl_pic.so.*
 %{_mandir}/man1/*
 %{_datadir}/locale/*
+%{_datadir}/doc/flex/*
 
 %files devel 
 %defattr(-,root,root)
