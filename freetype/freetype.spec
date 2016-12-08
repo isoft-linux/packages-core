@@ -2,19 +2,16 @@
 
 Summary: A free and portable TrueType font rendering engine.
 Name: freetype
-Version: 2.6.2
-Release: 2 
+Version: 2.7
+Release: 3 
 License: GPL
 URL: http://www.freetype.org
 Source0:  http://download.savannah.gnu.org/releases/freetype/freetype-%{version}.tar.bz2
-Source1:  infinality-settings.sh
+Source1:  freetype2.sh
 
-#there two patch is very important to improve font rendering result.
-#be careful when update !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#By Cjacker
-Patch0:  01-freetype-2.6.1-enable-valid.patch
-Patch1:  03-infinality-2.6.2-2015.11.28.patch
-Patch10: freetype-2.5.3-freetype-config-prefix.patch
+Patch0:  0001-Enable-table-validation-modules.patch
+Patch1:  0002-infinality-2.7-2016.09.09.patch
+#Patch10: freetype-2.5.3-freetype-config-prefix.patch
 
 BuildRequires: libX11-devel
 BuildRequires: libpng-devel
@@ -47,7 +44,7 @@ text-rendering library.
 %patch0 -p1
 %patch1 -p1
 
-%patch10 -p1
+#%patch10 -p1
 
 %build
 # Build Freetype 2
@@ -90,6 +87,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/freetype-config.1*
 
 %changelog
+* Thu Nov 24 2016 sulit <sulitsrc@163.com> - 2.7-3
+- rebuild
+
+* Tue Nov 22 2016 cjacker - 2.7-2
+- Update to 2.7, update infinality patches
+
+* Fri Nov 18 2016 cjacker - 2.7-2
+- Update to 2.7
+
 * Tue Dec 01 2015 Cjacker <cjacker@foxmail.com> - 2.6.2-2
 - Update
 
