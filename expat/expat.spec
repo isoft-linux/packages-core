@@ -2,7 +2,7 @@ Summary: An XML parser library
 Name: expat
 Version: 2.2.0
 Release: 1
-Source: http://downloads.sourceforge.net/expat/expat-%{version}.tar.gz
+Source: http://downloads.sourceforge.net/expat/expat-%{version}.tar.bz2
 URL: http://www.libexpat.org/
 License: MIT
 BuildRequires: autoconf, automake, libtool
