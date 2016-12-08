@@ -6,14 +6,12 @@ Release: 1
 License: GPLv2+
 URL: http://linux.dell.com/%{name}/
 BuildRequires: pciutils-devel, zlib-devel
-BuildRequires: popt-devel popt
-Requires: popt
+BuildRequires: popt-devel popt-static
 # EFI/UEFI don't exist on PPC
 ExclusiveArch: %{ix86} x86_64 ia64
 
 Source0: https://github.com/rhinstaller/%{name}/releases/download/%{version}/%{name}-%{version}.tar.bz2
 Source1: https://github.com/rhinstaller/efivar/releases/download/%{efivar_ver}/efivar-%{efivar_ver}.tar.bz2
-# efivar.h don't be required 
 %description
 %{name} displays and allows the user to edit the Intel Extensible
 Firmware Interface (EFI) Boot Manager variables.  Additional
@@ -76,7 +74,7 @@ rm -rf %{buildroot}
 * Wed Dec 07 2016 sulit - 14-1
 - upgrade efibootmgr to 14
 - add efivar to efbootmgr package
-- add BuildRequires popt-devel
+- add BuildRequires popt-devel and popt-static
 
 * Fri Oct 23 2015 cjacker - 0.5.4-2
 - Rebuild for new 4.0 release
