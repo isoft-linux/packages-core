@@ -1,10 +1,10 @@
 Summary: Gives a fake root environment
 Name: fakeroot
-Version: 1.20.2
-Release: 2%{?dist}
+Version: 1.21
+Release: 1%{?dist}
 License: GPL+
 URL: http://fakeroot.alioth.debian.org/
-Source0: http://ftp.debian.org/debian/pool/main/f/fakeroot/%{name}_%{version}.orig.tar.bz2
+Source0: http://ftp.debian.org/debian/pool/main/f/fakeroot/%{name}_%{version}.orig.tar.gz
 # Address some POSIX-types related problems.
 Patch0: fakeroot-inttypes.patch
 BuildRequires: /usr/bin/getopt
@@ -35,7 +35,7 @@ This package contains the libraries required by %{name}.
 %setup -q
 %patch0 -p1 -b .inttypes
 
-for file in ./doc/*/*.1; do
+for file in ./doc/*.1; do
   iconv -f latin1 -t utf8 < $file > $file.new
   mv -f $file.new $file
 done
@@ -170,6 +170,9 @@ fi
 %ghost %{_libdir}/libfakeroot/libfakeroot-0.so
 
 %changelog
+* Thu Dec 08 2016 sulit - 1.21-1
+- upgrade fakeroot to 1.21
+
 * Fri Oct 23 2015 cjacker - 1.20.2-2
 - Rebuild for new 4.0 release
 
