@@ -1,0 +1,12 @@
+diff -Nur efivar-30/Make.defaults efivar-30n/Make.defaults
+--- efivar-30/Make.defaults	2016-09-28 04:35:22.000000000 +0800
++++ efivar-30n/Make.defaults	2016-12-08 10:46:00.054647184 +0800
+@@ -17,7 +17,7 @@
+ CFLAGS	:= $(CFLAGS)
+ LDFLAGS ?=
+ LDFLAGS := $(LDFLAGS)
+-AR	:= $(CROSS_COMPILE)gcc-ar
++AR	:= $(CROSS_COMPILE)ar
+ NM	:= $(CROSS_COMPILE)gcc-nm
+ RANLIB	:= $(CROSS_COMPILE)gcc-ranlib
+ 
