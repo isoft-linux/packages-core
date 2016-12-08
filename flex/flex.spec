@@ -7,7 +7,7 @@ URL: http://flex.sourceforge.net/
 Source: flex-%{version}.tar.gz
 
 Requires: m4
-BuildRequires: gettext bison m4
+BuildRequires: gettext bison m4 help2man
 
 %description
 The flex program generates scanners.  Scanners are programs which can
