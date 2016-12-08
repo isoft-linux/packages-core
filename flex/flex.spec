@@ -10,7 +10,7 @@ Source: flex-%{version}.tar.gz
 Patch0: flex-do-not-enable-cxx_restart-test.patch
 
 Requires: m4
-BuildRequires: gettext bison m4 help2man
+BuildRequires: gettext bison m4 help2man automake
 
 %description
 The flex program generates scanners.  Scanners are programs which can
