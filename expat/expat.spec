@@ -1,7 +1,7 @@
 Summary: An XML parser library
 Name: expat
-Version: 2.1.0
-Release: 6
+Version: 2.2.0
+Release: 1
 Source: http://downloads.sourceforge.net/expat/expat-%{version}.tar.gz
 URL: http://www.libexpat.org/
 License: MIT
@@ -74,6 +74,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Thu Dec 08 2016 sulit - 2.2.0-1
+- upgrade expat to 2.2.0
+
 * Fri Oct 23 2015 cjacker - 2.1.0-6
 - Rebuild for new 4.0 release
 
