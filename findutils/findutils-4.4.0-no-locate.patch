@@ -43,7 +43,7 @@ index 1f278de..c584298 100644
  @c %**end of header
  
  @include version.texi
--@include ../locate/dblocation.texi
+-@include dblocation.texi
  
  @iftex
  @finalout

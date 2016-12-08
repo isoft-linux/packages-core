@@ -1,7 +1,7 @@
 Summary: The GNU versions of find utilities (find and xargs)
 Name: findutils
-Version: 4.5.14
-Release: 2
+Version: 4.5.19
+Release: 1
 Epoch: 1
 License: GPLv3+
 URL: http://www.gnu.org/software/findutils/
@@ -46,7 +46,7 @@ rm -rf locate
 %patch5 -p1
 
 # needed because of findutils-4.4.0-no-locate.patch
-autoreconf -iv
+autoreconf -iv -f
 
 %build
 %configure
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %{_mandir}/man1/xargs.1*
 
 %changelog
+* Thu Dec 08 2016 sulit - 1:4.5.19-1
+- upgrade findutils to 4.5.19
+
 * Fri Oct 23 2015 cjacker - 1:4.5.14-2
 - Rebuild for new 4.0 release
 
