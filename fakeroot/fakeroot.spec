@@ -11,6 +11,7 @@ BuildRequires: /usr/bin/getopt
 BuildRequires: libcap-devel
 # uudecode used by tests/tartest
 BuildRequires: sharutils
+BuildRequires: autoconf automake libtool
 Requires: /usr/bin/getopt
 Requires: fakeroot-libs = %{version}-%{release}
 Requires(post): /usr/sbin/alternatives
@@ -177,6 +178,7 @@ fi
 %changelog
 * Thu Dec 08 2016 sulit - 1.21-1
 - upgrade fakeroot to 1.21
+- add automake autoconf libtool buildrequires
 
 * Fri Oct 23 2015 cjacker - 1.20.2-2
 - Rebuild for new 4.0 release
