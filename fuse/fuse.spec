@@ -73,7 +73,7 @@ rm -f %{buildroot}%{_sysconfdir}/udev/rules.d/99-fuse.rules
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc AUTHORS ChangeLog COPYING FAQ Filesystems NEWS README README.NFS
+%doc AUTHORS ChangeLog COPYING
 %{_sbindir}/mount.fuse
 %attr(4755,root,root) %{_bindir}/fusermount
 %{_bindir}/ulockmgr_server
