@@ -1,6 +1,6 @@
 Name:           fuse
-Version:        2.9.4
-Release:        11 
+Version:        2.9.7
+Release:        1
 Summary:        File System in Userspace (FUSE) utilities
 
 License:        GPL+
@@ -73,7 +73,7 @@ rm -f %{buildroot}%{_sysconfdir}/udev/rules.d/99-fuse.rules
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc AUTHORS ChangeLog COPYING FAQ Filesystems NEWS README README.NFS
+%doc AUTHORS ChangeLog COPYING
 %{_sbindir}/mount.fuse
 %attr(4755,root,root) %{_bindir}/fusermount
 %{_bindir}/ulockmgr_server
@@ -95,6 +95,9 @@ rm -f %{buildroot}%{_sysconfdir}/udev/rules.d/99-fuse.rules
 %{_includedir}/fuse
 
 %changelog
+* Fri Dec 09 2016 sulit - 2.9.7-1
+- upgrade fuse to 2.9.7
+
 * Fri Oct 23 2015 cjacker - 2.9.4-11
 - Rebuild for new 4.0 release
 

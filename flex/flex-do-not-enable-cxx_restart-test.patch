@@ -1,0 +1,11 @@
+diff -Nur flex-2.6.2/tests/Makefile.am flex-2.6.2n/tests/Makefile.am
+--- flex-2.6.2/tests/Makefile.am	2016-10-21 08:43:44.000000000 +0800
++++ flex-2.6.2n/tests/Makefile.am	2016-12-08 18:39:59.003379254 +0800
+@@ -74,7 +74,6 @@
+ 	ccl \
+ 	cxx_basic \
+ 	cxx_multiple_scanners \
+-	cxx_restart \
+ 	debug_nr \
+ 	debug_r \
+ 	extended \

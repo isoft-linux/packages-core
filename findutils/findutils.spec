@@ -19,6 +19,7 @@ Patch2: findutils-4.4.2-autofs.patch
 Patch3: findutils-4.4.2-xautofs.patch
 
 Patch5: findutils-disable-doc.patch
+Patch6: findutils-build-oldfind.patch
 
 Conflicts: filesystem < 3
 Provides: /bin/find
@@ -44,6 +45,7 @@ rm -rf locate
 %patch2 -p1
 %patch3 -p1
 %patch5 -p1
+%patch6 -p1
 
 # needed because of findutils-4.4.0-no-locate.patch
 autoreconf -iv -f
@@ -72,7 +74,6 @@ rm -rf $RPM_BUILD_ROOT%{_infodir}
 %{_bindir}/oldfind
 %{_bindir}/xargs
 %{_mandir}/man1/find.1*
-%{_mandir}/man1/oldfind.1*
 %{_mandir}/man1/xargs.1*
 
 %changelog
