@@ -5,8 +5,8 @@
 
 %define rcversion 0
 
-%define kversion 4.9
-%define release 9
+%define kversion 4.9.0
+%define release 10
 
 %define extraversion -%{release}
 
@@ -707,6 +707,10 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Dec 13 2016 sulit - 4.9.0-10
+- modify kernel version to 4.9.0, redo upload linux-4.9.0.tar.xz, because name
+-  4.9 can cause modprobe modules fail in initrd
+
 * Tue Dec 13 2016 sulit - 4.9-9
 - update kernel config file
 
