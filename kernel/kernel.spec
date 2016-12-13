@@ -3,10 +3,10 @@
 
 %define debuginfodir /usr/lib/debug
 
-%define rcversion   rc8
+%define rcversion 0
 
 %define kversion 4.9
-%define release 4
+%define release 8
 
 %define extraversion -%{release}
 
@@ -707,6 +707,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Dec 13 2016 sulit - 4.9-8
+- upgrade kernel to 4.9-8
+
 * Fri Dec 09 2016 sulit - 4.9-4
 - upgrade kernel to 4.9-rc8
 
