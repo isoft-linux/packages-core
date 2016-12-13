@@ -6,7 +6,7 @@
 %define rcversion 0
 
 %define kversion 4.9
-%define release 8
+%define release 9
 
 %define extraversion -%{release}
 
@@ -707,6 +707,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Tue Dec 13 2016 sulit - 4.9-9
+- update kernel config file
+
 * Tue Dec 13 2016 sulit - 4.9-8
 - upgrade kernel to 4.9-8
 
