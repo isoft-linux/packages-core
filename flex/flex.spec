@@ -1,9 +1,11 @@
 Summary: A tool for creating scanners (text pattern recognizers)
 Name: flex
-Version: 2.6.2
-Release: 1
+Version: 2.6.3
+Release: 0.git.1
 License: BSD
 URL: http://flex.sourceforge.net/
+# git clone https://github.com/westes/flex.git
+# sha 6bea32e937058ddba2812581b1396ff35aae8d70
 Source: flex-%{version}.tar.gz
 # cxx_restart test fail, it's a bug
 # https://github.com/westes/flex/issues/98
@@ -37,6 +39,7 @@ This package contains the static library for flex.
 %patch0 -p1
 
 %build
+./autogen.sh
 %configure --disable-dependency-tracking --disable-shared CFLAGS="-fPIC $RPM_OPT_FLAGS"
 make %{?_smp_mflags}
 
@@ -75,6 +78,11 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/*.a
 %{_includedir}/FlexLexer.h
 %changelog
+* Wed Dec 14 2016 sulit - 2.6.3-0.git.1
+- upgrade flex to 2.6.3.git
+- flex 2.6.2 has some bug, flex git master
+- have fixed
+
 * Thu Dec 08 2016 sulit - 2.6.2-1
 - upgrade flex to 2.6.2
 
