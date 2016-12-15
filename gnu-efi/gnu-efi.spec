@@ -1,7 +1,7 @@
 Summary: Development Libraries and headers for EFI
 Name: gnu-efi
-Version: 3.0.2
-Release: 3%{?dist}
+Version: 3.0.4
+Release: 1%{?dist}
 Epoch:	1
 License: BSD 
 URL: ftp://ftp.hpl.hp.com/pub/linux-ia64
@@ -9,7 +9,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExclusiveArch: %{ix86} x86_64 ia64 aarch64
 BuildRequires: git
 Source: http://superb-dca2.dl.sourceforge.net/project/gnu-efi/gnu-efi-%{version}.tar.bz2
-Patch0001: 0001-Add-setjmp-back-once-again.patch
 
 %define debug_package %{nil}
 
@@ -47,7 +46,6 @@ This package contains utilties for debugging and developing EFI systems.
 
 %prep
 %setup -q -n gnu-efi-%{version}
-%patch0001 -p1
 
 %build
 # Package cannot build with %{?_smp_mflags}.
@@ -83,6 +81,9 @@ rm -rf %{buildroot}
 %attr(0644,root,root) /boot/efi/EFI/%{efidir}/*.efi
 
 %changelog
+* Thu Dec 15 2016 sulit - 1:3.0.4-1
+- upgrade gnu-efi to 3.0.4
+
 * Tue Oct 27 2015 Cjacker <cjacker@foxmail.com> - 1:3.0.2-3
 - Rebuild
 
