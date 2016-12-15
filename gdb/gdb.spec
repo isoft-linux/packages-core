@@ -1,7 +1,7 @@
 Summary: A GNU source-level debugger for C, C++, Java and other languages
 Name: gdb
-Version: 7.10
-Release: 3 
+Version: 7.12
+Release: 1
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ and GPLv2+ with exceptions and GPL+ and LGPLv2+ and GFDL and BSD and Public Domain
 URL: http://gnu.org/software/gdb/
 Source0: ftp://sourceware.org/pub/gdb/releases/gdb-%{version}.tar.xz
@@ -113,6 +113,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Dec 15 2016 sulit - 7.12-1
+- upgrade gdb to 7.12
+
 * Fri Oct 23 2015 cjacker - 7.10-2
 - Rebuild for new 4.0 release
 
