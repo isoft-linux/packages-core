@@ -9,9 +9,6 @@ URL:       http://www.icu-project.org/
 %global version_minor %(echo %{version} | cut -d. -f2)
 
 Source0:   http://download.icu-project.org/files/icu4c/%{version}/icu4c-%{version_major}_%{version_minor}-src.tgz
-Patch1: icu.8198.revert.icu5431.patch
-Patch2: icu.8800.freeserif.crash.patch
-Patch3: icu.7601.Indic-ccmp.patch
 
 BuildRequires: doxygen, autoconf, python
 Requires: lib%{name} = %{version}-%{release}
@@ -50,9 +47,6 @@ Summary: Documentation for International Components for Unicode
 
 %prep
 %setup -q -n %{name}
-%patch1 -p2 -R -b .icu8198.revert.icu5431.patch
-%patch2 -p1 -b .icu8800.freeserif.crash.patch
-%patch3 -p1 -b .icu7601.Indic-ccmp.patch
 
 %build
 #if clang found, icu will use clang by default.
@@ -133,6 +127,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Dec 15 2016 sulit - 58.2-1
 - update icu to 58.2
+- remove all patches
 
 * Sat Oct 31 2015 Cjacker <cjacker@foxmail.com> - 56.1-6
 - Update
