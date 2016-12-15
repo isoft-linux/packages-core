@@ -1,7 +1,7 @@
 Summary: A mouse server for the Linux console
 Name: gpm
 Version: 1.20.7
-Release: 1
+Release: 2
 License: GPLv2+
 URL: http://www.nico.schottelius.org/software/gpm/
 Source: http://www.nico.schottelius.org/software/gpm/archives/%{name}-%{version}.tar.lzma
@@ -81,6 +81,8 @@ chmod 0755 %{buildroot}/%{_libdir}/libgpm.so.%{LIBVER}
 ln -sf libgpm.so.%{LIBVER} %{buildroot}/%{_libdir}/libgpm.so
 
 rm -f %{buildroot}%{_datadir}/emacs/site-lisp/t-mouse.el
+# we don't any info pages
+rm -f %{buildroot}%{_infodir}/gpm.info.gz
 
 %ifnarch s390 s390x
 mkdir -p %{buildroot}%{_sysconfdir}/rc.d/init.d
@@ -132,7 +134,6 @@ rm -rf %{buildroot}%{_mandir}
 %{_sbindir}/*
 %{_bindir}/*
 %{_mandir}/man?/*
-%{_infodir}/gpm.info.gz
 %endif
 
 %files libs
@@ -146,6 +147,9 @@ rm -rf %{buildroot}%{_mandir}
 %{_libdir}/libgpm.a
 
 %changelog
+* Thu Dec 15 2016 sulit - 1.20.7-2
+- remove info pages
+
 * Thu Dec 15 2016 sulit - 1.20.7-1
 - upgrade gpm to 1.20.7
 
