@@ -3,9 +3,9 @@
 Summary: A GNU implementation of Scheme for application extensibility
 Name: guile
 %define mver 2.0
-Version: 2.0.11
-Release: 2 
-Source: ftp://ftp.gnu.org/pub/gnu/guile/guile-%{version}.tar.gz
+Version: 2.0.13
+Release: 1
+Source: ftp://ftp.gnu.org/pub/gnu/guile/guile-%{version}.tar.xz
 Source10: libunistring-%{unistring_ver}.tar.gz
 
 URL: http://www.gnu.org/software/guile/
@@ -117,6 +117,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Dec 15 2016 sulit - 5:2.0.13-1
+- upgrade guile to 2.0.13
+
 * Fri Oct 23 2015 cjacker - 5:2.0.11-2
 - Rebuild for new 4.0 release
 
