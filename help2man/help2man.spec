@@ -11,6 +11,7 @@ BuildRequires:  perl(POSIX)
 BuildRequires:  perl(Text::ParseWords)
 BuildRequires:  perl(Text::Tabs)
 BuildRequires:  perl(strict)
+BuildRequires:  perl-gettext
 BuildRequires:	texinfo gettext
 
 %description
