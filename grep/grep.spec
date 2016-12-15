@@ -1,6 +1,6 @@
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.25
+Version: 2.27
 Release: 1
 License: GPL
 URL: http://www.gnu.org/software/grep/
@@ -79,6 +79,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/*/*
 
 %changelog
+* Thu Dec 15 2016 sulit - 2.27-1
+- upgrade grep to 2.27
+
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 2.25-1
 - update grep to 2.25
 
