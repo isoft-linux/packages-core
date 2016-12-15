@@ -99,7 +99,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n lib%{name}
 %defattr(-,root,root,-)
-%doc license.html readme.html
+%doc LICENSE readme.html
 %{_libdir}/*.so.*
 
 %files -n lib%{name}-devel
@@ -107,7 +107,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/%{name}-config
 %{_bindir}/icuinfo
 %{_mandir}/man1/%{name}-config.1*
-%{_includedir}/layout
 %{_includedir}/unicode
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/icu*.pc
