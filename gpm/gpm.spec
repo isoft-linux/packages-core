@@ -1,20 +1,18 @@
 Summary: A mouse server for the Linux console
 Name: gpm
-Version: 1.20.6
-Release: 2 
+Version: 1.20.7
+Release: 1
 License: GPLv2+
 URL: http://www.nico.schottelius.org/software/gpm/
 Source: http://www.nico.schottelius.org/software/gpm/archives/%{name}-%{version}.tar.lzma
 Source1: gpm.service
 Patch1: gpm-1.20.6-multilib.patch
 Patch2: gpm-1.20.1-lib-silent.patch
-Patch3: gpm-1.20.3-gcc4.3.patch
 Patch4: gpm-1.20.5-close-fds.patch
 Patch5: gpm-1.20.1-weak-wgetch.patch
-Patch6: gpm-1.20.6-libtool.patch
-Patch7: 0001-rhbz-668480-gpm-types-7-manpage-fixes.patch
+Patch7: gpm-1.20.7-rhbz-668480-gpm-types-7-manpage-fixes.patch
 Patch8: gpm-1.20.6-missing-header-dir-in-make-depend.patch
-Patch9: gpm-aarch64.patch
+Patch9: gpm-format-security.patch
 
 Requires(post): systemd-units
 Requires(preun): systemd-units
@@ -59,17 +57,17 @@ mouse support to text-based Linux applications.
 
 %prep
 %setup -q
+
+./autogen.sh
+
 %patch1 -p1 -b .multilib
 %patch2 -p1 -b .lib-silent
-%patch3 -p1 -b .gcc4.3
 %patch4 -p1 -b .close-fds
 %patch5 -p1 -b .weak-wgetch
-%patch6 -p1 -b .libtool
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1 -b .aarch64
+%patch9 -p1
 
-autoreconf
 
 %build
 LDFLAGS='-Wl,-z,relro -Wl,-z,bind_now'
@@ -77,7 +75,7 @@ LDFLAGS='-Wl,-z,relro -Wl,-z,bind_now'
 make %{?_smp_mflags}
 
 %install
-%makeinstall
+%make_install
 
 chmod 0755 %{buildroot}/%{_libdir}/libgpm.so.%{LIBVER}
 ln -sf libgpm.so.%{LIBVER} %{buildroot}/%{_libdir}/libgpm.so
@@ -147,6 +145,9 @@ rm -rf %{buildroot}%{_mandir}
 %{_libdir}/libgpm.a
 
 %changelog
+* Thu Dec 15 2016 sulit - 1.20.7-1
+- upgrade gpm to 1.20.7
+
 * Fri Oct 23 2015 cjacker - 1.20.6-2
 - Rebuild for new 4.0 release
 
