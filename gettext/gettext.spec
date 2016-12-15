@@ -1,7 +1,7 @@
 Summary: GNU libraries and utilities for producing multi-lingual messages
 Name: gettext
-Version: 0.19.6
-Release: 4 
+Version: 0.19.8
+Release: 1
 License: GPLv3 and LGPLv2+
 URL: http://www.gnu.org/software/gettext/
 Source: ftp://ftp.gnu.org/gnu/gettext/%{name}-%{version}.tar.xz
@@ -158,6 +158,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/libgettextpo.so.*
 
 %changelog
+* Thu Dec 15 2016 sulit - 0.19.8-1
+- upgrade gettext to 0.19.8
+
 * Fri Oct 23 2015 cjacker - 0.19.6-4
 - Rebuild for new 4.0 release
 
