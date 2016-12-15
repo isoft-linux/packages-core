@@ -19,7 +19,7 @@ Requires(preun): systemd-units
 Requires(postun): systemd-units
 # this defines the library version that this package builds.
 %define LIBVER 2.1.0
-BuildRequires: sed gawk bison ncurses-devel autoconf automake libtool
+BuildRequires: sed gawk bison ncurses-devel autoconf automake libtool texinfo libcap-ng-devel
 Requires: %{name}-libs = %{version}-%{release}
 
 %description
@@ -124,14 +124,15 @@ rm -rf %{buildroot}%{_mandir}
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc BUGS COPYING README TODO
-%doc doc/README* doc/FAQ doc/Announce doc/changes/*
+%doc COPYING README TODO
+%doc doc/README* doc/FAQ doc/Announce doc/changelog
 %ifnarch s390 s390x
 %config(noreplace) %{_sysconfdir}/gpm-*
 /usr/lib/systemd/system/gpm.service
 %{_sbindir}/*
 %{_bindir}/*
 %{_mandir}/man?/*
+%{_infodir}/gpm.info.gz
 %endif
 
 %files libs
