@@ -1,7 +1,7 @@
 Summary: A GNU arbitrary precision library
 Name: gmp
-Version: 6.0.0 
-Release: 4
+Version: 6.1.1
+Release: 1
 URL: http://gmplib.org/
 Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%{version}a.tar.xz
 License: LGPL 
@@ -91,6 +91,9 @@ cd ..
 %{_includedir}/*.h
 
 %changelog
+* Thu Dec 15 2016 sulit - 6.1.1-1
+- upgrade gmp to 6.1.1
+
 * Fri Oct 23 2015 cjacker - 6.0.0-4
 - Rebuild for new 4.0 release
 
