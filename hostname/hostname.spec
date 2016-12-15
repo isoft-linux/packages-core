@@ -1,7 +1,7 @@
 Summary: Utility to set/show the host name or domain name
 Name: hostname
-Version: 3.15
-Release: 5
+Version: 3.18
+Release: 1
 License: GPLv2+
 URL: http://packages.qa.debian.org/h/hostname.html
 Source0: http://ftp.de.debian.org/debian/pool/main/h/hostname/hostname_%{version}.tar.gz
@@ -26,6 +26,9 @@ make BASEDIR=%{buildroot} BINDIR="/usr/bin" install
 %{_mandir}/man1/*
 
 %changelog
+* Thu Dec 15 2016 sulit - 3.18-1
+- update hostname to 3.18
+
 * Fri Oct 23 2015 cjacker - 3.15-5
 - Rebuild for new 4.0 release
 
