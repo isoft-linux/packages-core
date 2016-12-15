@@ -1,6 +1,6 @@
 Name:		help2man
-Version:    1.47.1	
-Release:	2
+Version:    1.47.4
+Release:	1
 Summary:    Conversion tool to create man files	
 
 License:	GPL
@@ -33,6 +33,9 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}/{[a-l]*,[n-z]*}
 %{_mandir}/man1/help2man.1.gz
 
 %changelog
+* Thu Dec 15 2016 sulit - 1.47.4-1
+- update help2man to 1.47.4
+
 * Fri Oct 23 2015 cjacker - 1.47.1-2
 - Rebuild for new 4.0 release
 
