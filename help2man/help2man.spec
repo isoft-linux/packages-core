@@ -6,6 +6,11 @@ Summary:    Conversion tool to create man files
 License:	GPL
 URL:		http://www.gnu.org/software/help2man/
 Source0:	http://ftp.gnu.org/gnu/help2man/help2man-%{version}.tar.xz
+BuildRequires:  perl(Getopt::Long)
+BuildRequires:  perl(POSIX)
+BuildRequires:  perl(Text::ParseWords)
+BuildRequires:  perl(Text::Tabs)
+BuildRequires:  perl(strict)
 
 %description
 %{summary}
