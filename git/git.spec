@@ -1,6 +1,6 @@
 Name: git
-Version: 2.7.0
-Release: 2 
+Version: 2.11.0
+Release: 1
 Summary: Core git tools
 License: GPLv2
 URL: http://kernel.org/pub/software/scm/git/
@@ -217,6 +217,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/perl5/site_perl/Git/IndexInfo.pm
 
 %changelog
+* Thu Dec 15 2016 sulit - 2.11.0-1
+- upgrade git to 2.11.0
+
 * Tue Jan 05 2016 Cjacker <cjacker@foxmail.com> - 2.7.0-2
 - Update
 
