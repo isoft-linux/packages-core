@@ -2,8 +2,8 @@
 
 Summary: A document formatting system
 Name: groff
-Version: 1.22.2
-Release: 4
+Version: 1.22.3
+Release: 1
 License: GPLv3+ and GFDL and BSD and MIT
 URL: http://groff.ffii.org
 
@@ -148,6 +148,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Dec 15 2016 sulit - 1.22.3-1
+- upgrade groff to 1.22.3
+
 * Fri Oct 23 2015 cjacker - 1.22.2-4
 - Rebuild for new 4.0 release
 
