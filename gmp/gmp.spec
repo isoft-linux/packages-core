@@ -3,7 +3,7 @@ Name: gmp
 Version: 6.1.1
 Release: 1
 URL: http://gmplib.org/
-Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%{version}a.tar.xz
+Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%{version}.tar.xz
 License: LGPL 
 
 BuildRequires: m4
