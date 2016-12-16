@@ -116,7 +116,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/%{version}/install-sh
 %{_datadir}/%{name}/%{version}/mkinstalldirs
 %{_datadir}/%{name}/%{version}/config
-%doc %{_datadir}/%{name}/%{version}/license.html
+%doc %{_datadir}/%{name}/%{version}/LICENSE
 
 #%files -n lib%{name}-doc
 #%defattr(-,root,root,-)
