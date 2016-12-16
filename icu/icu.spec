@@ -1,6 +1,6 @@
 Name:      icu
 Version:   58.2
-Release:   2
+Release:   3
 Summary:   International Components for Unicode
 License:   MIT and UCD and Public Domain
 URL:       http://www.icu-project.org/
@@ -62,7 +62,7 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT source/__docs
 make -C source install DESTDIR=$RPM_BUILD_ROOT
-cd %{buildroot}
+cd %{buildroot}%{_libdir}
 for soname in $(ls libicu*.so.%{version}); do
 	oldsoname=${soname#%{version}}
 	ln -s $soname ${soname} ${oldsoname}56
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 #%doc source/__docs/%{name}/html/*
 
 %changelog
+* Fri Dec 16 2016 sulit - 58.2-3
+- modify icu build
+
 * Fri Dec 16 2016 sulit - 58.2-2
 - modify icu build for enable old shared library, remove it after some import
   pkg build
