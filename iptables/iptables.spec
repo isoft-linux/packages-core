@@ -6,15 +6,14 @@
 
 Name: iptables
 Summary: Tools for managing Linux kernel packet filtering capabilities
-Version: 1.4.21
-Release: 2
+Version: 1.6.0
+Release: 1
 Source:  http://www.netfilter.org/projects/iptables/files/%{name}-%{version}.tar.bz2
 Source1: iptables.init
 Source2: iptables-config
 Source3: iptables.service
 Source4: iptables.save-legacy
 
-Patch0: iptables-1.4.14-musl-fixes.patch
 
 Source10: libnfnetlink-%{libnfnetlink_ver}.tar.bz2
 Patch10: libnfnetlink-musl-fix.patch
@@ -76,7 +75,6 @@ Currently only provides nfnl_osf with the pf.os database.
 
 %prep
 %setup -q -a10
-%patch0 -p1
 sed -i -e '/if_packet/i#define __aligned_u64 __u64 __attribute__((aligned(8)))' \
         extensions/libxt_pkttype.c
 %build
@@ -236,6 +234,9 @@ fi
 
 
 %changelog
+* Fri Dec 16 2016 sulit - 1.6.0-1
+- upgrade iptables to 1.6.0
+
 * Fri Oct 23 2015 cjacker - 1.4.21-2
 - Rebuild for new 4.0 release
 
