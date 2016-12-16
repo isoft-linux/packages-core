@@ -1,6 +1,6 @@
 Name:      icu
 Version:   58.2
-Release:   1
+Release:   2
 Summary:   International Components for Unicode
 License:   MIT and UCD and Public Domain
 URL:       http://www.icu-project.org/
@@ -129,6 +129,10 @@ rm -rf $RPM_BUILD_ROOT
 #%doc source/__docs/%{name}/html/*
 
 %changelog
+* Fri Dec 16 2016 sulit - 58.2-2
+- modify icu build for enable old shared library, remove it after some import
+  pkg build
+
 * Thu Dec 15 2016 sulit - 58.2-1
 - update icu to 58.2
 - remove all patches
