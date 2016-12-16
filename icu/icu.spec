@@ -65,7 +65,7 @@ make -C source install DESTDIR=$RPM_BUILD_ROOT
 cd %{buildroot}%{_libdir}
 for soname in $(ls libicu*.so.%{version}); do
 	oldsoname=${soname#%{version}}
-	ln -s $soname ${soname} ${oldsoname}56
+	ln -s $soname ${oldsoname}56
 done
 #make -C source install-doc docdir=__docs
 
