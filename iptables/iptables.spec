@@ -24,7 +24,7 @@ License: GPLv2
 BuildRequires: kernel-headers
 Conflicts: kernel < 2.4.20
 BuildRequires: systemd-units
-
+BuildRequires: bison flex libnftnl-devel libmnl-devel
 
 %description
 The iptables utility controls the network packet filtering code in the
@@ -189,6 +189,9 @@ fi
 %{_sbindir}/iptables*
 %{_sbindir}/ip6tables*
 %{_sbindir}/xtables-multi
+%{_sbindir}/arptables-compat
+%{_sbindir}/ebtables-compat
+%{_sbindir}/xtables-compat-multi
 %{_bindir}/iptables-xml
 %{_mandir}/man1/iptables-xml*
 %{_mandir}/man8/iptables*
@@ -199,6 +202,9 @@ fi
 %{_libdir}/xtables/libxt*
 %{_libdir}/libip*tc.so.*
 %{_libdir}/libxtables.so.*
+/etc/ethertypes
+%{_libdir}/xtables/libarpt*
+%{_libdir}/xtables/libebt*
 
 %files devel
 %defattr(-,root,root)
@@ -231,7 +237,6 @@ fi
 %{_sbindir}/nfnl_osf
 %dir %{_datadir}/xtables
 %{_datadir}/xtables/pf.os
-
 
 %changelog
 * Fri Dec 16 2016 sulit - 1.6.0-1
