@@ -9,6 +9,7 @@ Source0: http://www.skbuff.net/iputils/%{name}-s%{version}.tar.bz2
 
 BuildRequires: openssl-devel
 BuildRequires: libcap-devel
+BuildRequires: libgcrypt-devel
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
