@@ -3,7 +3,7 @@
 Name: boost
 Summary: The Boost C++ Libraries
 Version: 1.%{ver}.0 
-Release: 4 
+Release: 5
 License: Boost
 URL: http://www.boost.org/
 Source: boost_1_%{ver}_0.tar.bz2
@@ -347,6 +347,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 
 %changelog
+* Fri Dec 16 2016 sulit - 1.59.0-5
+- rebuild boost
+
 * Sun Nov 01 2015 Cjacker <cjacker@foxmail.com> - 1.59.0-4
 - Rebuild with icu 56.1
 
