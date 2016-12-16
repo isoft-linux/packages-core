@@ -1,7 +1,7 @@
 Summary: Network monitoring tools including ping
 Name: iputils
-Version: 20121221
-Release: 3 
+Version: 20151218
+Release: 1
 License: BSD and GPLv2+
 URL: http://www.skbuff.net/iputils
 
@@ -64,6 +64,9 @@ done
 #%attr(644,root,root) %{_mandir}/man8/ifenslave.8.gz
 
 %changelog
+* Fri Dec 16 2016 sulit - 20151218-1
+- upgrade iputils to 20151218
+
 * Fri Oct 23 2015 cjacker - 20121221-3
 - Rebuild for new 4.0 release
 
