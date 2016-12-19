@@ -1,6 +1,6 @@
 Name:           itstool
-Version:        2.0.0 
-Release:        2
+Version:        2.0.2
+Release:        1
 Summary:        ITS-based XML translation tool
 
 License:        GPLv3+
@@ -32,6 +32,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %doc %{_mandir}/man1/itstool.1.gz
 
 %changelog
+* Mon Dec 19 2016 sulit - 2.0.2-1
+- upgrade itstool to 2.0.2
+
 * Fri Oct 23 2015 cjacker - 2.0.0-2
 - Rebuild for new 4.0 release
 

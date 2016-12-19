@@ -26,6 +26,7 @@ groff-x11 package.
 %package perl
 Summary: Parts of the groff formatting system that require Perl
 Requires: groff = %{version}-%{release}
+%global __requires_exclude ^perl\\([^.]*\\.pl\\)
 
 %description perl
 The groff-perl package contains the parts of the groff text processor
@@ -44,6 +45,7 @@ Requires: groff = %{version}-%{release}
 Provides: groff-gxditview = %{version}-%{release}
 Obsoletes: groff-gxditview < 1.20.1
 
+
 %description x11
 The groff-x11 package contains the parts of the groff text processor
 package that require X Windows System. These include gxditview (display
@@ -60,7 +62,7 @@ xtotroff (converts X font metrics into groff font metrics).
 	--with-appresdir=%{_datadir}/X11/app-defaults \
 	--with-grofferdir=%{_datadir}/%{name}/%{version}/groffer \
     --without-x
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
@@ -119,6 +121,9 @@ rm -rf %{buildroot}
 
 %files -f files-nonperl
 %defattr(-,root,root,-)
+%{_libdir}/groff/groff_opts_no_arg.txt
+%{_libdir}/groff/groff_opts_with_arg.txt
+%{_libdir}/groff/grog/subs.pl
 %{_datadir}/groff/
 # manpages for binaries are covered by -f
 %{_mandir}/man1/grohtml.*
@@ -135,6 +140,10 @@ rm -rf %{buildroot}
 %files perl -f files-perl
 %defattr(-,root,root,-)
 %{_datadir}/groff/%{version}/groffer/
+%{_libdir}/groff/glilypond/args.pl
+%{_libdir}/groff/glilypond/oop_fh.pl
+%{_libdir}/groff/glilypond/subs.pl
+%{_libdir}/groff/gpinyin/subs.pl
 
 %if %{with_x}
 %files x11
