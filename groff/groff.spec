@@ -3,7 +3,7 @@
 Summary: A document formatting system
 Name: groff
 Version: 1.22.3
-Release: 1
+Release: 2
 License: GPLv3+ and GFDL and BSD and MIT
 URL: http://groff.ffii.org
 
@@ -157,6 +157,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Dec 19 2016 sulit - 1.22.3-2
+- remove perl(*.pl) dependences
+
 * Thu Dec 15 2016 sulit - 1.22.3-1
 - upgrade groff to 1.22.3
 
