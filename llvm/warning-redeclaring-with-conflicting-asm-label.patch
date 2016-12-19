@@ -1,0 +1,51 @@
+Index: include/clang/Basic/DiagnosticSemaKinds.td
+===================================================================
+--- include/clang/Basic/DiagnosticSemaKinds.td
++++ include/clang/Basic/DiagnosticSemaKinds.td
+@@ -4272,6 +4272,8 @@
+ def err_nested_redefinition : Error<"nested redefinition of %0">;
+ def err_use_with_wrong_tag : Error<
+   "use of %0 with tag type that does not match previous declaration">;
++def warn_different_asm_label : Warning<"conflicting asm label">,
++    InGroup<MismatchedTags>;
+ def warn_struct_class_tag_mismatch : Warning<
+     "%select{struct|interface|class}0%select{| template}1 %2 was previously "
+     "declared as a %select{struct|interface|class}3%select{| template}1">,
+Index: lib/Sema/SemaDecl.cpp
+===================================================================
+--- lib/Sema/SemaDecl.cpp
++++ lib/Sema/SemaDecl.cpp
+@@ -2385,7 +2385,10 @@
+     if (AsmLabelAttr *OldA = Old->getAttr<AsmLabelAttr>()) {
+       if (OldA->getLabel() != NewA->getLabel()) {
+         // This redeclaration changes __asm__ label.
+-        Diag(New->getLocation(), diag::err_different_asm_label);
++        if (New->isUsed())
++          Diag(New->getLocation(), diag::err_different_asm_label);
++        else
++          Diag(New->getLocation(), diag::warn_different_asm_label);
+         Diag(OldA->getLocation(), diag::note_previous_declaration);
+       }
+     } else if (Old->isUsed()) {
+Index: test/Sema/asm-label.c
+===================================================================
+--- test/Sema/asm-label.c
++++ test/Sema/asm-label.c
+@@ -10,7 +10,7 @@
+ void g() __asm__("gold");  // expected-error{{cannot apply asm label to function after its first use}}
+ 
+ void h() __asm__("hose");  // expected-note{{previous declaration is here}}
+-void h() __asm__("hair");  // expected-error{{conflicting asm label}}
++void h() __asm__("hair");  // expected-warning{{conflicting asm label}}
+ 
+ int x;
+ int x __asm__("xenon");
+@@ -21,7 +21,7 @@
+ int y __asm__("yacht");  // expected-error{{cannot apply asm label to variable after its first use}}
+ 
+ int z __asm__("zebra");  // expected-note{{previous declaration is here}}
+-int z __asm__("zooms");  // expected-error{{conflicting asm label}}
++int z __asm__("zooms");  // expected-warning{{conflicting asm label}}
+ 
+ 
+ // No diagnostics on the following.

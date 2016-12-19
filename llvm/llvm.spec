@@ -31,7 +31,7 @@
 
 Name: llvm
 Version: 3.9.0
-Release: 6
+Release: 7
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -101,6 +101,10 @@ Patch12: msan-prevent-initialization-failure-with-newer-glibc.patch
 #configure build system of llvm latest svn already enable openmp support.
 #this patch is for cmake build system
 Patch20: llvm-enable-openmp-build.patch
+
+# Warning on redeclaring with a conflicting asm label
+# testcase: glibc v2.24.x
+Patch21: warning-redeclaring-with-conflicting-asm-label.patch
 
 BuildRequires: clang gcc-go
 BuildRequires: cmake >= 3.4.3
@@ -414,6 +418,8 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 %if %{build_openmp}
 %patch20 -p1
 %endif
+
+%patch21 -p0 -d tools/clang
 
 %build
 #we use clang/clang++ build llvm/clang
@@ -799,6 +805,10 @@ exit 0
 #end build_openmp
 
 %changelog
+* Mon Dec 19 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 3.9.0-7
+- Warning on redeclaring with a conflicting asm label
+- testcase: scan-build (static analyzer) glibc v2.24.x
+
 * Wed Nov 30 2016 sulit - 3.9.0-6
 - recovery llvm-init.el, file-libs sometimes cause rpmbuild segmentation fault
 
