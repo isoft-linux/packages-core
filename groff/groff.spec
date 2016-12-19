@@ -62,7 +62,7 @@ xtotroff (converts X font metrics into groff font metrics).
 	--with-appresdir=%{_datadir}/X11/app-defaults \
 	--with-grofferdir=%{_datadir}/%{name}/%{version}/groffer \
     --without-x
-make %{?_smp_mflags}
+make
 
 %install
 rm -rf %{buildroot}
