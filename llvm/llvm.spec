@@ -31,7 +31,7 @@
 
 Name: llvm
 Version: 3.9.0
-Release: 7
+Release: 8
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -105,6 +105,11 @@ Patch20: llvm-enable-openmp-build.patch
 # Warning on redeclaring with a conflicting asm label
 # testcase: glibc v2.24.x
 Patch21: warning-redeclaring-with-conflicting-asm-label.patch
+
+# Static analyzer false positive of Unix API violation: Improper use of 'open', 
+# when 'open' is in an alternative namespace
+# testcase: k3b v17.04.0
+Patch22: analyzer-false-positive-of-Unix-API-violation.patch
 
 BuildRequires: clang gcc-go
 BuildRequires: cmake >= 3.4.3
@@ -420,6 +425,7 @@ tar xf %{SOURCE17} -C projects/openmp --strip-components=1
 %endif
 
 %patch21 -p0 -d tools/clang
+%patch22 -p0 -d tools/clang
 
 %build
 #we use clang/clang++ build llvm/clang
@@ -805,6 +811,11 @@ exit 0
 #end build_openmp
 
 %changelog
+* Tue Dec 20 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 3.9.0-8
+- Static analyzer false positive of Unix API violation: Improper use of 'open', 
+- when 'open' is in an alternative namespace
+- testcase: scan-build (static analyzer) k3b v17.04.0
+
 * Mon Dec 19 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 3.9.0-7
 - Warning on redeclaring with a conflicting asm label
 - testcase: scan-build (static analyzer) glibc v2.24.x
