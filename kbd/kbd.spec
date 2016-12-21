@@ -1,6 +1,6 @@
 Name:           kbd
-Version:        2.0.2 
-Release:        11 
+Version:        2.0.3
+Release:        1
 Summary:        Tools for configuring the console (keyboard, virtual terminals, etc.)
 
 License:        GPLv2+
@@ -8,12 +8,10 @@ URL:            http://ftp.altlinux.org/pub/people/legion/kbd
 Source0:        http://ftp.altlinux.org/pub/people/legion/kbd/kbd-%{version}.tar.xz
 Source10:       error.h
 
-Patch10:        0001-Replace-u_short-with-unsigned-short.patch
 Patch11:        0002-Fix-required-header-includes.patch
-Patch12:        0003-Only-inluclude-kernel-headers-with-glibc.patch
 Patch13:        kbd-2.0.2-backspace-1.patch
 
-BuildRequires:  bison, flex, gettext, check-devel
+BuildRequires:  bison, flex, gettext, check-devel, pam-devel
 Conflicts:      util-linux < 2.11r-9
 Requires:       systemd 
 ExcludeArch:    s390 s390x
@@ -25,9 +23,7 @@ fonts, the virtual terminals and font files.
 
 %prep
 %setup -q
-%patch10 -p1
 %patch11 -p1
-%patch12 -p1
 %patch13 -p1
 
 cp %{SOURCE10} .
@@ -92,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/kbd
 
 %changelog
+* Wed Dec 21 2016 sulit - 2.0.3-1
+- upgrade kbd to 2.0.3
+
 * Fri Oct 23 2015 cjacker - 2.0.2-11
 - Rebuild for new 4.0 release
 
