@@ -44,3 +44,15 @@ llvm-3.9.0.src.tar.xz
 openmp-3.9.0.src.tar.xz
 polly-3.9.0.src.tar.xz
 test-suite-3.9.0.src.tar.xz
+cfe-3.9.1.src.tar.xz
+clang-tools-extra-3.9.1.src.tar.xz
+compiler-rt-3.9.1.src.tar.xz
+libcxx-3.9.1.src.tar.xz
+libcxxabi-3.9.1.src.tar.xz
+libunwind-3.9.1.src.tar.xz
+lld-3.9.1.src.tar.xz
+lldb-3.9.1.src.tar.xz
+llvm-3.9.1.src.tar.xz
+openmp-3.9.1.src.tar.xz
+polly-3.9.1.src.tar.xz
+test-suite-3.9.1.src.tar.xz

@@ -30,8 +30,8 @@
 %define build_test_suite 0
 
 Name: llvm
-Version: 3.9.0
-Release: 8
+Version: 3.9.1
+Release: 1
 
 Summary: Low Level Virtual Machine (LLVM) with clang	
 License: University of Illinois/NCSA Open Source License 
@@ -811,6 +811,9 @@ exit 0
 #end build_openmp
 
 %changelog
+* Mon Dec 26 2016 sulit - 3.9.1-1
+- upgrade llvm to 3.9.1
+
 * Tue Dec 20 2016 Leslie Zhai <xiang.zhai@i-soft.com.cn> - 3.9.0-8
 - Static analyzer false positive of Unix API violation: Improper use of 'open', 
 - when 'open' is in an alternative namespace
