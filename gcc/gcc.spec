@@ -62,9 +62,9 @@
 %endif
 
 
-%define gcc_version 6.2.0
+%define gcc_version 6.3.0
 %define DATE 20160621
-%define gcc_release 1
+%define gcc_release 0
 %define _unpackaged_files_terminate_build 0
 
 %define gcc_target_platform %{_target_platform}
@@ -72,7 +72,7 @@
 Summary: Various compilers (C, C++, Objective-C, Java, ...)
 Name: gcc
 Version: %{gcc_version}
-Release: %{gcc_release}
+Release: %{gcc_release}.1
 License: GPLv3+ and GPLv2+ with exceptions
 Source0: gcc-%{version}.tar.bz2
 
@@ -699,6 +699,9 @@ fi
 
 
 %changelog
+* Mon Dec 26 2016 sulit - 6.3.0-0.1
+- upgrade gcc to 6.3.0
+
 * Tue Aug 30 2016 sulit <sulitsrc@gmail.com> - 6.2.0-1
 - update gcc to 6.2.0
 
