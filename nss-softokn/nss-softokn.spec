@@ -1,13 +1,13 @@
 %global nspr_version 4.10.8
 %global nss_name nss
-%global nss_util_version 3.20.1
+%global nss_util_version 3.27.1
 %global unsupported_tools_directory %{_libdir}/nss/unsupported-tools
 %global saved_files_dir %{_libdir}/nss/saved
 
 Summary:          Network Security Services Softoken Module
 Name:             nss-softokn
-Version:          3.20.1
-Release:          2%{?dist}
+Version:          3.27.1
+Release:          1%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
 Requires:         nspr >= %{nspr_version}
@@ -30,9 +30,7 @@ Source1:          nss-split-softokn.sh
 Source2:          nss-softokn.pc.in
 Source3:          nss-softokn-config.in
 
-Patch1:           build-nss-softoken-only.patch
 # Build only the softoken and freebl related tools
-Patch8:           softoken-minimal-test-dependencies.patch
 # Select the tests to run based on the type of build
 # This patch uses the gcc-iquote dir option documented at
 # http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options
@@ -90,11 +88,11 @@ Header and library files for doing development with Network Security Services.
 %prep
 %setup -q
 
-%patch1 -p0 -b .softokenonly
-%patch8 -p0 -b .minimal-deps
 # activate if needed when doing a major update with new apis
 %patch10 -p0 -b .iquote
+pushd nss
 %patch97 -p0 -b .add_encrypt_derive
+popd
 
 %build
 
@@ -144,6 +142,7 @@ export NSSUTIL_LIB_DIR=%{_libdir}
 
 NSS_USE_SYSTEM_SQLITE=1
 export NSS_USE_SYSTEM_SQLITE
+export NSS_DISABLE_GTESTS=1
 
 %ifarch x86_64 %{power64} ia64 s390x sparc64 aarch64
 USE_64=1
@@ -165,6 +164,12 @@ echo "##########################################"
 # Compile softokn plus needed support
 %{__make} -C ./nss/coreconf
 %{__make} -C ./nss/lib/dbm
+
+# ldvector.c, pkcs11.c, and lginit.c include nss/lib/util/verref.h, 
+# which is private export, move it to where it can be found.
+%{__mkdir_p} ./dist/private/nss
+%{__mv} ./nss/lib/util/verref.h ./dist/private/nss/verref.h
+
 %{__make} -C ./nss
 
 # Set up our package file
@@ -238,7 +243,7 @@ cd ./nss/tests/
 
 # only run cipher tests for nss-softokn
 %global nss_cycles "standard"
-%global nss_tests "cipher"
+%global nss_tests "cipher ec lowhash"
 %global nss_ssl_tests " "
 %global nss_ssl_run " "
 
@@ -276,13 +281,13 @@ echo "test suite completed"
 %{__mkdir_p} $RPM_BUILD_ROOT/%{saved_files_dir}
 
 # Copy the binary libraries we want
-for file in libsoftokn3.so libnssdbm3.so libfreebl3.so
+for file in libsoftokn3.so libnssdbm3.so libfreebl3.so libfreeblpriv3.so
 do
   %{__install} -p -m 755 dist/*.OBJ/lib/$file $RPM_BUILD_ROOT/%{_libdir}
 done
 
 # Copy the binaries we ship as unsupported
-for file in bltest fipstest shlibsign
+for file in bltest ecperf ectest fipstest shlibsign
 do
   %{__install} -p -m 755 dist/*.OBJ/bin/$file $RPM_BUILD_ROOT/%{unsupported_tools_directory}
 done
@@ -327,6 +332,8 @@ done
 %dir %{saved_files_dir}
 %dir %{unsupported_tools_directory}
 %{unsupported_tools_directory}/bltest
+%{unsupported_tools_directory}/ecperf
+%{unsupported_tools_directory}/ectest
 %{unsupported_tools_directory}/fipstest
 %{unsupported_tools_directory}/shlibsign
 
@@ -335,6 +342,8 @@ done
 %{!?_licensedir:%global license %%doc}
 %license nss/COPYING
 %{_libdir}/libfreebl3.so
+%{_libdir}/libfreeblpriv3.so
+
 
 %files freebl-devel
 %defattr(-,root,root)
@@ -342,6 +351,8 @@ done
 %{_includedir}/nss3/blapi.h
 %{_includedir}/nss3/blapit.h
 %{_includedir}/nss3/alghmac.h
+%{_includedir}/nss3/lowkeyi.h
+%{_includedir}/nss3/lowkeyti.h
 
 %files devel
 %defattr(-,root,root)
@@ -364,6 +375,9 @@ done
 %{_includedir}/nss3/shsign.h
 
 %changelog
+* Thu Dec 29 2016 sulit - 3.27.1-1
+- upgrade nss-softokn to 3.27.1
+
 * Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 3.20.1-2
 - Update to 3.20.1
 
