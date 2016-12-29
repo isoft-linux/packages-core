@@ -1,7 +1,7 @@
 Summary:        Netscape Portable Runtime
 Name:           nspr
-Version:        4.10.10
-Release:        2%{?dist}
+Version:        4.13.1
+Release:        1%{?dist}
 License:        MPLv2.0
 URL:            http://www.mozilla.org/projects/nspr/
 BuildRoot:      %{_tmppath}/%{name}-%{version}-root
@@ -140,6 +140,9 @@ done
 %{_mandir}/man*/*
 
 %changelog
+* Thu Dec 29 2016 sulit - 4.13.1-1
+- upgrade nspr to 4.13.1
+
 * Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 4.10.10-2
 - Update to 4.10.10
 
