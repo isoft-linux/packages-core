@@ -1,8 +1,8 @@
-%global nspr_version 4.10.8
+%global nspr_version 4.13.1
 
 Summary:          Network Security Services Utilities Library
 Name:             nss-util
-Version:          3.20.1
+Version:          3.27.1
 Release:          1%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
@@ -44,7 +44,7 @@ Header and library files for doing development with Network Security Services.
 
 %prep
 %setup -q
-%patch1 -p0 -b .utilonly
+%patch1 -p1 -b .utilonly
 #this patch is not standard and will break upstream firefox/thunderbird build.
 #Since hasht.h really use a type PRBool, this patch should be removed.
 #By Cjacker
@@ -83,6 +83,8 @@ export NSS_USE_SYSTEM_SQLITE
 
 NSS_BUILD_NSSUTIL_ONLY=1
 export NSS_BUILD_NSSUTIL_ONLY
+export NSS_BUILD_UTIL_ONLY=1
+export NSS_DISABLE_GTESTS=1
 
 %ifarch x86_64 ppc64 ia64 s390x sparc64 aarch64 ppc64le
 USE_64=1
@@ -218,6 +220,9 @@ done
 %{_includedir}/nss3/templates/templates.c
 
 %changelog
+* Thu Dec 29 2016 sulit - 3.27.1-1
+- upgrade nss-util to 3.27.1
+
 * Fri Oct 23 2015 cjacker - 3.19.2-3
 - Rebuild for new 4.0 release
 
