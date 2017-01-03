@@ -1,7 +1,6 @@
 %global nspr_version 4.13.1
 %global nss_util_version 3.27.1
 %global nss_softokn_version 3.27.1
-%global nss_pem_version 1.0.2
 %global unsupported_tools_directory %{_libdir}/nss/unsupported-tools
 %global allTools "certutil cmsutil crlutil derdump modutil pk12util signtool signver ssltap vfychain vfyserv"
 
@@ -20,7 +19,8 @@
 Summary:          Network Security Services
 Name:             nss
 Version:          3.27.2
-Release:          1%{?dist}
+Release:          1
+#%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
 Requires:         nspr >= %{nspr_version}
@@ -54,7 +54,6 @@ Source6:          blank-cert9.db
 Source7:          blank-key4.db
 Source8:          system-pkcs11.txt
 Source9:          setup-nsssysinit.sh
-Source12:         %{name}-pem-%{nss_pem_version}.tar.xz
 Source20:         nss-config.xml
 Source21:         setup-nsssysinit.xml
 Source22:         pkcs11.txt.xml
@@ -151,7 +150,7 @@ low level services.
 
 %prep
 %setup -q
-%setup -q -T -D -n %{name}-%{version} -a 12
+%setup -q -T -D -n %{name}-%{version}
 %patch2 -p0 -b .relro
 %patch3 -p0 -b .transitional
 %patch16 -p0 -b .539183
@@ -368,11 +367,6 @@ done
 for m in cert8.db.xml cert9.db.xml key3.db.xml key4.db.xml secmod.db.xml; do
   xmlto man ${m}
 done
-cd %{name}-pem-%{nss_pem_version}
-mkdir build && cd build
-%cmake ../src
-make %{?_smp_mflags} VERBOSE=yes
-cd ../..
 
 %check
 # skip all check, because some test cause exit
@@ -525,7 +519,6 @@ mkdir -p $RPM_BUILD_ROOT%{_mandir}/man5
 
 touch $RPM_BUILD_ROOT%{_libdir}/libnssckbi.so
 %{__install} -p -m 755 dist/*.OBJ/lib/libnssckbi.so $RPM_BUILD_ROOT/%{_libdir}/nss/libnssckbi.so
-%{__install} -p -m 755 %{name}-pem-%{nss_pem_version}/build/libnsspem.so $RPM_BUILD_ROOT/%{_libdir}
 
 # Copy the binary libraries we want
 for file in libnss3.so libnsssysinit.so libsmime3.so libssl3.so
@@ -564,11 +557,6 @@ done
 
 # Copy the include files we want
 for file in dist/public/nss/*.h
-do
-  %{__install} -p -m 644 $file $RPM_BUILD_ROOT/%{_includedir}/nss3
-done
-
-for file in %{name}-pem-%{nss_pem_version}/src/*.h
 do
   %{__install} -p -m 644 $file $RPM_BUILD_ROOT/%{_includedir}/nss3
 done
@@ -673,7 +661,6 @@ fi
 %{_libdir}/libsmime3.so
 %ghost %{_libdir}/libnssckbi.so
 %{_libdir}/nss/libnssckbi.so
-%{_libdir}/libnsspem.so
 %dir %{_sysconfdir}/pki/nssdb
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/pki/nssdb/cert8.db
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/pki/nssdb/key3.db
@@ -765,8 +752,6 @@ fi
 %{_includedir}/nss3/keythi.h
 %{_includedir}/nss3/nss.h
 %{_includedir}/nss3/nssckbi.h
-%{_includedir}/nss3/nsspem.h
-%{_includedir}/nss3/ckpem.h
 %{_includedir}/nss3/ocsp.h
 %{_includedir}/nss3/ocspt.h
 %{_includedir}/nss3/p12.h
