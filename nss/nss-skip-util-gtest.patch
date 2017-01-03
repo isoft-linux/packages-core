@@ -1,0 +1,12 @@
+diff -Nur external_tests/manifest.mn external_testsn/manifest.mn
+--- external_tests/manifest.mn	2016-11-29 09:03:38.000000000 +0800
++++ external_testsn/manifest.mn	2017-01-03 10:23:42.003055330 +0800
+@@ -9,8 +9,4 @@
+ 	google_test \
+ 	common \
+ 	der_gtest \
+-	util_gtest \
+-	pk11_gtest \
+-	ssl_gtest \
+-        nss_bogo_shim \
+ 	$(NULL)
