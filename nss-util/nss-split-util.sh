@@ -47,6 +47,9 @@ cp -a ${nss_source_dir} ${UTIL_WORK}/${util_dir}
 rm -rf ${UTIL_WORK}/${util_dir}/nss/cmd
 rm -rf ${UTIL_WORK}/${util_dir}/nss/tests
 rm -rf ${UTIL_WORK}/${util_dir}/nss/lib
+rm -rf ${UTIL_WORK}/${util_dir}/nss/automation
+rm -rf ${UTIL_WORK}/${util_dir}/nss/external_tests
+rm -rf ${UTIL_WORK}/${util_dir}/nss/doc
 
 # start with an empty cmd lib directories to be filled selectively
 mkdir ${UTIL_WORK}/${util_dir}/nss/cmd

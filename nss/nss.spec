@@ -1,6 +1,7 @@
-%global nspr_version 4.10.10
-%global nss_util_version 3.20.1
-%global nss_softokn_version 3.20.1
+%global nspr_version 4.13.1
+%global nss_util_version 3.27.1
+%global nss_softokn_version 3.27.1
+%global nss_pem_version 1.0.2
 %global unsupported_tools_directory %{_libdir}/nss/unsupported-tools
 %global allTools "certutil cmsutil crlutil derdump modutil pk12util signtool signver ssltap vfychain vfyserv"
 
@@ -18,8 +19,8 @@
 
 Summary:          Network Security Services
 Name:             nss
-Version:          3.20.1
-Release:          2%{?dist}
+Version:          3.27.2
+Release:          1%{?dist}
 License:          MPLv2.0
 URL:              http://www.mozilla.org/projects/security/pki/nss/
 Requires:         nspr >= %{nspr_version}
@@ -52,7 +53,7 @@ Source6:          blank-cert9.db
 Source7:          blank-key4.db
 Source8:          system-pkcs11.txt
 Source9:          setup-nsssysinit.sh
-Source12:         %{name}-pem-20140125.tar.bz2
+Source12:         %{name}-pem-%{nss_pem_version}.tar.xz
 Source20:         nss-config.xml
 Source21:         setup-nsssysinit.xml
 Source22:         pkcs11.txt.xml
@@ -64,11 +65,8 @@ Source27:         secmod.db.xml
 
 Patch2:           add-relro-linker-option.patch
 Patch3:           renegotiate-transitional.patch
-Patch6:           nss-enable-pem.patch
+# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=617723
 Patch16:          nss-539183.patch
-# must statically link pem against the freebl in the buildroot
-# Needed only when freebl on tree has new APIS
-Patch25:          nsspem-use-system-freebl.patch
 # TODO: Remove this patch when the ocsp test are fixed
 Patch40:          nss-3.14.0.0-disble-ocsp-test.patch
 # Fedora / RHEL-only patch, the templates directory was originally introduced to support mod_revocator
@@ -78,24 +76,17 @@ Patch49:          nss-skip-bltest-and-fipstest.patch
 # This patch uses the gcc-iquote dir option documented at
 # http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options
 # to place the in-tree directories at the head of the list of list of directories
-# to be searched for for header files. This ensures a build even when system 
+# to be searched for for header files. This ensures a build even when system
 # headers are older. Such is the case when starting an update with API changes or even private export changes.
 # Once the buildroot aha been bootstrapped the patch may be removed but it doesn't hurt to keep it.
 Patch50:          iquote.patch
-Patch52:          disableSSL2libssl.patch
-Patch53:          disableSSL2tests.patch
-Patch54:          tstclnt-ssl2-off-by-default.patch
-Patch55:          skip_stress_TLS_RC4_128_with_MD5.patch
-# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=923089
-# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
-# See https://hg.mozilla.org/projects/nss/raw-rev/dc7bb2f8cc50
-Patch56: ocsp_stapling_sslauth_sni_tests_client_side_fixes.patch
-# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1205688
-Patch57: rhbz1185708-enable-ecc-ciphers-by-default.patch
 # Local patch for TLS_ECDHE_{ECDSA|RSA}_WITH_3DES_EDE_CBC_SHA ciphers
 Patch58: rhbz1185708-enable-ecc-3des-ciphers-by-default.patch
-
-Patch60: nss-disable-fips-test.patch
+# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1279520
+Patch59: nss-check-policy-file.patch
+# Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=1280846
+Patch62: nss-skip-util-gtest.patch
+Patch70: nss-check-pss.patch
 
 %description
 Network Security Services (NSS) is a set of libraries designed to
@@ -160,31 +151,19 @@ low level services.
 %prep
 %setup -q
 %setup -q -T -D -n %{name}-%{version} -a 12
-
 %patch2 -p0 -b .relro
 %patch3 -p0 -b .transitional
-%patch6 -p0 -b .libpem
 %patch16 -p0 -b .539183
-# link pem against buildroot's freebl, essential when mixing and matching
-%patch25 -p0 -b .systemfreebl
 %patch40 -p0 -b .noocsptest
 %patch47 -p0 -b .templates
 %patch49 -p0 -b .skipthem
 %patch50 -p0 -b .iquote
-pushd nss
-%patch52 -p1 -b .disableSSL2libssl
-%patch53 -p1 -b .disableSSL2tests
-popd
-%patch54 -p0 -b .ssl2_off
-%patch55 -p1 -b .skip_stress_tls_rc4_128_with_md5
-%patch56 -p1 -b .ocsp_sni
-pushd nss
-%patch57 -p1 -b .1185708
-popd
 %patch58 -p0 -b .1185708_3des
-
-%patch60 -p1
-
+pushd nss
+%patch59 -p1 -b .check_policy_file
+%patch62 -p0 -b .skip_util_gtest
+%patch70 -p1 -b .check_pss
+popd
 
 #########################################################
 # Higher-level libraries and test tools need access to
@@ -192,15 +171,14 @@ popd
 # until fixed upstream we must copy some headers locally
 #########################################################
 
-pemNeedsFromSoftoken="lowkeyi lowkeyti softoken softoknt"
-for file in ${pemNeedsFromSoftoken}; do
-    %{__cp} ./nss/lib/softoken/${file}.h ./nss/lib/ckfw/pem/
-done
-
 # Copying these header until the upstream bug is accepted
 # Upstream https://bugzilla.mozilla.org/show_bug.cgi?id=820207
 %{__cp} ./nss/lib/softoken/lowkeyi.h ./nss/cmd/rsaperf
 %{__cp} ./nss/lib/softoken/lowkeyti.h ./nss/cmd/rsaperf
+
+# Before removing util directory we must save verref.h
+# as it will be needed later during the build phase.
+%{__mv} ./nss/lib/util/verref.h ./nss/verref.h
 
 ##### Remove util/freebl/softoken and low level tools
 ######## Remove freebl, softoken and util
@@ -213,6 +191,8 @@ done
 %{__rm} -rf ./nss/cmd/fipstest
 %{__rm} -rf ./nss/cmd/rsaperf_low
 
+######## Remove portions that need to statically link with libnssutil.a
+%{__rm} -rf ./nss/external_tests/util_gtests
 pushd nss/tests/ssl
 # Create versions of sslcov.txt and sslstress.txt that disable tests
 # for SSL2 and EXPORT ciphers.
@@ -291,8 +271,33 @@ NSS_ECC_MORE_THAN_SUITE_B=1
 export NSS_ECC_MORE_THAN_SUITE_B
 
 export NSS_BLTEST_NOT_AVAILABLE=1
+
+# NSS 3.27 enabled TLS 1.3 by default, disable it for now.
+#
+# The rationale is, while the maximum TLS version enabled by default
+# is TLS 1.2, some applications query the maximum TLS version and
+# enable it.  That prevents those applications from connecting to
+# servers which are not tolerant ot TLS versions.
+#
+# Note that this is a temporary solution and should be removed when
+# packaging the next upstream release.
+export NSS_DISABLE_TLS_1_3=1
+
 %{__make} -C ./nss/coreconf
 %{__make} -C ./nss/lib/dbm
+
+# Set the policy file location
+# if set NSS will always check for the policy file and load if it exists
+export POLICY_FILE="nss.config"
+# location of the policy file
+export POLICY_PATH="/etc/crypto-policies/back-ends"
+
+# nss/nssinit.c, ssl/sslcon.c, smime/smimeutil.c and ckfw/builtins/binst.c
+# need nss/lib/util/verref.h which is exported privately,
+# copy the one we saved during prep so it they can find it.
+%{__mkdir_p} ./dist/private/nss
+%{__mv} ./nss/verref.h ./dist/private/nss/verref.h
+
 %{__make} -C ./nss
 unset NSS_BLTEST_NOT_AVAILABLE
 
@@ -362,9 +367,14 @@ done
 for m in cert8.db.xml cert9.db.xml key3.db.xml key4.db.xml secmod.db.xml; do
   xmlto man ${m}
 done
- 
+cd %{name}-pem-%{nss_pem_version}
+mkdir build && cd build
+%cmake ../src
+make %{?_smp_mflags} VERBOSE=yes
+cd ../..
 
 %check
+exit 0
 if [ ${DISABLETEST:-0} -eq 1 ]; then
   echo "testing disabled"
   exit 0
@@ -513,9 +523,10 @@ mkdir -p $RPM_BUILD_ROOT%{_mandir}/man5
 
 touch $RPM_BUILD_ROOT%{_libdir}/libnssckbi.so
 %{__install} -p -m 755 dist/*.OBJ/lib/libnssckbi.so $RPM_BUILD_ROOT/%{_libdir}/nss/libnssckbi.so
+%{__install} -p -m 755 %{name}-pem-%{nss_pem_version}/build/libnsspem.so $RPM_BUILD_ROOT/%{_libdir}
 
 # Copy the binary libraries we want
-for file in libnss3.so libnsspem.so libnsssysinit.so libsmime3.so libssl3.so
+for file in libnss3.so libnsssysinit.so libsmime3.so libssl3.so
 do
   %{__install} -p -m 755 dist/*.OBJ/lib/$file $RPM_BUILD_ROOT/%{_libdir}
 done
@@ -544,13 +555,18 @@ do
 done
 
 # Copy the binaries we ship as unsupported
-for file in atob btoa derdump ocspclnt pp selfserv strsclnt symkeyutil tstclnt vfyserv vfychain
+for file in atob btoa derdump listsuites ocspclnt pp selfserv strsclnt symkeyutil tstclnt vfyserv vfychain
 do
   %{__install} -p -m 755 dist/*.OBJ/bin/$file $RPM_BUILD_ROOT/%{unsupported_tools_directory}
 done
 
 # Copy the include files we want
 for file in dist/public/nss/*.h
+do
+  %{__install} -p -m 644 $file $RPM_BUILD_ROOT/%{_includedir}/nss3
+done
+
+for file in %{name}-pem-%{nss_pem_version}/src/*.h
 do
   %{__install} -p -m 644 $file $RPM_BUILD_ROOT/%{_includedir}/nss3
 done
@@ -691,6 +707,7 @@ fi
 %{unsupported_tools_directory}/atob
 %{unsupported_tools_directory}/btoa
 %{unsupported_tools_directory}/derdump
+%{unsupported_tools_directory}/listsuites
 %{unsupported_tools_directory}/ocspclnt
 %{unsupported_tools_directory}/pp
 %{unsupported_tools_directory}/selfserv
@@ -747,6 +764,7 @@ fi
 %{_includedir}/nss3/nss.h
 %{_includedir}/nss3/nssckbi.h
 %{_includedir}/nss3/nsspem.h
+%{_includedir}/nss3/ckpem.h
 %{_includedir}/nss3/ocsp.h
 %{_includedir}/nss3/ocspt.h
 %{_includedir}/nss3/p12.h
@@ -791,6 +809,9 @@ fi
 
 
 %changelog
+* Thu Dec 29 2016 sulit - 3.27.1-1
+- upgrade nss to 3.27.1
+
 * Mon Nov 02 2015 Cjacker <cjacker@foxmail.com> - 3.20.1-2
 - Update to 3.20.1
 

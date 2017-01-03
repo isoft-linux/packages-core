@@ -17,14 +17,26 @@ BuildRequires:    perl
 
 Source0:          %{name}-%{version}.tar.gz
 # The nss-util tar ball is a subset of nss-{version}.tar.gz.
-# use 'sh ./nss-split-util.sh <nss version> to generate it.
+# We use the nss-split-util.sh script for keeping only what we need
+# nss-util is produced via via nss-split-util.sh {version}
+# Detailed Steps:
+# fedpkg clone nss-util
+# cd nss-util
+# Make the source tarball for nss-util out of the nss one:
+# sh ./nss-split-util.sh ${version}
+# A file named ${name}-${version}.tar.gz should appear
+# ready to upload to the lookaside cache.
 Source1:          nss-split-util.sh
 Source2:          nss-util.pc.in
 Source3:          nss-util-config.in
 
-Patch1: build-nss-util-only.patch
+# Local patches
 Patch2: hasht-dont-include-prtypes.patch
-#Patch3: pkcs1sig-include-prtypes.patch
+Patch3: pkcs1sig-include-prtypes.patch
+# TODO: investigate whether this patch should also be applied to
+# nss-softokn and nss and whether it should be submitted upstream.
+# First ensure that it won't cause any FIPS tests breakage.
+Patch4: nss-util-3.19.3-ldflags.patch
 
 %description
 Utilities for Network Security Services and the Softoken module
@@ -44,19 +56,15 @@ Header and library files for doing development with Network Security Services.
 
 %prep
 %setup -q
-%patch1 -p1 -b .utilonly
-#this patch is not standard and will break upstream firefox/thunderbird build.
-#Since hasht.h really use a type PRBool, this patch should be removed.
-#By Cjacker
-#%patch2 -p0 -b .prtypes
-#%patch3 -p0 -b .include_prtypes
+%patch2 -p0 -b .prtypes
+%patch3 -p0 -b .include_prtypes
+%patch4 -p1 -b .ldflags
 
 
 %build
 
 # Enable compiler optimizations and disable debugging code
-BUILD_OPT=1
-export BUILD_OPT
+export BUILD_OPT=1
 
 # Uncomment to disable optimizations
 #RPM_OPT_FLAGS=`echo $RPM_OPT_FLAGS | sed -e 's/-O2/-O0/g'`
@@ -78,15 +86,15 @@ NSPR_LIB_DIR=`/usr/bin/pkg-config --libs-only-L nspr | sed 's/-L//'`
 export NSPR_INCLUDE_DIR
 export NSPR_LIB_DIR
 
-NSS_USE_SYSTEM_SQLITE=1
-export NSS_USE_SYSTEM_SQLITE
+export NSS_USE_SYSTEM_SQLITE=1
 
-NSS_BUILD_NSSUTIL_ONLY=1
-export NSS_BUILD_NSSUTIL_ONLY
 export NSS_BUILD_UTIL_ONLY=1
+
+# external tests are not suitable for nss-util and
+# won't compile as they depend on ssl
 export NSS_DISABLE_GTESTS=1
 
-%ifarch x86_64 ppc64 ia64 s390x sparc64 aarch64 ppc64le
+%ifnarch noarch
 USE_64=1
 export USE_64
 %endif
@@ -184,6 +192,7 @@ done
 # these are marked as public export in nss/lib/util/manifest.mk
 %{_includedir}/nss3/base64.h
 %{_includedir}/nss3/ciferfam.h
+#%{_includedir}/nss3/eccutil.h
 %{_includedir}/nss3/hasht.h
 %{_includedir}/nss3/nssb64.h
 %{_includedir}/nss3/nssb64t.h
