@@ -20,7 +20,6 @@ Source0:          %{name}-%{version}.tar.gz
 # We use the nss-split-util.sh script for keeping only what we need
 # nss-util is produced via via nss-split-util.sh {version}
 # Detailed Steps:
-# fedpkg clone nss-util
 # cd nss-util
 # Make the source tarball for nss-util out of the nss one:
 # sh ./nss-split-util.sh ${version}
