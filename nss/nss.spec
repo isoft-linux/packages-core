@@ -374,6 +374,7 @@ make %{?_smp_mflags} VERBOSE=yes
 cd ../..
 
 %check
+# skip all check, because some test cause exit
 exit 0
 if [ ${DISABLETEST:-0} -eq 1 ]; then
   echo "testing disabled"
