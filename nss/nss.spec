@@ -39,6 +39,7 @@ BuildRequires:    pkgconfig
 BuildRequires:    gawk
 BuildRequires:    psmisc
 BuildRequires:    perl
+BuildRequires:    cmake
 
 %{!?nss_ckbi_suffix:%define full_nss_version %{version}}
 %{?nss_ckbi_suffix:%define full_nss_version %{version}%{nss_ckbi_suffix}}
