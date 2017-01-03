@@ -1,7 +1,7 @@
-diff -Nur nss-3.19.2/nss/tests/all.sh nss-3.19.2n/nss/tests/all.sh
---- nss-3.19.2/nss/tests/all.sh	2015-06-17 18:26:43.000000000 +0000
-+++ nss-3.19.2n/nss/tests/all.sh	2015-07-02 14:02:11.270308191 +0000
-@@ -184,7 +184,7 @@
+diff -Nur nss-3.27.1/nss/tests/all.sh nss-3.27.1n/nss/tests/all.sh
+--- nss-3.27.1/nss/tests/all.sh	2016-10-03 22:55:58.000000000 +0800
++++ nss-3.27.1n/nss/tests/all.sh	2016-12-29 16:57:12.364617695 +0800
+@@ -189,7 +189,7 @@
      init_directories
  
      if [ -r "${OLDHOSTDIR}/cert.log" ]; then
@@ -10,18 +10,18 @@ diff -Nur nss-3.19.2/nss/tests/all.sh nss-3.19.2n/nss/tests/all.sh
          for i in $DIRS
          do
              cp -r ${OLDHOSTDIR}/${i} ${HOSTDIR} #2> /dev/null
-@@ -274,12 +274,12 @@
+@@ -281,12 +281,12 @@
  cycles="standard pkix upgradedb sharedb"
  CYCLES=${NSS_CYCLES:-$cycles}
  
--tests="cipher lowhash libpkix cert dbtests tools fips sdr crmf smime ssl ocsp merge pkits chains"
-+tests="cipher lowhash libpkix cert dbtests tools sdr crmf smime ssl ocsp merge pkits chains"
+-tests="cipher lowhash libpkix cert dbtests tools fips sdr crmf smime ssl ocsp merge pkits chains ec gtests ssl_gtests"
++tests="cipher lowhash libpkix cert dbtests tools sdr crmf smime ssl ocsp merge pkits chains ec gtests ssl_gtests"
  TESTS=${NSS_TESTS:-$tests}
  
  ALL_TESTS=${TESTS}
  
--nss_ssl_tests="crl bypass_normal normal_bypass fips_normal normal_fips iopr"
-+nss_ssl_tests="crl bypass_normal normal_bypass iopr"
+-nss_ssl_tests="crl bypass_normal normal_bypass fips_normal normal_fips iopr policy"
++nss_ssl_tests="crl bypass_normal normal_bypass iopr policy"
  NSS_SSL_TESTS="${NSS_SSL_TESTS:-$nss_ssl_tests}"
  
  nss_ssl_run="cov auth stapling stress"
