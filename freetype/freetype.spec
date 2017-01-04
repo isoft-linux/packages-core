@@ -3,7 +3,7 @@
 Summary: A free and portable TrueType font rendering engine.
 Name: freetype
 Version: 2.7
-Release: 3 
+Release: 5
 License: GPL
 URL: http://www.freetype.org
 Source0:  http://download.savannah.gnu.org/releases/freetype/freetype-%{version}.tar.bz2
@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/freetype-config.1*
 
 %changelog
+* Wed Jan 04 2017 sulit - 2.7-5
+- upgrade freetype to 2.7
+
 * Thu Nov 24 2016 sulit <sulitsrc@163.com> - 2.7-3
 - rebuild
 
