@@ -13,6 +13,8 @@ BuildRequires: flex
 BuildRequires: bison
 BuildRequires: cmake
 BuildRequires: xapian-core-devel
+BuildRequires: zlib-devel
+BuildRequires: qt4-devel
 
 %description
 Doxygen can generate an online class browser (in HTML) and/or a
