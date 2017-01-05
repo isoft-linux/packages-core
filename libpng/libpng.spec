@@ -1,15 +1,16 @@
+%define libpng_apng_version 1.6.26
 Summary: A library of functions for manipulating PNG image format files
 Name: libpng
 Epoch: 2
-Version: 1.6.17
-Release: 5 
+Version: 1.6.27
+Release: 1
 License: zlib
 URL: http://www.libpng.org/pub/png/
 # Note: non-current tarballs get moved to the history/ subdirectory,
 # so look there if you fail to retrieve the version you want
 Source0: ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-%{version}.tar.xz
 
-Patch0: libpng-%{version}-apng.patch.gz
+Patch0: libpng-%{libpng_apng_version}-apng.patch.gz
 
 BuildRequires: zlib-devel, pkgconfig, libtool
 BuildRequires: autoconf >= 2.65
@@ -99,6 +100,9 @@ make check
 %{_bindir}/pngfix
 
 %changelog
+* Tue Jan 03 2017 sulit - 2:1.6.27-1
+- upgrade libpng to 1.6.27
+
 * Fri Oct 23 2015 cjacker - 2:1.6.17-5
 - Rebuild for new 4.0 release
 

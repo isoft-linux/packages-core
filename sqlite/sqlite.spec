@@ -2,11 +2,11 @@
 %global snapshot_build 0 
 
 %define realname sqlite-autoconf
-%define realver 3090000
+%define realver 3160000
 Summary: Library that implements an embeddable SQL database engine
 Name: sqlite
-Version: 3.9.0
-Release: 3 
+Version: 3.16.0
+Release: 1
 License: Public Domain
 URL: http://www.sqlite.org/
 
@@ -106,6 +106,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*.pc
 
 %changelog
+* Tue Jan 03 2017 sulit - 3.16.0-1
+- upgrade sqlite to 3.16
+
 * Fri Oct 23 2015 cjacker - 3.9.0-3
 - Rebuild for new 4.0 release
 
