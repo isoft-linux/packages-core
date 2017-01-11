@@ -5,7 +5,7 @@
 
 %define rcversion 0
 
-%define kversion 4.9.1
+%define kversion 4.9.2
 %define release 1
 
 %define extraversion -%{release}
@@ -707,6 +707,9 @@ grub-mkconfig -o /boot/grub/grub.cfg >/dev/null ||:
 
 
 %changelog
+* Wed Jan 11 2017 sulit - 4.9.2-1
+- upgrade kernel 4.9.2
+
 * Mon Jan 09 2017 sulit - 4.9.1-1
 - upgrade kernel to 4.9.1
 
